@@ -5,10 +5,7 @@ build
 # Client
 /client/node_modules
 /client/.svelte-kit
-/client/src/lib/services
-/client/static/openapi
 
 # Server
 /server/client
 /server/tmp
-/server/internal/services
