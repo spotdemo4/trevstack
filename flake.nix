@@ -14,6 +14,9 @@
     flake-utils.lib.eachDefaultSystem (system:
 
       let
+        pname = "trevstack";
+        version = "0.1.0";
+
         pkgs = import nixpkgs { 
           inherit system;
           config.allowUnfree = true;
@@ -32,10 +35,12 @@
         };
 
         client = pkgs.buildNpmPackage {
-          name = "client";
+          pname = "${pname}-client";
+          inherit version;
           src = gitignore.lib.gitignoreSource ./client;
           npmDepsHash = "sha256-hOmZZrCSuHyRQhG6M7Yu5uRLTdCYOL/giT4zUm9iTRE=";
           nodejs = pkgs.nodejs_22;
+
           installPhase = ''
             cp -r build "$out"
             chmod -R u+w "$out"
@@ -76,7 +81,7 @@
                 (cd "''${gitroot}/client" && npm run dev) &
                 P2=$!
 
-                protobufwatch &
+                (cd "''${gitroot}" && protobufwatch) &
                 P3=$!
 
                 trap 'kill $P1 $P2 $P3' SIGINT SIGTERM
@@ -109,9 +114,6 @@
               name = "protobufwatch";
 
               text = ''
-                gitroot=$(git rev-parse --show-toplevel)
-
-                cd "''${gitroot}"
                 inotifywait -mre close_write,moved_to,create proto | while read -r _ _ basename;
                 do
                   echo "file changed: $basename"
@@ -125,8 +127,7 @@
         };
 
         packages.default = pkgs.buildGoModule {
-          pname = "trevstack";
-          version = "1.0";
+          inherit pname version;
           src = gitignore.lib.gitignoreSource ./server;
           vendorHash = "sha256-PE9ns1W+7/ZBBxb7+96aXqBTzpDo5tGcfnCXAV8vp8E=";
 
