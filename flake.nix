@@ -19,7 +19,7 @@
           config.allowUnfree = true;
         };
 
-        protoc-gen-connect-openapi = pkgs.buildGoModule rec {
+        protoc-gen-connect-openapi = pkgs.buildGoModule {
           name = "protoc-gen-connect-openapi";
           src = pkgs.fetchFromGitHub {
             owner = "sudorandom";

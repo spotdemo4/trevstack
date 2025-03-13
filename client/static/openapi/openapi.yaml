@@ -1,0 +1,334 @@
+openapi: 3.1.0
+servers:
+  - url: /grpc
+info:
+  title: Trevstack API
+  version: 1.0.0
+  description: API for trevstack
+  contact:
+    name: Trev
+    email: spam@trev.xyz
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    user.v1.LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          title: username
+        password:
+          type: string
+          title: password
+      title: LoginRequest
+      additionalProperties: false
+    user.v1.LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          title: token
+      title: LoginResponse
+      additionalProperties: false
+    user.v1.LogoutRequest:
+      type: object
+      title: LogoutRequest
+      additionalProperties: false
+    user.v1.LogoutResponse:
+      type: object
+      title: LogoutResponse
+      additionalProperties: false
+    user.v1.SignUpRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          title: username
+        password:
+          type: string
+          title: password
+      title: SignUpRequest
+      additionalProperties: false
+    user.v1.SignUpResponse:
+      type: object
+      title: SignUpResponse
+      additionalProperties: false
+    connect-protocol-version:
+      type: number
+      title: Connect-Protocol-Version
+      enum:
+        - 1
+      description: Define the version of the Connect protocol
+      const: 1
+    connect-timeout-header:
+      type: number
+      title: Connect-Timeout-Ms
+      description: Define the timeout, in ms
+    connect.error:
+      type: object
+      properties:
+        code:
+          type: string
+          examples:
+            - not_found
+          enum:
+            - canceled
+            - unknown
+            - invalid_argument
+            - deadline_exceeded
+            - not_found
+            - already_exists
+            - permission_denied
+            - resource_exhausted
+            - failed_precondition
+            - aborted
+            - out_of_range
+            - unimplemented
+            - internal
+            - unavailable
+            - data_loss
+            - unauthenticated
+          description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+        message:
+          type: string
+          description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+        detail:
+          $ref: '#/components/schemas/google.protobuf.Any'
+      title: Connect Error
+      additionalProperties: true
+      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+    google.protobuf.Any:
+      type: object
+      properties:
+        type:
+          type: string
+        value:
+          type: string
+          format: binary
+        debug:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+      description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+    user.v1.APIKeyRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          title: password
+        confirmPassword:
+          type: string
+          title: confirm_password
+      title: APIKeyRequest
+      additionalProperties: false
+    user.v1.APIKeyResponse:
+      type: object
+      properties:
+        key:
+          type: string
+          title: key
+      title: APIKeyResponse
+      additionalProperties: false
+    user.v1.ChangePasswordRequest:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          title: old_password
+        newPassword:
+          type: string
+          title: new_password
+        confirmPassword:
+          type: string
+          title: confirm_password
+      title: ChangePasswordRequest
+      additionalProperties: false
+    user.v1.ChangePasswordResponse:
+      type: object
+      title: ChangePasswordResponse
+      additionalProperties: false
+security:
+  - bearerAuth: []
+paths:
+  /user.v1.AuthService/Login:
+    post:
+      tags:
+        - user.v1.AuthService
+      summary: Login
+      operationId: user.v1.AuthService.Login
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.LoginRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.LoginResponse'
+  /user.v1.AuthService/SignUp:
+    post:
+      tags:
+        - user.v1.AuthService
+      summary: SignUp
+      operationId: user.v1.AuthService.SignUp
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.SignUpRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.SignUpResponse'
+  /user.v1.AuthService/Logout:
+    post:
+      tags:
+        - user.v1.AuthService
+      summary: Logout
+      operationId: user.v1.AuthService.Logout
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.LogoutRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.LogoutResponse'
+  /user.v1.UserService/ChangePassword:
+    post:
+      tags:
+        - user.v1.UserService
+      summary: ChangePassword
+      operationId: user.v1.UserService.ChangePassword
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.ChangePasswordRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.ChangePasswordResponse'
+  /user.v1.UserService/APIKey:
+    post:
+      tags:
+        - user.v1.UserService
+      summary: APIKey
+      operationId: user.v1.UserService.APIKey
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.APIKeyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.APIKeyResponse'
+tags:
+  - name: user.v1.AuthService
+  - name: user.v1.UserService

@@ -5,8 +5,6 @@ build
 # Client
 /client/node_modules
 /client/.svelte-kit
-/client/vite.config.ts.timestamp-*.mjs
-/client/static/openapi
 
 # Server
 /server/client
