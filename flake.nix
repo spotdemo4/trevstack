@@ -4,15 +4,21 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    gitignore = {
+      url = "github:hercules-ci/gitignore.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, gitignore }:
     flake-utils.lib.eachDefaultSystem (system:
+
       let
         pkgs = import nixpkgs { 
           inherit system;
           config.allowUnfree = true;
         };
+
         protoc-gen-connect-openapi = pkgs.buildGoModule rec {
           name = "protoc-gen-connect-openapi";
           src = pkgs.fetchFromGitHub {
@@ -24,6 +30,13 @@
           vendorHash = "sha256-CIiG/XhV8xxjYY0sZcSvIFcJ1Wh8LyDDwqem2cSSwBA=";
           nativeCheckInputs = with pkgs; [ less ];
         };
+
+        client = pkgs.buildNpmPackage {
+          name = "client";
+          src = gitignore.lib.gitignoreSource ./client;
+          npmDepsHash = "sha256-hOmZZrCSuHyRQhG6M7Yu5uRLTdCYOL/giT4zUm9iTRE=";
+        };
+
       in
       {
         devShells.default = pkgs.mkShell {
@@ -106,9 +119,11 @@
           ];
         };
 
-        packages.default = pkgs.stdenv.mkDerivation {
+        packages.default = pkgs.buildGoModule {
           pname = "trevstack";
           version = "1.0";
+          src = gitignore.lib.gitignoreSource ./server;
+          vendorHash = "";
 
           buildInputs = with pkgs; [
             # Go backend
@@ -127,24 +142,8 @@
             nodejs_22
           ];
 
-          buildPhase = ''
-            gitroot=$(git rev-parse --show-toplevel)
-
-            cd "''${gitroot}"
-            buf lint
-            buf generate
-
-            cd "''${gitroot}/client"
-            npm run build
-            cp -r build ../server/client
-
-            cd "''${gitroot}/server"
-            go build -o ../build/trevstack .
-          '';
-
-          installPhase = ''
-            mkdir -p $out/bin
-            cp build/trevstack $out/bin
+          configurePhase = ''
+            cp -r ${client} client
           '';
         };
       }
