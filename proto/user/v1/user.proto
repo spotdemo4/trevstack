@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package user.v1;
+
+service UserService {
+  rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {}
+  rpc APIKey (APIKeyRequest) returns (APIKeyResponse) {}
+}
+
+message ChangePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+  string confirm_password = 3;
+}
+message ChangePasswordResponse {}
+
+message APIKeyRequest {
+  string password = 1;
+  string confirm_password = 2;
+}
+message APIKeyResponse {
+  string key = 1;
+}

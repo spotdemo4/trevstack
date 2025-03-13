@@ -1,0 +1,43 @@
+services:
+  trevstack:
+    container_name: trevstack
+    build:
+      context: .
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - DB_TYPE=postgres
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=trevstack-db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - PORT=${PORT}
+      - KEY=${KEY}
+    depends_on:
+      trevstack-db:
+        condition: service_healthy
+    links:
+      - trevstack-db
+    restart: unless-stopped
+
+  trevstack-db:
+    container_name: trevstack-db
+    image: postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - trevstackdata:/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -U postgres"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  trevstackdata:
+    name: trevstackdata
+    external: true
