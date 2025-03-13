@@ -35,6 +35,11 @@
           name = "client";
           src = gitignore.lib.gitignoreSource ./client;
           npmDepsHash = "sha256-hOmZZrCSuHyRQhG6M7Yu5uRLTdCYOL/giT4zUm9iTRE=";
+          nodejs = pkgs.nodejs_22;
+          installPhase = ''
+            cp -r build "$out"
+            chmod -R u+w "$out"
+          '';
         };
 
       in
@@ -123,26 +128,9 @@
           pname = "trevstack";
           version = "1.0";
           src = gitignore.lib.gitignoreSource ./server;
-          vendorHash = "";
+          vendorHash = "sha256-PE9ns1W+7/ZBBxb7+96aXqBTzpDo5tGcfnCXAV8vp8E=";
 
-          buildInputs = with pkgs; [
-            # Go backend
-            go
-            gotools
-            gopls
-            
-            # Protobuf middleware
-            buf
-            protoc-gen-go
-            protoc-gen-connect-go
-            protoc-gen-es
-            protoc-gen-connect-openapi
-
-            # Svelte frontend
-            nodejs_22
-          ];
-
-          configurePhase = ''
+          preBuild = ''
             cp -r ${client} client
           '';
         };
