@@ -68,9 +68,6 @@
             # Svelte frontend
             nodejs_22
 
-            # Openapi gen
-            openapi-generator-cli
-
             # Helper scripts
             (writeShellApplication {
               name = "run";
@@ -91,6 +88,8 @@
                 wait $P1
                 wait $P2
                 wait $P3
+                
+                kill $P1 $P2 $P3
               '';
             })
 

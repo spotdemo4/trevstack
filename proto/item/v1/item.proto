@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package item.v1;
+
+import "google/protobuf/timestamp.proto";
+
+message Item {
+  optional uint32 id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+  uint32 quantity = 5;
+  optional google.protobuf.Timestamp added = 6;
+}
+
+service ItemService {
+  rpc GetItem (GetItemRequest) returns (GetItemResponse) {}
+  rpc GetItems (GetItemsRequest) returns (GetItemsResponse) {}
+  rpc CreateItem (CreateItemRequest) returns (CreateItemResponse) {}
+  rpc UpdateItem (UpdateItemRequest) returns (UpdateItemResponse) {}
+  rpc DeleteItem (DeleteItemRequest) returns (DeleteItemResponse) {}
+}
+
+message GetItemRequest {
+  uint32 id = 1;
+}
+message GetItemResponse {
+  Item item = 1;
+}
+
+message GetItemsRequest {
+  optional google.protobuf.Timestamp start = 1;
+  optional google.protobuf.Timestamp end = 2;
+  optional string filter = 3;
+  optional uint32 limit = 4;
+  optional uint32 offset = 5;
+}
+message GetItemsResponse {
+  repeated Item items = 1;
+  uint64 count = 2;
+}
+
+message CreateItemRequest {
+  Item item = 1;
+}
+message CreateItemResponse {
+  Item item = 1;
+}
+
+message UpdateItemRequest {
+  Item item = 1;
+}
+message UpdateItemResponse {
+  Item item = 1;
+}
+
+message DeleteItemRequest {
+  uint32 id = 1;
+}
+message DeleteItemResponse {}

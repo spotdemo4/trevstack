@@ -15,50 +15,225 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    user.v1.LoginRequest:
+    google.protobuf.Timestamp:
+      type: string
+      format: date-time
+      description: |-
+        A Timestamp represents a point in time independent of any time zone or local
+         calendar, encoded as a count of seconds and fractions of seconds at
+         nanosecond resolution. The count is relative to an epoch at UTC midnight on
+         January 1, 1970, in the proleptic Gregorian calendar which extends the
+         Gregorian calendar backwards to year one.
+
+         All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+         second table is needed for interpretation, using a [24-hour linear
+         smear](https://developers.google.com/time/smear).
+
+         The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+         restricting to that range, we ensure that we can convert to and from [RFC
+         3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+
+         # Examples
+
+         Example 1: Compute Timestamp from POSIX `time()`.
+
+             Timestamp timestamp;
+             timestamp.set_seconds(time(NULL));
+             timestamp.set_nanos(0);
+
+         Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+
+             struct timeval tv;
+             gettimeofday(&tv, NULL);
+
+             Timestamp timestamp;
+             timestamp.set_seconds(tv.tv_sec);
+             timestamp.set_nanos(tv.tv_usec * 1000);
+
+         Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+
+             FILETIME ft;
+             GetSystemTimeAsFileTime(&ft);
+             UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+
+             // A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+             // is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+             Timestamp timestamp;
+             timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+             timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+
+         Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+
+             long millis = System.currentTimeMillis();
+
+             Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+                 .setNanos((int) ((millis % 1000) * 1000000)).build();
+
+         Example 5: Compute Timestamp from Java `Instant.now()`.
+
+             Instant now = Instant.now();
+
+             Timestamp timestamp =
+                 Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+                     .setNanos(now.getNano()).build();
+
+         Example 6: Compute Timestamp from current time in Python.
+
+             timestamp = Timestamp()
+             timestamp.GetCurrentTime()
+
+         # JSON Mapping
+
+         In JSON format, the Timestamp type is encoded as a string in the
+         [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the
+         format is "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z"
+         where {year} is always expressed using four digits while {month}, {day},
+         {hour}, {min}, and {sec} are zero-padded to two digits each. The fractional
+         seconds, which can go up to 9 digits (i.e. up to 1 nanosecond resolution),
+         are optional. The "Z" suffix indicates the timezone ("UTC"); the timezone
+         is required. A proto3 JSON serializer should always use UTC (as indicated by
+         "Z") when printing the Timestamp type and a proto3 JSON parser should be
+         able to accept both UTC and other timezones (as indicated by an offset).
+
+         For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past
+         01:30 UTC on January 15, 2017.
+
+         In JavaScript, one can convert a Date object to this format using the
+         standard
+         [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+         method. In Python, a standard `datetime.datetime` object can be converted
+         to this format using
+         [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with
+         the time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use
+         the Joda Time's [`ISODateTimeFormat.dateTime()`](
+         http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()
+         ) to obtain a formatter capable of generating timestamps in this format.
+    item.v1.CreateItemRequest:
       type: object
       properties:
-        username:
-          type: string
-          title: username
-        password:
-          type: string
-          title: password
-      title: LoginRequest
+        item:
+          title: item
+          $ref: '#/components/schemas/item.v1.Item'
+      title: CreateItemRequest
       additionalProperties: false
-    user.v1.LoginResponse:
+    item.v1.CreateItemResponse:
       type: object
       properties:
-        token:
-          type: string
-          title: token
-      title: LoginResponse
+        item:
+          title: item
+          $ref: '#/components/schemas/item.v1.Item'
+      title: CreateItemResponse
       additionalProperties: false
-    user.v1.LogoutRequest:
-      type: object
-      title: LogoutRequest
-      additionalProperties: false
-    user.v1.LogoutResponse:
-      type: object
-      title: LogoutResponse
-      additionalProperties: false
-    user.v1.SignUpRequest:
+    item.v1.DeleteItemRequest:
       type: object
       properties:
-        username:
-          type: string
-          title: username
-        password:
-          type: string
-          title: password
-        confirmPassword:
-          type: string
-          title: confirm_password
-      title: SignUpRequest
+        id:
+          type: integer
+          title: id
+      title: DeleteItemRequest
       additionalProperties: false
-    user.v1.SignUpResponse:
+    item.v1.DeleteItemResponse:
       type: object
-      title: SignUpResponse
+      title: DeleteItemResponse
+      additionalProperties: false
+    item.v1.GetItemRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          title: id
+      title: GetItemRequest
+      additionalProperties: false
+    item.v1.GetItemResponse:
+      type: object
+      properties:
+        item:
+          title: item
+          $ref: '#/components/schemas/item.v1.Item'
+      title: GetItemResponse
+      additionalProperties: false
+    item.v1.GetItemsRequest:
+      type: object
+      properties:
+        start:
+          title: start
+          nullable: true
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        end:
+          title: end
+          nullable: true
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+        filter:
+          type: string
+          title: filter
+          nullable: true
+        limit:
+          type: integer
+          title: limit
+          nullable: true
+        offset:
+          type: integer
+          title: offset
+          nullable: true
+      title: GetItemsRequest
+      additionalProperties: false
+    item.v1.GetItemsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/item.v1.Item'
+          title: items
+        count:
+          type:
+            - integer
+            - string
+          title: count
+          format: int64
+      title: GetItemsResponse
+      additionalProperties: false
+    item.v1.Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          title: id
+          nullable: true
+        name:
+          type: string
+          title: name
+        description:
+          type: string
+          title: description
+        price:
+          type: number
+          title: price
+          format: float
+        quantity:
+          type: integer
+          title: quantity
+        added:
+          title: added
+          nullable: true
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
+      title: Item
+      additionalProperties: false
+    item.v1.UpdateItemRequest:
+      type: object
+      properties:
+        item:
+          title: item
+          $ref: '#/components/schemas/item.v1.Item'
+      title: UpdateItemRequest
+      additionalProperties: false
+    item.v1.UpdateItemResponse:
+      type: object
+      properties:
+        item:
+          title: item
+          $ref: '#/components/schemas/item.v1.Item'
+      title: UpdateItemResponse
       additionalProperties: false
     connect-protocol-version:
       type: number
@@ -117,6 +292,51 @@ components:
           additionalProperties: true
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+    user.v1.LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          title: username
+        password:
+          type: string
+          title: password
+      title: LoginRequest
+      additionalProperties: false
+    user.v1.LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          title: token
+      title: LoginResponse
+      additionalProperties: false
+    user.v1.LogoutRequest:
+      type: object
+      title: LogoutRequest
+      additionalProperties: false
+    user.v1.LogoutResponse:
+      type: object
+      title: LogoutResponse
+      additionalProperties: false
+    user.v1.SignUpRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          title: username
+        password:
+          type: string
+          title: password
+        confirmPassword:
+          type: string
+          title: confirm_password
+      title: SignUpRequest
+      additionalProperties: false
+    user.v1.SignUpResponse:
+      type: object
+      title: SignUpResponse
+      additionalProperties: false
     user.v1.APIKeyRequest:
       type: object
       properties:
@@ -157,6 +377,181 @@ components:
 security:
   - bearerAuth: []
 paths:
+  /item.v1.ItemService/GetItem:
+    post:
+      tags:
+        - item.v1.ItemService
+      summary: GetItem
+      operationId: item.v1.ItemService.GetItem
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/item.v1.GetItemRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item.v1.GetItemResponse'
+  /item.v1.ItemService/GetItems:
+    post:
+      tags:
+        - item.v1.ItemService
+      summary: GetItems
+      operationId: item.v1.ItemService.GetItems
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/item.v1.GetItemsRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item.v1.GetItemsResponse'
+  /item.v1.ItemService/CreateItem:
+    post:
+      tags:
+        - item.v1.ItemService
+      summary: CreateItem
+      operationId: item.v1.ItemService.CreateItem
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/item.v1.CreateItemRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item.v1.CreateItemResponse'
+  /item.v1.ItemService/UpdateItem:
+    post:
+      tags:
+        - item.v1.ItemService
+      summary: UpdateItem
+      operationId: item.v1.ItemService.UpdateItem
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/item.v1.UpdateItemRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item.v1.UpdateItemResponse'
+  /item.v1.ItemService/DeleteItem:
+    post:
+      tags:
+        - item.v1.ItemService
+      summary: DeleteItem
+      operationId: item.v1.ItemService.DeleteItem
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/item.v1.DeleteItemRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/item.v1.DeleteItemResponse'
   /user.v1.AuthService/Login:
     post:
       tags:
@@ -333,5 +728,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/user.v1.APIKeyResponse'
 tags:
+  - name: item.v1.ItemService
   - name: user.v1.AuthService
   - name: user.v1.UserService

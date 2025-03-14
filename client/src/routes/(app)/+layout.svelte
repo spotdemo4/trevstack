@@ -34,7 +34,7 @@
 		},
 		{
 			name: 'Items',
-			href: '/items',
+			href: '/items/',
 			icon: LayoutList
 		},
 		{

@@ -114,6 +114,7 @@ func main() {
 	api := http.NewServeMux()
 	api.Handle(withCORS(handlers.NewAuthHandler(db, env.Key)))
 	api.Handle(withCORS(handlers.NewUserHandler(db, env.Key)))
+	api.Handle(withCORS(handlers.NewItemHandler(db, env.Key)))
 
 	// Serve web interface
 	mux := http.NewServeMux()
@@ -153,7 +154,9 @@ func main() {
 		}
 	}()
 
-	server.ListenAndServe()
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // withCORS adds CORS support to a Connect HTTP handler.

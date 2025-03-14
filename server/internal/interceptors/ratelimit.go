@@ -2,7 +2,7 @@ package interceptors
 
 import (
 	"context"
-	"log"
+	"errors"
 	"sync"
 	"time"
 
@@ -44,8 +44,11 @@ func (i *ratelimitInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFu
 			return next(ctx, req)
 		}
 
-		// Get ip
-		log.Println(req.Peer().Addr)
+		// Get user agent
+		limiter := i.getVisitor(req.Header().Get("User-Agent"))
+		if limiter.Allow() == false {
+			return nil, connect.NewError(connect.CodeResourceExhausted, errors.New("rate limit exceeded"))
+		}
 
 		return next(ctx, req)
 	})
@@ -65,22 +68,25 @@ func (i *ratelimitInterceptor) WrapStreamingHandler(next connect.StreamingHandle
 		ctx context.Context,
 		conn connect.StreamingHandlerConn,
 	) error {
-		// Get ip
-		log.Println(conn.Peer().Query)
+		// Get user agent
+		limiter := i.getVisitor(conn.RequestHeader().Get("User-Agent"))
+		if limiter.Allow() == false {
+			return connect.NewError(connect.CodeResourceExhausted, errors.New("rate limit exceeded"))
+		}
 
 		return next(ctx, conn)
 	})
 }
 
-func (i *ratelimitInterceptor) getVisitor(ip string) *rate.Limiter {
+func (i *ratelimitInterceptor) getVisitor(userAgent string) *rate.Limiter {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
-	v, exists := i.visitors[ip]
+	v, exists := i.visitors[userAgent]
 	if !exists {
 		limiter := rate.NewLimiter(1, 3)
 		// Include the current time when creating a new visitor.
-		i.visitors[ip] = &visitor{limiter, time.Now()}
+		i.visitors[userAgent] = &visitor{limiter, time.Now()}
 		return limiter
 	}
 

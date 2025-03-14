@@ -24,11 +24,12 @@ func WithAuthRedirect(next http.Handler, key string) http.Handler {
 		}
 
 		switch pathItems[1] {
-		case "auth":
-			next.ServeHTTP(w, r)
-			return
 
+		case "auth":
+			fallthrough
 		case "_app":
+			fallthrough
+		case "favicon.png":
 			next.ServeHTTP(w, r)
 			return
 
