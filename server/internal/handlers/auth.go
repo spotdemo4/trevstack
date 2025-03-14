@@ -9,6 +9,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 	"github.com/spotdemo4/trevstack/server/internal/models"
 	userv1 "github.com/spotdemo4/trevstack/server/internal/services/user/v1"
 	"github.com/spotdemo4/trevstack/server/internal/services/user/v1/userv1connect"
@@ -118,8 +119,13 @@ func (s *AuthHandler) Logout(ctx context.Context, req *connect.Request[userv1.Lo
 }
 
 func NewAuthHandler(db *gorm.DB, key string) (string, http.Handler) {
-	return userv1connect.NewAuthServiceHandler(&AuthHandler{
-		db:  db,
-		key: []byte(key),
-	})
+	interceptors := connect.WithInterceptors(interceptors.NewRateLimitInterceptor(key))
+
+	return userv1connect.NewAuthServiceHandler(
+		&AuthHandler{
+			db:  db,
+			key: []byte(key),
+		},
+		interceptors,
+	)
 }

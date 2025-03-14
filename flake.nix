@@ -113,7 +113,7 @@
         packages.default = pkgs.buildGoModule {
           inherit pname version;
           src = gitignore.lib.gitignoreSource ./server;
-          vendorHash = "sha256-PE9ns1W+7/ZBBxb7+96aXqBTzpDo5tGcfnCXAV8vp8E=";
+          vendorHash = "sha256-uaHWj0u71hGoOGRwH6rEZxvYXoeoyN6/FZeQ5/7zRfg=";
 
           preBuild = ''
             cp -r ${client} client
