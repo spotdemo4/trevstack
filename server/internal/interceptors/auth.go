@@ -7,10 +7,50 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"connectrpc.com/connect"
 	"github.com/golang-jwt/jwt/v5"
 )
+
+func WithAuthRedirect(next http.Handler, key string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("start", "method", r.Method, "path", r.URL.Path)
+		pathItems := strings.Split(r.URL.Path, "/")
+
+		if len(pathItems) < 2 {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		switch pathItems[1] {
+		case "auth":
+			next.ServeHTTP(w, r)
+			return
+
+		case "_app":
+			next.ServeHTTP(w, r)
+			return
+
+		default:
+			// Check if the request contains a valid cookie token
+			cookies := getCookies(r.Header.Get("Cookie"))
+			for _, cookie := range cookies {
+				if cookie.Name == "token" {
+					_, err := validateToken(cookie.Value, key)
+					if err == nil {
+						next.ServeHTTP(w, r)
+						return
+					}
+				}
+			}
+
+			// Otherwise redirect
+			http.Redirect(w, r, "/auth", http.StatusFound)
+			return
+		}
+	})
+}
 
 type authInterceptor struct {
 	key string

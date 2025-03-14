@@ -77,6 +77,9 @@ func (s *AuthHandler) SignUp(ctx context.Context, req *connect.Request[userv1.Si
 	} else {
 		return nil, connect.NewError(connect.CodeAlreadyExists, errors.New("username already exists"))
 	}
+	if req.Msg.Password != req.Msg.ConfirmPassword {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("passwords do not match"))
+	}
 
 	// Hash password
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Msg.Password), bcrypt.DefaultCost)

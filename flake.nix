@@ -38,7 +38,7 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-hOmZZrCSuHyRQhG6M7Yu5uRLTdCYOL/giT4zUm9iTRE=";
+          npmDepsHash = "sha256-YCmx+XNir+6iI0zqIBIjlNxyQ5iz4j9Is+unfSMEgQE=";
           nodejs = pkgs.nodejs_22;
 
           installPhase = ''
@@ -68,6 +68,9 @@
             # Svelte frontend
             nodejs_22
 
+            # Openapi gen
+            openapi-generator-cli
+
             # Helper scripts
             (writeShellApplication {
               name = "run";
@@ -88,25 +91,6 @@
                 wait $P1
                 wait $P2
                 wait $P3
-              '';
-            })
-
-            (writeShellApplication {
-              name = "build";
-
-              text = ''
-                gitroot=$(git rev-parse --show-toplevel)
-
-                cd "''${gitroot}"
-                buf lint
-                buf generate
-
-                cd "''${gitroot}/client"
-                npm run build
-                cp -r build ../server/client
-
-                cd "''${gitroot}/server"
-                go build -o ../build/trevstack .
               '';
             })
 

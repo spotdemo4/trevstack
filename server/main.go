@@ -21,6 +21,7 @@ import (
 
 	"github.com/spotdemo4/trevstack/server/internal/database"
 	"github.com/spotdemo4/trevstack/server/internal/handlers"
+	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 )
 
 //go:embed all:client
@@ -120,7 +121,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to get sub filesystem: %v", err)
 	}
-	mux.Handle("/", http.FileServer(http.FS(clientFs)))
+	mux.Handle("/", interceptors.WithAuthRedirect(http.FileServer(http.FS(clientFs)), env.Key))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
 	// Start server

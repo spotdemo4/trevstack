@@ -1,6 +1,7 @@
 .direnv
 .env
 build
+result
 
 # Client
 /client/node_modules

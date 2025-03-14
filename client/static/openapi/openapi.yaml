@@ -51,6 +51,9 @@ components:
         password:
           type: string
           title: password
+        confirmPassword:
+          type: string
+          title: confirm_password
       title: SignUpRequest
       additionalProperties: false
     user.v1.SignUpResponse:
