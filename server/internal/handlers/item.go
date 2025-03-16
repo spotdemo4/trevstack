@@ -21,7 +21,7 @@ type ItemHandler struct {
 }
 
 func (h *ItemHandler) GetItem(ctx context.Context, req *connect.Request[itemv1.GetItemRequest]) (*connect.Response[itemv1.GetItemResponse], error) {
-	userid, ok := interceptors.UserFromContext(ctx)
+	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
@@ -39,7 +39,7 @@ func (h *ItemHandler) GetItem(ctx context.Context, req *connect.Request[itemv1.G
 }
 
 func (h *ItemHandler) GetItems(ctx context.Context, req *connect.Request[itemv1.GetItemsRequest]) (*connect.Response[itemv1.GetItemsResponse], error) {
-	userid, ok := interceptors.UserFromContext(ctx)
+	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
@@ -89,7 +89,7 @@ func (h *ItemHandler) GetItems(ctx context.Context, req *connect.Request[itemv1.
 }
 
 func (h *ItemHandler) CreateItem(ctx context.Context, req *connect.Request[itemv1.CreateItemRequest]) (*connect.Response[itemv1.CreateItemResponse], error) {
-	userid, ok := interceptors.UserFromContext(ctx)
+	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
@@ -114,7 +114,7 @@ func (h *ItemHandler) CreateItem(ctx context.Context, req *connect.Request[itemv
 }
 
 func (h *ItemHandler) UpdateItem(ctx context.Context, req *connect.Request[itemv1.UpdateItemRequest]) (*connect.Response[itemv1.UpdateItemResponse], error) {
-	userid, ok := interceptors.UserFromContext(ctx)
+	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
@@ -144,7 +144,7 @@ func (h *ItemHandler) UpdateItem(ctx context.Context, req *connect.Request[itemv
 }
 
 func (h *ItemHandler) DeleteItem(ctx context.Context, req *connect.Request[itemv1.DeleteItemRequest]) (*connect.Response[itemv1.DeleteItemResponse], error) {
-	userid, ok := interceptors.UserFromContext(ctx)
+	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}

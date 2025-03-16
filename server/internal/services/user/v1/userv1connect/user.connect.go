@@ -33,17 +33,24 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// UserServiceChangePasswordProcedure is the fully-qualified name of the UserService's
-	// ChangePassword RPC.
-	UserServiceChangePasswordProcedure = "/user.v1.UserService/ChangePassword"
-	// UserServiceAPIKeyProcedure is the fully-qualified name of the UserService's APIKey RPC.
-	UserServiceAPIKeyProcedure = "/user.v1.UserService/APIKey"
+	// UserServiceGetUserProcedure is the fully-qualified name of the UserService's GetUser RPC.
+	UserServiceGetUserProcedure = "/user.v1.UserService/GetUser"
+	// UserServiceUpdatePasswordProcedure is the fully-qualified name of the UserService's
+	// UpdatePassword RPC.
+	UserServiceUpdatePasswordProcedure = "/user.v1.UserService/UpdatePassword"
+	// UserServiceGetAPIKeyProcedure is the fully-qualified name of the UserService's GetAPIKey RPC.
+	UserServiceGetAPIKeyProcedure = "/user.v1.UserService/GetAPIKey"
+	// UserServiceUpdateProfilePictureProcedure is the fully-qualified name of the UserService's
+	// UpdateProfilePicture RPC.
+	UserServiceUpdateProfilePictureProcedure = "/user.v1.UserService/UpdateProfilePicture"
 )
 
 // UserServiceClient is a client for the user.v1.UserService service.
 type UserServiceClient interface {
-	ChangePassword(context.Context, *connect.Request[v1.ChangePasswordRequest]) (*connect.Response[v1.ChangePasswordResponse], error)
-	APIKey(context.Context, *connect.Request[v1.APIKeyRequest]) (*connect.Response[v1.APIKeyResponse], error)
+	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
+	UpdatePassword(context.Context, *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error)
+	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error)
+	UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the user.v1.UserService service. By default, it uses
@@ -57,16 +64,28 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 	baseURL = strings.TrimRight(baseURL, "/")
 	userServiceMethods := v1.File_user_v1_user_proto.Services().ByName("UserService").Methods()
 	return &userServiceClient{
-		changePassword: connect.NewClient[v1.ChangePasswordRequest, v1.ChangePasswordResponse](
+		getUser: connect.NewClient[v1.GetUserRequest, v1.GetUserResponse](
 			httpClient,
-			baseURL+UserServiceChangePasswordProcedure,
-			connect.WithSchema(userServiceMethods.ByName("ChangePassword")),
+			baseURL+UserServiceGetUserProcedure,
+			connect.WithSchema(userServiceMethods.ByName("GetUser")),
 			connect.WithClientOptions(opts...),
 		),
-		aPIKey: connect.NewClient[v1.APIKeyRequest, v1.APIKeyResponse](
+		updatePassword: connect.NewClient[v1.UpdatePasswordRequest, v1.UpdatePasswordResponse](
 			httpClient,
-			baseURL+UserServiceAPIKeyProcedure,
-			connect.WithSchema(userServiceMethods.ByName("APIKey")),
+			baseURL+UserServiceUpdatePasswordProcedure,
+			connect.WithSchema(userServiceMethods.ByName("UpdatePassword")),
+			connect.WithClientOptions(opts...),
+		),
+		getAPIKey: connect.NewClient[v1.GetAPIKeyRequest, v1.GetAPIKeyResponse](
+			httpClient,
+			baseURL+UserServiceGetAPIKeyProcedure,
+			connect.WithSchema(userServiceMethods.ByName("GetAPIKey")),
+			connect.WithClientOptions(opts...),
+		),
+		updateProfilePicture: connect.NewClient[v1.UpdateProfilePictureRequest, v1.UpdateProfilePictureResponse](
+			httpClient,
+			baseURL+UserServiceUpdateProfilePictureProcedure,
+			connect.WithSchema(userServiceMethods.ByName("UpdateProfilePicture")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -74,24 +93,38 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // userServiceClient implements UserServiceClient.
 type userServiceClient struct {
-	changePassword *connect.Client[v1.ChangePasswordRequest, v1.ChangePasswordResponse]
-	aPIKey         *connect.Client[v1.APIKeyRequest, v1.APIKeyResponse]
+	getUser              *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
+	updatePassword       *connect.Client[v1.UpdatePasswordRequest, v1.UpdatePasswordResponse]
+	getAPIKey            *connect.Client[v1.GetAPIKeyRequest, v1.GetAPIKeyResponse]
+	updateProfilePicture *connect.Client[v1.UpdateProfilePictureRequest, v1.UpdateProfilePictureResponse]
 }
 
-// ChangePassword calls user.v1.UserService.ChangePassword.
-func (c *userServiceClient) ChangePassword(ctx context.Context, req *connect.Request[v1.ChangePasswordRequest]) (*connect.Response[v1.ChangePasswordResponse], error) {
-	return c.changePassword.CallUnary(ctx, req)
+// GetUser calls user.v1.UserService.GetUser.
+func (c *userServiceClient) GetUser(ctx context.Context, req *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error) {
+	return c.getUser.CallUnary(ctx, req)
 }
 
-// APIKey calls user.v1.UserService.APIKey.
-func (c *userServiceClient) APIKey(ctx context.Context, req *connect.Request[v1.APIKeyRequest]) (*connect.Response[v1.APIKeyResponse], error) {
-	return c.aPIKey.CallUnary(ctx, req)
+// UpdatePassword calls user.v1.UserService.UpdatePassword.
+func (c *userServiceClient) UpdatePassword(ctx context.Context, req *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error) {
+	return c.updatePassword.CallUnary(ctx, req)
+}
+
+// GetAPIKey calls user.v1.UserService.GetAPIKey.
+func (c *userServiceClient) GetAPIKey(ctx context.Context, req *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error) {
+	return c.getAPIKey.CallUnary(ctx, req)
+}
+
+// UpdateProfilePicture calls user.v1.UserService.UpdateProfilePicture.
+func (c *userServiceClient) UpdateProfilePicture(ctx context.Context, req *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error) {
+	return c.updateProfilePicture.CallUnary(ctx, req)
 }
 
 // UserServiceHandler is an implementation of the user.v1.UserService service.
 type UserServiceHandler interface {
-	ChangePassword(context.Context, *connect.Request[v1.ChangePasswordRequest]) (*connect.Response[v1.ChangePasswordResponse], error)
-	APIKey(context.Context, *connect.Request[v1.APIKeyRequest]) (*connect.Response[v1.APIKeyResponse], error)
+	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
+	UpdatePassword(context.Context, *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error)
+	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error)
+	UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -101,24 +134,40 @@ type UserServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	userServiceMethods := v1.File_user_v1_user_proto.Services().ByName("UserService").Methods()
-	userServiceChangePasswordHandler := connect.NewUnaryHandler(
-		UserServiceChangePasswordProcedure,
-		svc.ChangePassword,
-		connect.WithSchema(userServiceMethods.ByName("ChangePassword")),
+	userServiceGetUserHandler := connect.NewUnaryHandler(
+		UserServiceGetUserProcedure,
+		svc.GetUser,
+		connect.WithSchema(userServiceMethods.ByName("GetUser")),
 		connect.WithHandlerOptions(opts...),
 	)
-	userServiceAPIKeyHandler := connect.NewUnaryHandler(
-		UserServiceAPIKeyProcedure,
-		svc.APIKey,
-		connect.WithSchema(userServiceMethods.ByName("APIKey")),
+	userServiceUpdatePasswordHandler := connect.NewUnaryHandler(
+		UserServiceUpdatePasswordProcedure,
+		svc.UpdatePassword,
+		connect.WithSchema(userServiceMethods.ByName("UpdatePassword")),
+		connect.WithHandlerOptions(opts...),
+	)
+	userServiceGetAPIKeyHandler := connect.NewUnaryHandler(
+		UserServiceGetAPIKeyProcedure,
+		svc.GetAPIKey,
+		connect.WithSchema(userServiceMethods.ByName("GetAPIKey")),
+		connect.WithHandlerOptions(opts...),
+	)
+	userServiceUpdateProfilePictureHandler := connect.NewUnaryHandler(
+		UserServiceUpdateProfilePictureProcedure,
+		svc.UpdateProfilePicture,
+		connect.WithSchema(userServiceMethods.ByName("UpdateProfilePicture")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/user.v1.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case UserServiceChangePasswordProcedure:
-			userServiceChangePasswordHandler.ServeHTTP(w, r)
-		case UserServiceAPIKeyProcedure:
-			userServiceAPIKeyHandler.ServeHTTP(w, r)
+		case UserServiceGetUserProcedure:
+			userServiceGetUserHandler.ServeHTTP(w, r)
+		case UserServiceUpdatePasswordProcedure:
+			userServiceUpdatePasswordHandler.ServeHTTP(w, r)
+		case UserServiceGetAPIKeyProcedure:
+			userServiceGetAPIKeyHandler.ServeHTTP(w, r)
+		case UserServiceUpdateProfilePictureProcedure:
+			userServiceUpdateProfilePictureHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -128,10 +177,18 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 // UnimplementedUserServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedUserServiceHandler struct{}
 
-func (UnimplementedUserServiceHandler) ChangePassword(context.Context, *connect.Request[v1.ChangePasswordRequest]) (*connect.Response[v1.ChangePasswordResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.ChangePassword is not implemented"))
+func (UnimplementedUserServiceHandler) GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.GetUser is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) APIKey(context.Context, *connect.Request[v1.APIKeyRequest]) (*connect.Response[v1.APIKeyResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.APIKey is not implemented"))
+func (UnimplementedUserServiceHandler) UpdatePassword(context.Context, *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.UpdatePassword is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.GetAPIKey is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.UpdateProfilePicture is not implemented"))
 }

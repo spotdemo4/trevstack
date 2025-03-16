@@ -22,15 +22,33 @@ type UserHandler struct {
 	key []byte
 }
 
-func (s *UserHandler) ChangePassword(ctx context.Context, req *connect.Request[userv1.ChangePasswordRequest]) (*connect.Response[userv1.ChangePasswordResponse], error) {
-	userid, ok := interceptors.UserFromContext(ctx)
+func (h *UserHandler) GetUser(ctx context.Context, req *connect.Request[userv1.GetUserRequest]) (*connect.Response[userv1.GetUserResponse], error) {
+	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
 
 	// Get user
 	user := models.User{}
-	if err := s.db.First(&user, "id = ?", userid).Error; err != nil {
+	if err := h.db.Preload("ProfilePicture").First(&user, "id = ?", userid).Error; err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := connect.NewResponse(&userv1.GetUserResponse{
+		User: user.ToConnectV1(),
+	})
+	return res, nil
+}
+
+func (h *UserHandler) UpdatePassword(ctx context.Context, req *connect.Request[userv1.UpdatePasswordRequest]) (*connect.Response[userv1.UpdatePasswordResponse], error) {
+	userid, ok := interceptors.GetUserContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
+	}
+
+	// Get user
+	user := models.User{}
+	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
@@ -49,23 +67,23 @@ func (s *UserHandler) ChangePassword(ctx context.Context, req *connect.Request[u
 	}
 
 	// Update password
-	if err := s.db.Model(&user).Update("password", string(hash)).Error; err != nil {
+	if err := h.db.Model(&user).Update("password", string(hash)).Error; err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
-	res := connect.NewResponse(&userv1.ChangePasswordResponse{})
+	res := connect.NewResponse(&userv1.UpdatePasswordResponse{})
 	return res, nil
 }
 
-func (s *UserHandler) APIKey(ctx context.Context, req *connect.Request[userv1.APIKeyRequest]) (*connect.Response[userv1.APIKeyResponse], error) {
-	userid, ok := interceptors.UserFromContext(ctx)
+func (h *UserHandler) GetAPIKey(ctx context.Context, req *connect.Request[userv1.GetAPIKeyRequest]) (*connect.Response[userv1.GetAPIKeyResponse], error) {
+	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
 
 	// Get user
 	user := models.User{}
-	if err := s.db.First(&user, "id = ?", userid).Error; err != nil {
+	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
@@ -85,13 +103,67 @@ func (s *UserHandler) APIKey(ctx context.Context, req *connect.Request[userv1.AP
 			Time: time.Now(),
 		},
 	})
-	ss, err := t.SignedString(s.key)
+	ss, err := t.SignedString(h.key)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
-	res := connect.NewResponse(&userv1.APIKeyResponse{
+	res := connect.NewResponse(&userv1.GetAPIKeyResponse{
 		Key: ss,
+	})
+	return res, nil
+}
+
+func (h *UserHandler) UpdateProfilePicture(ctx context.Context, req *connect.Request[userv1.UpdateProfilePictureRequest]) (*connect.Response[userv1.UpdateProfilePictureResponse], error) {
+	userid, ok := interceptors.GetUserContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
+	}
+
+	// Validate file
+	fileType := http.DetectContentType(req.Msg.Data)
+	if fileType != "image/jpeg" && fileType != "image/png" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid file type"))
+	}
+
+	// Save bytes into file
+	file := models.File{
+		Name:   req.Msg.FileName,
+		Data:   req.Msg.Data,
+		UserID: uint(userid),
+	}
+	if err := h.db.Create(&file).Error; err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	// Get user info
+	user := models.User{}
+	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	// Get old profile picture ID
+	var ppid *uint32
+	if user.ProfilePicture != nil {
+		ppid = &user.ProfilePicture.ID
+	}
+
+	// Update user profile picture
+	fid := uint(file.ID)
+	user.ProfilePictureID = &fid
+	if err := h.db.Save(&user).Error; err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	// Delete old profile picture if exists
+	if ppid != nil {
+		if err := h.db.Delete(models.File{}, "id = ?", *ppid).Error; err != nil {
+			return nil, connect.NewError(connect.CodeInternal, err)
+		}
+	}
+
+	res := connect.NewResponse(&userv1.UpdateProfilePictureResponse{
+		User: user.ToConnectV1(),
 	})
 	return res, nil
 }

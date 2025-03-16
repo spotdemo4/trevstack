@@ -100,8 +100,9 @@
                 inotifywait -mre close_write,moved_to,create proto | while read -r _ _ basename;
                 do
                   echo "file changed: $basename"
-                  buf lint
-                  buf generate
+                  if buf lint ; then
+                    buf generate
+                  fi
                   echo "regenerated proto services"
                 done
               '';

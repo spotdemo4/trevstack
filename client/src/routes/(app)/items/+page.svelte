@@ -2,11 +2,10 @@
 	import { ItemClient } from '$lib/transport';
 	import { Plus, Trash, Pencil } from '@lucide/svelte';
 	import { timestampFromDate, timestampDate } from '@bufbuild/protobuf/wkt';
-	import { Dialog, Button } from 'bits-ui';
-	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { ConnectError } from '@connectrpc/connect';
 	import Modal from '$lib/ui/Modal.svelte';
+	import Button from '$lib/ui/Button.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 
 	// Config
@@ -67,6 +66,7 @@
 					<td class="px-6 py-3"><div class="bg-surface-2 m-2 h-3 animate-pulse rounded"></div></td>
 					<td class="px-6 py-3"><div class="bg-surface-2 m-2 h-3 animate-pulse rounded"></div></td>
 					<td class="px-6 py-3"><div class="bg-surface-2 m-2 h-3 animate-pulse rounded"></div></td>
+					<td class="w-8"></td>
 				</tr>
 			{:then items}
 				{#each items as item}
@@ -80,16 +80,19 @@
 						<td class="px-6 py-3">{item.quantity}</td>
 						<td class="pr-2">
 							<div class="flex gap-2">
-								<Modal bind:open={
-                                    () => editsOpen.has(item.id!) ? editsOpen.get(item.id!)! : editsOpen.set(item.id!, false) && editsOpen.get(item.id!)!,
-                                    (value) => editsOpen.set(item.id!, value)
-                                }>
+								<Modal
+									bind:open={
+										() =>
+											editsOpen.has(item.id!)
+												? editsOpen.get(item.id!)!
+												: editsOpen.set(item.id!, false) && editsOpen.get(item.id!)!,
+										(value) => editsOpen.set(item.id!, value)
+									}
+								>
 									{#snippet trigger()}
-										<button
-											class="bg-text text-crust hover:brightness-120 block cursor-pointer rounded p-2 drop-shadow-md"
-										>
+										<Button className="bg-text">
 											<Pencil />
-										</button>
+										</Button>
 									{/snippet}
 
 									{#snippet content()}
@@ -119,7 +122,7 @@
 
 													if (response.item && item.id) {
 														toast.success(`item "${name}" saved`);
-                                                        editsOpen.set(item.id, false)
+														editsOpen.set(item.id, false);
 														await updateItems();
 													}
 												} catch (err) {
@@ -169,27 +172,25 @@
 														value={item.quantity}
 													/>
 												</div>
-												<Button.Root
-													type="submit"
-													class="bg-sky text-crust hover:brightness-120 w-20 cursor-pointer rounded p-2 px-4 text-sm transition-all"
-												>
-													Submit
-												</Button.Root>
+												<Button type="submit">Submit</Button>
 											</div>
 										</form>
 									{/snippet}
 								</Modal>
 
-								<Modal bind:open={
-                                    () => deletesOpen.has(item.id!) ? deletesOpen.get(item.id!)! : deletesOpen.set(item.id!, false) && deletesOpen.get(item.id!)!,
-                                    (value) => deletesOpen.set(item.id!, value)
-                                }>
+								<Modal
+									bind:open={
+										() =>
+											deletesOpen.has(item.id!)
+												? deletesOpen.get(item.id!)!
+												: deletesOpen.set(item.id!, false) && deletesOpen.get(item.id!)!,
+										(value) => deletesOpen.set(item.id!, value)
+									}
+								>
 									{#snippet trigger()}
-										<button
-											class="bg-red text-crust hover:brightness-120 block cursor-pointer rounded p-2 drop-shadow-md"
-										>
+										<Button className="bg-red">
 											<Trash />
-										</button>
+										</Button>
 									{/snippet}
 
 									{#snippet content()}
@@ -206,7 +207,7 @@
 													});
 
 													toast.success(`item "${item.name}" deleted`);
-                                                    deletesOpen.set(item.id!, false);
+													deletesOpen.set(item.id!, false);
 													await updateItems();
 												} catch (err) {
 													const error = ConnectError.from(err);
@@ -215,15 +216,11 @@
 											}}
 										>
 											<div class="flex flex-col gap-4 p-3">
-												<span class="text-center">Are you sure you want to delete "{item.name}"?</span
+												<span class="text-center"
+													>Are you sure you want to delete "{item.name}"?</span
 												>
 												<div class="flex justify-center gap-4">
-													<Button.Root
-														type="submit"
-														class="bg-sky text-crust hover:brightness-120 cursor-pointer rounded p-2 px-4 text-sm transition-all"
-													>
-														Confirm
-													</Button.Root>
+													<Button type="submit">Submit</Button>
 												</div>
 											</div>
 										</form>
@@ -241,11 +238,9 @@
 <div class="mx-4 mt-1 flex justify-end">
 	<Modal bind:open={addedOpen}>
 		{#snippet trigger()}
-			<button
-				class="bg-sky text-crust hover:brightness-120 cursor-pointer rounded p-2 px-4 drop-shadow-md"
-			>
+			<Button className="bg-sky">
 				<Plus />
-			</button>
+			</Button>
 		{/snippet}
 
 		{#snippet content()}
@@ -319,12 +314,7 @@
 							class="border-surface-0 rounded border p-2 text-sm"
 						/>
 					</div>
-					<Button.Root
-						type="submit"
-						class="bg-sky text-crust hover:brightness-120 w-fit cursor-pointer rounded p-2 px-4 text-sm transition-all"
-					>
-						Submit
-					</Button.Root>
+					<Button type="submit">Submit</Button>
 				</div>
 			</form>
 		{/snippet}

@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { Tabs, Button } from 'bits-ui';
+	import { Tabs } from 'bits-ui';
 	import { cn } from '$lib/utils';
 	import { AuthClient } from '$lib/transport';
 	import { goto } from '$app/navigation';
 	import { ConnectError } from '@connectrpc/connect';
 	import { toast } from 'svelte-sonner';
+	import Button from '$lib/ui/Button.svelte';
 
 	let tab = $state('login');
 </script>
@@ -47,7 +48,6 @@
 						});
 
 						if (response.token && username) {
-							localStorage.setItem('username', username);
 							goto('/');
 						}
 					} catch (err) {
@@ -75,12 +75,7 @@
 							class="border-surface-0 rounded border p-2 text-sm"
 						/>
 					</div>
-					<Button.Root
-						type="submit"
-						class="bg-sky text-crust hover:brightness-120 w-20 cursor-pointer rounded p-2 px-4 text-sm transition-all"
-					>
-						Submit
-					</Button.Root>
+					<Button type="submit">Submit</Button>
 				</div>
 			</form>
 		</Tabs.Content>
@@ -138,12 +133,7 @@
 							class="border-surface-0 rounded border p-2 text-sm"
 						/>
 					</div>
-					<Button.Root
-						type="submit"
-						class="bg-sky text-crust hover:brightness-120 w-20 cursor-pointer rounded p-2 px-4 text-sm transition-all"
-					>
-						Submit
-					</Button.Root>
+					<Button type="submit">Submit</Button>
 				</div>
 			</form>
 		</Tabs.Content>

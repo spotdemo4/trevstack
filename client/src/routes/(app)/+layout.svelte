@@ -9,17 +9,21 @@
 		House,
 		type Icon as IconType
 	} from '@lucide/svelte';
-	import { NavigationMenu, Popover, Separator, Dialog } from 'bits-ui';
-	import { fly, slide } from 'svelte/transition';
+	import { NavigationMenu, Popover, Separator, Dialog, Avatar } from 'bits-ui';
+	import { fade, fly, slide } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-	import { AuthClient } from '$lib/transport';
+	import { AuthClient, UserClient } from '$lib/transport';
 	import { page } from '$app/state';
 	import { cn } from '$lib/utils';
 	let { children } = $props();
 
-	const username = localStorage.getItem('username');
+	let user = UserClient.getUser({}).then((res) => {
+		return res.user;
+	});
+
 	let sidebarOpen = $state(false);
+	let popupOpen = $state(false);
 
 	type MenuItem = {
 		name: string;
@@ -46,14 +50,17 @@
 
 	async function logout() {
 		await AuthClient.logout({});
-		localStorage.removeItem('username');
 		await goto('/auth');
 		toast.success('logged out successfully');
+
+		if (sidebarOpen) {
+			sidebarOpen = false;
+		}
 	}
 </script>
 
 <header
-	class="border-surface-0 bg-mantle fixed flex h-[50px] w-full items-center justify-between border-b p-2 px-6 drop-shadow-md"
+	class="border-surface-0 bg-mantle fixed z-50 flex h-[50px] w-full items-center justify-between border-b p-2 px-6 drop-shadow-md"
 >
 	<div class="flex items-center gap-4">
 		<Dialog.Root bind:open={sidebarOpen}>
@@ -61,7 +68,20 @@
 				<Menu />
 			</Dialog.Trigger>
 			<Dialog.Portal>
-				<Dialog.Overlay class="fixed inset-0 z-50 mt-[50px] bg-black/50" />
+				<Dialog.Overlay forceMount>
+					{#snippet child({ props, open })}
+						{#if open}
+							<div
+								{...props}
+								transition:fade={{
+									duration: 150
+								}}
+							>
+								<div class="fixed inset-0 z-50 mt-[50px] bg-black/50"></div>
+							</div>
+						{/if}
+					{/snippet}
+				</Dialog.Overlay>
 				<Dialog.Content forceMount>
 					{#snippet child({ props, open })}
 						{#if open}
@@ -73,7 +93,9 @@
 								}}
 							>
 								<NavigationMenu.Root orientation="vertical">
-									<NavigationMenu.List class="flex w-full flex-col gap-2 overflow-y-scroll p-2">
+									<NavigationMenu.List
+										class="flex w-full flex-col gap-2 overflow-y-auto overflow-x-hidden p-2"
+									>
 										{#each menuItems as item}
 											{@const Icon = item.icon}
 											<NavigationMenu.Item>
@@ -83,7 +105,7 @@
 														page.url.pathname === item.href && 'bg-surface-0'
 													)}
 													href={item.href}
-													onclick={() => {
+													onSelect={() => {
 														if (sidebarOpen) {
 															sidebarOpen = false;
 														}
@@ -101,6 +123,11 @@
 									<a
 										href="/settings"
 										class="hover:bg-surface-0 flex select-none items-center gap-2 rounded-lg p-2 transition-all"
+										onclick={() => {
+											if (sidebarOpen) {
+												sidebarOpen = false;
+											}
+										}}
 									>
 										<Settings />
 										<span>Settings</span>
@@ -146,24 +173,36 @@
 		<NavigationMenu.Viewport class="absolute" />
 	</NavigationMenu.Root>
 
-	<Popover.Root>
+	<Popover.Root bind:open={popupOpen}>
 		<Popover.Trigger
-			class="border-surface-2 hover:bg-surface-0 cursor-pointer rounded border p-1 px-4 text-sm transition-all"
+			class="outline-surface-2 hover:brightness-120 bg-text text-crust h-9 w-9 cursor-pointer rounded-full outline outline-offset-2 text-sm transition-all"
 		>
-			{username}
+			{#await user then user}
+				<Avatar.Root class="flex h-full w-full items-center justify-center">
+					<Avatar.Image src={user?.profilePicture} alt={`${user?.username}'s avatar`} class="rounded-full" />
+					<Avatar.Fallback class="font-medium uppercase"
+						>{user?.username.substring(0, 2)}</Avatar.Fallback
+					>
+				</Avatar.Root>
+			{/await}
 		</Popover.Trigger>
 		<Popover.Content forceMount>
 			{#snippet child({ wrapperProps, props, open })}
 				{#if open}
 					<div {...wrapperProps}>
 						<div
-							class="bg-mantle border-surface-0 z-50 mt-1 rounded border drop-shadow-md transition-all"
+							class="bg-mantle border-surface-0 m-1 rounded border drop-shadow-md transition-all"
 							{...props}
 							transition:fly
 						>
 							<a
 								class="hover:bg-surface-0 flex items-center gap-1 p-3 px-4 text-sm"
 								href="/settings"
+								onclick={() => {
+									if (popupOpen) {
+										popupOpen = false;
+									}
+								}}
 							>
 								<Settings size="20" />
 								Settings
@@ -184,6 +223,6 @@
 	</Popover.Root>
 </header>
 
-<div class="pt-[50px]">
+<div class="pt-[50px] overflow-auto">
 	{@render children()}
 </div>

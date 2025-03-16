@@ -337,7 +337,7 @@ components:
       type: object
       title: SignUpResponse
       additionalProperties: false
-    user.v1.APIKeyRequest:
+    user.v1.GetAPIKeyRequest:
       type: object
       properties:
         password:
@@ -346,17 +346,29 @@ components:
         confirmPassword:
           type: string
           title: confirm_password
-      title: APIKeyRequest
+      title: GetAPIKeyRequest
       additionalProperties: false
-    user.v1.APIKeyResponse:
+    user.v1.GetAPIKeyResponse:
       type: object
       properties:
         key:
           type: string
           title: key
-      title: APIKeyResponse
+      title: GetAPIKeyResponse
       additionalProperties: false
-    user.v1.ChangePasswordRequest:
+    user.v1.GetUserRequest:
+      type: object
+      title: GetUserRequest
+      additionalProperties: false
+    user.v1.GetUserResponse:
+      type: object
+      properties:
+        user:
+          title: user
+          $ref: '#/components/schemas/user.v1.User'
+      title: GetUserResponse
+      additionalProperties: false
+    user.v1.UpdatePasswordRequest:
       type: object
       properties:
         oldPassword:
@@ -368,11 +380,50 @@ components:
         confirmPassword:
           type: string
           title: confirm_password
-      title: ChangePasswordRequest
+      title: UpdatePasswordRequest
       additionalProperties: false
-    user.v1.ChangePasswordResponse:
+    user.v1.UpdatePasswordResponse:
       type: object
-      title: ChangePasswordResponse
+      properties:
+        user:
+          title: user
+          $ref: '#/components/schemas/user.v1.User'
+      title: UpdatePasswordResponse
+      additionalProperties: false
+    user.v1.UpdateProfilePictureRequest:
+      type: object
+      properties:
+        fileName:
+          type: string
+          title: file_name
+        data:
+          type: string
+          title: data
+          format: byte
+      title: UpdateProfilePictureRequest
+      additionalProperties: false
+    user.v1.UpdateProfilePictureResponse:
+      type: object
+      properties:
+        user:
+          title: user
+          $ref: '#/components/schemas/user.v1.User'
+      title: UpdateProfilePictureResponse
+      additionalProperties: false
+    user.v1.User:
+      type: object
+      properties:
+        id:
+          type: integer
+          title: id
+        username:
+          type: string
+          title: username
+        profilePicture:
+          type: string
+          title: profile_picture
+          nullable: true
+      title: User
       additionalProperties: false
 security:
   - bearerAuth: []
@@ -657,12 +708,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user.v1.LogoutResponse'
-  /user.v1.UserService/ChangePassword:
+  /user.v1.UserService/GetUser:
     post:
       tags:
         - user.v1.UserService
-      summary: ChangePassword
-      operationId: user.v1.UserService.ChangePassword
+      summary: GetUser
+      operationId: user.v1.UserService.GetUser
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -677,7 +728,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user.v1.ChangePasswordRequest'
+              $ref: '#/components/schemas/user.v1.GetUserRequest'
         required: true
       responses:
         default:
@@ -691,13 +742,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user.v1.ChangePasswordResponse'
-  /user.v1.UserService/APIKey:
+                $ref: '#/components/schemas/user.v1.GetUserResponse'
+  /user.v1.UserService/UpdatePassword:
     post:
       tags:
         - user.v1.UserService
-      summary: APIKey
-      operationId: user.v1.UserService.APIKey
+      summary: UpdatePassword
+      operationId: user.v1.UserService.UpdatePassword
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -712,7 +763,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user.v1.APIKeyRequest'
+              $ref: '#/components/schemas/user.v1.UpdatePasswordRequest'
         required: true
       responses:
         default:
@@ -726,7 +777,77 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user.v1.APIKeyResponse'
+                $ref: '#/components/schemas/user.v1.UpdatePasswordResponse'
+  /user.v1.UserService/GetAPIKey:
+    post:
+      tags:
+        - user.v1.UserService
+      summary: GetAPIKey
+      operationId: user.v1.UserService.GetAPIKey
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.GetAPIKeyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.GetAPIKeyResponse'
+  /user.v1.UserService/UpdateProfilePicture:
+    post:
+      tags:
+        - user.v1.UserService
+      summary: UpdateProfilePicture
+      operationId: user.v1.UserService.UpdateProfilePicture
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.UpdateProfilePictureRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.UpdateProfilePictureResponse'
 tags:
   - name: item.v1.ItemService
   - name: user.v1.AuthService

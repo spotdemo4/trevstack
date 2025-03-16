@@ -15,7 +15,6 @@ import (
 
 func WithAuthRedirect(next http.Handler, key string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("start", "method", r.Method, "path", r.URL.Path)
 		pathItems := strings.Split(r.URL.Path, "/")
 
 		if len(pathItems) < 2 {
@@ -38,10 +37,14 @@ func WithAuthRedirect(next http.Handler, key string) http.Handler {
 			cookies := getCookies(r.Header.Get("Cookie"))
 			for _, cookie := range cookies {
 				if cookie.Name == "token" {
-					_, err := validateToken(cookie.Value, key)
+					subject, err := validateToken(cookie.Value, key)
 					if err == nil {
-						next.ServeHTTP(w, r)
-						return
+						ctx, err := newUserContext(r.Context(), subject)
+						if err == nil {
+							r = r.WithContext(ctx)
+							next.ServeHTTP(w, r)
+							return
+						}
 					}
 				}
 			}
@@ -80,7 +83,7 @@ func (i *authInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 			if cookie.Name == "token" {
 				subject, err := validateToken(cookie.Value, i.key)
 				if err == nil {
-					ctx, err = i.newContext(ctx, subject)
+					ctx, err = newUserContext(ctx, subject)
 					if err == nil {
 						return next(ctx, req)
 					}
@@ -93,7 +96,7 @@ func (i *authInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 		if authorization != "" && len(authorization) > 7 {
 			subject, err := validateToken(authorization[7:], i.key)
 			if err == nil {
-				ctx, err = i.newContext(ctx, subject)
+				ctx, err = newUserContext(ctx, subject)
 				if err == nil {
 					return next(ctx, req)
 				}
@@ -127,7 +130,7 @@ func (i *authInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc
 			if cookie.Name == "token" {
 				subject, err := validateToken(cookie.Value, i.key)
 				if err == nil {
-					ctx, err = i.newContext(ctx, subject)
+					ctx, err = newUserContext(ctx, subject)
 					if err == nil {
 						return next(ctx, conn)
 					}
@@ -140,7 +143,7 @@ func (i *authInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc
 		if authorization != "" && len(authorization) > 7 {
 			subject, err := validateToken(authorization[7:], i.key)
 			if err == nil {
-				ctx, err = i.newContext(ctx, subject)
+				ctx, err = newUserContext(ctx, subject)
 				if err == nil {
 					return next(ctx, conn)
 				}
@@ -211,8 +214,8 @@ type key int
 // instead of using this key directly.
 var userKey key
 
-// NewContext returns a new Context that carries value u.
-func (i *authInterceptor) newContext(ctx context.Context, subject string) (context.Context, error) {
+// newUserContext returns a new Context that carries value u.
+func newUserContext(ctx context.Context, subject string) (context.Context, error) {
 	id, err := strconv.Atoi(subject)
 	if err != nil {
 		return nil, err
@@ -221,8 +224,8 @@ func (i *authInterceptor) newContext(ctx context.Context, subject string) (conte
 	return context.WithValue(ctx, userKey, id), nil
 }
 
-// FromContext returns the User value stored in ctx, if any.
-func UserFromContext(ctx context.Context) (int, bool) {
+// getUserContext returns the User value stored in ctx, if any.
+func GetUserContext(ctx context.Context) (int, bool) {
 	u, ok := ctx.Value(userKey).(int)
 	return u, ok
 }

@@ -7,7 +7,7 @@
 		trigger,
 		content,
 		open = $bindable(false)
-	}: { trigger: Snippet; content: Snippet; open: boolean } = $props();
+	}: { trigger: Snippet; content: Snippet; open?: boolean } = $props();
 </script>
 
 <Dialog.Root bind:open>
