@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { ItemClient } from '$lib/transport';
-	import { Plus, Trash, Pencil } from '@lucide/svelte';
+	import { Plus, Trash, Pencil, Calendar, Minus, ArrowLeft, ArrowRight } from '@lucide/svelte';
 	import { timestampFromDate, timestampDate } from '@bufbuild/protobuf/wkt';
 	import { toast } from 'svelte-sonner';
 	import { ConnectError } from '@connectrpc/connect';
 	import Modal from '$lib/ui/Modal.svelte';
 	import Button from '$lib/ui/Button.svelte';
+	import DateRangePicker from '$lib/ui/DateRangePicker.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 
 	// Config
@@ -44,8 +45,18 @@
 	}
 </script>
 
+<div class="mx-4 my-2 flex items-center justify-center gap-4">
+	<input
+		type="text"
+		placeholder="Filter..."
+		class="border-surface-0 hover:border-surface-2 w-70 bg-mantle rounded border p-2 text-sm drop-shadow-md transition-all"
+		bind:value={filter}
+	/>
+	<DateRangePicker bind:start bind:end />
+</div>
+
 <div
-	class="border-surface-0 bg-mantle mx-4 mt-2 overflow-x-auto rounded border-x border-t drop-shadow-md"
+	class="border-surface-0 bg-mantle mx-4 my-2 overflow-x-auto rounded border-x border-t drop-shadow-md"
 >
 	<table class="w-full table-auto border-collapse text-left rtl:text-right">
 		<thead>
