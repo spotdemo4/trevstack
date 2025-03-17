@@ -1,0 +1,16 @@
+{
+    "name": "TrevStack",
+    "description": "Template",
+    "short_name": "tstack",
+    "display": "standalone",
+    "start_url": "/",
+    "background_color": "#181825",
+    "theme_color": "#89dceb",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
