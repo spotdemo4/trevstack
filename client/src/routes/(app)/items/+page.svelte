@@ -263,7 +263,7 @@
 <div class="flex flex-wrap justify-center gap-2 px-4 sm:hidden">
 	{#await items}
 		<div
-			class="border-surface-0 bg-mantle flex w-full flex-col gap-2 rounded border p-5 drop-shadow-md"
+			class="border-surface-0 bg-mantle flex w-full flex-wrap gap-6 rounded border p-5 drop-shadow-md"
 		>
 			<div class="flex flex-col">
 				<span class="text-subtext-0 text-sm">Added</span>
