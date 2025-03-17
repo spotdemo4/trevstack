@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -48,7 +47,6 @@ func (h *ItemHandler) GetItems(ctx context.Context, req *connect.Request[itemv1.
 	// Filters
 	sql := h.db.Where("user_id = ?", userid)
 	if req.Msg.Start != nil {
-		log.Println(req.Msg.Start)
 		sql = sql.Where("added >= ?", req.Msg.Start.AsTime())
 	}
 	if req.Msg.End != nil {
