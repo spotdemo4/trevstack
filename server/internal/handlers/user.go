@@ -151,6 +151,7 @@ func (h *UserHandler) UpdateProfilePicture(ctx context.Context, req *connect.Req
 	// Update user profile picture
 	fid := uint(file.ID)
 	user.ProfilePictureID = &fid
+	user.ProfilePicture = &file
 	if err := h.db.Save(&user).Error; err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

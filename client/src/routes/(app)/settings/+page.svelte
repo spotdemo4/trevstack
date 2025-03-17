@@ -2,46 +2,41 @@
 	import { UserClient } from '$lib/transport';
 	import Button from '$lib/ui/Button.svelte';
 	import Modal from '$lib/ui/Modal.svelte';
+	import Input from '$lib/ui/Input.svelte';
 	import { ConnectError } from '@connectrpc/connect';
-	import { Avatar, Separator } from 'bits-ui';
+	import { Separator } from 'bits-ui';
 	import { toast } from 'svelte-sonner';
+	import { userState } from '$lib/sharedState.svelte';
+	import Avatar from '$lib/ui/Avatar.svelte';
 
-	let user = UserClient.getUser({}).then((res) => {
-		return res.user;
-	});
+	let openChangeProfilePicture = $state(false);
 	let key = $state('');
 </script>
 
 <div class="flex h-[calc(100vh-50px)]">
 	<div class="m-auto flex w-96 flex-col gap-4 p-4">
-		{#await user then user}
-			<div class="flex items-center justify-center gap-4">
-				<div
-					class="outline-surface-2 bg-text text-crust h-9 w-9 select-none rounded-full outline outline-offset-2 text-sm"
-				>
-					<Avatar.Root class="flex h-full w-full items-center justify-center">
-						<Avatar.Image src={user?.profilePicture} alt={`${user?.username}'s avatar`} class="rounded-full" />
-						<Avatar.Fallback class="font-medium uppercase"
-							>{user?.username.substring(0, 2)}</Avatar.Fallback
-						>
-					</Avatar.Root>
-				</div>
-				<h1 class="overflow-x-hidden text-2xl font-medium">{user?.username}</h1>
+		<div class="flex items-center justify-center gap-4">
+			<div
+				class="outline-surface-2 bg-text text-crust h-9 w-9 select-none rounded-full text-sm outline outline-offset-2"
+			>
+				<Avatar />
 			</div>
-		{/await}
+			<h1 class="overflow-x-hidden text-2xl font-medium">{userState.user?.username}</h1>
+		</div>
 
 		<Separator.Root class="bg-surface-0 h-px" />
 
 		<div class="flex justify-around gap-2">
 			<Modal>
-				{#snippet trigger()}
-					<Button className="bg-text">Generate API Key</Button>
+				{#snippet trigger(props)}
+					<Button {...props} className="bg-text">Generate API Key</Button>
+				{/snippet}
+
+				{#snippet title()}
+					Generate API Key
 				{/snippet}
 
 				{#snippet content()}
-					<h1 class="border-surface-0 border-b py-3 text-center text-xl font-bold">
-						Generate API Key
-					</h1>
 					{#if key == ''}
 						<form
 							onsubmit={async (e) => {
@@ -68,21 +63,11 @@
 							<div class="flex flex-col gap-4 p-3">
 								<div class="flex flex-col gap-1">
 									<label for="password" class="text-sm">Password</label>
-									<input
-										id="password"
-										name="password"
-										type="password"
-										class="border-surface-0 rounded border p-2 text-sm"
-									/>
+									<Input name="password" type="password" />
 								</div>
 								<div class="flex flex-col gap-1">
 									<label for="confirm-password" class="text-sm">Confirm Password</label>
-									<input
-										id="confirm-password"
-										name="confirm-password"
-										type="password"
-										class="border-surface-0 rounded border p-2 text-sm"
-									/>
+									<Input name="confirm-password" type="password" />
 								</div>
 								<Button type="submit">Submit</Button>
 							</div>
@@ -95,15 +80,16 @@
 				{/snippet}
 			</Modal>
 
-			<Modal>
-				{#snippet trigger()}
-					<Button className="bg-text">Change Profile Picture</Button>
+			<Modal bind:open={openChangeProfilePicture}>
+				{#snippet trigger(props)}
+					<Button {...props} className="bg-text">Change Profile Picture</Button>
+				{/snippet}
+
+				{#snippet title()}
+					Change Profile Picture
 				{/snippet}
 
 				{#snippet content()}
-					<h1 class="border-surface-0 border-b py-3 text-center text-xl font-bold">
-						Change Profile Picture
-					</h1>
 					<form
 						onsubmit={async (e) => {
 							e.preventDefault();
@@ -122,13 +108,14 @@
 							try {
 								const response = await UserClient.updateProfilePicture({
 									fileName: file.name,
-									data: data,
+									data: data
 								});
 
 								if (response.user) {
 									toast.success('Profile picture updated');
 									form.reset();
-
+									openChangeProfilePicture = false;
+									userState.user = response.user;
 								}
 							} catch (err) {
 								const error = ConnectError.from(err);
@@ -139,12 +126,7 @@
 						<div class="flex flex-col gap-4 p-3">
 							<div class="flex flex-col gap-1">
 								<label for="file" class="text-sm">Profile Picture</label>
-								<input
-									id="file"
-									name="file"
-									type="file"
-									class="border-surface-0 rounded border p-2 text-sm"
-								/>
+								<Input name="file" type="file" />
 							</div>
 							<Button type="submit">Submit</Button>
 						</div>
@@ -178,30 +160,15 @@
 			<div class="flex flex-col gap-4">
 				<div class="flex flex-col gap-1">
 					<label for="old-password" class="text-sm">Old Password</label>
-					<input
-						id="old-password"
-						name="old-password"
-						type="password"
-						class="border-surface-0 rounded border p-2 text-sm"
-					/>
+					<Input name="old-password" type="password" />
 				</div>
 				<div class="flex flex-col gap-1">
 					<label for="new-password" class="text-sm">New Password</label>
-					<input
-						id="new-password"
-						name="new-password"
-						type="password"
-						class="border-surface-0 rounded border p-2 text-sm"
-					/>
+					<Input name="new-password" type="password" />
 				</div>
 				<div class="flex flex-col gap-1">
 					<label for="confirm-password" class="text-sm">Confirm New Password</label>
-					<input
-						id="confirm-password"
-						name="confirm-password"
-						type="password"
-						class="border-surface-0 rounded border p-2 text-sm"
-					/>
+					<Input name="confirm-password" type="password" />
 				</div>
 				<Button type="submit">Submit</Button>
 			</div>

@@ -6,6 +6,7 @@
 	import { ConnectError } from '@connectrpc/connect';
 	import { toast } from 'svelte-sonner';
 	import Button from '$lib/ui/Button.svelte';
+	import Input from '$lib/ui/Input.svelte';
 
 	let tab = $state('login');
 </script>
@@ -59,21 +60,11 @@
 				<div class="flex flex-col gap-4">
 					<div class="flex flex-col gap-1">
 						<label for="login-username" class="text-sm">Username</label>
-						<input
-							id="login-username"
-							name="login-username"
-							type="text"
-							class="border-surface-0 rounded border p-2 text-sm"
-						/>
+						<Input name="login-username" />
 					</div>
 					<div class="flex flex-col gap-1">
 						<label for="login-password" class="text-sm">Password</label>
-						<input
-							id="login-password"
-							name="login-password"
-							type="password"
-							class="border-surface-0 rounded border p-2 text-sm"
-						/>
+						<Input name="login-password" type="password" />
 					</div>
 					<Button type="submit">Submit</Button>
 				</div>
@@ -108,30 +99,15 @@
 				<div class="flex flex-col gap-4">
 					<div class="flex flex-col gap-1">
 						<label for="signup-username" class="text-sm">Username</label>
-						<input
-							id="signup-username"
-							name="signup-username"
-							type="text"
-							class="border-surface-0 rounded border p-2 text-sm"
-						/>
+						<Input name="signup-username" />
 					</div>
 					<div class="flex flex-col gap-1">
 						<label for="signup-password" class="text-sm">Password</label>
-						<input
-							id="signup-password"
-							name="signup-password"
-							type="password"
-							class="border-surface-0 rounded border p-2 text-sm"
-						/>
+						<Input name="signup-password" />
 					</div>
 					<div class="flex flex-col gap-1">
 						<label for="signup-confirm-password" class="text-sm">Confirm Password</label>
-						<input
-							id="signup-confirm-password"
-							name="signup-confirm-password"
-							type="password"
-							class="border-surface-0 rounded border p-2 text-sm"
-						/>
+						<Input name="signup-confirm-password" />
 					</div>
 					<Button type="submit">Submit</Button>
 				</div>

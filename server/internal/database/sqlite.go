@@ -24,7 +24,9 @@ func NewSQLiteConnection(name string) (*gorm.DB, error) {
 
 	// Open database
 	dbPath := filepath.Join(settingsPath, name)
-	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
+		Logger: NewLogger(),
+	})
 	if err != nil {
 		return nil, err
 	}

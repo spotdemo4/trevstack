@@ -20,7 +20,7 @@
 <Button.Root
 	{type}
 	class={cn(
-		'bg-sky text-crust hover:brightness-120 w-fit cursor-pointer rounded p-2 px-4 text-sm font-medium transition-all',
+		'bg-sky text-crust flex justify-center items-center hover:brightness-120 focus:outline-sky w-fit cursor-pointer rounded p-2 px-4 text-sm font-medium transition-all focus:outline-2 focus:outline-offset-1',
 		className
 	)}
 	{onclick}
