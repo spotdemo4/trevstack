@@ -15,7 +15,7 @@
 
       let
         pname = "trevstack";
-        version = "0.1.0";
+        version = "0.1.1";
 
         pkgs = import nixpkgs { 
           inherit system;
@@ -38,8 +38,9 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-YCmx+XNir+6iI0zqIBIjlNxyQ5iz4j9Is+unfSMEgQE=";
+          npmDepsHash = "sha256-TO7eumSEJdmG4wZ5B/k8gChmmSDvfYKEtExHLLYHjj4=";
           nodejs = pkgs.nodejs_22;
+          npmFlags = [ "--legacy-peer-deps" ];
 
           installPhase = ''
             cp -r build "$out"
@@ -113,7 +114,7 @@
         packages.default = pkgs.buildGoModule {
           inherit pname version;
           src = gitignore.lib.gitignoreSource ./server;
-          vendorHash = "sha256-uaHWj0u71hGoOGRwH6rEZxvYXoeoyN6/FZeQ5/7zRfg=";
+          vendorHash = "sha256-FyqcKhJy58uL3UiGA9tg7pSt0OQ1NIZw+khTictyzcw=";
 
           preBuild = ''
             cp -r ${client} client
