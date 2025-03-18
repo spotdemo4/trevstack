@@ -51,7 +51,10 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [ 
+          packages = with pkgs; [
+            git
+            nix-update
+
             # Go backend
             go
             gotools
@@ -69,9 +72,6 @@
 
             # Svelte frontend
             nodejs_22
-
-            # Nix
-            nix-update
 
             # Helper scripts
             (writeShellApplication {
@@ -146,7 +146,7 @@
             })
 
             (writeShellApplication {
-              name = "ts-release";
+              name = "ts-bump";
 
               text = ''
                 git_root=$(git rev-parse --show-toplevel)
@@ -165,10 +165,10 @@
                 cd "''${git_root}"
                 nix-update --flake --version "''${next_version_no_v}" --subpackage client default
                 git add flake.nix
-                git commit -m "release: ''${version} -> ''${next_version}"
+                git commit -m "bump: ''${version} -> ''${next_version}"
                 git push origin main
 
-                git tag -a "''${next_version}" -m "release: ''${version} -> ''${next_version}"
+                git tag -a "''${next_version}" -m "bump: ''${version} -> ''${next_version}"
                 git push origin "''${next_version}"
               '';
             })
@@ -181,7 +181,6 @@
 
                 cd "''${git_root}/client"
                 npm run check
-                npm run format
                 npm run lint
 
                 cd "''${git_root}/server"
