@@ -15,7 +15,7 @@
 
       let
         pname = "trevstack";
-        version = "0.1.1";
+        version = "0.0.1";
 
         pkgs = import nixpkgs { 
           inherit system;
