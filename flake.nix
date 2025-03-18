@@ -145,7 +145,7 @@
             })
 
             (writeShellApplication {
-              name = "ts-bump";
+              name = "ts-release";
 
               text = ''
                 git_root=$(git rev-parse --show-toplevel)
@@ -162,12 +162,12 @@
                 git add package.json
 
                 cd "''${git_root}"
-                nix-update --flake --subpackage --version "''${next_version_no_v}" client default
+                nix-update --flake --version "''${next_version_no_v}" --subpackage client default
                 git add flake.nix
-                git commit -m "bump: ''${version} -> ''${next_version}"
+                git commit -m "release: ''${version} -> ''${next_version}"
                 git push origin main
 
-                git tag -a "''${next_version}" -m "bump: ''${version} -> ''${next_version}"
+                git tag -a "''${next_version}" -m "release: ''${version} -> ''${next_version}"
                 git push origin "''${next_version}"
               '';
             })
