@@ -1,5 +1,5 @@
 {
-  description = "A trevstack development environment";
+  description = "A template for trevstack";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -191,14 +191,18 @@
           ];
         };
 
-        packages.default = pkgs.buildGoModule {
-          inherit client pname version;
-          src = gitignore.lib.gitignoreSource ./server;
-          vendorHash = "sha256-sANPwYLGwMcWyMR7Veho81aAMfIQpVzZS5Q9eveR8o8=";
+        packages = rec {
+          default = trevstack;
 
-          preBuild = ''
-            cp -r ${client} internal/handlers/client/client
-          '';
+          trevstack = pkgs.buildGoModule {
+            inherit client pname version;
+            src = gitignore.lib.gitignoreSource ./server;
+            vendorHash = "sha256-sANPwYLGwMcWyMR7Veho81aAMfIQpVzZS5Q9eveR8o8=";
+
+            preBuild = ''
+              cp -r ${client} internal/handlers/client/client
+            '';
+          };
         };
       }
     );
