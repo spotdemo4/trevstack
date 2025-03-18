@@ -7,6 +7,7 @@
 	import { toast } from 'svelte-sonner';
 	import Button from '$lib/ui/Button.svelte';
 	import Input from '$lib/ui/Input.svelte';
+	import { page } from '$app/state';
 
 	let tab = $state('login');
 </script>
@@ -41,6 +42,7 @@
 					const formData = new FormData(e.target as HTMLFormElement);
 					const username = formData.get('login-username')?.toString();
 					const password = formData.get('login-password')?.toString();
+					const redir = page.url.searchParams.get('redir') || '/';
 
 					try {
 						const response = await AuthClient.login({
@@ -49,7 +51,7 @@
 						});
 
 						if (response.token && username) {
-							goto('/');
+							goto(redir);
 						}
 					} catch (err) {
 						const error = ConnectError.from(err);

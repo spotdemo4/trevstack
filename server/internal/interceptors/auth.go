@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -62,7 +63,8 @@ func WithAuthRedirect(next http.Handler, key string) http.Handler {
 			}
 
 			// Redirect if not authenticated
-			http.Redirect(w, r, "/auth", http.StatusFound)
+			pathRedir := url.QueryEscape(r.URL.Path)
+			http.Redirect(w, r, fmt.Sprintf("/auth?redir=%s", pathRedir), http.StatusFound)
 		}
 	})
 }
