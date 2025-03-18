@@ -38,7 +38,7 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-TO7eumSEJdmG4wZ5B/k8gChmmSDvfYKEtExHLLYHjj4=";
+          npmDepsHash = "sha256-BJwPQTxzix5Mx2AejraiVM+dpfyymj6G2dFpyxArEQI=";
           nodejs = pkgs.nodejs_22;
           npmFlags = [ "--legacy-peer-deps" ];
 
@@ -177,7 +177,7 @@
         packages.default = pkgs.buildGoModule {
           inherit client pname version;
           src = gitignore.lib.gitignoreSource ./server;
-          vendorHash = "sha256-FyqcKhJy58uL3UiGA9tg7pSt0OQ1NIZw+khTictyzcw=";
+          vendorHash = "sha256-sANPwYLGwMcWyMR7Veho81aAMfIQpVzZS5Q9eveR8o8=";
 
           preBuild = ''
             cp -r ${client} internal/handlers/client/client
