@@ -1,3 +1,4 @@
+// TrevStack HTTP Server
 package main
 
 import (
@@ -20,6 +21,8 @@ import (
 	"github.com/spotdemo4/trevstack/server/internal/database"
 	"github.com/spotdemo4/trevstack/server/internal/handlers"
 	"github.com/spotdemo4/trevstack/server/internal/handlers/client"
+	"github.com/spotdemo4/trevstack/server/internal/handlers/item/v1"
+	"github.com/spotdemo4/trevstack/server/internal/handlers/user/v1"
 )
 
 type env struct {
@@ -107,9 +110,9 @@ func main() {
 
 	// Serve GRPC Handlers
 	api := http.NewServeMux()
-	api.Handle(withCORS(handlers.NewAuthHandler(db, env.Key)))
-	api.Handle(withCORS(handlers.NewUserHandler(db, env.Key)))
-	api.Handle(withCORS(handlers.NewItemHandler(db, env.Key)))
+	api.Handle(withCORS(user.NewAuthHandler(db, env.Key)))
+	api.Handle(withCORS(user.NewUserHandler(db, env.Key)))
+	api.Handle(withCORS(item.NewItemHandler(db, env.Key)))
 
 	// Serve web interface
 	mux := http.NewServeMux()
