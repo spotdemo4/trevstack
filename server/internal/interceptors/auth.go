@@ -50,10 +50,7 @@ func WithAuthRedirect(next http.Handler, key string) http.Handler {
 			}
 			next.ServeHTTP(w, r)
 
-		case "_app":
-			next.ServeHTTP(w, r)
-
-		case "favicon.png":
+		case "_app", "favicon.png", "icon.png":
 			next.ServeHTTP(w, r)
 
 		default:
@@ -69,17 +66,17 @@ func WithAuthRedirect(next http.Handler, key string) http.Handler {
 	})
 }
 
-type authInterceptor struct {
+type AuthInterceptor struct {
 	key string
 }
 
-func NewAuthInterceptor(key string) *authInterceptor {
-	return &authInterceptor{
+func NewAuthInterceptor(key string) *AuthInterceptor {
+	return &AuthInterceptor{
 		key: key,
 	}
 }
 
-func (i *authInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
+func (i *AuthInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 	// Same as previous UnaryInterceptorFunc.
 	return connect.UnaryFunc(func(
 		ctx context.Context,
@@ -123,7 +120,7 @@ func (i *authInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 	})
 }
 
-func (*authInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) connect.StreamingClientFunc {
+func (*AuthInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) connect.StreamingClientFunc {
 	return connect.StreamingClientFunc(func(
 		ctx context.Context,
 		spec connect.Spec,
@@ -132,7 +129,7 @@ func (*authInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) co
 	})
 }
 
-func (i *authInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
+func (i *AuthInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
 	return connect.StreamingHandlerFunc(func(
 		ctx context.Context,
 		conn connect.StreamingHandlerConn,

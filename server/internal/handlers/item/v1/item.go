@@ -15,12 +15,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type ItemHandler struct {
+type Handler struct {
 	db  *gorm.DB
 	key []byte
 }
 
-func (h *ItemHandler) GetItem(ctx context.Context, req *connect.Request[itemv1.GetItemRequest]) (*connect.Response[itemv1.GetItemResponse], error) {
+func (h *Handler) GetItem(ctx context.Context, req *connect.Request[itemv1.GetItemRequest]) (*connect.Response[itemv1.GetItemResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -38,7 +38,7 @@ func (h *ItemHandler) GetItem(ctx context.Context, req *connect.Request[itemv1.G
 	return res, nil
 }
 
-func (h *ItemHandler) GetItems(ctx context.Context, req *connect.Request[itemv1.GetItemsRequest]) (*connect.Response[itemv1.GetItemsResponse], error) {
+func (h *Handler) GetItems(ctx context.Context, req *connect.Request[itemv1.GetItemsRequest]) (*connect.Response[itemv1.GetItemsResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -88,7 +88,7 @@ func (h *ItemHandler) GetItems(ctx context.Context, req *connect.Request[itemv1.
 	return res, nil
 }
 
-func (h *ItemHandler) CreateItem(ctx context.Context, req *connect.Request[itemv1.CreateItemRequest]) (*connect.Response[itemv1.CreateItemResponse], error) {
+func (h *Handler) CreateItem(ctx context.Context, req *connect.Request[itemv1.CreateItemRequest]) (*connect.Response[itemv1.CreateItemResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -113,7 +113,7 @@ func (h *ItemHandler) CreateItem(ctx context.Context, req *connect.Request[itemv
 	return res, nil
 }
 
-func (h *ItemHandler) UpdateItem(ctx context.Context, req *connect.Request[itemv1.UpdateItemRequest]) (*connect.Response[itemv1.UpdateItemResponse], error) {
+func (h *Handler) UpdateItem(ctx context.Context, req *connect.Request[itemv1.UpdateItemRequest]) (*connect.Response[itemv1.UpdateItemResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -143,7 +143,7 @@ func (h *ItemHandler) UpdateItem(ctx context.Context, req *connect.Request[itemv
 	return res, nil
 }
 
-func (h *ItemHandler) DeleteItem(ctx context.Context, req *connect.Request[itemv1.DeleteItemRequest]) (*connect.Response[itemv1.DeleteItemResponse], error) {
+func (h *Handler) DeleteItem(ctx context.Context, req *connect.Request[itemv1.DeleteItemRequest]) (*connect.Response[itemv1.DeleteItemResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -158,11 +158,11 @@ func (h *ItemHandler) DeleteItem(ctx context.Context, req *connect.Request[itemv
 	return res, nil
 }
 
-func NewItemHandler(db *gorm.DB, key string) (string, http.Handler) {
+func NewHandler(db *gorm.DB, key string) (string, http.Handler) {
 	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
 
 	return itemv1connect.NewItemServiceHandler(
-		&ItemHandler{
+		&Handler{
 			db:  db,
 			key: []byte(key),
 		},

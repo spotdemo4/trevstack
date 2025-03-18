@@ -5,10 +5,12 @@
 	let { children } = $props();
 </script>
 
-<Toaster toastOptions={{
-	classes: {
-		toast: '!bg-mantle !text-text !border-surface-0',
-	}
-}} />
+<Toaster
+	toastOptions={{
+		classes: {
+			toast: '!bg-mantle !text-text !border-surface-0'
+		}
+	}}
+/>
 
 {@render children()}

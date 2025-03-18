@@ -43,10 +43,10 @@
 			class="bg-mantle border-surface-0 hover:border-surface-2 flex items-center rounded border pl-2 text-sm drop-shadow-md transition-all"
 		>
 			<div class="flex grow items-center justify-center">
-				{#each ['start', 'end'] as const as type}
+				{#each ['start', 'end'] as const as type (type)}
 					<DateRangePicker.Input {type}>
 						{#snippet children({ segments })}
-							{#each segments as { part, value }}
+							{#each segments as { part, value } (value)}
 								<div class="inline-block select-none">
 									{#if part === 'literal'}
 										<DateRangePicker.Segment {part} class="text-overlay-0 p-1">
@@ -114,21 +114,21 @@
 									>
 										<ArrowLeft />
 									</DateRangePicker.PrevButton>
-									<DateRangePicker.Heading class="select-none font-medium" />
+									<DateRangePicker.Heading class="font-medium select-none" />
 									<DateRangePicker.NextButton
 										class="hover:bg-surface-0 inline-flex size-10 cursor-pointer items-center justify-center rounded transition-all active:scale-[0.98]"
 									>
 										<ArrowRight />
 									</DateRangePicker.NextButton>
 								</DateRangePicker.Header>
-								<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-									{#each months as month}
-										<DateRangePicker.Grid class="w-full border-collapse select-none space-y-1">
+								<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+									{#each months as month (month)}
+										<DateRangePicker.Grid class="w-full border-collapse space-y-1 select-none">
 											<DateRangePicker.GridHead>
 												<DateRangePicker.GridRow class="mb-1 flex w-full justify-between">
-													{#each weekdays as day}
+													{#each weekdays as day (day)}
 														<DateRangePicker.HeadCell
-															class="text-overlay-0 font-normal! w-10 rounded text-xs"
+															class="text-overlay-0 w-10 rounded text-xs font-normal!"
 														>
 															{day.slice(0, 2)}
 														</DateRangePicker.HeadCell>
@@ -136,19 +136,19 @@
 												</DateRangePicker.GridRow>
 											</DateRangePicker.GridHead>
 											<DateRangePicker.GridBody>
-												{#each month.weeks as weekDates}
+												{#each month.weeks as weekDates (weekDates)}
 													<DateRangePicker.GridRow class="flex w-full">
-														{#each weekDates as date}
+														{#each weekDates as date (date)}
 															<DateRangePicker.Cell
 																{date}
 																month={month.value}
-																class="p-0! relative m-0 size-10 overflow-visible text-center text-sm focus-within:relative focus-within:z-20"
+																class="relative m-0 size-10 overflow-visible p-0! text-center text-sm focus-within:relative focus-within:z-20"
 															>
 																<DateRangePicker.Day
-																	class={'hover:border-sky focus-visible:ring-foreground! data-selected:rounded-none data-selection-end:rounded-r data-selection-start:rounded-l data-highlighted:bg-surface-0 data-selected:bg-surface-1 data-selection-end:bg-surface-2 data-selection-start:bg-surface-2 data-disabled:text-text/30 data-unavailable:text-overlay-0 data-disabled:pointer-events-none data-outside-month:pointer-events-none data-highlighted:rounded-none data-unavailable:line-through group relative inline-flex size-10 items-center justify-center overflow-visible whitespace-nowrap rounded border border-transparent bg-transparent p-0 text-sm font-normal transition-all'}
+																	class="hover:border-sky focus-visible:ring-foreground! data-highlighted:bg-surface-0 data-selected:bg-surface-1 data-selection-end:bg-surface-2 data-selection-start:bg-surface-2 data-disabled:text-text/30 data-unavailable:text-overlay-0 group relative inline-flex size-10 items-center justify-center overflow-visible rounded border border-transparent bg-transparent p-0 text-sm font-normal whitespace-nowrap transition-all data-disabled:pointer-events-none data-highlighted:rounded-none data-outside-month:pointer-events-none data-selected:rounded-none data-selection-end:rounded-r data-selection-start:rounded-l data-unavailable:line-through"
 																>
 																	<div
-																		class="bg-sky group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full transition-all"
+																		class="bg-sky group-data-selected:bg-background absolute top-[5px] hidden size-1 rounded-full transition-all group-data-today:block"
 																	></div>
 																	{date.day}
 																</DateRangePicker.Day>

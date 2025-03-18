@@ -31,7 +31,7 @@
 >
 	<Select.Root type="single" {items} bind:value onValueChange={onchange}>
 		<Select.Trigger
-			class="focus:outline-sky data-placeholder:text-overlay-0 inline-flex grow cursor-pointer select-none items-center justify-between gap-2 rounded-l py-2 pl-2 text-sm transition-colors focus:outline focus:outline-offset-1"
+			class="focus:outline-sky data-placeholder:text-overlay-0 inline-flex grow cursor-pointer items-center justify-between gap-2 rounded-l py-2 pl-2 text-sm transition-colors select-none focus:outline focus:outline-offset-1"
 			aria-label={placeholder}
 		>
 			{selectedLabel}
@@ -44,7 +44,7 @@
 						<div {...wrapperProps}>
 							<div
 								{...props}
-								class="border-surface-0 bg-mantle shadow-popover outline-hidden z-50 mt-1 select-none rounded border p-1"
+								class="border-surface-0 bg-mantle shadow-popover z-50 mt-1 rounded border p-1 outline-hidden select-none"
 								transition:fade={{
 									duration: 100
 								}}
@@ -55,7 +55,7 @@
 								<Select.Viewport class="p-1">
 									{#each items as item, i (i + item.value)}
 										<Select.Item
-											class="data-disabled:cursor-not-allowed data-highlighted:bg-surface-0 outline-hidden data-disabled:opacity-50 flex h-10 w-full cursor-pointer select-none items-center gap-4 rounded px-5 py-3 text-sm capitalize"
+											class="data-highlighted:bg-surface-0 flex h-10 w-full cursor-pointer items-center gap-4 rounded px-5 py-3 text-sm capitalize outline-hidden select-none data-disabled:cursor-not-allowed data-disabled:opacity-50"
 											value={item.value}
 											label={item.label}
 											disabled={item.disabled}

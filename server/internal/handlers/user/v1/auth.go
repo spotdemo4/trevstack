@@ -22,7 +22,7 @@ type AuthHandler struct {
 	key []byte
 }
 
-func (h *AuthHandler) Login(ctx context.Context, req *connect.Request[userv1.LoginRequest]) (*connect.Response[userv1.LoginResponse], error) {
+func (h *AuthHandler) Login(_ context.Context, req *connect.Request[userv1.LoginRequest]) (*connect.Response[userv1.LoginResponse], error) {
 	// Validate
 	user := models.User{}
 	if err := h.db.First(&user, "username = ?", req.Msg.Username).Error; err != nil {
@@ -69,7 +69,7 @@ func (h *AuthHandler) Login(ctx context.Context, req *connect.Request[userv1.Log
 	return res, nil
 }
 
-func (h *AuthHandler) SignUp(ctx context.Context, req *connect.Request[userv1.SignUpRequest]) (*connect.Response[userv1.SignUpResponse], error) {
+func (h *AuthHandler) SignUp(_ context.Context, req *connect.Request[userv1.SignUpRequest]) (*connect.Response[userv1.SignUpResponse], error) {
 	// Validate
 	if err := h.db.First(&models.User{}, "username = ?", req.Msg.Username).Error; err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -101,7 +101,7 @@ func (h *AuthHandler) SignUp(ctx context.Context, req *connect.Request[userv1.Si
 	return res, nil
 }
 
-func (h *AuthHandler) Logout(ctx context.Context, req *connect.Request[userv1.LogoutRequest]) (*connect.Response[userv1.LogoutResponse], error) {
+func (h *AuthHandler) Logout(_ context.Context, _ *connect.Request[userv1.LogoutRequest]) (*connect.Response[userv1.LogoutResponse], error) {
 	// Clear cookie
 	cookie := http.Cookie{
 		Name:     "token",

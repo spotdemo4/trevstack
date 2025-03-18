@@ -15,14 +15,14 @@ type visitor struct {
 	lastSeen time.Time
 }
 
-type ratelimitInterceptor struct {
+type RatelimitInterceptor struct {
 	key      string
 	visitors map[string]*visitor
 	mu       sync.Mutex
 }
 
-func NewRateLimitInterceptor(key string) *ratelimitInterceptor {
-	rl := &ratelimitInterceptor{
+func NewRateLimitInterceptor(key string) *RatelimitInterceptor {
+	rl := &RatelimitInterceptor{
 		key:      key,
 		visitors: make(map[string]*visitor),
 		mu:       sync.Mutex{},
@@ -33,7 +33,7 @@ func NewRateLimitInterceptor(key string) *ratelimitInterceptor {
 	return rl
 }
 
-func (i *ratelimitInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
+func (i *RatelimitInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 	// Same as previous UnaryInterceptorFunc.
 	return connect.UnaryFunc(func(
 		ctx context.Context,
@@ -54,7 +54,7 @@ func (i *ratelimitInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFu
 	})
 }
 
-func (*ratelimitInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) connect.StreamingClientFunc {
+func (*RatelimitInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) connect.StreamingClientFunc {
 	return connect.StreamingClientFunc(func(
 		ctx context.Context,
 		spec connect.Spec,
@@ -63,7 +63,7 @@ func (*ratelimitInterceptor) WrapStreamingClient(next connect.StreamingClientFun
 	})
 }
 
-func (i *ratelimitInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
+func (i *RatelimitInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
 	return connect.StreamingHandlerFunc(func(
 		ctx context.Context,
 		conn connect.StreamingHandlerConn,
@@ -78,7 +78,7 @@ func (i *ratelimitInterceptor) WrapStreamingHandler(next connect.StreamingHandle
 	})
 }
 
-func (i *ratelimitInterceptor) getVisitor(userAgent string) *rate.Limiter {
+func (i *RatelimitInterceptor) getVisitor(userAgent string) *rate.Limiter {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
@@ -97,7 +97,7 @@ func (i *ratelimitInterceptor) getVisitor(userAgent string) *rate.Limiter {
 
 // Every minute check the map for visitors that haven't been seen for
 // more than 3 minutes and delete the entries.
-func (i *ratelimitInterceptor) cleanupVisitors() {
+func (i *RatelimitInterceptor) cleanupVisitors() {
 	for {
 		time.Sleep(time.Minute)
 

@@ -17,12 +17,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserHandler struct {
+type Handler struct {
 	db  *gorm.DB
 	key []byte
 }
 
-func (h *UserHandler) GetUser(ctx context.Context, req *connect.Request[userv1.GetUserRequest]) (*connect.Response[userv1.GetUserResponse], error) {
+func (h *Handler) GetUser(ctx context.Context, _ *connect.Request[userv1.GetUserRequest]) (*connect.Response[userv1.GetUserResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -40,7 +40,7 @@ func (h *UserHandler) GetUser(ctx context.Context, req *connect.Request[userv1.G
 	return res, nil
 }
 
-func (h *UserHandler) UpdatePassword(ctx context.Context, req *connect.Request[userv1.UpdatePasswordRequest]) (*connect.Response[userv1.UpdatePasswordResponse], error) {
+func (h *Handler) UpdatePassword(ctx context.Context, req *connect.Request[userv1.UpdatePasswordRequest]) (*connect.Response[userv1.UpdatePasswordResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -75,7 +75,7 @@ func (h *UserHandler) UpdatePassword(ctx context.Context, req *connect.Request[u
 	return res, nil
 }
 
-func (h *UserHandler) GetAPIKey(ctx context.Context, req *connect.Request[userv1.GetAPIKeyRequest]) (*connect.Response[userv1.GetAPIKeyResponse], error) {
+func (h *Handler) GetAPIKey(ctx context.Context, req *connect.Request[userv1.GetAPIKeyRequest]) (*connect.Response[userv1.GetAPIKeyResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -114,7 +114,7 @@ func (h *UserHandler) GetAPIKey(ctx context.Context, req *connect.Request[userv1
 	return res, nil
 }
 
-func (h *UserHandler) UpdateProfilePicture(ctx context.Context, req *connect.Request[userv1.UpdateProfilePictureRequest]) (*connect.Response[userv1.UpdateProfilePictureResponse], error) {
+func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request[userv1.UpdateProfilePictureRequest]) (*connect.Response[userv1.UpdateProfilePictureResponse], error) {
 	userid, ok := interceptors.GetUserContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -169,11 +169,11 @@ func (h *UserHandler) UpdateProfilePicture(ctx context.Context, req *connect.Req
 	return res, nil
 }
 
-func NewUserHandler(db *gorm.DB, key string) (string, http.Handler) {
+func NewHandler(db *gorm.DB, key string) (string, http.Handler) {
 	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
 
 	return userv1connect.NewUserServiceHandler(
-		&UserHandler{
+		&Handler{
 			db:  db,
 			key: []byte(key),
 		},

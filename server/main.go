@@ -111,8 +111,8 @@ func main() {
 	// Serve GRPC Handlers
 	api := http.NewServeMux()
 	api.Handle(withCORS(user.NewAuthHandler(db, env.Key)))
-	api.Handle(withCORS(user.NewUserHandler(db, env.Key)))
-	api.Handle(withCORS(item.NewItemHandler(db, env.Key)))
+	api.Handle(withCORS(user.NewHandler(db, env.Key)))
+	api.Handle(withCORS(item.NewHandler(db, env.Key)))
 
 	// Serve web interface
 	mux := http.NewServeMux()

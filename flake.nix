@@ -57,6 +57,7 @@
             gotools
             gopls
             air
+            revive
             
             # Protobuf middleware
             buf
@@ -169,6 +170,22 @@
 
                 git tag -a "''${next_version}" -m "release: ''${version} -> ''${next_version}"
                 git push origin "''${next_version}"
+              '';
+            })
+
+            (writeShellApplication {
+              name = "ts-lint";
+
+              text = ''
+                git_root=$(git rev-parse --show-toplevel)
+
+                cd "''${git_root}/client"
+                npm run check
+                npm run format
+                npm run lint
+
+                cd "''${git_root}/server"
+                revive -config revive.toml -formatter friendly ./...
               '';
             })
           ];

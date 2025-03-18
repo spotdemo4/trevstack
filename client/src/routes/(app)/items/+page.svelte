@@ -50,12 +50,7 @@
 </script>
 
 <div class="mx-4 my-2 flex flex-wrap items-center justify-center gap-2">
-	<Input
-		bind:value={filter}
-		className="bg-mantle"
-		placeholder="Filter"
-		onchange={updateItems}
-	/>
+	<Input bind:value={filter} className="bg-mantle" placeholder="Filter" onchange={updateItems} />
 	<Select
 		items={[
 			{
@@ -238,7 +233,7 @@
 					<td class="w-8"></td>
 				</tr>
 			{:then items}
-				{#each items as item}
+				{#each items as item (item.id)}
 					<tr class="border-surface-0 border-b">
 						<td class="px-6 py-3">
 							{item.added ? timestampDate(item.added).toLocaleString() : ''}
@@ -287,7 +282,7 @@
 			</div>
 		</div>
 	{:then items}
-		{#each items as item}
+		{#each items as item (item.id)}
 			<div
 				class="border-surface-0 bg-mantle flex w-full flex-wrap gap-6 rounded border p-5 drop-shadow-md"
 			>
@@ -313,7 +308,7 @@
 					<span class="text-subtext-0 text-sm">Quantity</span>
 					<span class="truncate">{item.quantity}</span>
 				</div>
-				<div class="flex justify-end ml-auto gap-2">
+				<div class="ml-auto flex justify-end gap-2">
 					{@render editModal(item)}
 					{@render deleteModal(item)}
 				</div>
@@ -322,7 +317,7 @@
 	{/await}
 </div>
 
-<div class="mx-4 mb-4 mt-2 flex justify-end sm:mt-1">
+<div class="mx-4 mt-2 mb-4 flex justify-end sm:mt-1">
 	<Modal bind:open={addedOpen}>
 		{#snippet trigger(props)}
 			<Button {...props} className="bg-sky">

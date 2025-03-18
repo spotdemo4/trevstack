@@ -48,10 +48,8 @@ func (h *FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		w.Header().Set("Content-Type", http.DetectContentType(file.Data))
 		w.Write(file.Data)
-		return
 	} else {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
 	}
 }
 

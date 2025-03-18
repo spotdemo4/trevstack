@@ -98,14 +98,14 @@
 							>
 								<NavigationMenu.Root orientation="vertical">
 									<NavigationMenu.List
-										class="flex w-full flex-col gap-2 overflow-y-auto overflow-x-hidden p-2"
+										class="flex w-full flex-col gap-2 overflow-x-hidden overflow-y-auto p-2"
 									>
-										{#each menuItems as item}
+										{#each menuItems as item (item.name)}
 											{@const Icon = item.icon}
 											<NavigationMenu.Item>
 												<NavigationMenu.Link
 													class={cn(
-														'hover:bg-surface-0 flex select-none gap-2 whitespace-nowrap rounded-lg p-2 transition-all',
+														'hover:bg-surface-0 flex gap-2 rounded-lg p-2 whitespace-nowrap transition-all select-none',
 														page.url.pathname === item.href && 'bg-surface-0'
 													)}
 													href={item.href}
@@ -126,7 +126,7 @@
 								<div class="border-surface-0 flex flex-col gap-2 border-t p-2">
 									<a
 										href="/settings"
-										class="hover:bg-surface-0 flex select-none items-center gap-2 rounded-lg p-2 transition-all"
+										class="hover:bg-surface-0 flex items-center gap-2 rounded-lg p-2 transition-all select-none"
 										onclick={() => {
 											if (sidebarOpen) {
 												sidebarOpen = false;
@@ -138,7 +138,7 @@
 									</a>
 
 									<button
-										class="hover:bg-surface-0 flex w-full cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg p-2 transition-all"
+										class="hover:bg-surface-0 flex w-full cursor-pointer items-center gap-2 rounded-lg p-2 whitespace-nowrap transition-all"
 										onclick={logout}
 									>
 										<LogOut size="20" />
@@ -152,7 +152,7 @@
 			</Dialog.Portal>
 		</Dialog.Root>
 
-		<a href="/" class="flex select-none items-center gap-2 text-2xl font-bold tracking-wider">
+		<a href="/" class="flex items-center gap-2 text-2xl font-bold tracking-wider select-none">
 			TrevStack
 			<LayoutGrid />
 		</a>
@@ -160,11 +160,11 @@
 
 	<NavigationMenu.Root class="hidden md:block">
 		<NavigationMenu.List class="flex gap-2">
-			{#each menuItems as item}
+			{#each menuItems as item (item.name)}
 				<NavigationMenu.Item>
 					<NavigationMenu.Link
 						class={cn(
-							'hover:bg-surface-0 flex select-none gap-2 rounded-lg p-1 px-2 transition-all',
+							'hover:bg-surface-0 flex gap-2 rounded-lg p-1 px-2 transition-all select-none',
 							page.url.pathname === item.href && 'bg-surface-0'
 						)}
 						href={item.href}
@@ -179,7 +179,7 @@
 
 	<Popover.Root bind:open={popupOpen}>
 		<Popover.Trigger
-			class="outline-surface-2 hover:brightness-120 bg-text text-crust h-9 w-9 cursor-pointer rounded-full text-sm outline outline-offset-2 transition-all"
+			class="outline-surface-2 bg-text text-crust h-9 w-9 cursor-pointer rounded-full text-sm outline outline-offset-2 transition-all hover:brightness-120"
 		>
 			<Avatar />
 		</Popover.Trigger>

@@ -24,7 +24,7 @@
 		perPage={limit}
 		onPageChange={(e) => {
 			offset = (e - 1) * limit;
-            window.scrollTo(0, 0);
+			window.scrollTo(0, 0);
 			onchange?.(e);
 		}}
 	>
@@ -38,11 +38,11 @@
 				<div class="flex items-center gap-2">
 					{#each pages as page (page.key)}
 						{#if page.type === 'ellipsis'}
-							<div class="select-none font-medium">...</div>
+							<div class="font-medium select-none">...</div>
 						{:else}
 							<Pagination.Page
 								{page}
-								class="hover:bg-surface-0 data-selected:bg-surface-0 data-selected:text-background inline-flex size-10 cursor-pointer select-none items-center justify-center rounded bg-transparent font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 hover:disabled:bg-transparent"
+								class="hover:bg-surface-0 data-selected:bg-surface-0 data-selected:text-background inline-flex size-10 cursor-pointer items-center justify-center rounded bg-transparent font-medium transition-all select-none disabled:cursor-not-allowed disabled:opacity-50 hover:disabled:bg-transparent"
 							>
 								{page.value}
 							</Pagination.Page>

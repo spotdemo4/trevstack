@@ -48,7 +48,7 @@
 						}}
 					>
 						<div
-							class="bg-mantle border-surface-0 fixed inset-0 left-[50%] top-[50%] z-50 size-fit w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded-xl border pb-1 drop-shadow-md"
+							class="bg-mantle border-surface-0 fixed inset-0 top-[50%] left-[50%] z-50 size-fit w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded-xl border pb-1 drop-shadow-md"
 						>
 							<div class="border-surface-0 flex justify-between border-b p-2">
 								<h1 class="grow truncate p-1 text-center text-xl font-bold">
