@@ -42,7 +42,7 @@
 		<div
 			class="bg-mantle border-surface-0 hover:border-surface-2 flex items-center rounded border pl-2 text-sm drop-shadow-md transition-all"
 		>
-			<div class="grow flex items-center justify-center">
+			<div class="flex grow items-center justify-center">
 				{#each ['start', 'end'] as const as type}
 					<DateRangePicker.Input {type}>
 						{#snippet children({ segments })}
@@ -72,7 +72,7 @@
 				{/each}
 			</div>
 			<DateRangePicker.Trigger
-				class="text-overlay-2 hover:bg-surface-0 grow flex justify-center items-center focus:outline-sky ml-1 cursor-pointer p-2 transition-all focus:outline focus:outline-offset-1"
+				class="text-overlay-2 hover:bg-surface-0 focus:outline-sky ml-1 flex grow cursor-pointer items-center justify-center p-2 transition-all focus:outline focus:outline-offset-1"
 			>
 				<Calendar size="20" />
 			</DateRangePicker.Trigger>
