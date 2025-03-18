@@ -10,3 +10,4 @@ result
 # Server
 /server/client
 /server/tmp
+/server/internal/handlers/client/client

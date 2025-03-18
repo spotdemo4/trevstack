@@ -18,40 +18,51 @@ func WithAuthRedirect(next http.Handler, key string) http.Handler {
 		pathItems := strings.Split(r.URL.Path, "/")
 
 		if len(pathItems) < 2 {
-			next.ServeHTTP(w, r)
+			http.Error(w, "Not found", http.StatusNotFound)
 			return
+		}
+
+		// Check if the user is authenticated
+		authenticated := false
+		cookies := getCookies(r.Header.Get("Cookie"))
+		for _, cookie := range cookies {
+			if cookie.Name == "token" {
+				subject, err := validateToken(cookie.Value, key)
+				if err == nil {
+					ctx, err := newUserContext(r.Context(), subject)
+					if err == nil {
+						r = r.WithContext(ctx)
+						authenticated = true
+					}
+				}
+
+				break
+			}
 		}
 
 		switch pathItems[1] {
 
 		case "auth":
-			fallthrough
+			if authenticated {
+				http.Redirect(w, r, "/", http.StatusFound)
+				return
+			}
+			next.ServeHTTP(w, r)
+
 		case "_app":
-			fallthrough
+			next.ServeHTTP(w, r)
+
 		case "favicon.png":
 			next.ServeHTTP(w, r)
-			return
 
 		default:
-			// Check if the request contains a valid cookie token
-			cookies := getCookies(r.Header.Get("Cookie"))
-			for _, cookie := range cookies {
-				if cookie.Name == "token" {
-					subject, err := validateToken(cookie.Value, key)
-					if err == nil {
-						ctx, err := newUserContext(r.Context(), subject)
-						if err == nil {
-							r = r.WithContext(ctx)
-							next.ServeHTTP(w, r)
-							return
-						}
-					}
-				}
+			if authenticated {
+				next.ServeHTTP(w, r)
+				return
 			}
 
-			// Otherwise redirect
+			// Redirect if not authenticated
 			http.Redirect(w, r, "/auth", http.StatusFound)
-			return
 		}
 	})
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"embed"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,10 +19,8 @@ import (
 
 	"github.com/spotdemo4/trevstack/server/internal/database"
 	"github.com/spotdemo4/trevstack/server/internal/handlers"
+	"github.com/spotdemo4/trevstack/server/internal/handlers/client"
 )
-
-//go:embed all:client
-var client embed.FS
 
 type env struct {
 	DBType string
@@ -116,7 +113,7 @@ func main() {
 
 	// Serve web interface
 	mux := http.NewServeMux()
-	mux.Handle("/", handlers.NewClientHandler(client, env.Key))
+	mux.Handle("/", client.NewClientHandler(env.Key))
 	mux.Handle("/file/", handlers.NewFileHandler(db, env.Key))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 

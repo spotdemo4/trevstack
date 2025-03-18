@@ -69,6 +69,9 @@
             # Svelte frontend
             nodejs_22
 
+            # Nix
+            nix-update
+
             # Helper scripts
             (writeShellApplication {
               name = "run";
@@ -117,7 +120,7 @@
           vendorHash = "sha256-FyqcKhJy58uL3UiGA9tg7pSt0OQ1NIZw+khTictyzcw=";
 
           preBuild = ''
-            cp -r ${client} client
+            cp -r ${client} internal/handlers/client/client
           '';
         };
       }
