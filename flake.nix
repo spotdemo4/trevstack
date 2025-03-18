@@ -74,18 +74,18 @@
 
             # Helper scripts
             (writeShellApplication {
-              name = "run";
+              name = "ts-run";
 
               text = ''
-                gitroot=$(git rev-parse --show-toplevel)
+                git_root=$(git rev-parse --show-toplevel)
 
-                (cd "''${gitroot}/server" && air) &
+                (cd "''${git_root}/server" && air) &
                 P1=$!
 
-                (cd "''${gitroot}/client" && npm run dev) &
+                (cd "''${git_root}/client" && npm run dev) &
                 P2=$!
 
-                (cd "''${gitroot}" && protobufwatch) &
+                (cd "''${git_root}" && ts-pbwatch) &
                 P3=$!
 
                 trap 'kill $P1 $P2 $P3' SIGINT SIGTERM
@@ -98,7 +98,7 @@
             })
 
             (writeShellApplication {
-              name = "protobufwatch";
+              name = "ts-pbwatch";
 
               text = ''
                 inotifywait -mre close_write,moved_to,create proto | while read -r _ _ basename;
@@ -111,11 +111,71 @@
                 done
               '';
             })
+
+            (writeShellApplication {
+              name = "ts-update";
+
+              text = ''
+                git_root=$(git rev-parse --show-toplevel)
+
+                cd "''${git_root}/client"
+                npm update --save
+                if ! git diff --exit-code package.json package-lock.json; then
+                  git add package-lock.json
+                  git add package.json
+                  git commit -m "build(client): updated npm dependencies"
+                fi
+
+                cd "''${git_root}/server"
+                go get -u
+                go mod tidy
+                if ! git diff --exit-code go.mod go.sum; then
+                  git add go.mod
+                  git add go.sum
+                  git commit -m "build(server): updated go dependencies"
+                fi
+
+                cd "''${git_root}"
+                nix-update --flake --version=skip --subpackage client default
+                if ! git diff --exit-code flake.nix; then
+                  git add flake.nix
+                  git commit -m "build(nix): updated nix hashes"
+                fi
+              '';
+            })
+
+            (writeShellApplication {
+              name = "ts-bump";
+
+              text = ''
+                git_root=$(git rev-parse --show-toplevel)
+
+                version=$(git describe --abbrev=0)
+                version_no_v="''${version:1}"
+
+                next_version=$(echo "''${version}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
+                next_version_no_v=$(echo "''${version_no_v}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
+
+                cd "''${git_root}/client"
+                npm version "''${next_version_no_v}"
+                git add package-lock.json
+                git add package.json
+
+                cd "''${git_root}"
+                nix-update --flake --subpackage --version "''${next_version_no_v}" client default
+                git add flake.nix
+                git commit -m "bump: ''${version} -> ''${next_version}"
+                git push origin main
+
+                git tag -a "''${next_version}" -m "bump: ''${version} -> ''${next_version}"
+                git push origin "''${next_version}"
+              '';
+            })
           ];
         };
 
         packages.default = pkgs.buildGoModule {
-          inherit pname version;
+          inherit client pname version;
           src = gitignore.lib.gitignoreSource ./server;
           vendorHash = "sha256-FyqcKhJy58uL3UiGA9tg7pSt0OQ1NIZw+khTictyzcw=";
 
