@@ -4,6 +4,7 @@ pnpm-lock.yaml
 yarn.lock
 
 # Build output
+build
 .svelte-kit
 node_modules
 
