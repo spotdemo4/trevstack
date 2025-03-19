@@ -122,11 +122,11 @@
 									</DateRangePicker.NextButton>
 								</DateRangePicker.Header>
 								<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-									{#each months as month (month.value)}
+									{#each months as month, i (i)}
 										<DateRangePicker.Grid class="w-full border-collapse space-y-1 select-none">
 											<DateRangePicker.GridHead>
 												<DateRangePicker.GridRow class="mb-1 flex w-full justify-between">
-													{#each weekdays as day (day)}
+													{#each weekdays as day, i (i)}
 														<DateRangePicker.HeadCell
 															class="text-overlay-0 w-10 rounded text-xs font-normal!"
 														>
@@ -136,9 +136,9 @@
 												</DateRangePicker.GridRow>
 											</DateRangePicker.GridHead>
 											<DateRangePicker.GridBody>
-												{#each month.weeks as weekDates (weekDates)}
+												{#each month.weeks as weekDates, i (i)}
 													<DateRangePicker.GridRow class="flex w-full">
-														{#each weekDates as date (date)}
+														{#each weekDates as date, i (i)}
 															<DateRangePicker.Cell
 																{date}
 																month={month.value}
