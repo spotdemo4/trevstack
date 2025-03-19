@@ -16,26 +16,20 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Nix
-        uses: nixbuild/nix-quick-install-action@v30
-
-      - name: Restore and save Nix store + go modules
-        uses: nix-community/cache-nix-action@v6
+        uses: cachix/install-nix-action@v31
         with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}-
-          gc-max-store-size-linux: 1G
-          purge: true
-          purge-prefixes: nix-${{ runner.os }}-
-          purge-created: 0
-          purge-primary-key: never
-          paths: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Use Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: trevstack
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         
       - name: Build
         run: nix develop --command ts-build
 
-      - name: Create release
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: |-
