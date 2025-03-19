@@ -2,6 +2,8 @@
 	import { cn } from '$lib/utils';
 	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { Pagination } from 'bits-ui';
+	import { pushState, replaceState } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let {
 		count = $bindable(),
@@ -16,15 +18,35 @@
 		className?: string;
 		onchange?: (e: number) => void;
 	} = $props();
+
+	let page: number = $state(1);
+
+	onMount(() => {
+		replaceState('', `${page}`);
+	});
 </script>
+
+<svelte:window
+	onpopstate={(e) => {
+		const lastPage: number = Number(e.state['sveltekit:states']);
+		if (!isNaN(lastPage)) {
+			page = lastPage;
+			offset = (lastPage - 1) * limit;
+			window.scrollTo(0, 0);
+			onchange?.(lastPage);
+		}
+	}}
+/>
 
 {#key count && limit}
 	<Pagination.Root
 		{count}
+		bind:page
 		perPage={limit}
 		onPageChange={(e) => {
 			offset = (e - 1) * limit;
 			window.scrollTo(0, 0);
+			pushState('', `${e}`);
 			onchange?.(e);
 		}}
 	>

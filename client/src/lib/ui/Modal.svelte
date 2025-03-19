@@ -2,7 +2,8 @@
 	import { X } from '@lucide/svelte';
 	import { Dialog } from 'bits-ui';
 	import { fade } from 'svelte/transition';
-	import type { Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
+	import { pushState } from '$app/navigation';
 
 	let {
 		trigger,
@@ -17,7 +18,24 @@
 	} = $props();
 </script>
 
-<Dialog.Root bind:open>
+<svelte:window
+	onpopstate={() => {
+		if (open) {
+			open = false;
+		}
+	}}
+/>
+
+<Dialog.Root
+	bind:open
+	onOpenChange={(e) => {
+		if (e) {
+			pushState('', '#modal');
+		} else {
+			history.back();
+		}
+	}}
+>
 	<Dialog.Trigger>
 		{#snippet child({ props })}
 			{@render trigger(props)}
