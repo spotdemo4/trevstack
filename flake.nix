@@ -83,8 +83,6 @@
 
             # Svelte frontend
             nodejs_22
-            eslint
-            nodePackages.prettier
 
             # Helper scripts
             (writeShellApplication {
@@ -193,8 +191,8 @@
 
                 cd "''${git_root}/client"
                 echo "Linting client"
-                prettier --check .
-                eslint .
+                npm run check
+                npm run lint
 
                 cd "''${git_root}/server"
                 echo "Linting server"
