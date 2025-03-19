@@ -35,7 +35,7 @@ jobs:
 
       - name: Install npm packages
         working-directory: ./client
-        run: npm ci
+        run: npm ci --legacy-peer-deps
         
       - name: Lint
         run: nix develop --command ts-lint
