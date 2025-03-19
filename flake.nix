@@ -38,7 +38,7 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-sscWJJ64TTMZUQn2Xn7IcOU26SKRTxZY3zdzgT6RMQc=";
+          npmDepsHash = "sha256-l/MIy/XB5zG0T67rVwcX5YSwQqzKBoZiEH+n92DJMJA=";
           nodejs = pkgs.nodejs_22;
           npmFlags = [ "--legacy-peer-deps" ];
 
