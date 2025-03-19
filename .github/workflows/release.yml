@@ -21,7 +21,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
         
       - name: Build
-        run: ts-build
+        run: nix develop --command ts-build
 
       - name: Create release
         uses: googleapis/release-please-action@v4
