@@ -15,19 +15,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Nix
-        uses: nixbuild/nix-quick-install-action@v30
-
-      - name: Restore and save Nix store + go modules + node packages
-        uses: nix-community/cache-nix-action@v6
+      - name: Install nix
+        uses: cachix/install-nix-action@v31
         with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}-
-          gc-max-store-size-linux: 1G
-          purge: true
-          purge-prefixes: nix-${{ runner.os }}-
-          purge-created: 0
-          purge-primary-key: never
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Use cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: trevstack
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Install npm packages
+        working-directory: ./client
+        run: npm ci --legacy-peer-deps
         
       - name: Lint
         run: nix develop --command ts-lint
