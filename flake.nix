@@ -38,13 +38,24 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-W5w/73RZpLDKfWMxEy9ikBnYkeKHMWM3eMN8S7B6mvw=";
+          npmDepsHash = "sha256-ZaJQxuRkWNPsCV+9kwPHAnJTDC8rB7dwUiJGRMZ0QbI=";
           nodejs = pkgs.nodejs_22;
           npmFlags = [ "--legacy-peer-deps" ];
 
           installPhase = ''
             cp -r build "$out"
             chmod -R u+w "$out"
+          '';
+        };
+
+        server = pkgs.buildGoModule {
+          inherit client pname version;
+          src = gitignore.lib.gitignoreSource ./server;
+          vendorHash = "sha256-sANPwYLGwMcWyMR7Veho81aAMfIQpVzZS5Q9eveR8o8=";
+          env.CGO_ENABLED = 0;
+
+          preBuild = ''
+            cp -r ${client} internal/handlers/client/client
           '';
         };
 
@@ -72,6 +83,8 @@
 
             # Svelte frontend
             nodejs_22
+            eslint
+            nodePackages.prettier
 
             # Helper scripts
             (writeShellApplication {
@@ -180,8 +193,8 @@
 
                 cd "''${git_root}/client"
                 echo "Linting client"
-                npm run check
-                npm run lint
+                prettier --check .
+                eslint .
 
                 cd "''${git_root}/server"
                 echo "Linting server"
@@ -221,17 +234,7 @@
         packages = rec {
           default = trevstack;
 
-          trevstack = pkgs.buildGoModule {
-            inherit client pname version;
-            src = gitignore.lib.gitignoreSource ./server;
-            vendorHash = "sha256-sANPwYLGwMcWyMR7Veho81aAMfIQpVzZS5Q9eveR8o8=";
-            env.CGO_ENABLED = 0;
-
-            preBuild = ''
-              cp -r ${client} internal/handlers/client/client
-            '';
-          };
-
+          trevstack = server;
           trevstack-client = client;
         };
       }
