@@ -150,26 +150,21 @@
 
               text = ''
                 git_root=$(git rev-parse --show-toplevel)
-
-                version=$(git describe --abbrev=0)
-                version_no_v="''${version:1}"
-
-                next_version=$(echo "''${version}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
-                next_version_no_v=$(echo "''${version_no_v}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
+                next_version=$(echo "${version}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
 
                 cd "''${git_root}/client"
-                npm version "''${next_version_no_v}"
+                npm version "''${next_version}"
                 git add package-lock.json
                 git add package.json
 
                 cd "''${git_root}"
-                nix-update --flake --version "''${next_version_no_v}" --subpackage client default
+                nix-update --flake --version "''${next_version}" --subpackage client default
                 git add flake.nix
-                git commit -m "bump: ''${version} -> ''${next_version}"
+                git commit -m "bump: ${version} -> ''${next_version}"
                 git push origin main
 
-                git tag -a "''${next_version}" -m "bump: ''${version} -> ''${next_version}"
-                git push origin "''${next_version}"
+                git tag -a "v''${next_version}" -m "bump: ${version} -> ''${next_version}"
+                git push origin "v''${next_version}"
               '';
             })
 
@@ -187,6 +182,33 @@
                 revive -config revive.toml -formatter friendly ./...
               '';
             })
+
+            (writeShellApplication {
+              name = "ts-build";
+
+              text = ''
+                git_root=$(git rev-parse --show-toplevel)
+
+                cd "''${git_root}"
+                echo "Building client"
+                nix build .#trevstack-client
+                cp -a result/. server/internal/handlers/client/client
+                chmod -R u+w server/internal/handlers/client/client
+
+                cd "''${git_root}/server"
+                echo "Building ${pname}-windows-amd64-${version}.exe"
+                GOOS=windows GOARCH=amd64 go build -o "../build/${pname}-windows-amd64-${version}.exe" .
+
+                echo "Building ${pname}-linux-amd64-${version}"
+                GOOS=linux GOARCH=amd64 go build -o "../build/${pname}-linux-amd64-${version}" .
+
+                echo "Building ${pname}-linux-amd64-${version}"
+                GOOS=linux GOARCH=arm64 go build -o "../build/${pname}-linux-arm64-${version}" .
+
+                echo "Building ${pname}-linux-arm-${version}"
+                GOOS=linux GOARCH=arm go build -o "../build/${pname}-linux-arm-${version}" .
+              '';
+            })
           ];
         };
 
@@ -197,11 +219,14 @@
             inherit client pname version;
             src = gitignore.lib.gitignoreSource ./server;
             vendorHash = "sha256-sANPwYLGwMcWyMR7Veho81aAMfIQpVzZS5Q9eveR8o8=";
+            env.CGO_ENABLED = 0;
 
             preBuild = ''
               cp -r ${client} internal/handlers/client/client
             '';
           };
+
+          trevstack-client = client;
         };
       }
     );
