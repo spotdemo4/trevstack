@@ -32,6 +32,10 @@ jobs:
             ~/.cache/go-build
             ~/go/pkg/mod
             ~/.npm
+
+      - name: Install npm packages
+        working-directory: ./client
+        run: npm ci
         
       - name: Lint
         run: nix develop --command ts-lint

@@ -174,11 +174,17 @@
               text = ''
                 git_root=$(git rev-parse --show-toplevel)
 
+                cd "''${git_root}"
+                echo "Linting protobuf"
+                buf lint
+
                 cd "''${git_root}/client"
+                echo "Linting client"
                 npm run check
                 npm run lint
 
                 cd "''${git_root}/server"
+                echo "Linting server"
                 revive -config revive.toml -formatter friendly ./...
               '';
             })
