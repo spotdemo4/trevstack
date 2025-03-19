@@ -160,10 +160,10 @@
                 cd "''${git_root}"
                 nix-update --flake --version "''${next_version}" --subpackage client default
                 git add flake.nix
-                git commit -m "bump: ${version} -> ''${next_version}"
+                git commit -m "bump: v${version} -> v''${next_version}"
                 git push origin main
 
-                git tag -a "v''${next_version}" -m "bump: ${version} -> ''${next_version}"
+                git tag -a "v''${next_version}" -m "bump: v${version} -> v''${next_version}"
                 git push origin "v''${next_version}"
               '';
             })
