@@ -46,18 +46,18 @@
 				{#each ['start', 'end'] as const as type (type)}
 					<DateRangePicker.Input {type}>
 						{#snippet children({ segments })}
-							{#each segments as { part, value } (value)}
+							{#each segments as seg (seg)}
 								<div class="inline-block select-none">
-									{#if part === 'literal'}
-										<DateRangePicker.Segment {part} class="text-overlay-0 p-1">
-											{value}
+									{#if seg.part === 'literal'}
+										<DateRangePicker.Segment part={seg.part} class="text-overlay-0 p-1">
+											{seg.value}
 										</DateRangePicker.Segment>
 									{:else}
 										<DateRangePicker.Segment
-											{part}
+											part={seg.part}
 											class="aria-[valuetext=Empty]:text-overlay-0 hover:bg-surface-0 focus:bg-surface-0 focus:outline-sky rounded p-0.5 transition-all focus:outline focus:outline-offset-1"
 										>
-											{value}
+											{seg.value}
 										</DateRangePicker.Segment>
 									{/if}
 								</div>
@@ -122,7 +122,7 @@
 									</DateRangePicker.NextButton>
 								</DateRangePicker.Header>
 								<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-									{#each months as month (month)}
+									{#each months as month (month.value)}
 										<DateRangePicker.Grid class="w-full border-collapse space-y-1 select-none">
 											<DateRangePicker.GridHead>
 												<DateRangePicker.GridRow class="mb-1 flex w-full justify-between">

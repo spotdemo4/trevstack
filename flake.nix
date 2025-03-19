@@ -185,6 +185,11 @@
               text = ''
                 git_root=$(git rev-parse --show-toplevel)
 
+                if [ -n "''${1:-}" ]; then
+                  cd "''${git_root}/client"
+                  npm run format
+                fi
+
                 cd "''${git_root}"
                 echo "Linting protobuf"
                 buf lint
