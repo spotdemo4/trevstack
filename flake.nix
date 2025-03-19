@@ -72,6 +72,9 @@
 
             # Svelte frontend
             nodejs_22
+            eslint
+            nodePackages.svelte-check
+            nodePackages.prettier
 
             # Helper scripts
             (writeShellApplication {
@@ -180,8 +183,9 @@
 
                 cd "''${git_root}/client"
                 echo "Linting client"
-                npm run check
-                npm run lint
+                svelte-check --tsconfig ./tsconfig.json
+                prettier --check .
+                eslint .
 
                 cd "''${git_root}/server"
                 echo "Linting server"

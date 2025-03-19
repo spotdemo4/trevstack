@@ -28,14 +28,6 @@ jobs:
           purge-prefixes: nix-${{ runner.os }}-
           purge-created: 0
           purge-primary-key: never
-          paths: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-            ~/.npm
-
-      - name: Install npm packages
-        working-directory: ./client
-        run: npm ci --legacy-peer-deps
         
       - name: Lint
         run: nix develop --command ts-lint
