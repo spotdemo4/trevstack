@@ -7,6 +7,8 @@
 	import { Separator } from 'bits-ui';
 	import { toast } from 'svelte-sonner';
 	import { userState } from '$lib/sharedState.svelte';
+	import { createPasskey } from '$lib/webauthn';
+	import { page } from '$app/state';
 	import Avatar from '$lib/ui/Avatar.svelte';
 
 	let openChangeProfilePicture = $state(false);
@@ -17,7 +19,7 @@
 	<div class="m-auto flex w-96 flex-col gap-4 p-4">
 		<div class="flex items-center justify-center gap-4">
 			<div
-				class="outline-surface-2 bg-text text-crust h-9 w-9 rounded-full text-sm outline outline-offset-2 select-none"
+				class="outline-surface-2 bg-text text-crust h-9 w-9 select-none rounded-full text-sm outline outline-offset-2"
 			>
 				<Avatar />
 			</div>
@@ -26,7 +28,7 @@
 
 		<Separator.Root class="bg-surface-0 h-px" />
 
-		<div class="flex justify-around gap-2">
+		<div class="flex flex-wrap justify-around gap-2">
 			<Modal>
 				{#snippet trigger(props)}
 					<Button {...props} className="bg-text">Generate API Key</Button>
@@ -133,6 +135,16 @@
 					</form>
 				{/snippet}
 			</Modal>
+
+			<Button
+				className="bg-text"
+				onclick={async () => {
+					if (userState.user) {
+						await createPasskey(userState.user.username, userState.user.id, "what");
+
+					}
+				}}>Register Device</Button
+			>
 		</div>
 
 		<form

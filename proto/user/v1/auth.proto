@@ -6,6 +6,8 @@ service AuthService {
   rpc Login (LoginRequest) returns (LoginResponse) {}
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {}
   rpc Logout (LogoutRequest) returns (LogoutResponse) {}
+  rpc GetPasskeyIDs (GetPasskeyIDsRequest) returns (GetPasskeyIDsResponse) {}
+  rpc PasskeyLogin (PasskeyLoginRequest) returns (PasskeyLoginResponse) {}
 }
 
 message LoginRequest {
@@ -25,3 +27,19 @@ message SignUpResponse {}
 
 message LogoutRequest {}
 message LogoutResponse {}
+
+message GetPasskeyIDsRequest {
+  string username = 1;
+}
+message GetPasskeyIDsResponse {
+  repeated string passkey_ids = 1;
+}
+
+message PasskeyLoginRequest {
+  string id = 1;
+  bytes signature = 2;
+  int32 algorithm = 3;
+}
+message PasskeyLoginResponse {
+  string token = 1;
+}

@@ -2,238 +2,274 @@
 // @generated from file user/v1/user.proto (package user.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from '@bufbuild/protobuf/codegenv1';
-import { fileDesc, messageDesc, serviceDesc } from '@bufbuild/protobuf/codegenv1';
-import type { Message } from '@bufbuild/protobuf';
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file user/v1/user.proto.
  */
-export const file_user_v1_user: GenFile =
-	/*@__PURE__*/
-	fileDesc(
-		'ChJ1c2VyL3YxL3VzZXIucHJvdG8SB3VzZXIudjEiVgoEVXNlchIKCgJpZBgBIAEoDRIQCgh1c2VybmFtZRgCIAEoCRIcCg9wcm9maWxlX3BpY3R1cmUYAyABKAlIAIgBAUISChBfcHJvZmlsZV9waWN0dXJlIhAKDkdldFVzZXJSZXF1ZXN0Ii4KD0dldFVzZXJSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIl0KFVVwZGF0ZVBhc3N3b3JkUmVxdWVzdBIUCgxvbGRfcGFzc3dvcmQYASABKAkSFAoMbmV3X3Bhc3N3b3JkGAIgASgJEhgKEGNvbmZpcm1fcGFzc3dvcmQYAyABKAkiNQoWVXBkYXRlUGFzc3dvcmRSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIj4KEEdldEFQSUtleVJlcXVlc3QSEAoIcGFzc3dvcmQYASABKAkSGAoQY29uZmlybV9wYXNzd29yZBgCIAEoCSIgChFHZXRBUElLZXlSZXNwb25zZRILCgNrZXkYASABKAkiPgobVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXF1ZXN0EhEKCWZpbGVfbmFtZRgBIAEoCRIMCgRkYXRhGAIgASgMIjsKHFVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVzcG9uc2USGwoEdXNlchgBIAEoCzINLnVzZXIudjEuVXNlcjLPAgoLVXNlclNlcnZpY2USPgoHR2V0VXNlchIXLnVzZXIudjEuR2V0VXNlclJlcXVlc3QaGC51c2VyLnYxLkdldFVzZXJSZXNwb25zZSIAElMKDlVwZGF0ZVBhc3N3b3JkEh4udXNlci52MS5VcGRhdGVQYXNzd29yZFJlcXVlc3QaHy51c2VyLnYxLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2UiABJECglHZXRBUElLZXkSGS51c2VyLnYxLkdldEFQSUtleVJlcXVlc3QaGi51c2VyLnYxLkdldEFQSUtleVJlc3BvbnNlIgASZQoUVXBkYXRlUHJvZmlsZVBpY3R1cmUSJC51c2VyLnYxLlVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVxdWVzdBolLnVzZXIudjEuVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXNwb25zZSIAQp0BCgtjb20udXNlci52MUIJVXNlclByb3RvUAFaRmdpdGh1Yi5jb20vc3BvdGRlbW80L3RyZXZzdGFjay9zZXJ2ZXIvaW50ZXJuYWwvc2VydmljZXMvdXNlci92MTt1c2VydjGiAgNVWFiqAgdVc2VyLlYxygIHVXNlclxWMeICE1VzZXJcVjFcR1BCTWV0YWRhdGHqAghVc2VyOjpWMWIGcHJvdG8z'
-	);
+export const file_user_v1_user: GenFile = /*@__PURE__*/
+  fileDesc("ChJ1c2VyL3YxL3VzZXIucHJvdG8SB3VzZXIudjEiVgoEVXNlchIKCgJpZBgBIAEoDRIQCgh1c2VybmFtZRgCIAEoCRIcCg9wcm9maWxlX3BpY3R1cmUYAyABKAlIAIgBAUISChBfcHJvZmlsZV9waWN0dXJlIhAKDkdldFVzZXJSZXF1ZXN0Ii4KD0dldFVzZXJSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIl0KFVVwZGF0ZVBhc3N3b3JkUmVxdWVzdBIUCgxvbGRfcGFzc3dvcmQYASABKAkSFAoMbmV3X3Bhc3N3b3JkGAIgASgJEhgKEGNvbmZpcm1fcGFzc3dvcmQYAyABKAkiNQoWVXBkYXRlUGFzc3dvcmRSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIj4KEEdldEFQSUtleVJlcXVlc3QSEAoIcGFzc3dvcmQYASABKAkSGAoQY29uZmlybV9wYXNzd29yZBgCIAEoCSIgChFHZXRBUElLZXlSZXNwb25zZRILCgNrZXkYASABKAkiPgobVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXF1ZXN0EhEKCWZpbGVfbmFtZRgBIAEoCRIMCgRkYXRhGAIgASgMIjsKHFVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVzcG9uc2USGwoEdXNlchgBIAEoCzINLnVzZXIudjEuVXNlciI2ChRDcmVhdGVQYXNza2V5UmVxdWVzdBIKCgJpZBgBIAEoCRISCgpwdWJsaWNfa2V5GAIgASgMIhcKFUNyZWF0ZVBhc3NrZXlSZXNwb25zZTKhAwoLVXNlclNlcnZpY2USPgoHR2V0VXNlchIXLnVzZXIudjEuR2V0VXNlclJlcXVlc3QaGC51c2VyLnYxLkdldFVzZXJSZXNwb25zZSIAElMKDlVwZGF0ZVBhc3N3b3JkEh4udXNlci52MS5VcGRhdGVQYXNzd29yZFJlcXVlc3QaHy51c2VyLnYxLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2UiABJECglHZXRBUElLZXkSGS51c2VyLnYxLkdldEFQSUtleVJlcXVlc3QaGi51c2VyLnYxLkdldEFQSUtleVJlc3BvbnNlIgASZQoUVXBkYXRlUHJvZmlsZVBpY3R1cmUSJC51c2VyLnYxLlVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVxdWVzdBolLnVzZXIudjEuVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXNwb25zZSIAElAKDUNyZWF0ZVBhc3NrZXkSHS51c2VyLnYxLkNyZWF0ZVBhc3NrZXlSZXF1ZXN0Gh4udXNlci52MS5DcmVhdGVQYXNza2V5UmVzcG9uc2UiAEKdAQoLY29tLnVzZXIudjFCCVVzZXJQcm90b1ABWkZnaXRodWIuY29tL3Nwb3RkZW1vNC90cmV2c3RhY2svc2VydmVyL2ludGVybmFsL3NlcnZpY2VzL3VzZXIvdjE7dXNlcnYxogIDVVhYqgIHVXNlci5WMcoCB1VzZXJcVjHiAhNVc2VyXFYxXEdQQk1ldGFkYXRh6gIIVXNlcjo6VjFiBnByb3RvMw");
 
 /**
  * @generated from message user.v1.User
  */
-export type User = Message<'user.v1.User'> & {
-	/**
-	 * @generated from field: uint32 id = 1;
-	 */
-	id: number;
+export type User = Message<"user.v1.User"> & {
+  /**
+   * @generated from field: uint32 id = 1;
+   */
+  id: number;
 
-	/**
-	 * @generated from field: string username = 2;
-	 */
-	username: string;
+  /**
+   * @generated from field: string username = 2;
+   */
+  username: string;
 
-	/**
-	 * @generated from field: optional string profile_picture = 3;
-	 */
-	profilePicture?: string;
+  /**
+   * @generated from field: optional string profile_picture = 3;
+   */
+  profilePicture?: string;
 };
 
 /**
  * Describes the message user.v1.User.
  * Use `create(UserSchema)` to create a new message.
  */
-export const UserSchema: GenMessage<User> = /*@__PURE__*/ messageDesc(file_user_v1_user, 0);
+export const UserSchema: GenMessage<User> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 0);
 
 /**
  * @generated from message user.v1.GetUserRequest
  */
-export type GetUserRequest = Message<'user.v1.GetUserRequest'> & {};
+export type GetUserRequest = Message<"user.v1.GetUserRequest"> & {
+};
 
 /**
  * Describes the message user.v1.GetUserRequest.
  * Use `create(GetUserRequestSchema)` to create a new message.
  */
-export const GetUserRequestSchema: GenMessage<GetUserRequest> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 1);
+export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 1);
 
 /**
  * @generated from message user.v1.GetUserResponse
  */
-export type GetUserResponse = Message<'user.v1.GetUserResponse'> & {
-	/**
-	 * @generated from field: user.v1.User user = 1;
-	 */
-	user?: User;
+export type GetUserResponse = Message<"user.v1.GetUserResponse"> & {
+  /**
+   * @generated from field: user.v1.User user = 1;
+   */
+  user?: User;
 };
 
 /**
  * Describes the message user.v1.GetUserResponse.
  * Use `create(GetUserResponseSchema)` to create a new message.
  */
-export const GetUserResponseSchema: GenMessage<GetUserResponse> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 2);
+export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 2);
 
 /**
  * @generated from message user.v1.UpdatePasswordRequest
  */
-export type UpdatePasswordRequest = Message<'user.v1.UpdatePasswordRequest'> & {
-	/**
-	 * @generated from field: string old_password = 1;
-	 */
-	oldPassword: string;
+export type UpdatePasswordRequest = Message<"user.v1.UpdatePasswordRequest"> & {
+  /**
+   * @generated from field: string old_password = 1;
+   */
+  oldPassword: string;
 
-	/**
-	 * @generated from field: string new_password = 2;
-	 */
-	newPassword: string;
+  /**
+   * @generated from field: string new_password = 2;
+   */
+  newPassword: string;
 
-	/**
-	 * @generated from field: string confirm_password = 3;
-	 */
-	confirmPassword: string;
+  /**
+   * @generated from field: string confirm_password = 3;
+   */
+  confirmPassword: string;
 };
 
 /**
  * Describes the message user.v1.UpdatePasswordRequest.
  * Use `create(UpdatePasswordRequestSchema)` to create a new message.
  */
-export const UpdatePasswordRequestSchema: GenMessage<UpdatePasswordRequest> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 3);
+export const UpdatePasswordRequestSchema: GenMessage<UpdatePasswordRequest> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 3);
 
 /**
  * @generated from message user.v1.UpdatePasswordResponse
  */
-export type UpdatePasswordResponse = Message<'user.v1.UpdatePasswordResponse'> & {
-	/**
-	 * @generated from field: user.v1.User user = 1;
-	 */
-	user?: User;
+export type UpdatePasswordResponse = Message<"user.v1.UpdatePasswordResponse"> & {
+  /**
+   * @generated from field: user.v1.User user = 1;
+   */
+  user?: User;
 };
 
 /**
  * Describes the message user.v1.UpdatePasswordResponse.
  * Use `create(UpdatePasswordResponseSchema)` to create a new message.
  */
-export const UpdatePasswordResponseSchema: GenMessage<UpdatePasswordResponse> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 4);
+export const UpdatePasswordResponseSchema: GenMessage<UpdatePasswordResponse> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 4);
 
 /**
  * @generated from message user.v1.GetAPIKeyRequest
  */
-export type GetAPIKeyRequest = Message<'user.v1.GetAPIKeyRequest'> & {
-	/**
-	 * @generated from field: string password = 1;
-	 */
-	password: string;
+export type GetAPIKeyRequest = Message<"user.v1.GetAPIKeyRequest"> & {
+  /**
+   * @generated from field: string password = 1;
+   */
+  password: string;
 
-	/**
-	 * @generated from field: string confirm_password = 2;
-	 */
-	confirmPassword: string;
+  /**
+   * @generated from field: string confirm_password = 2;
+   */
+  confirmPassword: string;
 };
 
 /**
  * Describes the message user.v1.GetAPIKeyRequest.
  * Use `create(GetAPIKeyRequestSchema)` to create a new message.
  */
-export const GetAPIKeyRequestSchema: GenMessage<GetAPIKeyRequest> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 5);
+export const GetAPIKeyRequestSchema: GenMessage<GetAPIKeyRequest> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 5);
 
 /**
  * @generated from message user.v1.GetAPIKeyResponse
  */
-export type GetAPIKeyResponse = Message<'user.v1.GetAPIKeyResponse'> & {
-	/**
-	 * @generated from field: string key = 1;
-	 */
-	key: string;
+export type GetAPIKeyResponse = Message<"user.v1.GetAPIKeyResponse"> & {
+  /**
+   * @generated from field: string key = 1;
+   */
+  key: string;
 };
 
 /**
  * Describes the message user.v1.GetAPIKeyResponse.
  * Use `create(GetAPIKeyResponseSchema)` to create a new message.
  */
-export const GetAPIKeyResponseSchema: GenMessage<GetAPIKeyResponse> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 6);
+export const GetAPIKeyResponseSchema: GenMessage<GetAPIKeyResponse> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 6);
 
 /**
  * @generated from message user.v1.UpdateProfilePictureRequest
  */
-export type UpdateProfilePictureRequest = Message<'user.v1.UpdateProfilePictureRequest'> & {
-	/**
-	 * @generated from field: string file_name = 1;
-	 */
-	fileName: string;
+export type UpdateProfilePictureRequest = Message<"user.v1.UpdateProfilePictureRequest"> & {
+  /**
+   * @generated from field: string file_name = 1;
+   */
+  fileName: string;
 
-	/**
-	 * @generated from field: bytes data = 2;
-	 */
-	data: Uint8Array;
+  /**
+   * @generated from field: bytes data = 2;
+   */
+  data: Uint8Array;
 };
 
 /**
  * Describes the message user.v1.UpdateProfilePictureRequest.
  * Use `create(UpdateProfilePictureRequestSchema)` to create a new message.
  */
-export const UpdateProfilePictureRequestSchema: GenMessage<UpdateProfilePictureRequest> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 7);
+export const UpdateProfilePictureRequestSchema: GenMessage<UpdateProfilePictureRequest> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 7);
 
 /**
  * @generated from message user.v1.UpdateProfilePictureResponse
  */
-export type UpdateProfilePictureResponse = Message<'user.v1.UpdateProfilePictureResponse'> & {
-	/**
-	 * @generated from field: user.v1.User user = 1;
-	 */
-	user?: User;
+export type UpdateProfilePictureResponse = Message<"user.v1.UpdateProfilePictureResponse"> & {
+  /**
+   * @generated from field: user.v1.User user = 1;
+   */
+  user?: User;
 };
 
 /**
  * Describes the message user.v1.UpdateProfilePictureResponse.
  * Use `create(UpdateProfilePictureResponseSchema)` to create a new message.
  */
-export const UpdateProfilePictureResponseSchema: GenMessage<UpdateProfilePictureResponse> =
-	/*@__PURE__*/
-	messageDesc(file_user_v1_user, 8);
+export const UpdateProfilePictureResponseSchema: GenMessage<UpdateProfilePictureResponse> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 8);
+
+/**
+ * @generated from message user.v1.CreatePasskeyRequest
+ */
+export type CreatePasskeyRequest = Message<"user.v1.CreatePasskeyRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: bytes public_key = 2;
+   */
+  publicKey: Uint8Array;
+};
+
+/**
+ * Describes the message user.v1.CreatePasskeyRequest.
+ * Use `create(CreatePasskeyRequestSchema)` to create a new message.
+ */
+export const CreatePasskeyRequestSchema: GenMessage<CreatePasskeyRequest> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 9);
+
+/**
+ * @generated from message user.v1.CreatePasskeyResponse
+ */
+export type CreatePasskeyResponse = Message<"user.v1.CreatePasskeyResponse"> & {
+};
+
+/**
+ * Describes the message user.v1.CreatePasskeyResponse.
+ * Use `create(CreatePasskeyResponseSchema)` to create a new message.
+ */
+export const CreatePasskeyResponseSchema: GenMessage<CreatePasskeyResponse> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 10);
 
 /**
  * @generated from service user.v1.UserService
  */
 export const UserService: GenService<{
-	/**
-	 * @generated from rpc user.v1.UserService.GetUser
-	 */
-	getUser: {
-		methodKind: 'unary';
-		input: typeof GetUserRequestSchema;
-		output: typeof GetUserResponseSchema;
-	};
-	/**
-	 * @generated from rpc user.v1.UserService.UpdatePassword
-	 */
-	updatePassword: {
-		methodKind: 'unary';
-		input: typeof UpdatePasswordRequestSchema;
-		output: typeof UpdatePasswordResponseSchema;
-	};
-	/**
-	 * @generated from rpc user.v1.UserService.GetAPIKey
-	 */
-	getAPIKey: {
-		methodKind: 'unary';
-		input: typeof GetAPIKeyRequestSchema;
-		output: typeof GetAPIKeyResponseSchema;
-	};
-	/**
-	 * @generated from rpc user.v1.UserService.UpdateProfilePicture
-	 */
-	updateProfilePicture: {
-		methodKind: 'unary';
-		input: typeof UpdateProfilePictureRequestSchema;
-		output: typeof UpdateProfilePictureResponseSchema;
-	};
-}> = /*@__PURE__*/ serviceDesc(file_user_v1_user, 0);
+  /**
+   * @generated from rpc user.v1.UserService.GetUser
+   */
+  getUser: {
+    methodKind: "unary";
+    input: typeof GetUserRequestSchema;
+    output: typeof GetUserResponseSchema;
+  },
+  /**
+   * @generated from rpc user.v1.UserService.UpdatePassword
+   */
+  updatePassword: {
+    methodKind: "unary";
+    input: typeof UpdatePasswordRequestSchema;
+    output: typeof UpdatePasswordResponseSchema;
+  },
+  /**
+   * @generated from rpc user.v1.UserService.GetAPIKey
+   */
+  getAPIKey: {
+    methodKind: "unary";
+    input: typeof GetAPIKeyRequestSchema;
+    output: typeof GetAPIKeyResponseSchema;
+  },
+  /**
+   * @generated from rpc user.v1.UserService.UpdateProfilePicture
+   */
+  updateProfilePicture: {
+    methodKind: "unary";
+    input: typeof UpdateProfilePictureRequestSchema;
+    output: typeof UpdateProfilePictureResponseSchema;
+  },
+  /**
+   * @generated from rpc user.v1.UserService.CreatePasskey
+   */
+  createPasskey: {
+    methodKind: "unary";
+    input: typeof CreatePasskeyRequestSchema;
+    output: typeof CreatePasskeyResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_user_v1_user, 0);
+

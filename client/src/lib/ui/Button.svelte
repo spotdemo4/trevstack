@@ -12,7 +12,7 @@
 	}: {
 		className?: string;
 		type?: 'submit' | 'reset' | 'button' | null;
-		onclick?: () => MouseEventHandler<HTMLButtonElement> | null | undefined;
+		onclick?: () => void;
 		children?: Snippet<[]>;
 	} = $props();
 </script>
@@ -23,7 +23,9 @@
 		'bg-sky text-crust focus:outline-sky flex w-fit cursor-pointer items-center justify-center rounded p-2 px-4 text-sm font-medium transition-all hover:brightness-120 focus:outline-2 focus:outline-offset-1',
 		className
 	)}
-	{onclick}
+	onclick={() => {
+		onclick?.();
+	}}
 >
 	{@render children?.()}
 </Button.Root>

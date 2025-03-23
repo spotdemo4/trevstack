@@ -169,6 +169,36 @@ func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request
 	return res, nil
 }
 
+// func BeginRegistration(ctx context.Context) error {
+// 	userid, ok := interceptors.GetUserContext(ctx)
+// 	if !ok {
+// 		return nil
+// 	}
+
+// 	wconfig := &webauthn.Config{
+// 		RPDisplayName: "Go Webauthn",                               // Display Name for your site
+// 		RPID:          "go-webauthn.local",                         // Generally the FQDN for your site
+// 		RPOrigins:     []string{"https://login.go-webauthn.local"}, // The origin URLs allowed for WebAuthn requests
+// 	}
+// 	webAuthn, err := webauthn.New(wconfig)
+// 	if err != nil {
+// 		return nil
+// 	}
+
+// 	var user webauthn.User
+// 	user.WebAuthnCredentials()
+
+// 	var cred webauthn.Credential
+// 	cred.Verify()
+
+// 	var test metadata.Provider
+// 	test.
+
+// 	options, session, err := webAuthn.BeginRegistration(user)
+
+// 	return nil
+// }
+
 func NewHandler(db *gorm.DB, key string) (string, http.Handler) {
 	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
 

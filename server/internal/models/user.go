@@ -9,8 +9,12 @@ import (
 type User struct {
 	ID uint32 `gorm:"primaryKey"`
 
-	Username string
-	Password string
+	Username  string
+	Password  string
+	Challenge *string
+
+	// Passkeys
+	Passkeys []Passkey
 
 	// Profile picture
 	ProfilePictureID *uint

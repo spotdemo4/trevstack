@@ -7,12 +7,15 @@ import (
 	"strconv"
 	"time"
 
+	_ "crypto/sha256"
+
 	"connectrpc.com/connect"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 	"github.com/spotdemo4/trevstack/server/internal/models"
 	userv1 "github.com/spotdemo4/trevstack/server/internal/services/user/v1"
 	"github.com/spotdemo4/trevstack/server/internal/services/user/v1/userv1connect"
+	"github.com/veraison/go-cose"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -114,6 +117,94 @@ func (h *AuthHandler) Logout(_ context.Context, _ *connect.Request[userv1.Logout
 	}
 
 	res := connect.NewResponse(&userv1.LogoutResponse{})
+	res.Header().Set("Set-Cookie", cookie.String())
+	return res, nil
+}
+
+func (h *AuthHandler) GetPasskeyIDs(_ context.Context, req *connect.Request[userv1.GetPasskeyIDsRequest]) (*connect.Response[userv1.GetPasskeyIDsResponse], error) {
+	// Get user
+	user := models.User{}
+	if err := h.db.Preload("Passkeys").First(&user, "username = ?", req.Msg.Username).Error; err != nil {
+		return nil, connect.NewError(connect.CodeNotFound, err)
+	}
+
+	// Get IDs
+	ids := []string{}
+	for _, passkey := range user.Passkeys {
+		ids = append(ids, passkey.ID)
+	}
+
+	return connect.NewResponse(&userv1.GetPasskeyIDsResponse{
+		PasskeyIds: ids,
+	}), nil
+}
+
+func (h *AuthHandler) PasskeyLogin(_ context.Context, req *connect.Request[userv1.PasskeyLoginRequest]) (*connect.Response[userv1.PasskeyLoginResponse], error) {
+	// Get passkey
+	passkey := models.Passkey{}
+	if err := h.db.First(&passkey, "id = ?", req.Msg.Id).Error; err != nil {
+		return nil, connect.NewError(connect.CodeNotFound, err)
+	}
+
+	// create a verifier from a trusted private key
+	var verifier cose.Verifier
+	var err error
+	switch req.Msg.Algorithm {
+	case -7:
+		verifier, err = cose.NewVerifier(cose.AlgorithmES256, passkey.PublicKey)
+
+	case -257:
+		verifier, err = cose.NewVerifier(cose.AlgorithmRS256, passkey.PublicKey)
+
+	default:
+		return nil, connect.NewError(connect.CodeInternal, errors.New("decode algorithm not implemented"))
+	}
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	// create a sign message from a raw signature payload
+	var msg cose.Sign1Message
+	if err = msg.UnmarshalCBOR(req.Msg.Signature); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	// Validate passkey
+	err = msg.Verify(nil, verifier)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	// Generate JWT
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Issuer:  "trevstack",
+		Subject: strconv.FormatUint(uint64(passkey.UserID), 10),
+		IssuedAt: &jwt.NumericDate{
+			Time: time.Now(),
+		},
+		ExpiresAt: &jwt.NumericDate{
+			Time: time.Now().Add(time.Hour * 24),
+		},
+	})
+	ss, err := t.SignedString(h.key)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	// Create cookie
+	cookie := http.Cookie{
+		Name:     "token",
+		Value:    ss,
+		Path:     "/",
+		MaxAge:   86400,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+
+	res := connect.NewResponse(&userv1.PasskeyLoginResponse{
+		Token: ss,
+	})
 	res.Header().Set("Set-Cookie", cookie.String())
 	return res, nil
 }

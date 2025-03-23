@@ -13,6 +13,7 @@ service UserService {
   rpc UpdatePassword (UpdatePasswordRequest) returns (UpdatePasswordResponse) {}
   rpc GetAPIKey (GetAPIKeyRequest) returns (GetAPIKeyResponse) {}
   rpc UpdateProfilePicture (UpdateProfilePictureRequest) returns (UpdateProfilePictureResponse) {}
+  rpc CreatePasskey (CreatePasskeyRequest) returns (CreatePasskeyResponse) {}
 }
 
 message GetUserRequest {}
@@ -44,3 +45,9 @@ message UpdateProfilePictureRequest {
 message UpdateProfilePictureResponse {
   User user = 1;
 }
+
+message CreatePasskeyRequest {
+  string id = 1;
+  bytes public_key = 2;
+}
+message CreatePasskeyResponse {}

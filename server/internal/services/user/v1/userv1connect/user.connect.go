@@ -43,6 +43,9 @@ const (
 	// UserServiceUpdateProfilePictureProcedure is the fully-qualified name of the UserService's
 	// UpdateProfilePicture RPC.
 	UserServiceUpdateProfilePictureProcedure = "/user.v1.UserService/UpdateProfilePicture"
+	// UserServiceCreatePasskeyProcedure is the fully-qualified name of the UserService's CreatePasskey
+	// RPC.
+	UserServiceCreatePasskeyProcedure = "/user.v1.UserService/CreatePasskey"
 )
 
 // UserServiceClient is a client for the user.v1.UserService service.
@@ -51,6 +54,7 @@ type UserServiceClient interface {
 	UpdatePassword(context.Context, *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error)
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error)
 	UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error)
+	CreatePasskey(context.Context, *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the user.v1.UserService service. By default, it uses
@@ -88,6 +92,12 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(userServiceMethods.ByName("UpdateProfilePicture")),
 			connect.WithClientOptions(opts...),
 		),
+		createPasskey: connect.NewClient[v1.CreatePasskeyRequest, v1.CreatePasskeyResponse](
+			httpClient,
+			baseURL+UserServiceCreatePasskeyProcedure,
+			connect.WithSchema(userServiceMethods.ByName("CreatePasskey")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -97,6 +107,7 @@ type userServiceClient struct {
 	updatePassword       *connect.Client[v1.UpdatePasswordRequest, v1.UpdatePasswordResponse]
 	getAPIKey            *connect.Client[v1.GetAPIKeyRequest, v1.GetAPIKeyResponse]
 	updateProfilePicture *connect.Client[v1.UpdateProfilePictureRequest, v1.UpdateProfilePictureResponse]
+	createPasskey        *connect.Client[v1.CreatePasskeyRequest, v1.CreatePasskeyResponse]
 }
 
 // GetUser calls user.v1.UserService.GetUser.
@@ -119,12 +130,18 @@ func (c *userServiceClient) UpdateProfilePicture(ctx context.Context, req *conne
 	return c.updateProfilePicture.CallUnary(ctx, req)
 }
 
+// CreatePasskey calls user.v1.UserService.CreatePasskey.
+func (c *userServiceClient) CreatePasskey(ctx context.Context, req *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error) {
+	return c.createPasskey.CallUnary(ctx, req)
+}
+
 // UserServiceHandler is an implementation of the user.v1.UserService service.
 type UserServiceHandler interface {
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
 	UpdatePassword(context.Context, *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error)
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error)
 	UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error)
+	CreatePasskey(context.Context, *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -158,6 +175,12 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(userServiceMethods.ByName("UpdateProfilePicture")),
 		connect.WithHandlerOptions(opts...),
 	)
+	userServiceCreatePasskeyHandler := connect.NewUnaryHandler(
+		UserServiceCreatePasskeyProcedure,
+		svc.CreatePasskey,
+		connect.WithSchema(userServiceMethods.ByName("CreatePasskey")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/user.v1.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case UserServiceGetUserProcedure:
@@ -168,6 +191,8 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 			userServiceGetAPIKeyHandler.ServeHTTP(w, r)
 		case UserServiceUpdateProfilePictureProcedure:
 			userServiceUpdateProfilePictureHandler.ServeHTTP(w, r)
+		case UserServiceCreatePasskeyProcedure:
+			userServiceCreatePasskeyHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -191,4 +216,8 @@ func (UnimplementedUserServiceHandler) GetAPIKey(context.Context, *connect.Reque
 
 func (UnimplementedUserServiceHandler) UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.UpdateProfilePicture is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) CreatePasskey(context.Context, *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.CreatePasskey is not implemented"))
 }

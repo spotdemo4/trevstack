@@ -292,6 +292,24 @@ components:
           additionalProperties: true
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+    user.v1.GetPasskeyIDsRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          title: username
+      title: GetPasskeyIDsRequest
+      additionalProperties: false
+    user.v1.GetPasskeyIDsResponse:
+      type: object
+      properties:
+        passkeyIds:
+          type: array
+          items:
+            type: string
+          title: passkey_ids
+      title: GetPasskeyIDsResponse
+      additionalProperties: false
     user.v1.LoginRequest:
       type: object
       properties:
@@ -319,6 +337,30 @@ components:
       type: object
       title: LogoutResponse
       additionalProperties: false
+    user.v1.PasskeyLoginRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        signature:
+          type: string
+          title: signature
+          format: byte
+        algorithm:
+          type: integer
+          title: algorithm
+          format: int32
+      title: PasskeyLoginRequest
+      additionalProperties: false
+    user.v1.PasskeyLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          title: token
+      title: PasskeyLoginResponse
+      additionalProperties: false
     user.v1.SignUpRequest:
       type: object
       properties:
@@ -336,6 +378,22 @@ components:
     user.v1.SignUpResponse:
       type: object
       title: SignUpResponse
+      additionalProperties: false
+    user.v1.CreatePasskeyRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          title: id
+        publicKey:
+          type: string
+          title: public_key
+          format: byte
+      title: CreatePasskeyRequest
+      additionalProperties: false
+    user.v1.CreatePasskeyResponse:
+      type: object
+      title: CreatePasskeyResponse
       additionalProperties: false
     user.v1.GetAPIKeyRequest:
       type: object
@@ -708,6 +766,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user.v1.LogoutResponse'
+  /user.v1.AuthService/GetPasskeyIDs:
+    post:
+      tags:
+        - user.v1.AuthService
+      summary: GetPasskeyIDs
+      operationId: user.v1.AuthService.GetPasskeyIDs
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.GetPasskeyIDsRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.GetPasskeyIDsResponse'
+  /user.v1.AuthService/PasskeyLogin:
+    post:
+      tags:
+        - user.v1.AuthService
+      summary: PasskeyLogin
+      operationId: user.v1.AuthService.PasskeyLogin
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.PasskeyLoginRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.PasskeyLoginResponse'
   /user.v1.UserService/GetUser:
     post:
       tags:
@@ -848,6 +976,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user.v1.UpdateProfilePictureResponse'
+  /user.v1.UserService/CreatePasskey:
+    post:
+      tags:
+        - user.v1.UserService
+      summary: CreatePasskey
+      operationId: user.v1.UserService.CreatePasskey
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.CreatePasskeyRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.CreatePasskeyResponse'
 tags:
   - name: item.v1.ItemService
   - name: user.v1.AuthService
