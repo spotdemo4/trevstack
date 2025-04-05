@@ -42,9 +42,12 @@ const (
 	// AuthServiceGetPasskeyIDsProcedure is the fully-qualified name of the AuthService's GetPasskeyIDs
 	// RPC.
 	AuthServiceGetPasskeyIDsProcedure = "/user.v1.AuthService/GetPasskeyIDs"
-	// AuthServicePasskeyLoginProcedure is the fully-qualified name of the AuthService's PasskeyLogin
-	// RPC.
-	AuthServicePasskeyLoginProcedure = "/user.v1.AuthService/PasskeyLogin"
+	// AuthServiceBeginPasskeyLoginProcedure is the fully-qualified name of the AuthService's
+	// BeginPasskeyLogin RPC.
+	AuthServiceBeginPasskeyLoginProcedure = "/user.v1.AuthService/BeginPasskeyLogin"
+	// AuthServiceFinishPasskeyLoginProcedure is the fully-qualified name of the AuthService's
+	// FinishPasskeyLogin RPC.
+	AuthServiceFinishPasskeyLoginProcedure = "/user.v1.AuthService/FinishPasskeyLogin"
 )
 
 // AuthServiceClient is a client for the user.v1.AuthService service.
@@ -53,7 +56,8 @@ type AuthServiceClient interface {
 	SignUp(context.Context, *connect.Request[v1.SignUpRequest]) (*connect.Response[v1.SignUpResponse], error)
 	Logout(context.Context, *connect.Request[v1.LogoutRequest]) (*connect.Response[v1.LogoutResponse], error)
 	GetPasskeyIDs(context.Context, *connect.Request[v1.GetPasskeyIDsRequest]) (*connect.Response[v1.GetPasskeyIDsResponse], error)
-	PasskeyLogin(context.Context, *connect.Request[v1.PasskeyLoginRequest]) (*connect.Response[v1.PasskeyLoginResponse], error)
+	BeginPasskeyLogin(context.Context, *connect.Request[v1.BeginPasskeyLoginRequest]) (*connect.Response[v1.BeginPasskeyLoginResponse], error)
+	FinishPasskeyLogin(context.Context, *connect.Request[v1.FinishPasskeyLoginRequest]) (*connect.Response[v1.FinishPasskeyLoginResponse], error)
 }
 
 // NewAuthServiceClient constructs a client for the user.v1.AuthService service. By default, it uses
@@ -91,10 +95,16 @@ func NewAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(authServiceMethods.ByName("GetPasskeyIDs")),
 			connect.WithClientOptions(opts...),
 		),
-		passkeyLogin: connect.NewClient[v1.PasskeyLoginRequest, v1.PasskeyLoginResponse](
+		beginPasskeyLogin: connect.NewClient[v1.BeginPasskeyLoginRequest, v1.BeginPasskeyLoginResponse](
 			httpClient,
-			baseURL+AuthServicePasskeyLoginProcedure,
-			connect.WithSchema(authServiceMethods.ByName("PasskeyLogin")),
+			baseURL+AuthServiceBeginPasskeyLoginProcedure,
+			connect.WithSchema(authServiceMethods.ByName("BeginPasskeyLogin")),
+			connect.WithClientOptions(opts...),
+		),
+		finishPasskeyLogin: connect.NewClient[v1.FinishPasskeyLoginRequest, v1.FinishPasskeyLoginResponse](
+			httpClient,
+			baseURL+AuthServiceFinishPasskeyLoginProcedure,
+			connect.WithSchema(authServiceMethods.ByName("FinishPasskeyLogin")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -102,11 +112,12 @@ func NewAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // authServiceClient implements AuthServiceClient.
 type authServiceClient struct {
-	login         *connect.Client[v1.LoginRequest, v1.LoginResponse]
-	signUp        *connect.Client[v1.SignUpRequest, v1.SignUpResponse]
-	logout        *connect.Client[v1.LogoutRequest, v1.LogoutResponse]
-	getPasskeyIDs *connect.Client[v1.GetPasskeyIDsRequest, v1.GetPasskeyIDsResponse]
-	passkeyLogin  *connect.Client[v1.PasskeyLoginRequest, v1.PasskeyLoginResponse]
+	login              *connect.Client[v1.LoginRequest, v1.LoginResponse]
+	signUp             *connect.Client[v1.SignUpRequest, v1.SignUpResponse]
+	logout             *connect.Client[v1.LogoutRequest, v1.LogoutResponse]
+	getPasskeyIDs      *connect.Client[v1.GetPasskeyIDsRequest, v1.GetPasskeyIDsResponse]
+	beginPasskeyLogin  *connect.Client[v1.BeginPasskeyLoginRequest, v1.BeginPasskeyLoginResponse]
+	finishPasskeyLogin *connect.Client[v1.FinishPasskeyLoginRequest, v1.FinishPasskeyLoginResponse]
 }
 
 // Login calls user.v1.AuthService.Login.
@@ -129,9 +140,14 @@ func (c *authServiceClient) GetPasskeyIDs(ctx context.Context, req *connect.Requ
 	return c.getPasskeyIDs.CallUnary(ctx, req)
 }
 
-// PasskeyLogin calls user.v1.AuthService.PasskeyLogin.
-func (c *authServiceClient) PasskeyLogin(ctx context.Context, req *connect.Request[v1.PasskeyLoginRequest]) (*connect.Response[v1.PasskeyLoginResponse], error) {
-	return c.passkeyLogin.CallUnary(ctx, req)
+// BeginPasskeyLogin calls user.v1.AuthService.BeginPasskeyLogin.
+func (c *authServiceClient) BeginPasskeyLogin(ctx context.Context, req *connect.Request[v1.BeginPasskeyLoginRequest]) (*connect.Response[v1.BeginPasskeyLoginResponse], error) {
+	return c.beginPasskeyLogin.CallUnary(ctx, req)
+}
+
+// FinishPasskeyLogin calls user.v1.AuthService.FinishPasskeyLogin.
+func (c *authServiceClient) FinishPasskeyLogin(ctx context.Context, req *connect.Request[v1.FinishPasskeyLoginRequest]) (*connect.Response[v1.FinishPasskeyLoginResponse], error) {
+	return c.finishPasskeyLogin.CallUnary(ctx, req)
 }
 
 // AuthServiceHandler is an implementation of the user.v1.AuthService service.
@@ -140,7 +156,8 @@ type AuthServiceHandler interface {
 	SignUp(context.Context, *connect.Request[v1.SignUpRequest]) (*connect.Response[v1.SignUpResponse], error)
 	Logout(context.Context, *connect.Request[v1.LogoutRequest]) (*connect.Response[v1.LogoutResponse], error)
 	GetPasskeyIDs(context.Context, *connect.Request[v1.GetPasskeyIDsRequest]) (*connect.Response[v1.GetPasskeyIDsResponse], error)
-	PasskeyLogin(context.Context, *connect.Request[v1.PasskeyLoginRequest]) (*connect.Response[v1.PasskeyLoginResponse], error)
+	BeginPasskeyLogin(context.Context, *connect.Request[v1.BeginPasskeyLoginRequest]) (*connect.Response[v1.BeginPasskeyLoginResponse], error)
+	FinishPasskeyLogin(context.Context, *connect.Request[v1.FinishPasskeyLoginRequest]) (*connect.Response[v1.FinishPasskeyLoginResponse], error)
 }
 
 // NewAuthServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -174,10 +191,16 @@ func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(authServiceMethods.ByName("GetPasskeyIDs")),
 		connect.WithHandlerOptions(opts...),
 	)
-	authServicePasskeyLoginHandler := connect.NewUnaryHandler(
-		AuthServicePasskeyLoginProcedure,
-		svc.PasskeyLogin,
-		connect.WithSchema(authServiceMethods.ByName("PasskeyLogin")),
+	authServiceBeginPasskeyLoginHandler := connect.NewUnaryHandler(
+		AuthServiceBeginPasskeyLoginProcedure,
+		svc.BeginPasskeyLogin,
+		connect.WithSchema(authServiceMethods.ByName("BeginPasskeyLogin")),
+		connect.WithHandlerOptions(opts...),
+	)
+	authServiceFinishPasskeyLoginHandler := connect.NewUnaryHandler(
+		AuthServiceFinishPasskeyLoginProcedure,
+		svc.FinishPasskeyLogin,
+		connect.WithSchema(authServiceMethods.ByName("FinishPasskeyLogin")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/user.v1.AuthService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -190,8 +213,10 @@ func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption
 			authServiceLogoutHandler.ServeHTTP(w, r)
 		case AuthServiceGetPasskeyIDsProcedure:
 			authServiceGetPasskeyIDsHandler.ServeHTTP(w, r)
-		case AuthServicePasskeyLoginProcedure:
-			authServicePasskeyLoginHandler.ServeHTTP(w, r)
+		case AuthServiceBeginPasskeyLoginProcedure:
+			authServiceBeginPasskeyLoginHandler.ServeHTTP(w, r)
+		case AuthServiceFinishPasskeyLoginProcedure:
+			authServiceFinishPasskeyLoginHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -217,6 +242,10 @@ func (UnimplementedAuthServiceHandler) GetPasskeyIDs(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.AuthService.GetPasskeyIDs is not implemented"))
 }
 
-func (UnimplementedAuthServiceHandler) PasskeyLogin(context.Context, *connect.Request[v1.PasskeyLoginRequest]) (*connect.Response[v1.PasskeyLoginResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.AuthService.PasskeyLogin is not implemented"))
+func (UnimplementedAuthServiceHandler) BeginPasskeyLogin(context.Context, *connect.Request[v1.BeginPasskeyLoginRequest]) (*connect.Response[v1.BeginPasskeyLoginResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.AuthService.BeginPasskeyLogin is not implemented"))
+}
+
+func (UnimplementedAuthServiceHandler) FinishPasskeyLogin(context.Context, *connect.Request[v1.FinishPasskeyLoginRequest]) (*connect.Response[v1.FinishPasskeyLoginResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.AuthService.FinishPasskeyLogin is not implemented"))
 }

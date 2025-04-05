@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file user/v1/user.proto.
  */
 export const file_user_v1_user: GenFile = /*@__PURE__*/
-  fileDesc("ChJ1c2VyL3YxL3VzZXIucHJvdG8SB3VzZXIudjEiVgoEVXNlchIKCgJpZBgBIAEoDRIQCgh1c2VybmFtZRgCIAEoCRIcCg9wcm9maWxlX3BpY3R1cmUYAyABKAlIAIgBAUISChBfcHJvZmlsZV9waWN0dXJlIhAKDkdldFVzZXJSZXF1ZXN0Ii4KD0dldFVzZXJSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIl0KFVVwZGF0ZVBhc3N3b3JkUmVxdWVzdBIUCgxvbGRfcGFzc3dvcmQYASABKAkSFAoMbmV3X3Bhc3N3b3JkGAIgASgJEhgKEGNvbmZpcm1fcGFzc3dvcmQYAyABKAkiNQoWVXBkYXRlUGFzc3dvcmRSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIj4KEEdldEFQSUtleVJlcXVlc3QSEAoIcGFzc3dvcmQYASABKAkSGAoQY29uZmlybV9wYXNzd29yZBgCIAEoCSIgChFHZXRBUElLZXlSZXNwb25zZRILCgNrZXkYASABKAkiPgobVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXF1ZXN0EhEKCWZpbGVfbmFtZRgBIAEoCRIMCgRkYXRhGAIgASgMIjsKHFVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVzcG9uc2USGwoEdXNlchgBIAEoCzINLnVzZXIudjEuVXNlciI2ChRDcmVhdGVQYXNza2V5UmVxdWVzdBIKCgJpZBgBIAEoCRISCgpwdWJsaWNfa2V5GAIgASgMIhcKFUNyZWF0ZVBhc3NrZXlSZXNwb25zZTKhAwoLVXNlclNlcnZpY2USPgoHR2V0VXNlchIXLnVzZXIudjEuR2V0VXNlclJlcXVlc3QaGC51c2VyLnYxLkdldFVzZXJSZXNwb25zZSIAElMKDlVwZGF0ZVBhc3N3b3JkEh4udXNlci52MS5VcGRhdGVQYXNzd29yZFJlcXVlc3QaHy51c2VyLnYxLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2UiABJECglHZXRBUElLZXkSGS51c2VyLnYxLkdldEFQSUtleVJlcXVlc3QaGi51c2VyLnYxLkdldEFQSUtleVJlc3BvbnNlIgASZQoUVXBkYXRlUHJvZmlsZVBpY3R1cmUSJC51c2VyLnYxLlVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVxdWVzdBolLnVzZXIudjEuVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXNwb25zZSIAElAKDUNyZWF0ZVBhc3NrZXkSHS51c2VyLnYxLkNyZWF0ZVBhc3NrZXlSZXF1ZXN0Gh4udXNlci52MS5DcmVhdGVQYXNza2V5UmVzcG9uc2UiAEKdAQoLY29tLnVzZXIudjFCCVVzZXJQcm90b1ABWkZnaXRodWIuY29tL3Nwb3RkZW1vNC90cmV2c3RhY2svc2VydmVyL2ludGVybmFsL3NlcnZpY2VzL3VzZXIvdjE7dXNlcnYxogIDVVhYqgIHVXNlci5WMcoCB1VzZXJcVjHiAhNVc2VyXFYxXEdQQk1ldGFkYXRh6gIIVXNlcjo6VjFiBnByb3RvMw");
+  fileDesc("ChJ1c2VyL3YxL3VzZXIucHJvdG8SB3VzZXIudjEiVgoEVXNlchIKCgJpZBgBIAEoDRIQCgh1c2VybmFtZRgCIAEoCRIcCg9wcm9maWxlX3BpY3R1cmUYAyABKAlIAIgBAUISChBfcHJvZmlsZV9waWN0dXJlIhAKDkdldFVzZXJSZXF1ZXN0Ii4KD0dldFVzZXJSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIl0KFVVwZGF0ZVBhc3N3b3JkUmVxdWVzdBIUCgxvbGRfcGFzc3dvcmQYASABKAkSFAoMbmV3X3Bhc3N3b3JkGAIgASgJEhgKEGNvbmZpcm1fcGFzc3dvcmQYAyABKAkiNQoWVXBkYXRlUGFzc3dvcmRSZXNwb25zZRIbCgR1c2VyGAEgASgLMg0udXNlci52MS5Vc2VyIj4KEEdldEFQSUtleVJlcXVlc3QSEAoIcGFzc3dvcmQYASABKAkSGAoQY29uZmlybV9wYXNzd29yZBgCIAEoCSIgChFHZXRBUElLZXlSZXNwb25zZRILCgNrZXkYASABKAkiPgobVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXF1ZXN0EhEKCWZpbGVfbmFtZRgBIAEoCRIMCgRkYXRhGAIgASgMIjsKHFVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVzcG9uc2USGwoEdXNlchgBIAEoCzINLnVzZXIudjEuVXNlciIhCh9CZWdpblBhc3NrZXlSZWdpc3RyYXRpb25SZXF1ZXN0IiIKIEJlZ2luUGFzc2tleVJlZ2lzdHJhdGlvblJlc3BvbnNlIiIKIEZpbmlzaFBhc3NrZXlSZWdpc3RyYXRpb25SZXF1ZXN0IiMKIUZpbmlzaFBhc3NrZXlSZWdpc3RyYXRpb25SZXNwb25zZTK4BAoLVXNlclNlcnZpY2USPgoHR2V0VXNlchIXLnVzZXIudjEuR2V0VXNlclJlcXVlc3QaGC51c2VyLnYxLkdldFVzZXJSZXNwb25zZSIAElMKDlVwZGF0ZVBhc3N3b3JkEh4udXNlci52MS5VcGRhdGVQYXNzd29yZFJlcXVlc3QaHy51c2VyLnYxLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2UiABJECglHZXRBUElLZXkSGS51c2VyLnYxLkdldEFQSUtleVJlcXVlc3QaGi51c2VyLnYxLkdldEFQSUtleVJlc3BvbnNlIgASZQoUVXBkYXRlUHJvZmlsZVBpY3R1cmUSJC51c2VyLnYxLlVwZGF0ZVByb2ZpbGVQaWN0dXJlUmVxdWVzdBolLnVzZXIudjEuVXBkYXRlUHJvZmlsZVBpY3R1cmVSZXNwb25zZSIAEnEKGEJlZ2luUGFzc2tleVJlZ2lzdHJhdGlvbhIoLnVzZXIudjEuQmVnaW5QYXNza2V5UmVnaXN0cmF0aW9uUmVxdWVzdBopLnVzZXIudjEuQmVnaW5QYXNza2V5UmVnaXN0cmF0aW9uUmVzcG9uc2UiABJ0ChlGaW5pc2hQYXNza2V5UmVnaXN0cmF0aW9uEikudXNlci52MS5GaW5pc2hQYXNza2V5UmVnaXN0cmF0aW9uUmVxdWVzdBoqLnVzZXIudjEuRmluaXNoUGFzc2tleVJlZ2lzdHJhdGlvblJlc3BvbnNlIgBCnQEKC2NvbS51c2VyLnYxQglVc2VyUHJvdG9QAVpGZ2l0aHViLmNvbS9zcG90ZGVtbzQvdHJldnN0YWNrL3NlcnZlci9pbnRlcm5hbC9zZXJ2aWNlcy91c2VyL3YxO3VzZXJ2MaICA1VYWKoCB1VzZXIuVjHKAgdVc2VyXFYx4gITVXNlclxWMVxHUEJNZXRhZGF0YeoCCFVzZXI6OlYxYgZwcm90bzM");
 
 /**
  * @generated from message user.v1.User
@@ -192,39 +192,56 @@ export const UpdateProfilePictureResponseSchema: GenMessage<UpdateProfilePicture
   messageDesc(file_user_v1_user, 8);
 
 /**
- * @generated from message user.v1.CreatePasskeyRequest
+ * @generated from message user.v1.BeginPasskeyRegistrationRequest
  */
-export type CreatePasskeyRequest = Message<"user.v1.CreatePasskeyRequest"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
-
-  /**
-   * @generated from field: bytes public_key = 2;
-   */
-  publicKey: Uint8Array;
+export type BeginPasskeyRegistrationRequest = Message<"user.v1.BeginPasskeyRegistrationRequest"> & {
 };
 
 /**
- * Describes the message user.v1.CreatePasskeyRequest.
- * Use `create(CreatePasskeyRequestSchema)` to create a new message.
+ * Describes the message user.v1.BeginPasskeyRegistrationRequest.
+ * Use `create(BeginPasskeyRegistrationRequestSchema)` to create a new message.
  */
-export const CreatePasskeyRequestSchema: GenMessage<CreatePasskeyRequest> = /*@__PURE__*/
+export const BeginPasskeyRegistrationRequestSchema: GenMessage<BeginPasskeyRegistrationRequest> = /*@__PURE__*/
   messageDesc(file_user_v1_user, 9);
 
 /**
- * @generated from message user.v1.CreatePasskeyResponse
+ * @generated from message user.v1.BeginPasskeyRegistrationResponse
  */
-export type CreatePasskeyResponse = Message<"user.v1.CreatePasskeyResponse"> & {
+export type BeginPasskeyRegistrationResponse = Message<"user.v1.BeginPasskeyRegistrationResponse"> & {
 };
 
 /**
- * Describes the message user.v1.CreatePasskeyResponse.
- * Use `create(CreatePasskeyResponseSchema)` to create a new message.
+ * Describes the message user.v1.BeginPasskeyRegistrationResponse.
+ * Use `create(BeginPasskeyRegistrationResponseSchema)` to create a new message.
  */
-export const CreatePasskeyResponseSchema: GenMessage<CreatePasskeyResponse> = /*@__PURE__*/
+export const BeginPasskeyRegistrationResponseSchema: GenMessage<BeginPasskeyRegistrationResponse> = /*@__PURE__*/
   messageDesc(file_user_v1_user, 10);
+
+/**
+ * @generated from message user.v1.FinishPasskeyRegistrationRequest
+ */
+export type FinishPasskeyRegistrationRequest = Message<"user.v1.FinishPasskeyRegistrationRequest"> & {
+};
+
+/**
+ * Describes the message user.v1.FinishPasskeyRegistrationRequest.
+ * Use `create(FinishPasskeyRegistrationRequestSchema)` to create a new message.
+ */
+export const FinishPasskeyRegistrationRequestSchema: GenMessage<FinishPasskeyRegistrationRequest> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 11);
+
+/**
+ * @generated from message user.v1.FinishPasskeyRegistrationResponse
+ */
+export type FinishPasskeyRegistrationResponse = Message<"user.v1.FinishPasskeyRegistrationResponse"> & {
+};
+
+/**
+ * Describes the message user.v1.FinishPasskeyRegistrationResponse.
+ * Use `create(FinishPasskeyRegistrationResponseSchema)` to create a new message.
+ */
+export const FinishPasskeyRegistrationResponseSchema: GenMessage<FinishPasskeyRegistrationResponse> = /*@__PURE__*/
+  messageDesc(file_user_v1_user, 12);
 
 /**
  * @generated from service user.v1.UserService
@@ -263,12 +280,20 @@ export const UserService: GenService<{
     output: typeof UpdateProfilePictureResponseSchema;
   },
   /**
-   * @generated from rpc user.v1.UserService.CreatePasskey
+   * @generated from rpc user.v1.UserService.BeginPasskeyRegistration
    */
-  createPasskey: {
+  beginPasskeyRegistration: {
     methodKind: "unary";
-    input: typeof CreatePasskeyRequestSchema;
-    output: typeof CreatePasskeyResponseSchema;
+    input: typeof BeginPasskeyRegistrationRequestSchema;
+    output: typeof BeginPasskeyRegistrationResponseSchema;
+  },
+  /**
+   * @generated from rpc user.v1.UserService.FinishPasskeyRegistration
+   */
+  finishPasskeyRegistration: {
+    methodKind: "unary";
+    input: typeof FinishPasskeyRegistrationRequestSchema;
+    output: typeof FinishPasskeyRegistrationResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_user_v1_user, 0);

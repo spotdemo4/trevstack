@@ -1,13 +1,16 @@
-.direnv
 .env
-build
-result
+
+/docker-compose.*
+
+/.direnv/
+/build/
+/result/
 
 # Client
-/client/node_modules
-/client/.svelte-kit
+/client/node_modules/
+/client/.svelte-kit/
 
 # Server
-/server/client
-/server/tmp
-/server/internal/handlers/client/client
+/server/client/
+/server/tmp/
+/server/internal/handlers/client/client/

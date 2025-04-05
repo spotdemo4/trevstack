@@ -1,0 +1,10 @@
+wipe: true
+
+sqlite:
+  output: internal/models
+
+psql:
+  output: internal/models
+
+mysql:
+  output: internal/models

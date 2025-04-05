@@ -34,6 +34,21 @@
           nativeCheckInputs = with pkgs; [ less ];
         };
 
+        bobgen = pkgs.buildGoModule {
+          name = "bobgen";
+          src = pkgs.fetchFromGitHub {
+            owner = "stephenafamo";
+            repo = "bob";
+            rev = "v0.31.0";
+            sha256 = "sha256-APAckQ+EDAu459NTPXUISLIrcAcX3aQ5B/jrMUEW0EY=";
+          };
+          vendorHash = "sha256-3blGiSxlKpWH8k0acAXXks8nCdnoWmXLmzPStJmmGcM=";
+          subPackages = [
+            "gen/bobgen-sqlite"
+            "gen/bobgen-psql"
+          ];
+        };
+
         client = pkgs.buildNpmPackage {
           pname = "${pname}-client";
           inherit version;
@@ -72,6 +87,7 @@
             gopls
             air
             revive
+            bobgen
             
             # Protobuf middleware
             buf

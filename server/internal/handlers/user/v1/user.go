@@ -169,6 +169,38 @@ func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request
 	return res, nil
 }
 
+func (h *Handler) BeginPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.BeginPasskeyRegistrationRequest]) (*connect.Response[userv1.BeginPasskeyRegistrationResponse], error) {
+	// Get user ID from context
+	userid, ok := interceptors.GetUserContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
+	}
+
+	// Get user
+	user := models.User{}
+	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return connect.NewResponse(&userv1.BeginPasskeyRegistrationResponse{}), nil
+}
+
+func (h *Handler) FinishPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.FinishPasskeyRegistrationRequest]) (*connect.Response[userv1.FinishPasskeyRegistrationResponse], error) {
+	// Get user ID from context
+	userid, ok := interceptors.GetUserContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
+	}
+
+	// Get user
+	user := models.User{}
+	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return connect.NewResponse(&userv1.FinishPasskeyRegistrationResponse{}), nil
+}
+
 // func BeginRegistration(ctx context.Context) error {
 // 	userid, ok := interceptors.GetUserContext(ctx)
 // 	if !ok {

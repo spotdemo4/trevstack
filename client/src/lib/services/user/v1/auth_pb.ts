@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file user/v1/auth.proto.
  */
 export const file_user_v1_auth: GenFile = /*@__PURE__*/
-  fileDesc("ChJ1c2VyL3YxL2F1dGgucHJvdG8SB3VzZXIudjEiMgoMTG9naW5SZXF1ZXN0EhAKCHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIh4KDUxvZ2luUmVzcG9uc2USDQoFdG9rZW4YASABKAkiTQoNU2lnblVwUmVxdWVzdBIQCgh1c2VybmFtZRgBIAEoCRIQCghwYXNzd29yZBgCIAEoCRIYChBjb25maXJtX3Bhc3N3b3JkGAMgASgJIhAKDlNpZ25VcFJlc3BvbnNlIg8KDUxvZ291dFJlcXVlc3QiEAoOTG9nb3V0UmVzcG9uc2UiKAoUR2V0UGFzc2tleUlEc1JlcXVlc3QSEAoIdXNlcm5hbWUYASABKAkiLAoVR2V0UGFzc2tleUlEc1Jlc3BvbnNlEhMKC3Bhc3NrZXlfaWRzGAEgAygJIkcKE1Bhc3NrZXlMb2dpblJlcXVlc3QSCgoCaWQYASABKAkSEQoJc2lnbmF0dXJlGAIgASgMEhEKCWFsZ29yaXRobRgDIAEoBSIlChRQYXNza2V5TG9naW5SZXNwb25zZRINCgV0b2tlbhgBIAEoCTLiAgoLQXV0aFNlcnZpY2USOAoFTG9naW4SFS51c2VyLnYxLkxvZ2luUmVxdWVzdBoWLnVzZXIudjEuTG9naW5SZXNwb25zZSIAEjsKBlNpZ25VcBIWLnVzZXIudjEuU2lnblVwUmVxdWVzdBoXLnVzZXIudjEuU2lnblVwUmVzcG9uc2UiABI7CgZMb2dvdXQSFi51c2VyLnYxLkxvZ291dFJlcXVlc3QaFy51c2VyLnYxLkxvZ291dFJlc3BvbnNlIgASUAoNR2V0UGFzc2tleUlEcxIdLnVzZXIudjEuR2V0UGFzc2tleUlEc1JlcXVlc3QaHi51c2VyLnYxLkdldFBhc3NrZXlJRHNSZXNwb25zZSIAEk0KDFBhc3NrZXlMb2dpbhIcLnVzZXIudjEuUGFzc2tleUxvZ2luUmVxdWVzdBodLnVzZXIudjEuUGFzc2tleUxvZ2luUmVzcG9uc2UiAEKdAQoLY29tLnVzZXIudjFCCUF1dGhQcm90b1ABWkZnaXRodWIuY29tL3Nwb3RkZW1vNC90cmV2c3RhY2svc2VydmVyL2ludGVybmFsL3NlcnZpY2VzL3VzZXIvdjE7dXNlcnYxogIDVVhYqgIHVXNlci5WMcoCB1VzZXJcVjHiAhNVc2VyXFYxXEdQQk1ldGFkYXRh6gIIVXNlcjo6VjFiBnByb3RvMw");
+  fileDesc("ChJ1c2VyL3YxL2F1dGgucHJvdG8SB3VzZXIudjEiMgoMTG9naW5SZXF1ZXN0EhAKCHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIh4KDUxvZ2luUmVzcG9uc2USDQoFdG9rZW4YASABKAkiTQoNU2lnblVwUmVxdWVzdBIQCgh1c2VybmFtZRgBIAEoCRIQCghwYXNzd29yZBgCIAEoCRIYChBjb25maXJtX3Bhc3N3b3JkGAMgASgJIhAKDlNpZ25VcFJlc3BvbnNlIg8KDUxvZ291dFJlcXVlc3QiEAoOTG9nb3V0UmVzcG9uc2UiKAoUR2V0UGFzc2tleUlEc1JlcXVlc3QSEAoIdXNlcm5hbWUYASABKAkiLAoVR2V0UGFzc2tleUlEc1Jlc3BvbnNlEhMKC3Bhc3NrZXlfaWRzGAEgAygJIhoKGEJlZ2luUGFzc2tleUxvZ2luUmVxdWVzdCIbChlCZWdpblBhc3NrZXlMb2dpblJlc3BvbnNlIhsKGUZpbmlzaFBhc3NrZXlMb2dpblJlcXVlc3QiHAoaRmluaXNoUGFzc2tleUxvZ2luUmVzcG9uc2Uy0gMKC0F1dGhTZXJ2aWNlEjgKBUxvZ2luEhUudXNlci52MS5Mb2dpblJlcXVlc3QaFi51c2VyLnYxLkxvZ2luUmVzcG9uc2UiABI7CgZTaWduVXASFi51c2VyLnYxLlNpZ25VcFJlcXVlc3QaFy51c2VyLnYxLlNpZ25VcFJlc3BvbnNlIgASOwoGTG9nb3V0EhYudXNlci52MS5Mb2dvdXRSZXF1ZXN0GhcudXNlci52MS5Mb2dvdXRSZXNwb25zZSIAElAKDUdldFBhc3NrZXlJRHMSHS51c2VyLnYxLkdldFBhc3NrZXlJRHNSZXF1ZXN0Gh4udXNlci52MS5HZXRQYXNza2V5SURzUmVzcG9uc2UiABJcChFCZWdpblBhc3NrZXlMb2dpbhIhLnVzZXIudjEuQmVnaW5QYXNza2V5TG9naW5SZXF1ZXN0GiIudXNlci52MS5CZWdpblBhc3NrZXlMb2dpblJlc3BvbnNlIgASXwoSRmluaXNoUGFzc2tleUxvZ2luEiIudXNlci52MS5GaW5pc2hQYXNza2V5TG9naW5SZXF1ZXN0GiMudXNlci52MS5GaW5pc2hQYXNza2V5TG9naW5SZXNwb25zZSIAQp0BCgtjb20udXNlci52MUIJQXV0aFByb3RvUAFaRmdpdGh1Yi5jb20vc3BvdGRlbW80L3RyZXZzdGFjay9zZXJ2ZXIvaW50ZXJuYWwvc2VydmljZXMvdXNlci92MTt1c2VydjGiAgNVWFiqAgdVc2VyLlYxygIHVXNlclxWMeICE1VzZXJcVjFcR1BCTWV0YWRhdGHqAghVc2VyOjpWMWIGcHJvdG8z");
 
 /**
  * @generated from message user.v1.LoginRequest
@@ -152,48 +152,56 @@ export const GetPasskeyIDsResponseSchema: GenMessage<GetPasskeyIDsResponse> = /*
   messageDesc(file_user_v1_auth, 7);
 
 /**
- * @generated from message user.v1.PasskeyLoginRequest
+ * @generated from message user.v1.BeginPasskeyLoginRequest
  */
-export type PasskeyLoginRequest = Message<"user.v1.PasskeyLoginRequest"> & {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id: string;
-
-  /**
-   * @generated from field: bytes signature = 2;
-   */
-  signature: Uint8Array;
-
-  /**
-   * @generated from field: int32 algorithm = 3;
-   */
-  algorithm: number;
+export type BeginPasskeyLoginRequest = Message<"user.v1.BeginPasskeyLoginRequest"> & {
 };
 
 /**
- * Describes the message user.v1.PasskeyLoginRequest.
- * Use `create(PasskeyLoginRequestSchema)` to create a new message.
+ * Describes the message user.v1.BeginPasskeyLoginRequest.
+ * Use `create(BeginPasskeyLoginRequestSchema)` to create a new message.
  */
-export const PasskeyLoginRequestSchema: GenMessage<PasskeyLoginRequest> = /*@__PURE__*/
+export const BeginPasskeyLoginRequestSchema: GenMessage<BeginPasskeyLoginRequest> = /*@__PURE__*/
   messageDesc(file_user_v1_auth, 8);
 
 /**
- * @generated from message user.v1.PasskeyLoginResponse
+ * @generated from message user.v1.BeginPasskeyLoginResponse
  */
-export type PasskeyLoginResponse = Message<"user.v1.PasskeyLoginResponse"> & {
-  /**
-   * @generated from field: string token = 1;
-   */
-  token: string;
+export type BeginPasskeyLoginResponse = Message<"user.v1.BeginPasskeyLoginResponse"> & {
 };
 
 /**
- * Describes the message user.v1.PasskeyLoginResponse.
- * Use `create(PasskeyLoginResponseSchema)` to create a new message.
+ * Describes the message user.v1.BeginPasskeyLoginResponse.
+ * Use `create(BeginPasskeyLoginResponseSchema)` to create a new message.
  */
-export const PasskeyLoginResponseSchema: GenMessage<PasskeyLoginResponse> = /*@__PURE__*/
+export const BeginPasskeyLoginResponseSchema: GenMessage<BeginPasskeyLoginResponse> = /*@__PURE__*/
   messageDesc(file_user_v1_auth, 9);
+
+/**
+ * @generated from message user.v1.FinishPasskeyLoginRequest
+ */
+export type FinishPasskeyLoginRequest = Message<"user.v1.FinishPasskeyLoginRequest"> & {
+};
+
+/**
+ * Describes the message user.v1.FinishPasskeyLoginRequest.
+ * Use `create(FinishPasskeyLoginRequestSchema)` to create a new message.
+ */
+export const FinishPasskeyLoginRequestSchema: GenMessage<FinishPasskeyLoginRequest> = /*@__PURE__*/
+  messageDesc(file_user_v1_auth, 10);
+
+/**
+ * @generated from message user.v1.FinishPasskeyLoginResponse
+ */
+export type FinishPasskeyLoginResponse = Message<"user.v1.FinishPasskeyLoginResponse"> & {
+};
+
+/**
+ * Describes the message user.v1.FinishPasskeyLoginResponse.
+ * Use `create(FinishPasskeyLoginResponseSchema)` to create a new message.
+ */
+export const FinishPasskeyLoginResponseSchema: GenMessage<FinishPasskeyLoginResponse> = /*@__PURE__*/
+  messageDesc(file_user_v1_auth, 11);
 
 /**
  * @generated from service user.v1.AuthService
@@ -232,12 +240,20 @@ export const AuthService: GenService<{
     output: typeof GetPasskeyIDsResponseSchema;
   },
   /**
-   * @generated from rpc user.v1.AuthService.PasskeyLogin
+   * @generated from rpc user.v1.AuthService.BeginPasskeyLogin
    */
-  passkeyLogin: {
+  beginPasskeyLogin: {
     methodKind: "unary";
-    input: typeof PasskeyLoginRequestSchema;
-    output: typeof PasskeyLoginResponseSchema;
+    input: typeof BeginPasskeyLoginRequestSchema;
+    output: typeof BeginPasskeyLoginResponseSchema;
+  },
+  /**
+   * @generated from rpc user.v1.AuthService.FinishPasskeyLogin
+   */
+  finishPasskeyLogin: {
+    methodKind: "unary";
+    input: typeof FinishPasskeyLoginRequestSchema;
+    output: typeof FinishPasskeyLoginResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_user_v1_auth, 0);

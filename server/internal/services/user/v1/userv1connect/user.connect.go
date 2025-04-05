@@ -43,9 +43,12 @@ const (
 	// UserServiceUpdateProfilePictureProcedure is the fully-qualified name of the UserService's
 	// UpdateProfilePicture RPC.
 	UserServiceUpdateProfilePictureProcedure = "/user.v1.UserService/UpdateProfilePicture"
-	// UserServiceCreatePasskeyProcedure is the fully-qualified name of the UserService's CreatePasskey
-	// RPC.
-	UserServiceCreatePasskeyProcedure = "/user.v1.UserService/CreatePasskey"
+	// UserServiceBeginPasskeyRegistrationProcedure is the fully-qualified name of the UserService's
+	// BeginPasskeyRegistration RPC.
+	UserServiceBeginPasskeyRegistrationProcedure = "/user.v1.UserService/BeginPasskeyRegistration"
+	// UserServiceFinishPasskeyRegistrationProcedure is the fully-qualified name of the UserService's
+	// FinishPasskeyRegistration RPC.
+	UserServiceFinishPasskeyRegistrationProcedure = "/user.v1.UserService/FinishPasskeyRegistration"
 )
 
 // UserServiceClient is a client for the user.v1.UserService service.
@@ -54,7 +57,8 @@ type UserServiceClient interface {
 	UpdatePassword(context.Context, *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error)
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error)
 	UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error)
-	CreatePasskey(context.Context, *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error)
+	BeginPasskeyRegistration(context.Context, *connect.Request[v1.BeginPasskeyRegistrationRequest]) (*connect.Response[v1.BeginPasskeyRegistrationResponse], error)
+	FinishPasskeyRegistration(context.Context, *connect.Request[v1.FinishPasskeyRegistrationRequest]) (*connect.Response[v1.FinishPasskeyRegistrationResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the user.v1.UserService service. By default, it uses
@@ -92,10 +96,16 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(userServiceMethods.ByName("UpdateProfilePicture")),
 			connect.WithClientOptions(opts...),
 		),
-		createPasskey: connect.NewClient[v1.CreatePasskeyRequest, v1.CreatePasskeyResponse](
+		beginPasskeyRegistration: connect.NewClient[v1.BeginPasskeyRegistrationRequest, v1.BeginPasskeyRegistrationResponse](
 			httpClient,
-			baseURL+UserServiceCreatePasskeyProcedure,
-			connect.WithSchema(userServiceMethods.ByName("CreatePasskey")),
+			baseURL+UserServiceBeginPasskeyRegistrationProcedure,
+			connect.WithSchema(userServiceMethods.ByName("BeginPasskeyRegistration")),
+			connect.WithClientOptions(opts...),
+		),
+		finishPasskeyRegistration: connect.NewClient[v1.FinishPasskeyRegistrationRequest, v1.FinishPasskeyRegistrationResponse](
+			httpClient,
+			baseURL+UserServiceFinishPasskeyRegistrationProcedure,
+			connect.WithSchema(userServiceMethods.ByName("FinishPasskeyRegistration")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -103,11 +113,12 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // userServiceClient implements UserServiceClient.
 type userServiceClient struct {
-	getUser              *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
-	updatePassword       *connect.Client[v1.UpdatePasswordRequest, v1.UpdatePasswordResponse]
-	getAPIKey            *connect.Client[v1.GetAPIKeyRequest, v1.GetAPIKeyResponse]
-	updateProfilePicture *connect.Client[v1.UpdateProfilePictureRequest, v1.UpdateProfilePictureResponse]
-	createPasskey        *connect.Client[v1.CreatePasskeyRequest, v1.CreatePasskeyResponse]
+	getUser                   *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
+	updatePassword            *connect.Client[v1.UpdatePasswordRequest, v1.UpdatePasswordResponse]
+	getAPIKey                 *connect.Client[v1.GetAPIKeyRequest, v1.GetAPIKeyResponse]
+	updateProfilePicture      *connect.Client[v1.UpdateProfilePictureRequest, v1.UpdateProfilePictureResponse]
+	beginPasskeyRegistration  *connect.Client[v1.BeginPasskeyRegistrationRequest, v1.BeginPasskeyRegistrationResponse]
+	finishPasskeyRegistration *connect.Client[v1.FinishPasskeyRegistrationRequest, v1.FinishPasskeyRegistrationResponse]
 }
 
 // GetUser calls user.v1.UserService.GetUser.
@@ -130,9 +141,14 @@ func (c *userServiceClient) UpdateProfilePicture(ctx context.Context, req *conne
 	return c.updateProfilePicture.CallUnary(ctx, req)
 }
 
-// CreatePasskey calls user.v1.UserService.CreatePasskey.
-func (c *userServiceClient) CreatePasskey(ctx context.Context, req *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error) {
-	return c.createPasskey.CallUnary(ctx, req)
+// BeginPasskeyRegistration calls user.v1.UserService.BeginPasskeyRegistration.
+func (c *userServiceClient) BeginPasskeyRegistration(ctx context.Context, req *connect.Request[v1.BeginPasskeyRegistrationRequest]) (*connect.Response[v1.BeginPasskeyRegistrationResponse], error) {
+	return c.beginPasskeyRegistration.CallUnary(ctx, req)
+}
+
+// FinishPasskeyRegistration calls user.v1.UserService.FinishPasskeyRegistration.
+func (c *userServiceClient) FinishPasskeyRegistration(ctx context.Context, req *connect.Request[v1.FinishPasskeyRegistrationRequest]) (*connect.Response[v1.FinishPasskeyRegistrationResponse], error) {
+	return c.finishPasskeyRegistration.CallUnary(ctx, req)
 }
 
 // UserServiceHandler is an implementation of the user.v1.UserService service.
@@ -141,7 +157,8 @@ type UserServiceHandler interface {
 	UpdatePassword(context.Context, *connect.Request[v1.UpdatePasswordRequest]) (*connect.Response[v1.UpdatePasswordResponse], error)
 	GetAPIKey(context.Context, *connect.Request[v1.GetAPIKeyRequest]) (*connect.Response[v1.GetAPIKeyResponse], error)
 	UpdateProfilePicture(context.Context, *connect.Request[v1.UpdateProfilePictureRequest]) (*connect.Response[v1.UpdateProfilePictureResponse], error)
-	CreatePasskey(context.Context, *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error)
+	BeginPasskeyRegistration(context.Context, *connect.Request[v1.BeginPasskeyRegistrationRequest]) (*connect.Response[v1.BeginPasskeyRegistrationResponse], error)
+	FinishPasskeyRegistration(context.Context, *connect.Request[v1.FinishPasskeyRegistrationRequest]) (*connect.Response[v1.FinishPasskeyRegistrationResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -175,10 +192,16 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(userServiceMethods.ByName("UpdateProfilePicture")),
 		connect.WithHandlerOptions(opts...),
 	)
-	userServiceCreatePasskeyHandler := connect.NewUnaryHandler(
-		UserServiceCreatePasskeyProcedure,
-		svc.CreatePasskey,
-		connect.WithSchema(userServiceMethods.ByName("CreatePasskey")),
+	userServiceBeginPasskeyRegistrationHandler := connect.NewUnaryHandler(
+		UserServiceBeginPasskeyRegistrationProcedure,
+		svc.BeginPasskeyRegistration,
+		connect.WithSchema(userServiceMethods.ByName("BeginPasskeyRegistration")),
+		connect.WithHandlerOptions(opts...),
+	)
+	userServiceFinishPasskeyRegistrationHandler := connect.NewUnaryHandler(
+		UserServiceFinishPasskeyRegistrationProcedure,
+		svc.FinishPasskeyRegistration,
+		connect.WithSchema(userServiceMethods.ByName("FinishPasskeyRegistration")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/user.v1.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -191,8 +214,10 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 			userServiceGetAPIKeyHandler.ServeHTTP(w, r)
 		case UserServiceUpdateProfilePictureProcedure:
 			userServiceUpdateProfilePictureHandler.ServeHTTP(w, r)
-		case UserServiceCreatePasskeyProcedure:
-			userServiceCreatePasskeyHandler.ServeHTTP(w, r)
+		case UserServiceBeginPasskeyRegistrationProcedure:
+			userServiceBeginPasskeyRegistrationHandler.ServeHTTP(w, r)
+		case UserServiceFinishPasskeyRegistrationProcedure:
+			userServiceFinishPasskeyRegistrationHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -218,6 +243,10 @@ func (UnimplementedUserServiceHandler) UpdateProfilePicture(context.Context, *co
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.UpdateProfilePicture is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) CreatePasskey(context.Context, *connect.Request[v1.CreatePasskeyRequest]) (*connect.Response[v1.CreatePasskeyResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.CreatePasskey is not implemented"))
+func (UnimplementedUserServiceHandler) BeginPasskeyRegistration(context.Context, *connect.Request[v1.BeginPasskeyRegistrationRequest]) (*connect.Response[v1.BeginPasskeyRegistrationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.BeginPasskeyRegistration is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) FinishPasskeyRegistration(context.Context, *connect.Request[v1.FinishPasskeyRegistrationRequest]) (*connect.Response[v1.FinishPasskeyRegistrationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("user.v1.UserService.FinishPasskeyRegistration is not implemented"))
 }
