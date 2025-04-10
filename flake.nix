@@ -53,7 +53,7 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-GQNChIR5kEInghn/W3t8BVnOv5X4pvn/SNCXyFnvLNo=";
+          npmDepsHash = "sha256-IYszhhEyoGJQXnNL9S9/Al2lLtyZ9YRo10zcLjuWaho=";
           nodejs = pkgs.nodejs_22;
           npmFlags = [ "--legacy-peer-deps" ];
 
@@ -66,7 +66,7 @@
         server = pkgs.buildGoModule {
           inherit client pname version;
           src = gitignore.lib.gitignoreSource ./server;
-          vendorHash = "sha256-sANPwYLGwMcWyMR7Veho81aAMfIQpVzZS5Q9eveR8o8=";
+          vendorHash = "sha256-+feIdTkIvFP9/QCJgA0u0M1f9YFCaRc2emfrsDfLwJI=";
           env.CGO_ENABLED = 0;
 
           preBuild = ''
@@ -99,46 +99,6 @@
 
             # Svelte frontend
             nodejs_22
-
-            # Helper scripts
-            (writeShellApplication {
-              name = "ts-run";
-
-              text = ''
-                git_root=$(git rev-parse --show-toplevel)
-
-                (cd "''${git_root}/server" && air) &
-                P1=$!
-
-                (cd "''${git_root}/client" && npm run dev) &
-                P2=$!
-
-                (cd "''${git_root}" && ts-pbwatch) &
-                P3=$!
-
-                trap 'kill $P1 $P2 $P3' SIGINT SIGTERM
-                wait $P1
-                wait $P2
-                wait $P3
-                
-                kill $P1 $P2 $P3
-              '';
-            })
-
-            (writeShellApplication {
-              name = "ts-pbwatch";
-
-              text = ''
-                inotifywait -mre close_write,moved_to,create proto | while read -r _ _ basename;
-                do
-                  echo "file changed: $basename"
-                  if buf lint ; then
-                    buf generate
-                  fi
-                  echo "regenerated proto services"
-                done
-              '';
-            })
 
             (writeShellApplication {
               name = "ts-update";
