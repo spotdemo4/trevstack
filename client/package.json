@@ -19,7 +19,7 @@
 		"@eslint/compat": "^1.2.8",
 		"@eslint/js": "^9.18.0",
 		"@lucide/svelte": "^0.479.0",
-		"@scalar/api-reference": "^1.28.15",
+		"@scalar/api-reference": "^1.28.17",
 		"@simplewebauthn/browser": "^13.1.0",
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.20.5",
@@ -29,13 +29,13 @@
 		"cbor2": "^1.12.0",
 		"clsx": "^2.1.1",
 		"eslint": "^9.24.0",
-		"eslint-config-prettier": "^10.1.1",
+		"eslint-config-prettier": "^10.1.2",
 		"eslint-plugin-svelte": "^3.5.1",
 		"globals": "^16.0.0",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
-		"svelte": "^5.25.10",
+		"svelte": "^5.25.12",
 		"svelte-check": "^4.1.5",
 		"svelte-sonner": "^0.3.28",
 		"tailwind-merge": "^3.2.0",
@@ -43,6 +43,6 @@
 		"tw-animate-css": "^1.2.5",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.29.1",
-		"vite": "^6.2.5"
+		"vite": "^6.2.6"
 	}
 }
