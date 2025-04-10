@@ -45,8 +45,7 @@
           };
           vendorHash = "sha256-3blGiSxlKpWH8k0acAXXks8nCdnoWmXLmzPStJmmGcM=";
           subPackages = [
-            "gen/bobgen-sqlite"
-            "gen/bobgen-psql"
+            "gen/bobgen-sql"
           ];
         };
 
@@ -54,7 +53,7 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-IYszhhEyoGJQXnNL9S9/Al2lLtyZ9YRo10zcLjuWaho=";
+          npmDepsHash = "sha256-DMpmhtCGT6zOAwxJvfqwQo38yHJj00Nz651Hu6jRGkY=";
           nodejs = pkgs.nodejs_22;
           npmFlags = [ "--legacy-peer-deps" ];
 
@@ -67,11 +66,11 @@
         server = pkgs.buildGoModule {
           inherit client pname version;
           src = gitignore.lib.gitignoreSource ./server;
-          vendorHash = "sha256-+feIdTkIvFP9/QCJgA0u0M1f9YFCaRc2emfrsDfLwJI=";
+          vendorHash = "sha256-YmMKl9X1kVz6dk/JOSi2jghCUKObUKdm2O+JpO9PDCA=";
           env.CGO_ENABLED = 0;
 
           preBuild = ''
-            cp -r ${client} internal/handlers/client/client
+            cp -r ${client} client
           '';
         };
 
@@ -82,6 +81,7 @@
             git
             nix-update
             treli.packages."${system}".default
+            sqlite
 
             # Go backend
             go
@@ -89,6 +89,7 @@
             gopls
             revive
             bobgen
+            dbmate
             
             # Protobuf middleware
             buf
@@ -194,8 +195,8 @@
                 cd "''${git_root}"
                 echo "Building client"
                 nix build .#trevstack-client
-                cp -a result/. server/internal/handlers/client/client
-                chmod -R u+w server/internal/handlers/client/client
+                cp -a result/. server/client
+                chmod -R u+w server/client
 
                 cd "''${git_root}/server"
                 echo "Building ${pname}-windows-amd64-${version}.exe"
