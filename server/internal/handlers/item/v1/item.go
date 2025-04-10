@@ -2,21 +2,39 @@ package item
 
 import (
 	"context"
+	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/aarondl/opt/omit"
+	"github.com/aarondl/opt/omitnull"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 	"github.com/spotdemo4/trevstack/server/internal/models"
 	itemv1 "github.com/spotdemo4/trevstack/server/internal/services/item/v1"
 	"github.com/spotdemo4/trevstack/server/internal/services/item/v1/itemv1connect"
-	"gorm.io/gorm"
+	"github.com/stephenafamo/bob"
+	"github.com/stephenafamo/bob/dialect/sqlite"
+	"github.com/stephenafamo/bob/dialect/sqlite/sm"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func itemToConnect(item *models.Item) *itemv1.Item {
+	timestamp := timestamppb.New(item.Added)
+
+	return &itemv1.Item{
+		Id:          &item.ID,
+		Name:        item.Name,
+		Description: item.Description.GetOrZero(),
+		Price:       item.Price.GetOrZero(),
+		Quantity:    int32(item.Quantity.GetOrZero()),
+		Added:       timestamp,
+	}
+}
+
 type Handler struct {
-	db  *gorm.DB
+	db  *bob.DB
 	key []byte
 }
 
@@ -27,13 +45,22 @@ func (h *Handler) GetItem(ctx context.Context, req *connect.Request[itemv1.GetIt
 	}
 
 	// Get item
-	item := models.Item{}
-	if err := h.db.First(&item, "id = ? AND user_id = ?", req.Msg.Id, userid).Error; err != nil {
-		return nil, connect.NewError(connect.CodeNotFound, err)
+	item, err := models.Items.Query(
+		sqlite.WhereAnd(
+			models.SelectWhere.Items.ID.EQ(req.Msg.Id),
+			models.SelectWhere.Items.UserID.EQ(userid),
+		),
+	).One(ctx, h.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, connect.NewError(connect.CodeNotFound, err)
+		}
+
+		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	res := connect.NewResponse(&itemv1.GetItemResponse{
-		Item: item.ToConnectV1(),
+		Item: itemToConnect(item),
 	})
 	return res, nil
 }
@@ -45,45 +72,55 @@ func (h *Handler) GetItems(ctx context.Context, req *connect.Request[itemv1.GetI
 	}
 
 	// Filters
-	sql := h.db.Where("user_id = ?", userid)
+	query := models.Items.Query(models.SelectWhere.Items.UserID.EQ(userid))
+	countQuery := models.Items.Query(models.SelectWhere.Items.UserID.EQ(userid))
+
+	// Counted filters
 	if req.Msg.Start != nil {
-		sql = sql.Where("added >= ?", req.Msg.Start.AsTime())
+		query.Apply(models.SelectWhere.Items.Added.GTE(req.Msg.Start.AsTime()))
+		countQuery.Apply(models.SelectWhere.Items.Added.GTE(req.Msg.Start.AsTime()))
 	}
 	if req.Msg.End != nil {
-		sql = sql.Where("added <= ?", req.Msg.End.AsTime())
+		query.Apply(models.SelectWhere.Items.Added.LTE(req.Msg.End.AsTime()))
+		countQuery.Apply(models.SelectWhere.Items.Added.LTE(req.Msg.End.AsTime()))
 	}
-	if req.Msg.Filter != nil {
-		sql = sql.Where("name LIKE ?", fmt.Sprintf("%%%s%%", *req.Msg.Filter))
+	if req.Msg.Filter != nil && *req.Msg.Filter != "" {
+		query.Apply(models.SelectWhere.Items.Name.Like("%" + *req.Msg.Filter + "%"))
+		countQuery.Apply(models.SelectWhere.Items.Name.Like(*req.Msg.Filter))
 	}
 
 	// Uncounted filters
-	sqlu := sql.Session(&gorm.Session{})
 	if req.Msg.Limit != nil {
-		sqlu = sqlu.Limit(int(*req.Msg.Limit))
+		query.Apply(sm.Limit(*req.Msg.Limit))
 	}
 	if req.Msg.Offset != nil {
-		sqlu = sqlu.Offset(int(*req.Msg.Offset))
+		query.Apply(sm.Offset(*req.Msg.Offset))
 	}
 
 	// Get items & count
-	items := []models.Item{}
-	var count int64
-	if err := sqlu.Order("added desc").Find(&items).Error; err != nil {
-		return nil, connect.NewError(connect.CodeNotFound, err)
+	items, err := query.All(ctx, h.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, connect.NewError(connect.CodeNotFound, err)
+		}
+
+		return nil, connect.NewError(connect.CodeInternal, err)
 	}
-	if err := sql.Model(&items).Count(&count).Error; err != nil {
+
+	count, err := query.Count(ctx, h.db)
+	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Convert to connect v1 items
 	resItems := []*itemv1.Item{}
 	for _, item := range items {
-		resItems = append(resItems, item.ToConnectV1())
+		resItems = append(resItems, itemToConnect(item))
 	}
 
 	res := connect.NewResponse(&itemv1.GetItemsResponse{
 		Items: resItems,
-		Count: uint64(count),
+		Count: count,
 	})
 	return res, nil
 }
@@ -94,21 +131,20 @@ func (h *Handler) CreateItem(ctx context.Context, req *connect.Request[itemv1.Cr
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
 
-	// Create item
-	item := models.Item{
-		Name:        req.Msg.Item.Name,
-		Description: req.Msg.Item.Description,
-		Price:       req.Msg.Item.Price,
-		Quantity:    int(req.Msg.Item.Quantity),
-		Added:       time.Now(),
-		UserID:      uint(userid),
-	}
-	if err := h.db.Create(&item).Error; err != nil {
+	item, err := models.Items.Insert(&models.ItemSetter{
+		Name:        omit.From(req.Msg.Item.Name),
+		Description: omitnull.From(req.Msg.Item.Description),
+		Price:       omitnull.From(req.Msg.Item.Price),
+		Quantity:    omitnull.From(int64(req.Msg.Item.Quantity)),
+		Added:       omit.From(time.Now()),
+		UserID:      omit.From(userid),
+	}).One(ctx, h.db)
+	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	res := connect.NewResponse(&itemv1.CreateItemResponse{
-		Item: item.ToConnectV1(),
+		Item: itemToConnect(item),
 	})
 	return res, nil
 }
@@ -125,20 +161,27 @@ func (h *Handler) UpdateItem(ctx context.Context, req *connect.Request[itemv1.Up
 	}
 
 	// Update item
-	item := models.Item{
-		ID:          *req.Msg.Item.Id,
-		Name:        req.Msg.Item.Name,
-		Description: req.Msg.Item.Description,
-		Price:       req.Msg.Item.Price,
-		Quantity:    int(req.Msg.Item.Quantity),
-		UserID:      uint(userid),
-	}
-	if err := h.db.Where("id = ? AND user_id = ?", req.Msg.Item.Id, userid).Updates(&item).Error; err != nil {
+	item, err := models.Items.Update(
+		// Set col
+		models.ItemSetter{
+			Name:        omit.From(req.Msg.Item.Name),
+			Description: omitnull.From(req.Msg.Item.Description),
+			Price:       omitnull.From(req.Msg.Item.Price),
+			Quantity:    omitnull.From(int64(req.Msg.Item.Quantity)),
+		}.UpdateMod(),
+
+		// Where
+		sqlite.WhereAnd(
+			models.UpdateWhere.Items.ID.EQ(*req.Msg.Item.Id),
+			models.UpdateWhere.Items.UserID.EQ(userid),
+		),
+	).One(ctx, h.db)
+	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	res := connect.NewResponse(&itemv1.UpdateItemResponse{
-		Item: item.ToConnectV1(),
+		Item: itemToConnect(item),
 	})
 	return res, nil
 }
@@ -150,7 +193,13 @@ func (h *Handler) DeleteItem(ctx context.Context, req *connect.Request[itemv1.De
 	}
 
 	// Delete item
-	if err := h.db.Delete(&models.Item{}, "id = ? AND user_id = ?", req.Msg.Id, userid).Error; err != nil {
+	_, err := models.Items.Delete(
+		sqlite.WhereAnd(
+			models.DeleteWhere.Items.ID.EQ(req.Msg.Id),
+			models.DeleteWhere.Items.UserID.EQ(userid),
+		),
+	).Exec(ctx, h.db)
+	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
@@ -158,7 +207,7 @@ func (h *Handler) DeleteItem(ctx context.Context, req *connect.Request[itemv1.De
 	return res, nil
 }
 
-func NewHandler(db *gorm.DB, key string) (string, http.Handler) {
+func NewHandler(db *bob.DB, key string) (string, http.Handler) {
 	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
 
 	return itemv1connect.NewItemServiceHandler(

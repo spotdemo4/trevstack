@@ -2,23 +2,34 @@ package user
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/aarondl/opt/omit"
+	"github.com/aarondl/opt/omitnull"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 	"github.com/spotdemo4/trevstack/server/internal/models"
 	userv1 "github.com/spotdemo4/trevstack/server/internal/services/user/v1"
 	"github.com/spotdemo4/trevstack/server/internal/services/user/v1/userv1connect"
+	"github.com/stephenafamo/bob"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
+func userToConnect(item *models.User) *userv1.User {
+	return &userv1.User{
+		Id:               item.ID,
+		Username:         item.Username,
+		ProfilePictureId: item.ProfilePictureID.Ptr(),
+	}
+}
+
 type Handler struct {
-	db  *gorm.DB
+	db  *bob.DB
 	key []byte
 }
 
@@ -29,13 +40,19 @@ func (h *Handler) GetUser(ctx context.Context, _ *connect.Request[userv1.GetUser
 	}
 
 	// Get user
-	user := models.User{}
-	if err := h.db.Preload("ProfilePicture").First(&user, "id = ?", userid).Error; err != nil {
+	user, err := models.Users.Query(
+		models.SelectWhere.Users.ID.EQ(userid),
+	).One(ctx, h.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, connect.NewError(connect.CodeNotFound, err)
+		}
+
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	res := connect.NewResponse(&userv1.GetUserResponse{
-		User: user.ToConnectV1(),
+		User: userToConnect(user),
 	})
 	return res, nil
 }
@@ -47,8 +64,14 @@ func (h *Handler) UpdatePassword(ctx context.Context, req *connect.Request[userv
 	}
 
 	// Get user
-	user := models.User{}
-	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+	user, err := models.Users.Query(
+		models.SelectWhere.Users.ID.EQ(userid),
+	).One(ctx, h.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, connect.NewError(connect.CodeNotFound, err)
+		}
+
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
@@ -67,7 +90,10 @@ func (h *Handler) UpdatePassword(ctx context.Context, req *connect.Request[userv
 	}
 
 	// Update password
-	if err := h.db.Model(&user).Update("password", string(hash)).Error; err != nil {
+	err = user.Update(ctx, h.db, &models.UserSetter{
+		Password: omit.From(string(hash)),
+	})
+	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
@@ -82,8 +108,14 @@ func (h *Handler) GetAPIKey(ctx context.Context, req *connect.Request[userv1.Get
 	}
 
 	// Get user
-	user := models.User{}
-	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+	user, err := models.Users.Query(
+		models.SelectWhere.Users.ID.EQ(userid),
+	).One(ctx, h.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, connect.NewError(connect.CodeNotFound, err)
+		}
+
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
@@ -98,7 +130,7 @@ func (h *Handler) GetAPIKey(ctx context.Context, req *connect.Request[userv1.Get
 	// Generate JWT
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		Issuer:  "trevstack",
-		Subject: strconv.FormatUint(uint64(user.ID), 10),
+		Subject: strconv.FormatInt(user.ID, 10),
 		IssuedAt: &jwt.NumericDate{
 			Time: time.Now(),
 		},
@@ -127,79 +159,88 @@ func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request
 	}
 
 	// Save bytes into file
-	file := models.File{
-		Name:   req.Msg.FileName,
-		Data:   req.Msg.Data,
-		UserID: uint(userid),
-	}
-	if err := h.db.Create(&file).Error; err != nil {
+	file, err := models.Files.Insert(&models.FileSetter{
+		Name:   omit.From(req.Msg.FileName),
+		Data:   omit.From(req.Msg.Data),
+		UserID: omit.From(userid),
+	}).One(ctx, h.db)
+	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
-	// Get user info
-	user := models.User{}
-	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+	// Get user
+	user, err := models.Users.Query(
+		models.SelectWhere.Users.ID.EQ(userid),
+	).One(ctx, h.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, connect.NewError(connect.CodeNotFound, err)
+		}
+
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Get old profile picture ID
-	var ppid *uint32
-	if user.ProfilePicture != nil {
-		ppid = &user.ProfilePicture.ID
+	var ppid *int64
+	if user.ProfilePictureID.Ptr() != nil {
+		ppid = user.ProfilePictureID.Ptr()
 	}
 
 	// Update user profile picture
-	fid := uint(file.ID)
-	user.ProfilePictureID = &fid
-	user.ProfilePicture = &file
-	if err := h.db.Save(&user).Error; err != nil {
+	err = user.Update(ctx, h.db, &models.UserSetter{
+		ProfilePictureID: omitnull.From(file.ID),
+	})
+	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Delete old profile picture if exists
 	if ppid != nil {
-		if err := h.db.Delete(models.File{}, "id = ?", *ppid).Error; err != nil {
+		_, err = models.Files.Delete(
+			models.DeleteWhere.Files.ID.EQ(*ppid),
+		).Exec(ctx, h.db)
+		if err != nil {
 			return nil, connect.NewError(connect.CodeInternal, err)
 		}
 	}
 
 	res := connect.NewResponse(&userv1.UpdateProfilePictureResponse{
-		User: user.ToConnectV1(),
+		User: userToConnect(user),
 	})
 	return res, nil
 }
 
-func (h *Handler) BeginPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.BeginPasskeyRegistrationRequest]) (*connect.Response[userv1.BeginPasskeyRegistrationResponse], error) {
-	// Get user ID from context
-	userid, ok := interceptors.GetUserContext(ctx)
-	if !ok {
-		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
-	}
+// func (h *Handler) BeginPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.BeginPasskeyRegistrationRequest]) (*connect.Response[userv1.BeginPasskeyRegistrationResponse], error) {
+// 	// Get user ID from context
+// 	userid, ok := interceptors.GetUserContext(ctx)
+// 	if !ok {
+// 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
+// 	}
 
-	// Get user
-	user := models.User{}
-	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
+// 	// Get user
+// 	user := models.User{}
+// 	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+// 		return nil, connect.NewError(connect.CodeInternal, err)
+// 	}
 
-	return connect.NewResponse(&userv1.BeginPasskeyRegistrationResponse{}), nil
-}
+// 	return connect.NewResponse(&userv1.BeginPasskeyRegistrationResponse{}), nil
+// }
 
-func (h *Handler) FinishPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.FinishPasskeyRegistrationRequest]) (*connect.Response[userv1.FinishPasskeyRegistrationResponse], error) {
-	// Get user ID from context
-	userid, ok := interceptors.GetUserContext(ctx)
-	if !ok {
-		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
-	}
+// func (h *Handler) FinishPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.FinishPasskeyRegistrationRequest]) (*connect.Response[userv1.FinishPasskeyRegistrationResponse], error) {
+// 	// Get user ID from context
+// 	userid, ok := interceptors.GetUserContext(ctx)
+// 	if !ok {
+// 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
+// 	}
 
-	// Get user
-	user := models.User{}
-	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
+// 	// Get user
+// 	user := models.User{}
+// 	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
+// 		return nil, connect.NewError(connect.CodeInternal, err)
+// 	}
 
-	return connect.NewResponse(&userv1.FinishPasskeyRegistrationResponse{}), nil
-}
+// 	return connect.NewResponse(&userv1.FinishPasskeyRegistrationResponse{}), nil
+// }
 
 // func BeginRegistration(ctx context.Context) error {
 // 	userid, ok := interceptors.GetUserContext(ctx)
@@ -231,7 +272,7 @@ func (h *Handler) FinishPasskeyRegistration(ctx context.Context, req *connect.Re
 // 	return nil
 // }
 
-func NewHandler(db *gorm.DB, key string) (string, http.Handler) {
+func NewHandler(db *bob.DB, key string) (string, http.Handler) {
 	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
 
 	return userv1connect.NewUserServiceHandler(

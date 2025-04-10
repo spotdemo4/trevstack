@@ -6,9 +6,9 @@ service AuthService {
   rpc Login (LoginRequest) returns (LoginResponse) {}
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {}
   rpc Logout (LogoutRequest) returns (LogoutResponse) {}
-  rpc GetPasskeyIDs (GetPasskeyIDsRequest) returns (GetPasskeyIDsResponse) {}
-  rpc BeginPasskeyLogin (BeginPasskeyLoginRequest) returns (BeginPasskeyLoginResponse) {}
-  rpc FinishPasskeyLogin (FinishPasskeyLoginRequest) returns (FinishPasskeyLoginResponse) {}
+  // rpc GetPasskeyIDs (GetPasskeyIDsRequest) returns (GetPasskeyIDsResponse) {}
+  // rpc BeginPasskeyLogin (BeginPasskeyLoginRequest) returns (BeginPasskeyLoginResponse) {}
+  // rpc FinishPasskeyLogin (FinishPasskeyLoginRequest) returns (FinishPasskeyLoginResponse) {}
 }
 
 message LoginRequest {
@@ -29,15 +29,15 @@ message SignUpResponse {}
 message LogoutRequest {}
 message LogoutResponse {}
 
-message GetPasskeyIDsRequest {
-  string username = 1;
-}
-message GetPasskeyIDsResponse {
-  repeated string passkey_ids = 1;
-}
+// message GetPasskeyIDsRequest {
+//   string username = 1;
+// }
+// message GetPasskeyIDsResponse {
+//   repeated string passkey_ids = 1;
+// }
 
-message BeginPasskeyLoginRequest {}
-message BeginPasskeyLoginResponse {}
+// message BeginPasskeyLoginRequest {}
+// message BeginPasskeyLoginResponse {}
 
-message FinishPasskeyLoginRequest {}
-message FinishPasskeyLoginResponse {}
+// message FinishPasskeyLoginRequest {}
+// message FinishPasskeyLoginResponse {}

@@ -36,19 +36,19 @@ func (mods UserModSlice) Apply(n *UserTemplate) {
 // UserTemplate is an object representing the database table.
 // all columns are optional and should be set by mods
 type UserTemplate struct {
-	ID               func() int32
-	Username         func() null.Val[string]
-	Password         func() null.Val[string]
-	ProfilePictureID func() null.Val[int32]
-	Challenge        func() null.Val[string]
+	ID               func() int64
+	Username         func() string
+	Password         func() string
+	ProfilePictureID func() null.Val[int64]
 
 	r userR
 	f *Factory
 }
 
 type userR struct {
-	Files []*userRFilesR
-	Items []*userRItemsR
+	Files              []*userRFilesR
+	Items              []*userRItemsR
+	ProfilePictureFile *userRProfilePictureFileR
 }
 
 type userRFilesR struct {
@@ -58,6 +58,9 @@ type userRFilesR struct {
 type userRItemsR struct {
 	number int
 	o      *ItemTemplate
+}
+type userRProfilePictureFileR struct {
+	o *FileTemplate
 }
 
 // Apply mods to the UserTemplate
@@ -84,9 +87,6 @@ func (o UserTemplate) toModel() *models.User {
 	if o.ProfilePictureID != nil {
 		m.ProfilePictureID = o.ProfilePictureID()
 	}
-	if o.Challenge != nil {
-		m.Challenge = o.Challenge()
-	}
 
 	return m
 }
@@ -111,7 +111,7 @@ func (t UserTemplate) setModelRels(o *models.User) {
 		for _, r := range t.r.Files {
 			related := r.o.toModels(r.number)
 			for _, rel := range related {
-				rel.UserID = null.From(o.ID)
+				rel.UserID = o.ID
 				rel.R.User = o
 			}
 			rel = append(rel, related...)
@@ -124,12 +124,19 @@ func (t UserTemplate) setModelRels(o *models.User) {
 		for _, r := range t.r.Items {
 			related := r.o.toModels(r.number)
 			for _, rel := range related {
-				rel.UserID = null.From(o.ID)
+				rel.UserID = o.ID
 				rel.R.User = o
 			}
 			rel = append(rel, related...)
 		}
 		o.R.Items = rel
+	}
+
+	if t.r.ProfilePictureFile != nil {
+		rel := t.r.ProfilePictureFile.o.toModel()
+		rel.R.ProfilePictureUsers = append(rel.R.ProfilePictureUsers, o)
+		o.ProfilePictureID = null.From(rel.ID)
+		o.R.ProfilePictureFile = rel
 	}
 }
 
@@ -142,16 +149,13 @@ func (o UserTemplate) BuildSetter() *models.UserSetter {
 		m.ID = omit.From(o.ID())
 	}
 	if o.Username != nil {
-		m.Username = omitnull.FromNull(o.Username())
+		m.Username = omit.From(o.Username())
 	}
 	if o.Password != nil {
-		m.Password = omitnull.FromNull(o.Password())
+		m.Password = omit.From(o.Password())
 	}
 	if o.ProfilePictureID != nil {
 		m.ProfilePictureID = omitnull.FromNull(o.ProfilePictureID())
-	}
-	if o.Challenge != nil {
-		m.Challenge = omitnull.FromNull(o.Challenge())
 	}
 
 	return m
@@ -193,6 +197,12 @@ func (o UserTemplate) BuildMany(number int) models.UserSlice {
 }
 
 func ensureCreatableUser(m *models.UserSetter) {
+	if m.Username.IsUnset() {
+		m.Username = omit.From(random_string(nil))
+	}
+	if m.Password.IsUnset() {
+		m.Password = omit.From(random_string(nil))
+	}
 }
 
 // insertOptRels creates and inserts any optional the relationships on *models.User
@@ -228,6 +238,18 @@ func (o *UserTemplate) insertOptRels(ctx context.Context, exec bob.Executor, m *
 			if err != nil {
 				return ctx, err
 			}
+		}
+	}
+
+	if o.r.ProfilePictureFile != nil {
+		var rel2 *models.File
+		ctx, rel2, err = o.r.ProfilePictureFile.o.create(ctx, exec)
+		if err != nil {
+			return ctx, err
+		}
+		err = m.AttachProfilePictureFile(ctx, exec, rel2)
+		if err != nil {
+			return ctx, err
 		}
 	}
 
@@ -342,19 +364,18 @@ func (m userMods) RandomizeAllColumns(f *faker.Faker) UserMod {
 		UserMods.RandomUsername(f),
 		UserMods.RandomPassword(f),
 		UserMods.RandomProfilePictureID(f),
-		UserMods.RandomChallenge(f),
 	}
 }
 
 // Set the model columns to this value
-func (m userMods) ID(val int32) UserMod {
+func (m userMods) ID(val int64) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.ID = func() int32 { return val }
+		o.ID = func() int64 { return val }
 	})
 }
 
 // Set the Column from the function
-func (m userMods) IDFunc(f func() int32) UserMod {
+func (m userMods) IDFunc(f func() int64) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
 		o.ID = f
 	})
@@ -371,21 +392,21 @@ func (m userMods) UnsetID() UserMod {
 // if faker is nil, a default faker is used
 func (m userMods) RandomID(f *faker.Faker) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.ID = func() int32 {
-			return random_int32(f)
+		o.ID = func() int64 {
+			return random_int64(f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m userMods) Username(val null.Val[string]) UserMod {
+func (m userMods) Username(val string) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.Username = func() null.Val[string] { return val }
+		o.Username = func() string { return val }
 	})
 }
 
 // Set the Column from the function
-func (m userMods) UsernameFunc(f func() null.Val[string]) UserMod {
+func (m userMods) UsernameFunc(f func() string) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
 		o.Username = f
 	})
@@ -402,29 +423,21 @@ func (m userMods) UnsetUsername() UserMod {
 // if faker is nil, a default faker is used
 func (m userMods) RandomUsername(f *faker.Faker) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.Username = func() null.Val[string] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[string](nil)
-			}
-
-			return null.From(random_string(f))
+		o.Username = func() string {
+			return random_string(f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m userMods) Password(val null.Val[string]) UserMod {
+func (m userMods) Password(val string) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.Password = func() null.Val[string] { return val }
+		o.Password = func() string { return val }
 	})
 }
 
 // Set the Column from the function
-func (m userMods) PasswordFunc(f func() null.Val[string]) UserMod {
+func (m userMods) PasswordFunc(f func() string) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
 		o.Password = f
 	})
@@ -441,29 +454,21 @@ func (m userMods) UnsetPassword() UserMod {
 // if faker is nil, a default faker is used
 func (m userMods) RandomPassword(f *faker.Faker) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.Password = func() null.Val[string] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[string](nil)
-			}
-
-			return null.From(random_string(f))
+		o.Password = func() string {
+			return random_string(f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m userMods) ProfilePictureID(val null.Val[int32]) UserMod {
+func (m userMods) ProfilePictureID(val null.Val[int64]) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.ProfilePictureID = func() null.Val[int32] { return val }
+		o.ProfilePictureID = func() null.Val[int64] { return val }
 	})
 }
 
 // Set the Column from the function
-func (m userMods) ProfilePictureIDFunc(f func() null.Val[int32]) UserMod {
+func (m userMods) ProfilePictureIDFunc(f func() null.Val[int64]) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
 		o.ProfilePictureID = f
 	})
@@ -480,56 +485,39 @@ func (m userMods) UnsetProfilePictureID() UserMod {
 // if faker is nil, a default faker is used
 func (m userMods) RandomProfilePictureID(f *faker.Faker) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.ProfilePictureID = func() null.Val[int32] {
+		o.ProfilePictureID = func() null.Val[int64] {
 			if f == nil {
 				f = &defaultFaker
 			}
 
 			if f.Bool() {
-				return null.FromPtr[int32](nil)
+				return null.FromPtr[int64](nil)
 			}
 
-			return null.From(random_int32(f))
+			return null.From(random_int64(f))
 		}
 	})
 }
 
-// Set the model columns to this value
-func (m userMods) Challenge(val null.Val[string]) UserMod {
+func (m userMods) WithProfilePictureFile(rel *FileTemplate) UserMod {
 	return UserModFunc(func(o *UserTemplate) {
-		o.Challenge = func() null.Val[string] { return val }
-	})
-}
-
-// Set the Column from the function
-func (m userMods) ChallengeFunc(f func() null.Val[string]) UserMod {
-	return UserModFunc(func(o *UserTemplate) {
-		o.Challenge = f
-	})
-}
-
-// Clear any values for the column
-func (m userMods) UnsetChallenge() UserMod {
-	return UserModFunc(func(o *UserTemplate) {
-		o.Challenge = nil
-	})
-}
-
-// Generates a random value for the column using the given faker
-// if faker is nil, a default faker is used
-func (m userMods) RandomChallenge(f *faker.Faker) UserMod {
-	return UserModFunc(func(o *UserTemplate) {
-		o.Challenge = func() null.Val[string] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[string](nil)
-			}
-
-			return null.From(random_string(f))
+		o.r.ProfilePictureFile = &userRProfilePictureFileR{
+			o: rel,
 		}
+	})
+}
+
+func (m userMods) WithNewProfilePictureFile(mods ...FileMod) UserMod {
+	return UserModFunc(func(o *UserTemplate) {
+		related := o.f.NewFile(mods...)
+
+		m.WithProfilePictureFile(related).Apply(o)
+	})
+}
+
+func (m userMods) WithoutProfilePictureFile() UserMod {
+	return UserModFunc(func(o *UserTemplate) {
+		o.r.ProfilePictureFile = nil
 	})
 }
 

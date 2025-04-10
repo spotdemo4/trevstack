@@ -27,13 +27,13 @@ import (
 
 // Item is an object representing the database table.
 type Item struct {
-	ID          int32               `db:"id,pk" `
-	Name        null.Val[string]    `db:"name" `
-	Description null.Val[string]    `db:"description" `
-	Price       null.Val[float32]   `db:"price" `
-	Quantity    null.Val[int32]     `db:"quantity" `
-	Added       null.Val[time.Time] `db:"added" `
-	UserID      null.Val[int32]     `db:"user_id" `
+	ID          int64             `db:"id,pk" `
+	Name        string            `db:"name" `
+	Added       time.Time         `db:"added" `
+	Description null.Val[string]  `db:"description" `
+	Price       null.Val[float32] `db:"price" `
+	Quantity    null.Val[int64]   `db:"quantity" `
+	UserID      int64             `db:"user_id" `
 
 	R itemR `db:"-" `
 }
@@ -42,37 +42,37 @@ type Item struct {
 // This should almost always be used instead of []*Item.
 type ItemSlice []*Item
 
-// Items contains methods to work with the items table
-var Items = sqlite.NewTablex[*Item, ItemSlice, *ItemSetter]("", "items")
+// Items contains methods to work with the item table
+var Items = sqlite.NewTablex[*Item, ItemSlice, *ItemSetter]("", "item")
 
-// ItemsQuery is a query on the items table
+// ItemsQuery is a query on the item table
 type ItemsQuery = *sqlite.ViewQuery[*Item, ItemSlice]
 
 // itemR is where relationships are stored.
 type itemR struct {
-	User *User // fk_items_0
+	User *User // fk_item_0
 }
 
 type itemColumnNames struct {
 	ID          string
 	Name        string
+	Added       string
 	Description string
 	Price       string
 	Quantity    string
-	Added       string
 	UserID      string
 }
 
-var ItemColumns = buildItemColumns("items")
+var ItemColumns = buildItemColumns("item")
 
 type itemColumns struct {
 	tableAlias  string
 	ID          sqlite.Expression
 	Name        sqlite.Expression
+	Added       sqlite.Expression
 	Description sqlite.Expression
 	Price       sqlite.Expression
 	Quantity    sqlite.Expression
-	Added       sqlite.Expression
 	UserID      sqlite.Expression
 }
 
@@ -89,22 +89,22 @@ func buildItemColumns(alias string) itemColumns {
 		tableAlias:  alias,
 		ID:          sqlite.Quote(alias, "id"),
 		Name:        sqlite.Quote(alias, "name"),
+		Added:       sqlite.Quote(alias, "added"),
 		Description: sqlite.Quote(alias, "description"),
 		Price:       sqlite.Quote(alias, "price"),
 		Quantity:    sqlite.Quote(alias, "quantity"),
-		Added:       sqlite.Quote(alias, "added"),
 		UserID:      sqlite.Quote(alias, "user_id"),
 	}
 }
 
 type itemWhere[Q sqlite.Filterable] struct {
-	ID          sqlite.WhereMod[Q, int32]
-	Name        sqlite.WhereNullMod[Q, string]
+	ID          sqlite.WhereMod[Q, int64]
+	Name        sqlite.WhereMod[Q, string]
+	Added       sqlite.WhereMod[Q, time.Time]
 	Description sqlite.WhereNullMod[Q, string]
 	Price       sqlite.WhereNullMod[Q, float32]
-	Quantity    sqlite.WhereNullMod[Q, int32]
-	Added       sqlite.WhereNullMod[Q, time.Time]
-	UserID      sqlite.WhereNullMod[Q, int32]
+	Quantity    sqlite.WhereNullMod[Q, int64]
+	UserID      sqlite.WhereMod[Q, int64]
 }
 
 func (itemWhere[Q]) AliasedAs(alias string) itemWhere[Q] {
@@ -113,35 +113,35 @@ func (itemWhere[Q]) AliasedAs(alias string) itemWhere[Q] {
 
 func buildItemWhere[Q sqlite.Filterable](cols itemColumns) itemWhere[Q] {
 	return itemWhere[Q]{
-		ID:          sqlite.Where[Q, int32](cols.ID),
-		Name:        sqlite.WhereNull[Q, string](cols.Name),
+		ID:          sqlite.Where[Q, int64](cols.ID),
+		Name:        sqlite.Where[Q, string](cols.Name),
+		Added:       sqlite.Where[Q, time.Time](cols.Added),
 		Description: sqlite.WhereNull[Q, string](cols.Description),
 		Price:       sqlite.WhereNull[Q, float32](cols.Price),
-		Quantity:    sqlite.WhereNull[Q, int32](cols.Quantity),
-		Added:       sqlite.WhereNull[Q, time.Time](cols.Added),
-		UserID:      sqlite.WhereNull[Q, int32](cols.UserID),
+		Quantity:    sqlite.WhereNull[Q, int64](cols.Quantity),
+		UserID:      sqlite.Where[Q, int64](cols.UserID),
 	}
 }
 
 var ItemErrors = &itemErrors{
-	ErrUniquePkMainItems: &UniqueConstraintError{s: "pk_main_items"},
+	ErrUniquePkMainItem: &UniqueConstraintError{s: "pk_main_item"},
 }
 
 type itemErrors struct {
-	ErrUniquePkMainItems *UniqueConstraintError
+	ErrUniquePkMainItem *UniqueConstraintError
 }
 
 // ItemSetter is used for insert/upsert/update operations
 // All values are optional, and do not have to be set
 // Generated columns are not included
 type ItemSetter struct {
-	ID          omit.Val[int32]         `db:"id,pk" `
-	Name        omitnull.Val[string]    `db:"name" `
-	Description omitnull.Val[string]    `db:"description" `
-	Price       omitnull.Val[float32]   `db:"price" `
-	Quantity    omitnull.Val[int32]     `db:"quantity" `
-	Added       omitnull.Val[time.Time] `db:"added" `
-	UserID      omitnull.Val[int32]     `db:"user_id" `
+	ID          omit.Val[int64]       `db:"id,pk" `
+	Name        omit.Val[string]      `db:"name" `
+	Added       omit.Val[time.Time]   `db:"added" `
+	Description omitnull.Val[string]  `db:"description" `
+	Price       omitnull.Val[float32] `db:"price" `
+	Quantity    omitnull.Val[int64]   `db:"quantity" `
+	UserID      omit.Val[int64]       `db:"user_id" `
 }
 
 func (s ItemSetter) SetColumns() []string {
@@ -152,6 +152,10 @@ func (s ItemSetter) SetColumns() []string {
 
 	if !s.Name.IsUnset() {
 		vals = append(vals, "name")
+	}
+
+	if !s.Added.IsUnset() {
+		vals = append(vals, "added")
 	}
 
 	if !s.Description.IsUnset() {
@@ -166,10 +170,6 @@ func (s ItemSetter) SetColumns() []string {
 		vals = append(vals, "quantity")
 	}
 
-	if !s.Added.IsUnset() {
-		vals = append(vals, "added")
-	}
-
 	if !s.UserID.IsUnset() {
 		vals = append(vals, "user_id")
 	}
@@ -182,7 +182,10 @@ func (s ItemSetter) Overwrite(t *Item) {
 		t.ID, _ = s.ID.Get()
 	}
 	if !s.Name.IsUnset() {
-		t.Name, _ = s.Name.GetNull()
+		t.Name, _ = s.Name.Get()
+	}
+	if !s.Added.IsUnset() {
+		t.Added, _ = s.Added.Get()
 	}
 	if !s.Description.IsUnset() {
 		t.Description, _ = s.Description.GetNull()
@@ -193,11 +196,8 @@ func (s ItemSetter) Overwrite(t *Item) {
 	if !s.Quantity.IsUnset() {
 		t.Quantity, _ = s.Quantity.GetNull()
 	}
-	if !s.Added.IsUnset() {
-		t.Added, _ = s.Added.GetNull()
-	}
 	if !s.UserID.IsUnset() {
-		t.UserID, _ = s.UserID.GetNull()
+		t.UserID, _ = s.UserID.Get()
 	}
 }
 
@@ -220,6 +220,10 @@ func (s *ItemSetter) Apply(q *dialect.InsertQuery) {
 			vals = append(vals, sqlite.Arg(s.Name))
 		}
 
+		if !s.Added.IsUnset() {
+			vals = append(vals, sqlite.Arg(s.Added))
+		}
+
 		if !s.Description.IsUnset() {
 			vals = append(vals, sqlite.Arg(s.Description))
 		}
@@ -230,10 +234,6 @@ func (s *ItemSetter) Apply(q *dialect.InsertQuery) {
 
 		if !s.Quantity.IsUnset() {
 			vals = append(vals, sqlite.Arg(s.Quantity))
-		}
-
-		if !s.Added.IsUnset() {
-			vals = append(vals, sqlite.Arg(s.Added))
 		}
 
 		if !s.UserID.IsUnset() {
@@ -265,6 +265,13 @@ func (s ItemSetter) Expressions(prefix ...string) []bob.Expression {
 		}})
 	}
 
+	if !s.Added.IsUnset() {
+		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
+			sqlite.Quote(append(prefix, "added")...),
+			sqlite.Arg(s.Added),
+		}})
+	}
+
 	if !s.Description.IsUnset() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
 			sqlite.Quote(append(prefix, "description")...),
@@ -286,13 +293,6 @@ func (s ItemSetter) Expressions(prefix ...string) []bob.Expression {
 		}})
 	}
 
-	if !s.Added.IsUnset() {
-		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
-			sqlite.Quote(append(prefix, "added")...),
-			sqlite.Arg(s.Added),
-		}})
-	}
-
 	if !s.UserID.IsUnset() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
 			sqlite.Quote(append(prefix, "user_id")...),
@@ -305,7 +305,7 @@ func (s ItemSetter) Expressions(prefix ...string) []bob.Expression {
 
 // FindItem retrieves a single record by primary key
 // If cols is empty Find will return all columns.
-func FindItem(ctx context.Context, exec bob.Executor, IDPK int32, cols ...string) (*Item, error) {
+func FindItem(ctx context.Context, exec bob.Executor, IDPK int64, cols ...string) (*Item, error) {
 	if len(cols) == 0 {
 		return Items.Query(
 			SelectWhere.Items.ID.EQ(IDPK),
@@ -319,7 +319,7 @@ func FindItem(ctx context.Context, exec bob.Executor, IDPK int32, cols ...string
 }
 
 // ItemExists checks the presence of a single record by primary key
-func ItemExists(ctx context.Context, exec bob.Executor, IDPK int32) (bool, error) {
+func ItemExists(ctx context.Context, exec bob.Executor, IDPK int64) (bool, error) {
 	return Items.Query(
 		SelectWhere.Items.ID.EQ(IDPK),
 	).Exists(ctx, exec)
@@ -349,7 +349,7 @@ func (o *Item) PrimaryKeyVals() bob.Expression {
 }
 
 func (o *Item) pkEQ() dialect.Expression {
-	return sqlite.Quote("items", "id").EQ(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
+	return sqlite.Quote("item", "id").EQ(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
 		return o.PrimaryKeyVals().WriteSQL(ctx, w, d, start)
 	}))
 }
@@ -410,7 +410,7 @@ func (o ItemSlice) pkIN() dialect.Expression {
 		return sqlite.Raw("NULL")
 	}
 
-	return sqlite.Quote("items", "id").In(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
+	return sqlite.Quote("item", "id").In(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
 		pkPairs := make([]bob.Expression, len(o))
 		for i, row := range o {
 			pkPairs[i] = row.PrimaryKeyVals()
@@ -561,7 +561,7 @@ func itemsJoinUser[Q dialect.Joinable](from itemColumns, typ string) func(contex
 	}
 }
 
-// User starts a query for related objects on users
+// User starts a query for related objects on user
 func (o *Item) User(mods ...bob.Mod[*dialect.SelectQuery]) UsersQuery {
 	return Users.Query(append(mods,
 		sm.Where(UserColumns.ID.EQ(sqlite.Arg(o.UserID))),
@@ -673,7 +673,7 @@ func (os ItemSlice) LoadItemUser(ctx context.Context, exec bob.Executor, mods ..
 
 	for _, o := range os {
 		for _, rel := range users {
-			if o.UserID.GetOrZero() != rel.ID {
+			if o.UserID != rel.ID {
 				continue
 			}
 
@@ -689,7 +689,7 @@ func (os ItemSlice) LoadItemUser(ctx context.Context, exec bob.Executor, mods ..
 
 func attachItemUser0(ctx context.Context, exec bob.Executor, count int, item0 *Item, user1 *User) (*Item, error) {
 	setter := &ItemSetter{
-		UserID: omitnull.From(user1.ID),
+		UserID: omit.From(user1.ID),
 	}
 
 	err := item0.Update(ctx, exec, setter)

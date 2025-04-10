@@ -46,7 +46,7 @@ func (i *RatelimitInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFu
 
 		// Get user agent
 		limiter := i.getVisitor(req.Header().Get("User-Agent"))
-		if limiter.Allow() == false {
+		if !limiter.Allow() {
 			return nil, connect.NewError(connect.CodeResourceExhausted, errors.New("rate limit exceeded"))
 		}
 
@@ -70,7 +70,7 @@ func (i *RatelimitInterceptor) WrapStreamingHandler(next connect.StreamingHandle
 	) error {
 		// Get user agent
 		limiter := i.getVisitor(conn.RequestHeader().Get("User-Agent"))
-		if limiter.Allow() == false {
+		if !limiter.Allow() {
 			return connect.NewError(connect.CodeResourceExhausted, errors.New("rate limit exceeded"))
 		}
 

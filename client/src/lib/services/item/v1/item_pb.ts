@@ -12,16 +12,16 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file item/v1/item.proto.
  */
 export const file_item_v1_item: GenFile = /*@__PURE__*/
-  fileDesc("ChJpdGVtL3YxL2l0ZW0ucHJvdG8SB2l0ZW0udjEinAEKBEl0ZW0SDwoCaWQYASABKA1IAIgBARIMCgRuYW1lGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEg0KBXByaWNlGAQgASgCEhAKCHF1YW50aXR5GAUgASgNEi4KBWFkZGVkGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBQgUKA19pZEIICgZfYWRkZWQiHAoOR2V0SXRlbVJlcXVlc3QSCgoCaWQYASABKA0iLgoPR2V0SXRlbVJlc3BvbnNlEhsKBGl0ZW0YASABKAsyDS5pdGVtLnYxLkl0ZW0i3wEKD0dldEl0ZW1zUmVxdWVzdBIuCgVzdGFydBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAIgBARIsCgNlbmQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESEwoGZmlsdGVyGAMgASgJSAKIAQESEgoFbGltaXQYBCABKA1IA4gBARITCgZvZmZzZXQYBSABKA1IBIgBAUIICgZfc3RhcnRCBgoEX2VuZEIJCgdfZmlsdGVyQggKBl9saW1pdEIJCgdfb2Zmc2V0Ij8KEEdldEl0ZW1zUmVzcG9uc2USHAoFaXRlbXMYASADKAsyDS5pdGVtLnYxLkl0ZW0SDQoFY291bnQYAiABKAQiMAoRQ3JlYXRlSXRlbVJlcXVlc3QSGwoEaXRlbRgBIAEoCzINLml0ZW0udjEuSXRlbSIxChJDcmVhdGVJdGVtUmVzcG9uc2USGwoEaXRlbRgBIAEoCzINLml0ZW0udjEuSXRlbSIwChFVcGRhdGVJdGVtUmVxdWVzdBIbCgRpdGVtGAEgASgLMg0uaXRlbS52MS5JdGVtIjEKElVwZGF0ZUl0ZW1SZXNwb25zZRIbCgRpdGVtGAEgASgLMg0uaXRlbS52MS5JdGVtIh8KEURlbGV0ZUl0ZW1SZXF1ZXN0EgoKAmlkGAEgASgNIhQKEkRlbGV0ZUl0ZW1SZXNwb25zZTLrAgoLSXRlbVNlcnZpY2USPgoHR2V0SXRlbRIXLml0ZW0udjEuR2V0SXRlbVJlcXVlc3QaGC5pdGVtLnYxLkdldEl0ZW1SZXNwb25zZSIAEkEKCEdldEl0ZW1zEhguaXRlbS52MS5HZXRJdGVtc1JlcXVlc3QaGS5pdGVtLnYxLkdldEl0ZW1zUmVzcG9uc2UiABJHCgpDcmVhdGVJdGVtEhouaXRlbS52MS5DcmVhdGVJdGVtUmVxdWVzdBobLml0ZW0udjEuQ3JlYXRlSXRlbVJlc3BvbnNlIgASRwoKVXBkYXRlSXRlbRIaLml0ZW0udjEuVXBkYXRlSXRlbVJlcXVlc3QaGy5pdGVtLnYxLlVwZGF0ZUl0ZW1SZXNwb25zZSIAEkcKCkRlbGV0ZUl0ZW0SGi5pdGVtLnYxLkRlbGV0ZUl0ZW1SZXF1ZXN0GhsuaXRlbS52MS5EZWxldGVJdGVtUmVzcG9uc2UiAEKdAQoLY29tLml0ZW0udjFCCUl0ZW1Qcm90b1ABWkZnaXRodWIuY29tL3Nwb3RkZW1vNC90cmV2c3RhY2svc2VydmVyL2ludGVybmFsL3NlcnZpY2VzL2l0ZW0vdjE7aXRlbXYxogIDSVhYqgIHSXRlbS5WMcoCB0l0ZW1cVjHiAhNJdGVtXFYxXEdQQk1ldGFkYXRh6gIISXRlbTo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("ChJpdGVtL3YxL2l0ZW0ucHJvdG8SB2l0ZW0udjEinAEKBEl0ZW0SDwoCaWQYASABKANIAIgBARIMCgRuYW1lGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEg0KBXByaWNlGAQgASgCEhAKCHF1YW50aXR5GAUgASgFEi4KBWFkZGVkGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBQgUKA19pZEIICgZfYWRkZWQiHAoOR2V0SXRlbVJlcXVlc3QSCgoCaWQYASABKAMiLgoPR2V0SXRlbVJlc3BvbnNlEhsKBGl0ZW0YASABKAsyDS5pdGVtLnYxLkl0ZW0i3wEKD0dldEl0ZW1zUmVxdWVzdBIuCgVzdGFydBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAIgBARIsCgNlbmQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESEwoGZmlsdGVyGAMgASgJSAKIAQESEgoFbGltaXQYBCABKAVIA4gBARITCgZvZmZzZXQYBSABKAVIBIgBAUIICgZfc3RhcnRCBgoEX2VuZEIJCgdfZmlsdGVyQggKBl9saW1pdEIJCgdfb2Zmc2V0Ij8KEEdldEl0ZW1zUmVzcG9uc2USHAoFaXRlbXMYASADKAsyDS5pdGVtLnYxLkl0ZW0SDQoFY291bnQYAiABKAMiMAoRQ3JlYXRlSXRlbVJlcXVlc3QSGwoEaXRlbRgBIAEoCzINLml0ZW0udjEuSXRlbSIxChJDcmVhdGVJdGVtUmVzcG9uc2USGwoEaXRlbRgBIAEoCzINLml0ZW0udjEuSXRlbSIwChFVcGRhdGVJdGVtUmVxdWVzdBIbCgRpdGVtGAEgASgLMg0uaXRlbS52MS5JdGVtIjEKElVwZGF0ZUl0ZW1SZXNwb25zZRIbCgRpdGVtGAEgASgLMg0uaXRlbS52MS5JdGVtIh8KEURlbGV0ZUl0ZW1SZXF1ZXN0EgoKAmlkGAEgASgDIhQKEkRlbGV0ZUl0ZW1SZXNwb25zZTLrAgoLSXRlbVNlcnZpY2USPgoHR2V0SXRlbRIXLml0ZW0udjEuR2V0SXRlbVJlcXVlc3QaGC5pdGVtLnYxLkdldEl0ZW1SZXNwb25zZSIAEkEKCEdldEl0ZW1zEhguaXRlbS52MS5HZXRJdGVtc1JlcXVlc3QaGS5pdGVtLnYxLkdldEl0ZW1zUmVzcG9uc2UiABJHCgpDcmVhdGVJdGVtEhouaXRlbS52MS5DcmVhdGVJdGVtUmVxdWVzdBobLml0ZW0udjEuQ3JlYXRlSXRlbVJlc3BvbnNlIgASRwoKVXBkYXRlSXRlbRIaLml0ZW0udjEuVXBkYXRlSXRlbVJlcXVlc3QaGy5pdGVtLnYxLlVwZGF0ZUl0ZW1SZXNwb25zZSIAEkcKCkRlbGV0ZUl0ZW0SGi5pdGVtLnYxLkRlbGV0ZUl0ZW1SZXF1ZXN0GhsuaXRlbS52MS5EZWxldGVJdGVtUmVzcG9uc2UiAEKdAQoLY29tLml0ZW0udjFCCUl0ZW1Qcm90b1ABWkZnaXRodWIuY29tL3Nwb3RkZW1vNC90cmV2c3RhY2svc2VydmVyL2ludGVybmFsL3NlcnZpY2VzL2l0ZW0vdjE7aXRlbXYxogIDSVhYqgIHSXRlbS5WMcoCB0l0ZW1cVjHiAhNJdGVtXFYxXEdQQk1ldGFkYXRh6gIISXRlbTo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message item.v1.Item
  */
 export type Item = Message<"item.v1.Item"> & {
   /**
-   * @generated from field: optional uint32 id = 1;
+   * @generated from field: optional int64 id = 1;
    */
-  id?: number;
+  id?: bigint;
 
   /**
    * @generated from field: string name = 2;
@@ -39,7 +39,7 @@ export type Item = Message<"item.v1.Item"> & {
   price: number;
 
   /**
-   * @generated from field: uint32 quantity = 5;
+   * @generated from field: int32 quantity = 5;
    */
   quantity: number;
 
@@ -61,9 +61,9 @@ export const ItemSchema: GenMessage<Item> = /*@__PURE__*/
  */
 export type GetItemRequest = Message<"item.v1.GetItemRequest"> & {
   /**
-   * @generated from field: uint32 id = 1;
+   * @generated from field: int64 id = 1;
    */
-  id: number;
+  id: bigint;
 };
 
 /**
@@ -110,12 +110,12 @@ export type GetItemsRequest = Message<"item.v1.GetItemsRequest"> & {
   filter?: string;
 
   /**
-   * @generated from field: optional uint32 limit = 4;
+   * @generated from field: optional int32 limit = 4;
    */
   limit?: number;
 
   /**
-   * @generated from field: optional uint32 offset = 5;
+   * @generated from field: optional int32 offset = 5;
    */
   offset?: number;
 };
@@ -137,7 +137,7 @@ export type GetItemsResponse = Message<"item.v1.GetItemsResponse"> & {
   items: Item[];
 
   /**
-   * @generated from field: uint64 count = 2;
+   * @generated from field: int64 count = 2;
    */
   count: bigint;
 };
@@ -222,9 +222,9 @@ export const UpdateItemResponseSchema: GenMessage<UpdateItemResponse> = /*@__PUR
  */
 export type DeleteItemRequest = Message<"item.v1.DeleteItemRequest"> & {
   /**
-   * @generated from field: uint32 id = 1;
+   * @generated from field: int64 id = 1;
    */
-  id: number;
+  id: bigint;
 };
 
 /**

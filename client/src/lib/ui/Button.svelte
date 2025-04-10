@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { Button } from 'bits-ui';
 	import { cn } from '$lib/utils';
-	import type { MouseEventHandler } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
+
+	type me = MouseEvent & { currentTarget: EventTarget & HTMLButtonElement; }
 
 	let {
 		className,
@@ -12,7 +13,7 @@
 	}: {
 		className?: string;
 		type?: 'submit' | 'reset' | 'button' | null;
-		onclick?: () => void;
+		onclick?: (e: me) => void;
 		children?: Snippet<[]>;
 	} = $props();
 </script>
@@ -23,8 +24,8 @@
 		'bg-sky text-crust focus:outline-sky flex w-fit cursor-pointer items-center justify-center rounded p-2 px-4 text-sm font-medium transition-all hover:brightness-120 focus:outline-2 focus:outline-offset-1',
 		className
 	)}
-	onclick={() => {
-		onclick?.();
+	onclick={(e: me) => {
+		onclick?.(e);
 	}}
 >
 	{@render children?.()}

@@ -4,13 +4,14 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    treli.url = "github:spotdemo4/treli";
     gitignore = {
       url = "github:hercules-ci/gitignore.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, gitignore }:
+  outputs = { self, nixpkgs, flake-utils, gitignore, treli }:
     flake-utils.lib.eachDefaultSystem (system:
 
       let
@@ -80,12 +81,12 @@
           packages = with pkgs; [
             git
             nix-update
+            treli.packages."${system}".default
 
             # Go backend
             go
             gotools
             gopls
-            air
             revive
             bobgen
             
@@ -95,11 +96,11 @@
             protoc-gen-connect-go
             protoc-gen-es
             protoc-gen-connect-openapi
-            inotify-tools
 
             # Svelte frontend
             nodejs_22
 
+            # Update
             (writeShellApplication {
               name = "ts-update";
 
@@ -132,6 +133,7 @@
               '';
             })
 
+            # Bump version
             (writeShellApplication {
               name = "ts-bump";
 
@@ -155,6 +157,7 @@
               '';
             })
 
+            # Lint
             (writeShellApplication {
               name = "ts-lint";
 
@@ -177,10 +180,11 @@
 
                 cd "''${git_root}/server"
                 echo "Linting server"
-                revive -config revive.toml -formatter friendly ./...
+                revive -config revive.toml -set_exit_status ./...
               '';
             })
 
+            # Build
             (writeShellApplication {
               name = "ts-build";
 

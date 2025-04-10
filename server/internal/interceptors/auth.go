@@ -217,7 +217,7 @@ func validateToken(tokenString string, key string) (subject string, err error) {
 
 // key is an unexported type for keys defined in this package.
 // This prevents collisions with keys defined in other packages.
-type key int
+type key int64
 
 // userKey is the key for user.User values in Contexts. It is
 // unexported; clients use user.NewContext and user.FromContext
@@ -231,11 +231,11 @@ func newUserContext(ctx context.Context, subject string) (context.Context, error
 		return nil, err
 	}
 
-	return context.WithValue(ctx, userKey, id), nil
+	return context.WithValue(ctx, userKey, int64(id)), nil
 }
 
 // getUserContext returns the User value stored in ctx, if any.
-func GetUserContext(ctx context.Context) (int, bool) {
-	u, ok := ctx.Value(userKey).(int)
+func GetUserContext(ctx context.Context) (int64, bool) {
+	u, ok := ctx.Value(userKey).(int64)
 	return u, ok
 }

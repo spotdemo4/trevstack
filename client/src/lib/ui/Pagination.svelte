@@ -3,7 +3,7 @@
 	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { Pagination } from 'bits-ui';
 	import { pushState, replaceState } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	let {
 		count = $bindable(),
@@ -21,7 +21,8 @@
 
 	let page: number = $state(1);
 
-	onMount(() => {
+	onMount(async() => {
+		await tick();
 		replaceState('', `${page}`);
 	});
 </script>

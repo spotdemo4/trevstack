@@ -8,14 +8,14 @@ import (
 	"testing"
 )
 
-func TestRandom_int32(t *testing.T) {
+func TestRandom_int64(t *testing.T) {
 	t.Parallel()
 
-	val1 := random_int32(nil)
-	val2 := random_int32(nil)
+	val1 := random_int64(nil)
+	val2 := random_int64(nil)
 
 	if val1 == val2 {
-		t.Fatalf("random_int32() returned the same value twice: %v", val1)
+		t.Fatalf("random_int64() returned the same value twice: %v", val1)
 	}
 }
 
@@ -41,17 +41,6 @@ func TestRandom___byte(t *testing.T) {
 	}
 }
 
-func TestRandom_float32(t *testing.T) {
-	t.Parallel()
-
-	val1 := random_float32(nil)
-	val2 := random_float32(nil)
-
-	if val1 == val2 {
-		t.Fatalf("random_float32() returned the same value twice: %v", val1)
-	}
-}
-
 func TestRandom_time_Time(t *testing.T) {
 	t.Parallel()
 
@@ -60,5 +49,16 @@ func TestRandom_time_Time(t *testing.T) {
 
 	if val1.Equal(val2) {
 		t.Fatalf("random_time_Time() returned the same value twice: %v", val1)
+	}
+}
+
+func TestRandom_float32(t *testing.T) {
+	t.Parallel()
+
+	val1 := random_float32(nil)
+	val2 := random_float32(nil)
+
+	if val1 == val2 {
+		t.Fatalf("random_float32() returned the same value twice: %v", val1)
 	}
 }

@@ -26,8 +26,8 @@
 
 	// Open
 	let addedOpen = $state(false);
-	let deletesOpen: SvelteMap<number, boolean> = new SvelteMap();
-	let editsOpen: SvelteMap<number, boolean> = new SvelteMap();
+	let deletesOpen: SvelteMap<bigint, boolean> = new SvelteMap();
+	let editsOpen: SvelteMap<bigint, boolean> = new SvelteMap();
 
 	async function getItems() {
 		return await ItemClient.getItems({

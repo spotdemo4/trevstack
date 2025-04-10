@@ -128,8 +128,11 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+            - integer
+            - string
           title: id
+          format: int64
       title: DeleteItemRequest
       additionalProperties: false
     item.v1.DeleteItemResponse:
@@ -140,8 +143,11 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+            - integer
+            - string
           title: id
+          format: int64
       title: GetItemRequest
       additionalProperties: false
     item.v1.GetItemResponse:
@@ -170,10 +176,12 @@ components:
         limit:
           type: integer
           title: limit
+          format: int32
           nullable: true
         offset:
           type: integer
           title: offset
+          format: int32
           nullable: true
       title: GetItemsRequest
       additionalProperties: false
@@ -197,8 +205,11 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+            - integer
+            - string
           title: id
+          format: int64
           nullable: true
         name:
           type: string
@@ -213,6 +224,7 @@ components:
         quantity:
           type: integer
           title: quantity
+          format: int32
         added:
           title: added
           nullable: true
@@ -292,40 +304,6 @@ components:
           additionalProperties: true
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-    user.v1.BeginPasskeyLoginRequest:
-      type: object
-      title: BeginPasskeyLoginRequest
-      additionalProperties: false
-    user.v1.BeginPasskeyLoginResponse:
-      type: object
-      title: BeginPasskeyLoginResponse
-      additionalProperties: false
-    user.v1.FinishPasskeyLoginRequest:
-      type: object
-      title: FinishPasskeyLoginRequest
-      additionalProperties: false
-    user.v1.FinishPasskeyLoginResponse:
-      type: object
-      title: FinishPasskeyLoginResponse
-      additionalProperties: false
-    user.v1.GetPasskeyIDsRequest:
-      type: object
-      properties:
-        username:
-          type: string
-          title: username
-      title: GetPasskeyIDsRequest
-      additionalProperties: false
-    user.v1.GetPasskeyIDsResponse:
-      type: object
-      properties:
-        passkeyIds:
-          type: array
-          items:
-            type: string
-          title: passkey_ids
-      title: GetPasskeyIDsResponse
-      additionalProperties: false
     user.v1.LoginRequest:
       type: object
       properties:
@@ -370,22 +348,6 @@ components:
     user.v1.SignUpResponse:
       type: object
       title: SignUpResponse
-      additionalProperties: false
-    user.v1.BeginPasskeyRegistrationRequest:
-      type: object
-      title: BeginPasskeyRegistrationRequest
-      additionalProperties: false
-    user.v1.BeginPasskeyRegistrationResponse:
-      type: object
-      title: BeginPasskeyRegistrationResponse
-      additionalProperties: false
-    user.v1.FinishPasskeyRegistrationRequest:
-      type: object
-      title: FinishPasskeyRegistrationRequest
-      additionalProperties: false
-    user.v1.FinishPasskeyRegistrationResponse:
-      type: object
-      title: FinishPasskeyRegistrationResponse
       additionalProperties: false
     user.v1.GetAPIKeyRequest:
       type: object
@@ -464,14 +426,20 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+            - integer
+            - string
           title: id
+          format: int64
         username:
           type: string
           title: username
-        profilePicture:
-          type: string
-          title: profile_picture
+        profilePictureId:
+          type:
+            - integer
+            - string
+          title: profile_picture_id
+          format: int64
           nullable: true
       title: User
       additionalProperties: false
@@ -758,111 +726,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user.v1.LogoutResponse'
-  /user.v1.AuthService/GetPasskeyIDs:
-    post:
-      tags:
-        - user.v1.AuthService
-      summary: GetPasskeyIDs
-      operationId: user.v1.AuthService.GetPasskeyIDs
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user.v1.GetPasskeyIDsRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user.v1.GetPasskeyIDsResponse'
-  /user.v1.AuthService/BeginPasskeyLogin:
-    post:
-      tags:
-        - user.v1.AuthService
-      summary: BeginPasskeyLogin
-      operationId: user.v1.AuthService.BeginPasskeyLogin
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user.v1.BeginPasskeyLoginRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user.v1.BeginPasskeyLoginResponse'
-  /user.v1.AuthService/FinishPasskeyLogin:
-    post:
-      tags:
-        - user.v1.AuthService
-      summary: FinishPasskeyLogin
-      operationId: user.v1.AuthService.FinishPasskeyLogin
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user.v1.FinishPasskeyLoginRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user.v1.FinishPasskeyLoginResponse'
   /user.v1.UserService/GetUser:
     post:
       tags:
@@ -1003,76 +866,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user.v1.UpdateProfilePictureResponse'
-  /user.v1.UserService/BeginPasskeyRegistration:
-    post:
-      tags:
-        - user.v1.UserService
-      summary: BeginPasskeyRegistration
-      operationId: user.v1.UserService.BeginPasskeyRegistration
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user.v1.BeginPasskeyRegistrationRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user.v1.BeginPasskeyRegistrationResponse'
-  /user.v1.UserService/FinishPasskeyRegistration:
-    post:
-      tags:
-        - user.v1.UserService
-      summary: FinishPasskeyRegistration
-      operationId: user.v1.UserService.FinishPasskeyRegistration
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/connect-protocol-version'
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: '#/components/schemas/connect-timeout-header'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user.v1.FinishPasskeyRegistrationRequest'
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/connect.error'
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user.v1.FinishPasskeyRegistrationResponse'
 tags:
   - name: item.v1.ItemService
   - name: user.v1.AuthService

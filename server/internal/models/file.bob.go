@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/aarondl/opt/null"
 	"github.com/aarondl/opt/omit"
 	"github.com/aarondl/opt/omitnull"
 	"github.com/stephenafamo/bob"
@@ -26,10 +25,10 @@ import (
 
 // File is an object representing the database table.
 type File struct {
-	ID     int32            `db:"id,pk" `
-	Name   null.Val[string] `db:"name" `
-	Data   null.Val[[]byte] `db:"data" `
-	UserID null.Val[int32]  `db:"user_id" `
+	ID     int64  `db:"id,pk" `
+	Name   string `db:"name" `
+	Data   []byte `db:"data" `
+	UserID int64  `db:"user_id" `
 
 	R fileR `db:"-" `
 }
@@ -38,15 +37,16 @@ type File struct {
 // This should almost always be used instead of []*File.
 type FileSlice []*File
 
-// Files contains methods to work with the files table
-var Files = sqlite.NewTablex[*File, FileSlice, *FileSetter]("", "files")
+// Files contains methods to work with the file table
+var Files = sqlite.NewTablex[*File, FileSlice, *FileSetter]("", "file")
 
-// FilesQuery is a query on the files table
+// FilesQuery is a query on the file table
 type FilesQuery = *sqlite.ViewQuery[*File, FileSlice]
 
 // fileR is where relationships are stored.
 type fileR struct {
-	User *User // fk_files_0
+	User                *User     // fk_file_0
+	ProfilePictureUsers UserSlice // fk_user_0
 }
 
 type fileColumnNames struct {
@@ -56,7 +56,7 @@ type fileColumnNames struct {
 	UserID string
 }
 
-var FileColumns = buildFileColumns("files")
+var FileColumns = buildFileColumns("file")
 
 type fileColumns struct {
 	tableAlias string
@@ -85,10 +85,10 @@ func buildFileColumns(alias string) fileColumns {
 }
 
 type fileWhere[Q sqlite.Filterable] struct {
-	ID     sqlite.WhereMod[Q, int32]
-	Name   sqlite.WhereNullMod[Q, string]
-	Data   sqlite.WhereNullMod[Q, []byte]
-	UserID sqlite.WhereNullMod[Q, int32]
+	ID     sqlite.WhereMod[Q, int64]
+	Name   sqlite.WhereMod[Q, string]
+	Data   sqlite.WhereMod[Q, []byte]
+	UserID sqlite.WhereMod[Q, int64]
 }
 
 func (fileWhere[Q]) AliasedAs(alias string) fileWhere[Q] {
@@ -97,29 +97,29 @@ func (fileWhere[Q]) AliasedAs(alias string) fileWhere[Q] {
 
 func buildFileWhere[Q sqlite.Filterable](cols fileColumns) fileWhere[Q] {
 	return fileWhere[Q]{
-		ID:     sqlite.Where[Q, int32](cols.ID),
-		Name:   sqlite.WhereNull[Q, string](cols.Name),
-		Data:   sqlite.WhereNull[Q, []byte](cols.Data),
-		UserID: sqlite.WhereNull[Q, int32](cols.UserID),
+		ID:     sqlite.Where[Q, int64](cols.ID),
+		Name:   sqlite.Where[Q, string](cols.Name),
+		Data:   sqlite.Where[Q, []byte](cols.Data),
+		UserID: sqlite.Where[Q, int64](cols.UserID),
 	}
 }
 
 var FileErrors = &fileErrors{
-	ErrUniquePkMainFiles: &UniqueConstraintError{s: "pk_main_files"},
+	ErrUniquePkMainFile: &UniqueConstraintError{s: "pk_main_file"},
 }
 
 type fileErrors struct {
-	ErrUniquePkMainFiles *UniqueConstraintError
+	ErrUniquePkMainFile *UniqueConstraintError
 }
 
 // FileSetter is used for insert/upsert/update operations
 // All values are optional, and do not have to be set
 // Generated columns are not included
 type FileSetter struct {
-	ID     omit.Val[int32]      `db:"id,pk" `
-	Name   omitnull.Val[string] `db:"name" `
-	Data   omitnull.Val[[]byte] `db:"data" `
-	UserID omitnull.Val[int32]  `db:"user_id" `
+	ID     omit.Val[int64]  `db:"id,pk" `
+	Name   omit.Val[string] `db:"name" `
+	Data   omit.Val[[]byte] `db:"data" `
+	UserID omit.Val[int64]  `db:"user_id" `
 }
 
 func (s FileSetter) SetColumns() []string {
@@ -148,13 +148,13 @@ func (s FileSetter) Overwrite(t *File) {
 		t.ID, _ = s.ID.Get()
 	}
 	if !s.Name.IsUnset() {
-		t.Name, _ = s.Name.GetNull()
+		t.Name, _ = s.Name.Get()
 	}
 	if !s.Data.IsUnset() {
-		t.Data, _ = s.Data.GetNull()
+		t.Data, _ = s.Data.Get()
 	}
 	if !s.UserID.IsUnset() {
-		t.UserID, _ = s.UserID.GetNull()
+		t.UserID, _ = s.UserID.Get()
 	}
 }
 
@@ -229,7 +229,7 @@ func (s FileSetter) Expressions(prefix ...string) []bob.Expression {
 
 // FindFile retrieves a single record by primary key
 // If cols is empty Find will return all columns.
-func FindFile(ctx context.Context, exec bob.Executor, IDPK int32, cols ...string) (*File, error) {
+func FindFile(ctx context.Context, exec bob.Executor, IDPK int64, cols ...string) (*File, error) {
 	if len(cols) == 0 {
 		return Files.Query(
 			SelectWhere.Files.ID.EQ(IDPK),
@@ -243,7 +243,7 @@ func FindFile(ctx context.Context, exec bob.Executor, IDPK int32, cols ...string
 }
 
 // FileExists checks the presence of a single record by primary key
-func FileExists(ctx context.Context, exec bob.Executor, IDPK int32) (bool, error) {
+func FileExists(ctx context.Context, exec bob.Executor, IDPK int64) (bool, error) {
 	return Files.Query(
 		SelectWhere.Files.ID.EQ(IDPK),
 	).Exists(ctx, exec)
@@ -273,7 +273,7 @@ func (o *File) PrimaryKeyVals() bob.Expression {
 }
 
 func (o *File) pkEQ() dialect.Expression {
-	return sqlite.Quote("files", "id").EQ(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
+	return sqlite.Quote("file", "id").EQ(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
 		return o.PrimaryKeyVals().WriteSQL(ctx, w, d, start)
 	}))
 }
@@ -334,7 +334,7 @@ func (o FileSlice) pkIN() dialect.Expression {
 		return sqlite.Raw("NULL")
 	}
 
-	return sqlite.Quote("files", "id").In(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
+	return sqlite.Quote("file", "id").In(bob.ExpressionFunc(func(ctx context.Context, w io.Writer, d bob.Dialect, start int) ([]any, error) {
 		pkPairs := make([]bob.Expression, len(o))
 		for i, row := range o {
 			pkPairs[i] = row.PrimaryKeyVals()
@@ -451,8 +451,9 @@ func (o FileSlice) ReloadAll(ctx context.Context, exec bob.Executor) error {
 }
 
 type fileJoins[Q dialect.Joinable] struct {
-	typ  string
-	User func(context.Context) modAs[Q, userColumns]
+	typ                 string
+	User                func(context.Context) modAs[Q, userColumns]
+	ProfilePictureUsers func(context.Context) modAs[Q, userColumns]
 }
 
 func (j fileJoins[Q]) aliasedAs(alias string) fileJoins[Q] {
@@ -461,8 +462,9 @@ func (j fileJoins[Q]) aliasedAs(alias string) fileJoins[Q] {
 
 func buildFileJoins[Q dialect.Joinable](cols fileColumns, typ string) fileJoins[Q] {
 	return fileJoins[Q]{
-		typ:  typ,
-		User: filesJoinUser[Q](cols, typ),
+		typ:                 typ,
+		User:                filesJoinUser[Q](cols, typ),
+		ProfilePictureUsers: filesJoinProfilePictureUsers[Q](cols, typ),
 	}
 }
 
@@ -485,7 +487,26 @@ func filesJoinUser[Q dialect.Joinable](from fileColumns, typ string) func(contex
 	}
 }
 
-// User starts a query for related objects on users
+func filesJoinProfilePictureUsers[Q dialect.Joinable](from fileColumns, typ string) func(context.Context) modAs[Q, userColumns] {
+	return func(ctx context.Context) modAs[Q, userColumns] {
+		return modAs[Q, userColumns]{
+			c: UserColumns,
+			f: func(to userColumns) bob.Mod[Q] {
+				mods := make(mods.QueryMods[Q], 0, 1)
+
+				{
+					mods = append(mods, dialect.Join[Q](typ, Users.Name().As(to.Alias())).On(
+						to.ProfilePictureID.EQ(from.ID),
+					))
+				}
+
+				return mods
+			},
+		}
+	}
+}
+
+// User starts a query for related objects on user
 func (o *File) User(mods ...bob.Mod[*dialect.SelectQuery]) UsersQuery {
 	return Users.Query(append(mods,
 		sm.Where(UserColumns.ID.EQ(sqlite.Arg(o.UserID))),
@@ -500,6 +521,24 @@ func (os FileSlice) User(mods ...bob.Mod[*dialect.SelectQuery]) UsersQuery {
 
 	return Users.Query(append(mods,
 		sm.Where(sqlite.Group(UserColumns.ID).In(PKArgs...)),
+	)...)
+}
+
+// ProfilePictureUsers starts a query for related objects on user
+func (o *File) ProfilePictureUsers(mods ...bob.Mod[*dialect.SelectQuery]) UsersQuery {
+	return Users.Query(append(mods,
+		sm.Where(UserColumns.ProfilePictureID.EQ(sqlite.Arg(o.ID))),
+	)...)
+}
+
+func (os FileSlice) ProfilePictureUsers(mods ...bob.Mod[*dialect.SelectQuery]) UsersQuery {
+	PKArgs := make([]bob.Expression, len(os))
+	for i, o := range os {
+		PKArgs[i] = sqlite.ArgGroup(o.ID)
+	}
+
+	return Users.Query(append(mods,
+		sm.Where(sqlite.Group(UserColumns.ProfilePictureID).In(PKArgs...)),
 	)...)
 }
 
@@ -519,6 +558,20 @@ func (o *File) Preload(name string, retrieved any) error {
 
 		if rel != nil {
 			rel.R.Files = FileSlice{o}
+		}
+		return nil
+	case "ProfilePictureUsers":
+		rels, ok := retrieved.(UserSlice)
+		if !ok {
+			return fmt.Errorf("file cannot load %T as %q", retrieved, name)
+		}
+
+		o.R.ProfilePictureUsers = rels
+
+		for _, rel := range rels {
+			if rel != nil {
+				rel.R.ProfilePictureFile = o
+			}
 		}
 		return nil
 	default:
@@ -597,7 +650,7 @@ func (os FileSlice) LoadFileUser(ctx context.Context, exec bob.Executor, mods ..
 
 	for _, o := range os {
 		for _, rel := range users {
-			if o.UserID.GetOrZero() != rel.ID {
+			if o.UserID != rel.ID {
 				continue
 			}
 
@@ -611,9 +664,81 @@ func (os FileSlice) LoadFileUser(ctx context.Context, exec bob.Executor, mods ..
 	return nil
 }
 
+func ThenLoadFileProfilePictureUsers(queryMods ...bob.Mod[*dialect.SelectQuery]) sqlite.Loader {
+	return sqlite.Loader(func(ctx context.Context, exec bob.Executor, retrieved any) error {
+		loader, isLoader := retrieved.(interface {
+			LoadFileProfilePictureUsers(context.Context, bob.Executor, ...bob.Mod[*dialect.SelectQuery]) error
+		})
+		if !isLoader {
+			return fmt.Errorf("object %T cannot load FileProfilePictureUsers", retrieved)
+		}
+
+		err := loader.LoadFileProfilePictureUsers(ctx, exec, queryMods...)
+
+		// Don't cause an issue due to missing relationships
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil
+		}
+
+		return err
+	})
+}
+
+// LoadFileProfilePictureUsers loads the file's ProfilePictureUsers into the .R struct
+func (o *File) LoadFileProfilePictureUsers(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if o == nil {
+		return nil
+	}
+
+	// Reset the relationship
+	o.R.ProfilePictureUsers = nil
+
+	related, err := o.ProfilePictureUsers(mods...).All(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	for _, rel := range related {
+		rel.R.ProfilePictureFile = o
+	}
+
+	o.R.ProfilePictureUsers = related
+	return nil
+}
+
+// LoadFileProfilePictureUsers loads the file's ProfilePictureUsers into the .R struct
+func (os FileSlice) LoadFileProfilePictureUsers(ctx context.Context, exec bob.Executor, mods ...bob.Mod[*dialect.SelectQuery]) error {
+	if len(os) == 0 {
+		return nil
+	}
+
+	users, err := os.ProfilePictureUsers(mods...).All(ctx, exec)
+	if err != nil {
+		return err
+	}
+
+	for _, o := range os {
+		o.R.ProfilePictureUsers = nil
+	}
+
+	for _, o := range os {
+		for _, rel := range users {
+			if o.ID != rel.ProfilePictureID.GetOrZero() {
+				continue
+			}
+
+			rel.R.ProfilePictureFile = o
+
+			o.R.ProfilePictureUsers = append(o.R.ProfilePictureUsers, rel)
+		}
+	}
+
+	return nil
+}
+
 func attachFileUser0(ctx context.Context, exec bob.Executor, count int, file0 *File, user1 *User) (*File, error) {
 	setter := &FileSetter{
-		UserID: omitnull.From(user1.ID),
+		UserID: omit.From(user1.ID),
 	}
 
 	err := file0.Update(ctx, exec, setter)
@@ -653,6 +778,74 @@ func (file0 *File) AttachUser(ctx context.Context, exec bob.Executor, user1 *Use
 	file0.R.User = user1
 
 	user1.R.Files = append(user1.R.Files, file0)
+
+	return nil
+}
+
+func insertFileProfilePictureUsers0(ctx context.Context, exec bob.Executor, users1 []*UserSetter, file0 *File) (UserSlice, error) {
+	for i := range users1 {
+		users1[i].ProfilePictureID = omitnull.From(file0.ID)
+	}
+
+	ret, err := Users.Insert(bob.ToMods(users1...)).All(ctx, exec)
+	if err != nil {
+		return ret, fmt.Errorf("insertFileProfilePictureUsers0: %w", err)
+	}
+
+	return ret, nil
+}
+
+func attachFileProfilePictureUsers0(ctx context.Context, exec bob.Executor, count int, users1 UserSlice, file0 *File) (UserSlice, error) {
+	setter := &UserSetter{
+		ProfilePictureID: omitnull.From(file0.ID),
+	}
+
+	err := users1.UpdateAll(ctx, exec, *setter)
+	if err != nil {
+		return nil, fmt.Errorf("attachFileProfilePictureUsers0: %w", err)
+	}
+
+	return users1, nil
+}
+
+func (file0 *File) InsertProfilePictureUsers(ctx context.Context, exec bob.Executor, related ...*UserSetter) error {
+	if len(related) == 0 {
+		return nil
+	}
+
+	var err error
+
+	users1, err := insertFileProfilePictureUsers0(ctx, exec, related, file0)
+	if err != nil {
+		return err
+	}
+
+	file0.R.ProfilePictureUsers = append(file0.R.ProfilePictureUsers, users1...)
+
+	for _, rel := range users1 {
+		rel.R.ProfilePictureFile = file0
+	}
+	return nil
+}
+
+func (file0 *File) AttachProfilePictureUsers(ctx context.Context, exec bob.Executor, related ...*User) error {
+	if len(related) == 0 {
+		return nil
+	}
+
+	var err error
+	users1 := UserSlice(related)
+
+	_, err = attachFileProfilePictureUsers0(ctx, exec, len(related), users1, file0)
+	if err != nil {
+		return err
+	}
+
+	file0.R.ProfilePictureUsers = append(file0.R.ProfilePictureUsers, users1...)
+
+	for _, rel := range related {
+		rel.R.ProfilePictureFile = file0
+	}
 
 	return nil
 }

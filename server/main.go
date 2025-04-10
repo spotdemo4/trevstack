@@ -3,65 +3,41 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	connectcors "connectrpc.com/cors"
 	"github.com/joho/godotenv"
-	"github.com/rs/cors"
+	"github.com/stephenafamo/bob"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
-	"gorm.io/gorm"
 
 	"github.com/spotdemo4/trevstack/server/internal/database"
-	"github.com/spotdemo4/trevstack/server/internal/handlers"
 	"github.com/spotdemo4/trevstack/server/internal/handlers/client"
+	"github.com/spotdemo4/trevstack/server/internal/handlers/file"
 	"github.com/spotdemo4/trevstack/server/internal/handlers/item/v1"
 	"github.com/spotdemo4/trevstack/server/internal/handlers/user/v1"
+	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 )
 
-type env struct {
-	DBType string
-	DBUser string
-	DBPass string
-	DBHost string
-	DBPort string
-	DBName string
-	Port   string
-	Key    string
-}
-
 func main() {
-	err := godotenv.Load()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
+	// Get env
+	env, err := getEnv()
 	if err != nil {
-		log.Println("Failed to load .env file, using environment variables")
+		log.Fatal(err.Error())
 	}
 
-	// Get environment variables for server
-	env := env{
-		DBType: os.Getenv("DB_TYPE"),
-		DBUser: os.Getenv("DB_USER"),
-		DBPass: os.Getenv("DB_PASS"),
-		DBHost: os.Getenv("DB_HOST"),
-		DBPort: os.Getenv("DB_PORT"),
-		DBName: os.Getenv("DB_NAME"),
-		Port:   os.Getenv("PORT"),
-		Key:    os.Getenv("KEY"),
-	}
-	if env.Port == "" {
-		env.Port = "8080"
-	}
-	if env.Key == "" {
-		log.Fatal("KEY is required")
-	}
-
-	// Get environment variables for database
-	db := &gorm.DB{}
+	// Get database
+	db := &bob.DB{}
 	switch env.DBType {
 	case "postgres":
 		log.Println("Using Postgres")
@@ -103,21 +79,16 @@ func main() {
 		log.Fatal("DB_TYPE must be either postgres or sqlite")
 	}
 
-	// Init database
-	if err := database.Migrate(db); err != nil {
-		log.Fatalf("failed to migrate database: %v", err)
-	}
-
 	// Serve GRPC Handlers
 	api := http.NewServeMux()
-	api.Handle(withCORS(user.NewAuthHandler(db, env.Key)))
-	api.Handle(withCORS(user.NewHandler(db, env.Key)))
-	api.Handle(withCORS(item.NewHandler(db, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewAuthHandler(db, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewHandler(db, env.Key)))
+	api.Handle(interceptors.WithCORS(item.NewHandler(db, env.Key)))
 
 	// Serve web interface
 	mux := http.NewServeMux()
 	mux.Handle("/", client.NewClientHandler(env.Key))
-	mux.Handle("/file/", handlers.NewFileHandler(db, env.Key))
+	mux.Handle("/file/", file.NewFileHandler(db, env.Key))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
 	// Start server
@@ -132,8 +103,7 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		sig := <-sigs
-		log.Printf("Received signal %s", sig)
-		log.Println("Exiting")
+		slog.Warn(fmt.Sprintf("Received signal %s, exiting", sig))
 
 		// Close HTTP server
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -143,10 +113,7 @@ func main() {
 		cancel()
 
 		// Close database connection
-		sqlDB, err := db.DB() // Get underlying SQL database
-		if err == nil {
-			sqlDB.Close()
-		}
+		db.Close()
 	}()
 
 	if err := server.ListenAndServe(); err != nil {
@@ -154,13 +121,42 @@ func main() {
 	}
 }
 
-// withCORS adds CORS support to a Connect HTTP handler.
-func withCORS(pattern string, h http.Handler) (string, http.Handler) {
-	middleware := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: connectcors.AllowedMethods(),
-		AllowedHeaders: connectcors.AllowedHeaders(),
-		ExposedHeaders: connectcors.ExposedHeaders(),
-	})
-	return pattern, middleware.Handler(h)
+type env struct {
+	DBType string
+	DBUser string
+	DBPass string
+	DBHost string
+	DBPort string
+	DBName string
+	Port   string
+	Key    string
+}
+
+func getEnv() (*env, error) {
+	err := godotenv.Load()
+	if err != nil {
+		slog.Warn("Failed to load .env file, using environment variables")
+	}
+
+	// Create
+	env := env{
+		DBType: os.Getenv("DB_TYPE"),
+		DBUser: os.Getenv("DB_USER"),
+		DBPass: os.Getenv("DB_PASS"),
+		DBHost: os.Getenv("DB_HOST"),
+		DBPort: os.Getenv("DB_PORT"),
+		DBName: os.Getenv("DB_NAME"),
+		Port:   os.Getenv("PORT"),
+		Key:    os.Getenv("KEY"),
+	}
+
+	// Validate
+	if env.Port == "" {
+		env.Port = "8080"
+	}
+	if env.Key == "" {
+		return nil, errors.New("env 'key' not found")
+	}
+
+	return &env, nil
 }

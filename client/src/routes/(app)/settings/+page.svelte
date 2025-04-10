@@ -140,8 +140,7 @@
 				className="bg-text"
 				onclick={async () => {
 					if (userState.user) {
-						await createPasskey(userState.user.username, userState.user.id, "what");
-
+						//await createPasskey(userState.user.username, userState.user.id, "what");
 					}
 				}}>Register Device</Button
 			>

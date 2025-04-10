@@ -28,12 +28,12 @@ func random_float32(f *faker.Faker) float32 {
 	return f.Float32(10, -1_000_000, 1_000_000)
 }
 
-func random_int32(f *faker.Faker) int32 {
+func random_int64(f *faker.Faker) int64 {
 	if f == nil {
 		f = &defaultFaker
 	}
 
-	return f.Int32()
+	return f.Int64()
 }
 
 func random_string(f *faker.Faker) string {

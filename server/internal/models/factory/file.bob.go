@@ -9,7 +9,6 @@ import (
 
 	"github.com/aarondl/opt/null"
 	"github.com/aarondl/opt/omit"
-	"github.com/aarondl/opt/omitnull"
 	"github.com/jaswdr/faker/v2"
 	models "github.com/spotdemo4/trevstack/server/internal/models"
 	"github.com/stephenafamo/bob"
@@ -36,21 +35,26 @@ func (mods FileModSlice) Apply(n *FileTemplate) {
 // FileTemplate is an object representing the database table.
 // all columns are optional and should be set by mods
 type FileTemplate struct {
-	ID     func() int32
-	Name   func() null.Val[string]
-	Data   func() null.Val[[]byte]
-	UserID func() null.Val[int32]
+	ID     func() int64
+	Name   func() string
+	Data   func() []byte
+	UserID func() int64
 
 	r fileR
 	f *Factory
 }
 
 type fileR struct {
-	User *fileRUserR
+	User                *fileRUserR
+	ProfilePictureUsers []*fileRProfilePictureUsersR
 }
 
 type fileRUserR struct {
 	o *UserTemplate
+}
+type fileRProfilePictureUsersR struct {
+	number int
+	o      *UserTemplate
 }
 
 // Apply mods to the FileTemplate
@@ -99,8 +103,21 @@ func (t FileTemplate) setModelRels(o *models.File) {
 	if t.r.User != nil {
 		rel := t.r.User.o.toModel()
 		rel.R.Files = append(rel.R.Files, o)
-		o.UserID = null.From(rel.ID)
+		o.UserID = rel.ID
 		o.R.User = rel
+	}
+
+	if t.r.ProfilePictureUsers != nil {
+		rel := models.UserSlice{}
+		for _, r := range t.r.ProfilePictureUsers {
+			related := r.o.toModels(r.number)
+			for _, rel := range related {
+				rel.ProfilePictureID = null.From(o.ID)
+				rel.R.ProfilePictureFile = o
+			}
+			rel = append(rel, related...)
+		}
+		o.R.ProfilePictureUsers = rel
 	}
 }
 
@@ -113,13 +130,13 @@ func (o FileTemplate) BuildSetter() *models.FileSetter {
 		m.ID = omit.From(o.ID())
 	}
 	if o.Name != nil {
-		m.Name = omitnull.FromNull(o.Name())
+		m.Name = omit.From(o.Name())
 	}
 	if o.Data != nil {
-		m.Data = omitnull.FromNull(o.Data())
+		m.Data = omit.From(o.Data())
 	}
 	if o.UserID != nil {
-		m.UserID = omitnull.FromNull(o.UserID())
+		m.UserID = omit.From(o.UserID())
 	}
 
 	return m
@@ -161,6 +178,15 @@ func (o FileTemplate) BuildMany(number int) models.FileSlice {
 }
 
 func ensureCreatableFile(m *models.FileSetter) {
+	if m.Name.IsUnset() {
+		m.Name = omit.From(random_string(nil))
+	}
+	if m.Data.IsUnset() {
+		m.Data = omit.From(random___byte(nil))
+	}
+	if m.UserID.IsUnset() {
+		m.UserID = omit.From(random_int64(nil))
+	}
 }
 
 // insertOptRels creates and inserts any optional the relationships on *models.File
@@ -169,15 +195,18 @@ func ensureCreatableFile(m *models.FileSetter) {
 func (o *FileTemplate) insertOptRels(ctx context.Context, exec bob.Executor, m *models.File) (context.Context, error) {
 	var err error
 
-	if o.r.User != nil {
-		var rel0 *models.User
-		ctx, rel0, err = o.r.User.o.create(ctx, exec)
-		if err != nil {
-			return ctx, err
-		}
-		err = m.AttachUser(ctx, exec, rel0)
-		if err != nil {
-			return ctx, err
+	if o.r.ProfilePictureUsers != nil {
+		for _, r := range o.r.ProfilePictureUsers {
+			var rel1 models.UserSlice
+			ctx, rel1, err = r.o.createMany(ctx, exec, r.number)
+			if err != nil {
+				return ctx, err
+			}
+
+			err = m.AttachProfilePictureUsers(ctx, exec, rel1...)
+			if err != nil {
+				return ctx, err
+			}
 		}
 	}
 
@@ -223,11 +252,29 @@ func (o *FileTemplate) create(ctx context.Context, exec bob.Executor) (context.C
 	opt := o.BuildSetter()
 	ensureCreatableFile(opt)
 
+	var rel0 *models.User
+	if o.r.User == nil {
+		var ok bool
+		rel0, ok = userCtx.Value(ctx)
+		if !ok {
+			FileMods.WithNewUser().Apply(o)
+		}
+	}
+	if o.r.User != nil {
+		ctx, rel0, err = o.r.User.o.create(ctx, exec)
+		if err != nil {
+			return ctx, nil, err
+		}
+	}
+	opt.UserID = omit.From(rel0.ID)
+
 	m, err := models.Files.Insert(opt).One(ctx, exec)
 	if err != nil {
 		return ctx, nil, err
 	}
 	ctx = fileCtx.WithValue(ctx, m)
+
+	m.R.User = rel0
 
 	ctx, err = o.insertOptRels(ctx, exec, m)
 	return ctx, m, err
@@ -296,14 +343,14 @@ func (m fileMods) RandomizeAllColumns(f *faker.Faker) FileMod {
 }
 
 // Set the model columns to this value
-func (m fileMods) ID(val int32) FileMod {
+func (m fileMods) ID(val int64) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.ID = func() int32 { return val }
+		o.ID = func() int64 { return val }
 	})
 }
 
 // Set the Column from the function
-func (m fileMods) IDFunc(f func() int32) FileMod {
+func (m fileMods) IDFunc(f func() int64) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
 		o.ID = f
 	})
@@ -320,21 +367,21 @@ func (m fileMods) UnsetID() FileMod {
 // if faker is nil, a default faker is used
 func (m fileMods) RandomID(f *faker.Faker) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.ID = func() int32 {
-			return random_int32(f)
+		o.ID = func() int64 {
+			return random_int64(f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m fileMods) Name(val null.Val[string]) FileMod {
+func (m fileMods) Name(val string) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.Name = func() null.Val[string] { return val }
+		o.Name = func() string { return val }
 	})
 }
 
 // Set the Column from the function
-func (m fileMods) NameFunc(f func() null.Val[string]) FileMod {
+func (m fileMods) NameFunc(f func() string) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
 		o.Name = f
 	})
@@ -351,29 +398,21 @@ func (m fileMods) UnsetName() FileMod {
 // if faker is nil, a default faker is used
 func (m fileMods) RandomName(f *faker.Faker) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.Name = func() null.Val[string] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[string](nil)
-			}
-
-			return null.From(random_string(f))
+		o.Name = func() string {
+			return random_string(f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m fileMods) Data(val null.Val[[]byte]) FileMod {
+func (m fileMods) Data(val []byte) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.Data = func() null.Val[[]byte] { return val }
+		o.Data = func() []byte { return val }
 	})
 }
 
 // Set the Column from the function
-func (m fileMods) DataFunc(f func() null.Val[[]byte]) FileMod {
+func (m fileMods) DataFunc(f func() []byte) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
 		o.Data = f
 	})
@@ -390,29 +429,21 @@ func (m fileMods) UnsetData() FileMod {
 // if faker is nil, a default faker is used
 func (m fileMods) RandomData(f *faker.Faker) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.Data = func() null.Val[[]byte] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[[]byte](nil)
-			}
-
-			return null.From(random___byte(f))
+		o.Data = func() []byte {
+			return random___byte(f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m fileMods) UserID(val null.Val[int32]) FileMod {
+func (m fileMods) UserID(val int64) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.UserID = func() null.Val[int32] { return val }
+		o.UserID = func() int64 { return val }
 	})
 }
 
 // Set the Column from the function
-func (m fileMods) UserIDFunc(f func() null.Val[int32]) FileMod {
+func (m fileMods) UserIDFunc(f func() int64) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
 		o.UserID = f
 	})
@@ -429,16 +460,8 @@ func (m fileMods) UnsetUserID() FileMod {
 // if faker is nil, a default faker is used
 func (m fileMods) RandomUserID(f *faker.Faker) FileMod {
 	return FileModFunc(func(o *FileTemplate) {
-		o.UserID = func() null.Val[int32] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[int32](nil)
-			}
-
-			return null.From(random_int32(f))
+		o.UserID = func() int64 {
+			return random_int64(f)
 		}
 	})
 }
@@ -462,5 +485,43 @@ func (m fileMods) WithNewUser(mods ...UserMod) FileMod {
 func (m fileMods) WithoutUser() FileMod {
 	return FileModFunc(func(o *FileTemplate) {
 		o.r.User = nil
+	})
+}
+
+func (m fileMods) WithProfilePictureUsers(number int, related *UserTemplate) FileMod {
+	return FileModFunc(func(o *FileTemplate) {
+		o.r.ProfilePictureUsers = []*fileRProfilePictureUsersR{{
+			number: number,
+			o:      related,
+		}}
+	})
+}
+
+func (m fileMods) WithNewProfilePictureUsers(number int, mods ...UserMod) FileMod {
+	return FileModFunc(func(o *FileTemplate) {
+		related := o.f.NewUser(mods...)
+		m.WithProfilePictureUsers(number, related).Apply(o)
+	})
+}
+
+func (m fileMods) AddProfilePictureUsers(number int, related *UserTemplate) FileMod {
+	return FileModFunc(func(o *FileTemplate) {
+		o.r.ProfilePictureUsers = append(o.r.ProfilePictureUsers, &fileRProfilePictureUsersR{
+			number: number,
+			o:      related,
+		})
+	})
+}
+
+func (m fileMods) AddNewProfilePictureUsers(number int, mods ...UserMod) FileMod {
+	return FileModFunc(func(o *FileTemplate) {
+		related := o.f.NewUser(mods...)
+		m.AddProfilePictureUsers(number, related).Apply(o)
+	})
+}
+
+func (m fileMods) WithoutProfilePictureUsers() FileMod {
+	return FileModFunc(func(o *FileTemplate) {
+		o.r.ProfilePictureUsers = nil
 	})
 }

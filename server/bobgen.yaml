@@ -1,5 +1,15 @@
 wipe: true
 
+replacements:
+  - match:
+      db_type: "INTEGER"
+    replace: "int64"
+
+  - match:
+      db_type: "INTEGER"
+      nullable: true
+    replace: "int64"
+
 sqlite:
   output: internal/models
 

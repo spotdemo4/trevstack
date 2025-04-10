@@ -37,13 +37,13 @@ func (mods ItemModSlice) Apply(n *ItemTemplate) {
 // ItemTemplate is an object representing the database table.
 // all columns are optional and should be set by mods
 type ItemTemplate struct {
-	ID          func() int32
-	Name        func() null.Val[string]
+	ID          func() int64
+	Name        func() string
+	Added       func() time.Time
 	Description func() null.Val[string]
 	Price       func() null.Val[float32]
-	Quantity    func() null.Val[int32]
-	Added       func() null.Val[time.Time]
-	UserID      func() null.Val[int32]
+	Quantity    func() null.Val[int64]
+	UserID      func() int64
 
 	r itemR
 	f *Factory
@@ -75,6 +75,9 @@ func (o ItemTemplate) toModel() *models.Item {
 	if o.Name != nil {
 		m.Name = o.Name()
 	}
+	if o.Added != nil {
+		m.Added = o.Added()
+	}
 	if o.Description != nil {
 		m.Description = o.Description()
 	}
@@ -83,9 +86,6 @@ func (o ItemTemplate) toModel() *models.Item {
 	}
 	if o.Quantity != nil {
 		m.Quantity = o.Quantity()
-	}
-	if o.Added != nil {
-		m.Added = o.Added()
 	}
 	if o.UserID != nil {
 		m.UserID = o.UserID()
@@ -112,7 +112,7 @@ func (t ItemTemplate) setModelRels(o *models.Item) {
 	if t.r.User != nil {
 		rel := t.r.User.o.toModel()
 		rel.R.Items = append(rel.R.Items, o)
-		o.UserID = null.From(rel.ID)
+		o.UserID = rel.ID
 		o.R.User = rel
 	}
 }
@@ -126,7 +126,10 @@ func (o ItemTemplate) BuildSetter() *models.ItemSetter {
 		m.ID = omit.From(o.ID())
 	}
 	if o.Name != nil {
-		m.Name = omitnull.FromNull(o.Name())
+		m.Name = omit.From(o.Name())
+	}
+	if o.Added != nil {
+		m.Added = omit.From(o.Added())
 	}
 	if o.Description != nil {
 		m.Description = omitnull.FromNull(o.Description())
@@ -137,11 +140,8 @@ func (o ItemTemplate) BuildSetter() *models.ItemSetter {
 	if o.Quantity != nil {
 		m.Quantity = omitnull.FromNull(o.Quantity())
 	}
-	if o.Added != nil {
-		m.Added = omitnull.FromNull(o.Added())
-	}
 	if o.UserID != nil {
-		m.UserID = omitnull.FromNull(o.UserID())
+		m.UserID = omit.From(o.UserID())
 	}
 
 	return m
@@ -183,6 +183,15 @@ func (o ItemTemplate) BuildMany(number int) models.ItemSlice {
 }
 
 func ensureCreatableItem(m *models.ItemSetter) {
+	if m.Name.IsUnset() {
+		m.Name = omit.From(random_string(nil))
+	}
+	if m.Added.IsUnset() {
+		m.Added = omit.From(random_time_Time(nil))
+	}
+	if m.UserID.IsUnset() {
+		m.UserID = omit.From(random_int64(nil))
+	}
 }
 
 // insertOptRels creates and inserts any optional the relationships on *models.Item
@@ -190,18 +199,6 @@ func ensureCreatableItem(m *models.ItemSetter) {
 // any required relationship should have already exist on the model
 func (o *ItemTemplate) insertOptRels(ctx context.Context, exec bob.Executor, m *models.Item) (context.Context, error) {
 	var err error
-
-	if o.r.User != nil {
-		var rel0 *models.User
-		ctx, rel0, err = o.r.User.o.create(ctx, exec)
-		if err != nil {
-			return ctx, err
-		}
-		err = m.AttachUser(ctx, exec, rel0)
-		if err != nil {
-			return ctx, err
-		}
-	}
 
 	return ctx, err
 }
@@ -245,11 +242,29 @@ func (o *ItemTemplate) create(ctx context.Context, exec bob.Executor) (context.C
 	opt := o.BuildSetter()
 	ensureCreatableItem(opt)
 
+	var rel0 *models.User
+	if o.r.User == nil {
+		var ok bool
+		rel0, ok = userCtx.Value(ctx)
+		if !ok {
+			ItemMods.WithNewUser().Apply(o)
+		}
+	}
+	if o.r.User != nil {
+		ctx, rel0, err = o.r.User.o.create(ctx, exec)
+		if err != nil {
+			return ctx, nil, err
+		}
+	}
+	opt.UserID = omit.From(rel0.ID)
+
 	m, err := models.Items.Insert(opt).One(ctx, exec)
 	if err != nil {
 		return ctx, nil, err
 	}
 	ctx = itemCtx.WithValue(ctx, m)
+
+	m.R.User = rel0
 
 	ctx, err = o.insertOptRels(ctx, exec, m)
 	return ctx, m, err
@@ -312,23 +327,23 @@ func (m itemMods) RandomizeAllColumns(f *faker.Faker) ItemMod {
 	return ItemModSlice{
 		ItemMods.RandomID(f),
 		ItemMods.RandomName(f),
+		ItemMods.RandomAdded(f),
 		ItemMods.RandomDescription(f),
 		ItemMods.RandomPrice(f),
 		ItemMods.RandomQuantity(f),
-		ItemMods.RandomAdded(f),
 		ItemMods.RandomUserID(f),
 	}
 }
 
 // Set the model columns to this value
-func (m itemMods) ID(val int32) ItemMod {
+func (m itemMods) ID(val int64) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.ID = func() int32 { return val }
+		o.ID = func() int64 { return val }
 	})
 }
 
 // Set the Column from the function
-func (m itemMods) IDFunc(f func() int32) ItemMod {
+func (m itemMods) IDFunc(f func() int64) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
 		o.ID = f
 	})
@@ -345,21 +360,21 @@ func (m itemMods) UnsetID() ItemMod {
 // if faker is nil, a default faker is used
 func (m itemMods) RandomID(f *faker.Faker) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.ID = func() int32 {
-			return random_int32(f)
+		o.ID = func() int64 {
+			return random_int64(f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m itemMods) Name(val null.Val[string]) ItemMod {
+func (m itemMods) Name(val string) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.Name = func() null.Val[string] { return val }
+		o.Name = func() string { return val }
 	})
 }
 
 // Set the Column from the function
-func (m itemMods) NameFunc(f func() null.Val[string]) ItemMod {
+func (m itemMods) NameFunc(f func() string) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
 		o.Name = f
 	})
@@ -376,16 +391,39 @@ func (m itemMods) UnsetName() ItemMod {
 // if faker is nil, a default faker is used
 func (m itemMods) RandomName(f *faker.Faker) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.Name = func() null.Val[string] {
-			if f == nil {
-				f = &defaultFaker
-			}
+		o.Name = func() string {
+			return random_string(f)
+		}
+	})
+}
 
-			if f.Bool() {
-				return null.FromPtr[string](nil)
-			}
+// Set the model columns to this value
+func (m itemMods) Added(val time.Time) ItemMod {
+	return ItemModFunc(func(o *ItemTemplate) {
+		o.Added = func() time.Time { return val }
+	})
+}
 
-			return null.From(random_string(f))
+// Set the Column from the function
+func (m itemMods) AddedFunc(f func() time.Time) ItemMod {
+	return ItemModFunc(func(o *ItemTemplate) {
+		o.Added = f
+	})
+}
+
+// Clear any values for the column
+func (m itemMods) UnsetAdded() ItemMod {
+	return ItemModFunc(func(o *ItemTemplate) {
+		o.Added = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+func (m itemMods) RandomAdded(f *faker.Faker) ItemMod {
+	return ItemModFunc(func(o *ItemTemplate) {
+		o.Added = func() time.Time {
+			return random_time_Time(f)
 		}
 	})
 }
@@ -469,14 +507,14 @@ func (m itemMods) RandomPrice(f *faker.Faker) ItemMod {
 }
 
 // Set the model columns to this value
-func (m itemMods) Quantity(val null.Val[int32]) ItemMod {
+func (m itemMods) Quantity(val null.Val[int64]) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.Quantity = func() null.Val[int32] { return val }
+		o.Quantity = func() null.Val[int64] { return val }
 	})
 }
 
 // Set the Column from the function
-func (m itemMods) QuantityFunc(f func() null.Val[int32]) ItemMod {
+func (m itemMods) QuantityFunc(f func() null.Val[int64]) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
 		o.Quantity = f
 	})
@@ -493,68 +531,29 @@ func (m itemMods) UnsetQuantity() ItemMod {
 // if faker is nil, a default faker is used
 func (m itemMods) RandomQuantity(f *faker.Faker) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.Quantity = func() null.Val[int32] {
+		o.Quantity = func() null.Val[int64] {
 			if f == nil {
 				f = &defaultFaker
 			}
 
 			if f.Bool() {
-				return null.FromPtr[int32](nil)
+				return null.FromPtr[int64](nil)
 			}
 
-			return null.From(random_int32(f))
+			return null.From(random_int64(f))
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m itemMods) Added(val null.Val[time.Time]) ItemMod {
+func (m itemMods) UserID(val int64) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.Added = func() null.Val[time.Time] { return val }
+		o.UserID = func() int64 { return val }
 	})
 }
 
 // Set the Column from the function
-func (m itemMods) AddedFunc(f func() null.Val[time.Time]) ItemMod {
-	return ItemModFunc(func(o *ItemTemplate) {
-		o.Added = f
-	})
-}
-
-// Clear any values for the column
-func (m itemMods) UnsetAdded() ItemMod {
-	return ItemModFunc(func(o *ItemTemplate) {
-		o.Added = nil
-	})
-}
-
-// Generates a random value for the column using the given faker
-// if faker is nil, a default faker is used
-func (m itemMods) RandomAdded(f *faker.Faker) ItemMod {
-	return ItemModFunc(func(o *ItemTemplate) {
-		o.Added = func() null.Val[time.Time] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[time.Time](nil)
-			}
-
-			return null.From(random_time_Time(f))
-		}
-	})
-}
-
-// Set the model columns to this value
-func (m itemMods) UserID(val null.Val[int32]) ItemMod {
-	return ItemModFunc(func(o *ItemTemplate) {
-		o.UserID = func() null.Val[int32] { return val }
-	})
-}
-
-// Set the Column from the function
-func (m itemMods) UserIDFunc(f func() null.Val[int32]) ItemMod {
+func (m itemMods) UserIDFunc(f func() int64) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
 		o.UserID = f
 	})
@@ -571,16 +570,8 @@ func (m itemMods) UnsetUserID() ItemMod {
 // if faker is nil, a default faker is used
 func (m itemMods) RandomUserID(f *faker.Faker) ItemMod {
 	return ItemModFunc(func(o *ItemTemplate) {
-		o.UserID = func() null.Val[int32] {
-			if f == nil {
-				f = &defaultFaker
-			}
-
-			if f.Bool() {
-				return null.FromPtr[int32](nil)
-			}
-
-			return null.From(random_int32(f))
+		o.UserID = func() int64 {
+			return random_int64(f)
 		}
 	})
 }

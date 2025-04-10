@@ -19,9 +19,9 @@ var TableNames = struct {
 	Items string
 	Users string
 }{
-	Files: "files",
-	Items: "items",
-	Users: "users",
+	Files: "file",
+	Items: "item",
+	Users: "user",
 }
 
 var ColumnNames = struct {
@@ -38,10 +38,10 @@ var ColumnNames = struct {
 	Items: itemColumnNames{
 		ID:          "id",
 		Name:        "name",
+		Added:       "added",
 		Description: "description",
 		Price:       "price",
 		Quantity:    "quantity",
-		Added:       "added",
 		UserID:      "user_id",
 	},
 	Users: userColumnNames{
@@ -49,7 +49,6 @@ var ColumnNames = struct {
 		Username:         "username",
 		Password:         "password",
 		ProfilePictureID: "profile_picture_id",
-		Challenge:        "challenge",
 	},
 }
 

@@ -5,7 +5,7 @@
 
 <Avatar.Root class="flex h-full w-full items-center justify-center">
 	<Avatar.Image
-		src={userState.user?.profilePicture}
+		src={userState.user?.profilePictureId ? "/file/" + userState.user.profilePictureId : null}
 		alt={`${userState.user?.username}'s avatar`}
 		class="rounded-full"
 	/>

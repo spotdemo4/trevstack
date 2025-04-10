@@ -20,12 +20,6 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
 
-      - name: Use Cachix
-        uses: cachix/cachix-action@v16
-        with:
-          name: trevstack
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
       - name: Install NPM Packages
         working-directory: ./client
         run: npm ci --legacy-peer-deps

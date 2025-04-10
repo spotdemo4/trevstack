@@ -1,14 +1,15 @@
 package database
 
 import (
+	"database/sql"
 	"os"
 	"path/filepath"
 
-	"github.com/glebarez/sqlite"
-	"gorm.io/gorm"
+	"github.com/stephenafamo/bob"
+	_ "modernc.org/sqlite" // Sqlite
 )
 
-func NewSQLiteConnection(name string) (*gorm.DB, error) {
+func NewSQLiteConnection(name string) (*bob.DB, error) {
 	// Find config diretory
 	configDir, err := os.UserConfigDir()
 	if err != nil {
@@ -24,12 +25,13 @@ func NewSQLiteConnection(name string) (*gorm.DB, error) {
 
 	// Open database
 	dbPath := filepath.Join(settingsPath, name)
-	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
-		Logger: NewLogger(),
-	})
+	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
 		return nil, err
 	}
 
-	return db, nil
+	// Create new bob db
+	bobdb := bob.NewDB(db)
+
+	return &bobdb, nil
 }
