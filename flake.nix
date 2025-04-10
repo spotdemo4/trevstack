@@ -16,7 +16,7 @@
 
       let
         pname = "trevstack";
-        version = "0.0.10";
+        version = "0.0.11";
 
         pkgs = import nixpkgs { 
           inherit system;
@@ -53,7 +53,7 @@
           pname = "${pname}-client";
           inherit version;
           src = gitignore.lib.gitignoreSource ./client;
-          npmDepsHash = "sha256-DMpmhtCGT6zOAwxJvfqwQo38yHJj00Nz651Hu6jRGkY=";
+          npmDepsHash = "sha256-Mu04whysDA1U5wvECJJ+KopGfSzTPR/OhWz9cjTRIfU=";
           nodejs = pkgs.nodejs_22;
           npmFlags = [ "--legacy-peer-deps" ];
 
