@@ -7,8 +7,6 @@
 	import { Separator } from 'bits-ui';
 	import { toast } from 'svelte-sonner';
 	import { userState } from '$lib/sharedState.svelte';
-	import { createPasskey } from '$lib/webauthn';
-	import { page } from '$app/state';
 	import Avatar from '$lib/ui/Avatar.svelte';
 
 	let openChangeProfilePicture = $state(false);
@@ -19,7 +17,7 @@
 	<div class="m-auto flex w-96 flex-col gap-4 p-4">
 		<div class="flex items-center justify-center gap-4">
 			<div
-				class="outline-surface-2 bg-text text-crust h-9 w-9 select-none rounded-full text-sm outline outline-offset-2"
+				class="outline-surface-2 bg-text text-crust h-9 w-9 rounded-full text-sm outline outline-offset-2 select-none"
 			>
 				<Avatar />
 			</div>

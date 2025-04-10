@@ -3,7 +3,7 @@
 	import { cn } from '$lib/utils';
 	import type { Snippet } from 'svelte';
 
-	type me = MouseEvent & { currentTarget: EventTarget & HTMLButtonElement; }
+	type me = MouseEvent & { currentTarget: EventTarget & HTMLButtonElement };
 
 	let {
 		className,

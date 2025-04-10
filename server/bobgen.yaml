@@ -10,11 +10,7 @@ replacements:
       nullable: true
     replace: "int64"
 
-sqlite:
-  output: internal/models
-
-psql:
-  output: internal/models
-
-mysql:
+sql:
+  dialect: sqlite
+  dir: db
   output: internal/models

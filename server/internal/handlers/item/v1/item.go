@@ -9,7 +9,6 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/aarondl/opt/omit"
-	"github.com/aarondl/opt/omitnull"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 	"github.com/spotdemo4/trevstack/server/internal/models"
 	itemv1 "github.com/spotdemo4/trevstack/server/internal/services/item/v1"
@@ -26,9 +25,9 @@ func itemToConnect(item *models.Item) *itemv1.Item {
 	return &itemv1.Item{
 		Id:          &item.ID,
 		Name:        item.Name,
-		Description: item.Description.GetOrZero(),
-		Price:       item.Price.GetOrZero(),
-		Quantity:    int32(item.Quantity.GetOrZero()),
+		Description: item.Description,
+		Price:       item.Price,
+		Quantity:    int32(item.Quantity),
 		Added:       timestamp,
 	}
 }
@@ -133,9 +132,9 @@ func (h *Handler) CreateItem(ctx context.Context, req *connect.Request[itemv1.Cr
 
 	item, err := models.Items.Insert(&models.ItemSetter{
 		Name:        omit.From(req.Msg.Item.Name),
-		Description: omitnull.From(req.Msg.Item.Description),
-		Price:       omitnull.From(req.Msg.Item.Price),
-		Quantity:    omitnull.From(int64(req.Msg.Item.Quantity)),
+		Description: omit.From(req.Msg.Item.Description),
+		Price:       omit.From(req.Msg.Item.Price),
+		Quantity:    omit.From(int64(req.Msg.Item.Quantity)),
 		Added:       omit.From(time.Now()),
 		UserID:      omit.From(userid),
 	}).One(ctx, h.db)
@@ -165,9 +164,9 @@ func (h *Handler) UpdateItem(ctx context.Context, req *connect.Request[itemv1.Up
 		// Set col
 		models.ItemSetter{
 			Name:        omit.From(req.Msg.Item.Name),
-			Description: omitnull.From(req.Msg.Item.Description),
-			Price:       omitnull.From(req.Msg.Item.Price),
-			Quantity:    omitnull.From(int64(req.Msg.Item.Quantity)),
+			Description: omit.From(req.Msg.Item.Description),
+			Price:       omit.From(req.Msg.Item.Price),
+			Quantity:    omit.From(int64(req.Msg.Item.Quantity)),
 		}.UpdateMod(),
 
 		// Where

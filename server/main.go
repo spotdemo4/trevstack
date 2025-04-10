@@ -3,13 +3,16 @@ package main
 
 import (
 	"context"
+	"embed"
 	"errors"
 	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -26,6 +29,9 @@ import (
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 )
 
+var clientFS *embed.FS
+var dbFS *embed.FS
+
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
@@ -36,41 +42,27 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	// Migrate database
+	err = database.Migrate(env.DatabaseUrl, dbFS)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 	// Get database
 	db := &bob.DB{}
-	switch env.DBType {
+	switch env.DatabaseType {
 	case "postgres":
 		log.Println("Using Postgres")
 
-		if env.DBUser == "" {
-			log.Fatal("DB_USER is required")
-		}
-		if env.DBPass == "" {
-			log.Fatal("DB_PASS is required")
-		}
-		if env.DBHost == "" {
-			log.Fatal("DB_HOST is required")
-		}
-		if env.DBPort == "" {
-			log.Fatal("DB_PORT is required")
-		}
-		if env.DBName == "" {
-			log.Fatal("DB_NAME is required")
-		}
-
-		db, err = database.NewPostgresConnection(env.DBUser, env.DBPass, env.DBHost, env.DBPort, env.DBName)
+		db, err = database.NewPostgresConnection(env.DatabaseUrl)
 		if err != nil {
 			log.Fatalf("failed to connect to postgres: %v", err)
 		}
 
-	case "sqlite":
+	case "sqlite", "sqlite3":
 		log.Println("Using SQLite")
 
-		if env.DBName == "" {
-			log.Fatal("DB_NAME is required")
-		}
-
-		db, err = database.NewSQLiteConnection(env.DBName)
+		db, err = database.NewSQLiteConnection(env.DatabaseUrl)
 		if err != nil {
 			log.Fatalf("failed to connect to sqlite: %v", err)
 		}
@@ -87,7 +79,7 @@ func main() {
 
 	// Serve web interface
 	mux := http.NewServeMux()
-	mux.Handle("/", client.NewClientHandler(env.Key))
+	mux.Handle("/", client.NewClientHandler(env.Key, clientFS))
 	mux.Handle("/file/", file.NewFileHandler(db, env.Key))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
@@ -122,14 +114,10 @@ func main() {
 }
 
 type env struct {
-	DBType string
-	DBUser string
-	DBPass string
-	DBHost string
-	DBPort string
-	DBName string
-	Port   string
-	Key    string
+	Port         string
+	Key          string
+	DatabaseType string
+	DatabaseUrl  *url.URL
 }
 
 func getEnv() (*env, error) {
@@ -140,14 +128,8 @@ func getEnv() (*env, error) {
 
 	// Create
 	env := env{
-		DBType: os.Getenv("DB_TYPE"),
-		DBUser: os.Getenv("DB_USER"),
-		DBPass: os.Getenv("DB_PASS"),
-		DBHost: os.Getenv("DB_HOST"),
-		DBPort: os.Getenv("DB_PORT"),
-		DBName: os.Getenv("DB_NAME"),
-		Port:   os.Getenv("PORT"),
-		Key:    os.Getenv("KEY"),
+		Port: os.Getenv("PORT"),
+		Key:  os.Getenv("KEY"),
 	}
 
 	// Validate
@@ -157,6 +139,20 @@ func getEnv() (*env, error) {
 	if env.Key == "" {
 		return nil, errors.New("env 'key' not found")
 	}
+
+	// Validate DATABASE_URL
+	dbstr := os.Getenv("DATABASE_URL")
+	if dbstr == "" {
+		return nil, errors.New("env 'DATABASE_URL' not found")
+	}
+
+	dbsp := strings.Split(dbstr, ":")
+	dburl, err := url.Parse(dbstr)
+	if err != nil || len(dbsp) < 2 {
+		return nil, errors.New("env 'DATABASE_URL' formatted incorrectly")
+	}
+	env.DatabaseType = dbsp[0]
+	env.DatabaseUrl = dburl
 
 	return &env, nil
 }

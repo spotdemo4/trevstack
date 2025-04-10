@@ -21,7 +21,7 @@
 
 	let page: number = $state(1);
 
-	onMount(async() => {
+	onMount(async () => {
 		await tick();
 		replaceState('', `${page}`);
 	});
