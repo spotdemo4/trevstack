@@ -13,7 +13,7 @@ git add package.json
 
 echo "bumping nix"
 cd "${git_root}"
-nix-update --flake --version "${next_version}" default
+nix-update --flake --version "${next_version}" --subpackage trevstack-client trevstack
 git add flake.nix
 
 git commit -m "bump: v${version} -> v${next_version}"
