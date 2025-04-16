@@ -9,27 +9,25 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	"github.com/aarondl/opt/omit"
-	"github.com/aarondl/opt/omitnull"
 	"github.com/golang-jwt/jwt/v5"
+	userv1 "github.com/spotdemo4/trevstack/server/internal/connect/user/v1"
+	"github.com/spotdemo4/trevstack/server/internal/connect/user/v1/userv1connect"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
-	"github.com/spotdemo4/trevstack/server/internal/models"
-	userv1 "github.com/spotdemo4/trevstack/server/internal/services/user/v1"
-	"github.com/spotdemo4/trevstack/server/internal/services/user/v1/userv1connect"
-	"github.com/stephenafamo/bob"
+	"github.com/spotdemo4/trevstack/server/internal/sqlc"
+	"github.com/spotdemo4/trevstack/server/internal/util"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func userToConnect(item *models.User) *userv1.User {
+func userToConnect(item sqlc.User) *userv1.User {
 	return &userv1.User{
 		Id:               item.ID,
 		Username:         item.Username,
-		ProfilePictureId: item.ProfilePictureID.Ptr(),
+		ProfilePictureId: item.ProfilePictureID,
 	}
 }
 
 type Handler struct {
-	db  *bob.DB
+	db  *sqlc.Queries
 	key []byte
 }
 
@@ -40,9 +38,7 @@ func (h *Handler) GetUser(ctx context.Context, _ *connect.Request[userv1.GetUser
 	}
 
 	// Get user
-	user, err := models.Users.Query(
-		models.SelectWhere.Users.ID.EQ(userid),
-	).One(ctx, h.db)
+	user, err := h.db.GetUser(ctx, userid)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, connect.NewError(connect.CodeNotFound, err)
@@ -64,9 +60,7 @@ func (h *Handler) UpdatePassword(ctx context.Context, req *connect.Request[userv
 	}
 
 	// Get user
-	user, err := models.Users.Query(
-		models.SelectWhere.Users.ID.EQ(userid),
-	).One(ctx, h.db)
+	user, err := h.db.GetUser(ctx, userid)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, connect.NewError(connect.CodeNotFound, err)
@@ -90,8 +84,9 @@ func (h *Handler) UpdatePassword(ctx context.Context, req *connect.Request[userv
 	}
 
 	// Update password
-	err = user.Update(ctx, h.db, &models.UserSetter{
-		Password: omit.From(string(hash)),
+	err = h.db.UpdateUser(ctx, sqlc.UpdateUserParams{
+		Password: util.ToPointer(string(hash)),
+		ID:       userid,
 	})
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -108,9 +103,7 @@ func (h *Handler) GetAPIKey(ctx context.Context, req *connect.Request[userv1.Get
 	}
 
 	// Get user
-	user, err := models.Users.Query(
-		models.SelectWhere.Users.ID.EQ(userid),
-	).One(ctx, h.db)
+	user, err := h.db.GetUser(ctx, userid)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, connect.NewError(connect.CodeNotFound, err)
@@ -159,19 +152,17 @@ func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request
 	}
 
 	// Save bytes into file
-	file, err := models.Files.Insert(&models.FileSetter{
-		Name:   omit.From(req.Msg.FileName),
-		Data:   omit.From(req.Msg.Data),
-		UserID: omit.From(userid),
-	}).One(ctx, h.db)
+	fileID, err := h.db.InsertFile(ctx, sqlc.InsertFileParams{
+		Name:   req.Msg.FileName,
+		Data:   req.Msg.Data,
+		UserID: userid,
+	})
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Get user
-	user, err := models.Users.Query(
-		models.SelectWhere.Users.ID.EQ(userid),
-	).One(ctx, h.db)
+	user, err := h.db.GetUser(ctx, userid)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, connect.NewError(connect.CodeNotFound, err)
@@ -180,25 +171,24 @@ func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
-	// Get old profile picture ID
-	var ppid *int64
-	if user.ProfilePictureID.Ptr() != nil {
-		ppid = user.ProfilePictureID.Ptr()
-	}
-
 	// Update user profile picture
-	err = user.Update(ctx, h.db, &models.UserSetter{
-		ProfilePictureID: omitnull.From(file.ID),
+	err = h.db.UpdateUser(ctx, sqlc.UpdateUserParams{
+		// set
+		ProfilePictureID: &fileID,
+
+		// where
+		ID: userid,
 	})
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Delete old profile picture if exists
-	if ppid != nil {
-		_, err = models.Files.Delete(
-			models.DeleteWhere.Files.ID.EQ(*ppid),
-		).Exec(ctx, h.db)
+	if user.ProfilePictureID != nil {
+		err = h.db.DeleteFile(ctx, sqlc.DeleteFileParams{
+			ID:     *user.ProfilePictureID,
+			UserID: userid,
+		})
 		if err != nil {
 			return nil, connect.NewError(connect.CodeInternal, err)
 		}
@@ -272,7 +262,7 @@ func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request
 // 	return nil
 // }
 
-func NewHandler(db *bob.DB, key string) (string, http.Handler) {
+func NewHandler(db *sqlc.Queries, key string) (string, http.Handler) {
 	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
 
 	return userv1connect.NewUserServiceHandler(

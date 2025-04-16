@@ -1,7 +1,6 @@
 package file
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 	"net/http"
@@ -9,13 +8,11 @@ import (
 	"strings"
 
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
-	"github.com/spotdemo4/trevstack/server/internal/models"
-	"github.com/stephenafamo/bob"
-	"github.com/stephenafamo/bob/dialect/sqlite"
+	"github.com/spotdemo4/trevstack/server/internal/sqlc"
 )
 
 type FileHandler struct {
-	db  *bob.DB
+	db  *sqlc.Queries
 	key []byte
 }
 
@@ -45,12 +42,10 @@ func (h *FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the file from the database
-	file, err := models.Files.Query(
-		sqlite.WhereAnd(
-			models.SelectWhere.Files.ID.EQ(int64(id)),
-			models.SelectWhere.Files.UserID.EQ(userid),
-		),
-	).One(context.Background(), h.db)
+	file, err := h.db.GetFile(r.Context(), sqlc.GetFileParams{
+		ID:     int64(id),
+		UserID: userid,
+	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Not Found", http.StatusNotFound)
@@ -64,7 +59,7 @@ func (h *FileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write(file.Data)
 }
 
-func NewFileHandler(db *bob.DB, key string) http.Handler {
+func NewFileHandler(db *sqlc.Queries, key string) http.Handler {
 	return interceptors.WithAuthRedirect(
 		&FileHandler{
 			db:  db,

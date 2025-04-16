@@ -10,7 +10,7 @@
 	import Input from '$lib/ui/Input.svelte';
 	import Select from '$lib/ui/Select.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
-	import type { Item } from '$lib/services/item/v1/item_pb';
+	import type { Item } from '$lib/connect/item/v1/item_pb';
 	import Pagination from '$lib/ui/Pagination.svelte';
 
 	// Config
@@ -113,21 +113,17 @@
 					const quantity = formData.get('quantity')?.toString();
 
 					try {
-						const response = await ItemClient.updateItem({
-							item: {
-								id: item.id,
-								name: name,
-								description: description,
-								price: parseFloat(price ?? '0'),
-								quantity: parseInt(quantity ?? '0')
-							}
+						await ItemClient.updateItem({
+							id: item.id,
+							name: name,
+							description: description,
+							price: price ? parseFloat(price) : undefined,
+							quantity: quantity ? parseInt(quantity) : undefined
 						});
 
-						if (response.item && item.id) {
-							toast.success(`item "${name}" saved`);
-							editsOpen.set(item.id, false);
-							await updateItems();
-						}
+						toast.success(`item "${name}" saved`);
+						editsOpen.set(item.id, false);
+						await updateItems();
 					} catch (err) {
 						const error = ConnectError.from(err);
 						toast.error(error.rawMessage);
@@ -341,21 +337,17 @@
 					const quantity = formData.get('quantity')?.toString();
 
 					try {
-						const response = await ItemClient.createItem({
-							item: {
-								name: name,
-								description: description,
-								price: parseFloat(price ?? '0'),
-								quantity: parseInt(quantity ?? '0')
-							}
+						await ItemClient.createItem({
+							name: name,
+							description: description,
+							price: parseFloat(price ?? '0'),
+							quantity: parseInt(quantity ?? '0')
 						});
 
-						if (response.item) {
-							form.reset();
-							toast.success(`item "${name}" added`);
-							addedOpen = false;
-							await updateItems();
-						}
+						form.reset();
+						toast.success(`item "${name}" added`);
+						addedOpen = false;
+						await updateItems();
 					} catch (err) {
 						const error = ConnectError.from(err);
 						toast.error(error.rawMessage);

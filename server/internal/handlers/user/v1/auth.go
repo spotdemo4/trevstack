@@ -11,26 +11,22 @@ import (
 	_ "crypto/sha256" // Crypto
 
 	"connectrpc.com/connect"
-	"github.com/aarondl/opt/omit"
 	"github.com/golang-jwt/jwt/v5"
+	userv1 "github.com/spotdemo4/trevstack/server/internal/connect/user/v1"
+	"github.com/spotdemo4/trevstack/server/internal/connect/user/v1/userv1connect"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
-	"github.com/spotdemo4/trevstack/server/internal/models"
-	userv1 "github.com/spotdemo4/trevstack/server/internal/services/user/v1"
-	"github.com/spotdemo4/trevstack/server/internal/services/user/v1/userv1connect"
-	"github.com/stephenafamo/bob"
+	"github.com/spotdemo4/trevstack/server/internal/sqlc"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthHandler struct {
-	db  *bob.DB
+	db  *sqlc.Queries
 	key []byte
 }
 
 func (h *AuthHandler) Login(ctx context.Context, req *connect.Request[userv1.LoginRequest]) (*connect.Response[userv1.LoginResponse], error) {
 	// Get user
-	user, err := models.Users.Query(
-		models.SelectWhere.Users.Username.EQ(req.Msg.Username),
-	).One(ctx, h.db)
+	user, err := h.db.GetUserbyUsername(ctx, req.Msg.Username)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, connect.NewError(connect.CodePermissionDenied, err)
@@ -47,7 +43,7 @@ func (h *AuthHandler) Login(ctx context.Context, req *connect.Request[userv1.Log
 	// Generate JWT
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		Issuer:  "trevstack",
-		Subject: strconv.FormatUint(uint64(user.ID), 10),
+		Subject: strconv.FormatInt(user.ID, 10),
 		IssuedAt: &jwt.NumericDate{
 			Time: time.Now(),
 		},
@@ -80,16 +76,13 @@ func (h *AuthHandler) Login(ctx context.Context, req *connect.Request[userv1.Log
 
 func (h *AuthHandler) SignUp(ctx context.Context, req *connect.Request[userv1.SignUpRequest]) (*connect.Response[userv1.SignUpResponse], error) {
 	// Get user
-	user, err := models.Users.Query(
-		models.SelectWhere.Users.Username.EQ(req.Msg.Username),
-	).One(ctx, h.db)
+	_, err := h.db.GetUserbyUsername(ctx, req.Msg.Username)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return nil, connect.NewError(connect.CodeInternal, err)
 		}
-	}
-	if user != nil {
-		return nil, connect.NewError(connect.CodeAlreadyExists, errors.New("username already exists"))
+	} else {
+		return nil, connect.NewError(connect.CodeAlreadyExists, err)
 	}
 
 	// Check if confirmation passwords match
@@ -104,10 +97,10 @@ func (h *AuthHandler) SignUp(ctx context.Context, req *connect.Request[userv1.Si
 	}
 
 	// Create user
-	_, err = models.Users.Insert(&models.UserSetter{
-		Username: omit.From(req.Msg.Username),
-		Password: omit.From(string(hash)),
-	}).One(ctx, h.db)
+	_, err = h.db.InsertUser(ctx, sqlc.InsertUserParams{
+		Username: req.Msg.Username,
+		Password: string(hash),
+	})
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -221,7 +214,7 @@ func (h *AuthHandler) Logout(_ context.Context, _ *connect.Request[userv1.Logout
 // 	return res, nil
 // }
 
-func NewAuthHandler(db *bob.DB, key string) (string, http.Handler) {
+func NewAuthHandler(db *sqlc.Queries, key string) (string, http.Handler) {
 	interceptors := connect.WithInterceptors(interceptors.NewRateLimitInterceptor(key))
 
 	return userv1connect.NewAuthServiceHandler(

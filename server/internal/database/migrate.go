@@ -9,12 +9,17 @@ import (
 	_ "github.com/spotdemo4/dbmate-sqlite-modernc/pkg/driver/sqlite" // Modernc sqlite
 )
 
-func Migrate(url *url.URL, dbFS *embed.FS) error {
+func Migrate(dsn string, dbFS *embed.FS) error {
 	if dbFS == nil {
 		return nil
 	}
 
-	db := dbmate.New(url)
+	dburl, err := url.Parse(dsn)
+	if err != nil {
+		return err
+	}
+
+	db := dbmate.New(dburl)
 	db.Driver()
 	db.FS = dbFS
 

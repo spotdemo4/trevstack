@@ -3,4 +3,5 @@
     "go.lintFlags": [
         "--config=server/revive.toml"
     ],
+    "sqlfluff.config": "server/db/.sqlfluff",
 }

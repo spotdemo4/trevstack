@@ -4,24 +4,24 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/spotdemo4/trevstack/server/internal/services
+      value: github.com/spotdemo4/trevstack/server/internal/connect
 
 plugins:
   - local: protoc-gen-go
-    out: server/internal/services
+    out: server/internal/connect
     opt: paths=source_relative
 
   - local: protoc-gen-connect-go
-    out: server/internal/services
+    out: server/internal/connect
     opt: paths=source_relative
 
   - local: protoc-gen-es
-    out: client/src/lib/services
+    out: client/src/lib/connect
     opt: target=ts
 
   - local: protoc-gen-connect-openapi
     out: client/static/openapi
     strategy: all
     opt:
-      - base=base.openapi.yaml
+      - base=openapi.base.yaml
       - path=openapi.yaml

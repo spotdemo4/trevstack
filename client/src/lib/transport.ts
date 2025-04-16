@@ -1,8 +1,8 @@
 import { createConnectTransport } from '@connectrpc/connect-web';
 import { Code, ConnectError, createClient, type Interceptor } from '@connectrpc/connect';
-import { AuthService } from '$lib/services/user/v1/auth_pb';
-import { UserService } from '$lib/services/user/v1/user_pb';
-import { ItemService } from '$lib/services/item/v1/item_pb';
+import { AuthService } from '$lib/connect/user/v1/auth_pb';
+import { UserService } from '$lib/connect/user/v1/user_pb';
+import { ItemService } from '$lib/connect/item/v1/item_pb';
 import { goto } from '$app/navigation';
 
 const redirector: Interceptor = (next) => async (req) => {

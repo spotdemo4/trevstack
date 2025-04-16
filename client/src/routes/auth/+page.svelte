@@ -105,11 +105,11 @@
 					</div>
 					<div class="flex flex-col gap-1">
 						<label for="signup-password" class="text-sm">Password</label>
-						<Input name="signup-password" />
+						<Input name="signup-password" type="password" />
 					</div>
 					<div class="flex flex-col gap-1">
 						<label for="signup-confirm-password" class="text-sm">Confirm Password</label>
-						<Input name="signup-confirm-password" />
+						<Input name="signup-confirm-password" type="password" />
 					</div>
 					<Button type="submit">Submit</Button>
 				</div>

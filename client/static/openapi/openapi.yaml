@@ -111,17 +111,34 @@ components:
     item.v1.CreateItemRequest:
       type: object
       properties:
-        item:
-          title: item
-          $ref: '#/components/schemas/item.v1.Item'
+        name:
+          type: string
+          title: name
+        description:
+          type: string
+          title: description
+        price:
+          type: number
+          title: price
+          format: float
+        quantity:
+          type: integer
+          title: quantity
+          format: int32
       title: CreateItemRequest
       additionalProperties: false
     item.v1.CreateItemResponse:
       type: object
       properties:
-        item:
-          title: item
-          $ref: '#/components/schemas/item.v1.Item'
+        id:
+          type:
+            - integer
+            - string
+          title: id
+          format: int64
+        added:
+          title: added
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: CreateItemResponse
       additionalProperties: false
     item.v1.DeleteItemRequest:
@@ -210,10 +227,12 @@ components:
             - string
           title: id
           format: int64
-          nullable: true
         name:
           type: string
           title: name
+        added:
+          title: added
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         description:
           type: string
           title: description
@@ -225,26 +244,39 @@ components:
           type: integer
           title: quantity
           format: int32
-        added:
-          title: added
-          nullable: true
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: Item
       additionalProperties: false
     item.v1.UpdateItemRequest:
       type: object
       properties:
-        item:
-          title: item
-          $ref: '#/components/schemas/item.v1.Item'
+        id:
+          type:
+            - integer
+            - string
+          title: id
+          format: int64
+        name:
+          type: string
+          title: name
+          nullable: true
+        description:
+          type: string
+          title: description
+          nullable: true
+        price:
+          type: number
+          title: price
+          format: float
+          nullable: true
+        quantity:
+          type: integer
+          title: quantity
+          format: int32
+          nullable: true
       title: UpdateItemRequest
       additionalProperties: false
     item.v1.UpdateItemResponse:
       type: object
-      properties:
-        item:
-          title: item
-          $ref: '#/components/schemas/item.v1.Item'
       title: UpdateItemResponse
       additionalProperties: false
     connect-protocol-version:

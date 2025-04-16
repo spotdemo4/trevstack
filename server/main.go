@@ -9,15 +9,12 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
-	"net/url"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/stephenafamo/bob"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
@@ -33,7 +30,7 @@ var clientFS *embed.FS
 var dbFS *embed.FS
 
 func main() {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
 	slog.SetDefault(logger)
 
 	// Get env
@@ -43,44 +40,27 @@ func main() {
 	}
 
 	// Migrate database
-	err = database.Migrate(env.DatabaseUrl, dbFS)
+	err = database.Migrate(env.DatabaseURL, dbFS)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	// Get database
-	db := &bob.DB{}
-	switch env.DatabaseType {
-	case "postgres":
-		log.Println("Using Postgres")
-
-		db, err = database.NewPostgresConnection(env.DatabaseUrl)
-		if err != nil {
-			log.Fatalf("failed to connect to postgres: %v", err)
-		}
-
-	case "sqlite", "sqlite3":
-		log.Println("Using SQLite")
-
-		db, err = database.NewSQLiteConnection(env.DatabaseUrl)
-		if err != nil {
-			log.Fatalf("failed to connect to sqlite: %v", err)
-		}
-
-	default:
-		log.Fatal("DB_TYPE must be either postgres or sqlite")
+	sqlc, db, err := database.New(env.DatabaseURL)
+	if err != nil {
+		log.Fatalf("failed to connect to database: %s", err.Error())
 	}
 
 	// Serve GRPC Handlers
 	api := http.NewServeMux()
-	api.Handle(interceptors.WithCORS(user.NewAuthHandler(db, env.Key)))
-	api.Handle(interceptors.WithCORS(user.NewHandler(db, env.Key)))
-	api.Handle(interceptors.WithCORS(item.NewHandler(db, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewAuthHandler(sqlc, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewHandler(sqlc, env.Key)))
+	api.Handle(interceptors.WithCORS(item.NewHandler(sqlc, env.Key)))
 
 	// Serve web interface
 	mux := http.NewServeMux()
 	mux.Handle("/", client.NewClientHandler(env.Key, clientFS))
-	mux.Handle("/file/", file.NewFileHandler(db, env.Key))
+	mux.Handle("/file/", file.NewFileHandler(sqlc, env.Key))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
 	// Start server
@@ -114,10 +94,9 @@ func main() {
 }
 
 type env struct {
-	Port         string
-	Key          string
-	DatabaseType string
-	DatabaseUrl  *url.URL
+	Port        string
+	Key         string
+	DatabaseURL string
 }
 
 func getEnv() (*env, error) {
@@ -128,8 +107,9 @@ func getEnv() (*env, error) {
 
 	// Create
 	env := env{
-		Port: os.Getenv("PORT"),
-		Key:  os.Getenv("KEY"),
+		Port:        os.Getenv("PORT"),
+		Key:         os.Getenv("KEY"),
+		DatabaseURL: os.Getenv("DATABASE_URL"),
 	}
 
 	// Validate
@@ -139,20 +119,9 @@ func getEnv() (*env, error) {
 	if env.Key == "" {
 		return nil, errors.New("env 'key' not found")
 	}
-
-	// Validate DATABASE_URL
-	dbstr := os.Getenv("DATABASE_URL")
-	if dbstr == "" {
+	if env.DatabaseURL == "" {
 		return nil, errors.New("env 'DATABASE_URL' not found")
 	}
-
-	dbsp := strings.Split(dbstr, ":")
-	dburl, err := url.Parse(dbstr)
-	if err != nil || len(dbsp) < 2 {
-		return nil, errors.New("env 'DATABASE_URL' formatted incorrectly")
-	}
-	env.DatabaseType = dbsp[0]
-	env.DatabaseUrl = dburl
 
 	return &env, nil
 }
