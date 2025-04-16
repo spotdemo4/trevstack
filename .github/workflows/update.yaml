@@ -24,7 +24,7 @@ jobs:
 
       - name: Install NPM Packages
         working-directory: ./client
-        run: npm ci
+        run: npm i && npm ci # https://github.com/npm/cli/issues/6787#issuecomment-2128344748
         
       - name: Update
         run: nix develop --command trevstack-update
