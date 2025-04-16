@@ -12,7 +12,7 @@
     ...
   }: let
     pname = "trevstack";
-    version = "0.0.11";
+    version = "0.0.12";
 
     supportedSystems = [
       "x86_64-linux"
@@ -104,7 +104,7 @@
       trevstack = pkgs.buildGoModule {
         inherit trevstack-client pname version;
         src = ./server;
-        vendorHash = "sha256-ocOqypV4OjlepoMgYFpk/+zpRzBlHg/dljBVMZzS9Yg=";
+        vendorHash = "sha256-yU+d3bKpMYVkZ9Etqe3cSDtFqswZYZK01d6vxDt/a5U=";
 
         preBuild = ''
           cp -r ${trevstack-client} client
