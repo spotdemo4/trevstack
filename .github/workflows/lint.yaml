@@ -25,6 +25,10 @@ jobs:
         with:
           name: treli
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Install NPM Packages
+        working-directory: ./client
+        run: npm ci --legacy-peer-deps
         
       - name: Lint
         run: nix develop --command trevstack-lint

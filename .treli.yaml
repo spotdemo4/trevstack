@@ -24,6 +24,13 @@ apps:
     onstart: go build -o ./tmp/app -tags dev && ./tmp/app
     onchange: go build -o ./tmp/app -tags dev && ./tmp/app
 
+  nix:
+    color: "#74c7ec"
+    exts:
+      - nix
+    onstart: nix fmt
+    onchange: nix fmt
+
   prettier:
     color: "#fab387"
     dir: client

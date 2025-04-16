@@ -23,7 +23,7 @@ fi
 
 echo "updating nix"
 cd "${git_root}"
-nix-update --flake --version=skip default
+nix-update --flake --version=skip --subpackage trevstack-client trevstack
 if ! git diff --exit-code flake.nix; then
     git add flake.nix
     git commit -m "build(nix): updated nix hashes"
