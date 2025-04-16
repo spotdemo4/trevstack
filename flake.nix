@@ -86,13 +86,11 @@
     formatter = forSystem ({pkgs, ...}: pkgs.alejandra);
 
     packages = forSystem ({pkgs, ...}: rec {
-      default = trevstack;
-
       trevstack-client = pkgs.buildNpmPackage {
         pname = "${pname}-client";
         inherit version;
         src = ./client;
-        npmDepsHash = "sha256-o+ANqVBYztpQNAFTThSHdS+euteIGijUTZSXp2DlkDU=";
+        npmDepsHash = "sha256-id8auix4uJcz5Yah8t2RKGWW3UULh06jheixjl9jCQg=";
         nodejs = pkgs.nodejs_22;
 
         installPhase = ''
@@ -100,16 +98,16 @@
           chmod -R u+w "$out"
         '';
       };
-
       trevstack = pkgs.buildGoModule {
         inherit trevstack-client pname version;
         src = ./server;
-        vendorHash = "sha256-lVsyKV8W9ViqWzNmlbu5LRQ/tA6H8UOF1Qw4f2EfhiU=";
+        vendorHash = "sha256-ocOqypV4OjlepoMgYFpk/+zpRzBlHg/dljBVMZzS9Yg=";
 
         preBuild = ''
           cp -r ${trevstack-client} client
         '';
       };
+      default = trevstack;
     });
   };
 }
