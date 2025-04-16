@@ -92,7 +92,7 @@
         pname = "${pname}-client";
         inherit version;
         src = ./client;
-        npmDepsHash = "sha256-Mu04whysDA1U5wvECJJ+KopGfSzTPR/OhWz9cjTRIfU=";
+        npmDepsHash = "sha256-yKabRCijP2oSe6AhMVvxbY/gCA+7/6xSw0YoIzaGezA=";
         nodejs = pkgs.nodejs_22;
         npmFlags = ["--legacy-peer-deps"];
 
@@ -105,7 +105,7 @@
       trevstack = pkgs.buildGoModule {
         inherit trevstack-client pname version;
         src = ./server;
-        vendorHash = "sha256-YmMKl9X1kVz6dk/JOSi2jghCUKObUKdm2O+JpO9PDCA=";
+        vendorHash = "sha256-ocOqypV4OjlepoMgYFpk/+zpRzBlHg/dljBVMZzS9Yg=";
 
         preBuild = ''
           cp -r ${trevstack-client} client
