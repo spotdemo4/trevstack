@@ -29,6 +29,26 @@ jobs:
       - name: Install NPM Packages
         working-directory: ./client
         run: npm ci --legacy-peer-deps
+
+      - uses: nicknovitski/nix-develop@v1
         
-      - name: Lint
-        run: nix develop --command trevstack-lint
+      - run: npx prettier --check .
+        working-directory: ./client
+
+      - run: npx eslint .
+        working-directory: ./client
+
+      - run: npx svelte-check
+        working-directory: ./client
+
+      - run: revive -config revive.toml -set_exit_status ./...
+        working-directory: ./server
+
+      - run: sqlfluff lint
+        working-directory: ./server
+
+      - run: buf lint
+
+      - run: nix fmt -- flake.nix --check
+
+      - run: nix flake check --all-systems
