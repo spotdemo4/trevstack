@@ -21,7 +21,7 @@
     ...
   }: let
     pname = "trevstack";
-    version = "0.0.15";
+    version = "0.0.17";
 
     supportedSystems = [
       "x86_64-linux"
@@ -99,7 +99,7 @@
         pname = "${pname}-client";
         inherit version;
         src = ./client;
-        npmDepsHash = "sha256-nLo/vpRhKjugCGZ7JrxCYtMGv3X6FgLB9x8baYvKnv8=";
+        npmDepsHash = "sha256-I9Za0f5NKcBBZPqT4F9OWnDEXuiM1ZZk1VNkRM0nb/U=";
         nodejs = pkgs.nodejs_22;
 
         installPhase = ''
