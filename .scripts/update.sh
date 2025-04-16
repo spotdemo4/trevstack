@@ -5,7 +5,7 @@ updated=false
 
 echo "updating client"
 cd "${git_root}/client"
-npm update --save
+npm update --save && npm i
 if ! git diff --exit-code package.json package-lock.json; then
     git add package-lock.json
     git add package.json

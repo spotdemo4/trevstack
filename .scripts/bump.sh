@@ -7,7 +7,7 @@ next_version=$(echo "${version}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
 
 echo "bumping client"
 cd "${git_root}/client"
-npm version "${next_version}"
+npm version "${next_version}" && npm i
 git add package-lock.json
 git add package.json
 
