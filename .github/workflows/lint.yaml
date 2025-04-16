@@ -28,7 +28,7 @@ jobs:
 
       - name: Install NPM Packages
         working-directory: ./client
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - uses: nicknovitski/nix-develop@v1
         

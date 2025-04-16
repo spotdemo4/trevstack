@@ -92,9 +92,8 @@
         pname = "${pname}-client";
         inherit version;
         src = ./client;
-        npmDepsHash = "sha256-yKabRCijP2oSe6AhMVvxbY/gCA+7/6xSw0YoIzaGezA=";
+        npmDepsHash = "sha256-o+ANqVBYztpQNAFTThSHdS+euteIGijUTZSXp2DlkDU=";
         nodejs = pkgs.nodejs_22;
-        npmFlags = ["--legacy-peer-deps"];
 
         installPhase = ''
           cp -r build "$out"
