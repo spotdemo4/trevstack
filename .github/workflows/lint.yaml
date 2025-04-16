@@ -23,7 +23,7 @@ jobs:
       - name: Use Cachix
         uses: cachix/cachix-action@v16
         with:
-          name: treli
+          name: trevstack
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Install NPM Packages
