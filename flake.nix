@@ -1,6 +1,15 @@
 {
   description = "A template for trevstack";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://trevstack.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "trevstack.cachix.org-1:wlY2/NBLC4U4u8fD4WgW1kMstfiGbGmgDwE3dBho4tE="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     treli.url = "github:spotdemo4/treli";
@@ -12,7 +21,7 @@
     ...
   }: let
     pname = "trevstack";
-    version = "0.0.16";
+    version = "0.0.15";
 
     supportedSystems = [
       "x86_64-linux"
@@ -90,7 +99,7 @@
         pname = "${pname}-client";
         inherit version;
         src = ./client;
-        npmDepsHash = "sha256-RHUgfR4t47rktX0AwyjRf1MxcZImfKswzObktlSErfE=";
+        npmDepsHash = "sha256-nLo/vpRhKjugCGZ7JrxCYtMGv3X6FgLB9x8baYvKnv8=";
         nodejs = pkgs.nodejs_22;
 
         installPhase = ''
