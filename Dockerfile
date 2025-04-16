@@ -9,6 +9,7 @@ WORKDIR /tmp/build
 RUN nix \
     --extra-experimental-features "nix-command flakes" \
     --option filter-syscalls false \
+    --accept-flake-config \
     build
 
 # Copy the Nix store closure into a directory. The Nix store closure is the
