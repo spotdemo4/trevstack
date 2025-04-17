@@ -92,6 +92,60 @@
       };
     });
 
+    checks = forSystem ({pkgs, ...}: {
+      buf = with pkgs;
+        runCommandLocal "check-buf" {
+          nativeBuildInputs = with pkgs; [
+            buf
+          ];
+        } ''
+          export HOME=$(pwd)
+          cd ${./.}
+          buf lint
+          touch $out
+        '';
+
+      nix = with pkgs;
+        runCommandLocal "check-nix" {
+          nativeBuildInputs = with pkgs; [
+            alejandra
+          ];
+        } ''
+          cd ${./.}
+          alejandra -c .
+          touch $out
+        '';
+
+      client = with pkgs;
+        buildNpmPackage {
+          pname = "check-client";
+          inherit version;
+          src = ./client;
+          npmDepsHash = "sha256-u7zkBgaxDEB2XFrNl0f7/HtW0Oy2B7FVPot9MLPzXGc=";
+          dontNpmInstall = true;
+
+          buildPhase = ''
+            npx prettier --check .
+            npx eslint .
+            npx svelte-kit sync && npx svelte-check
+            touch $out
+          '';
+        };
+
+      server = with pkgs;
+        runCommandLocal "check-server" {
+          nativeBuildInputs = with pkgs; [
+            revive
+            sqlfluff
+          ];
+        } ''
+          cd ${./server}
+          revive -config revive.toml -set_exit_status ./...
+          sqlfluff lint
+          touch $out
+        '';
+    });
+
     formatter = forSystem ({pkgs, ...}: pkgs.alejandra);
 
     packages = forSystem ({pkgs, ...}: rec {

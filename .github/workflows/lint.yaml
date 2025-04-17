@@ -24,29 +24,5 @@ jobs:
           name: trevstack
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Install NPM Packages
-        working-directory: ./client
-        run: npm i && npm ci # https://github.com/npm/cli/issues/7793
-
-      - uses: nicknovitski/nix-develop@v1
-        
-      - run: npx prettier --check .
-        working-directory: ./client
-
-      - run: npx eslint .
-        working-directory: ./client
-
-      - run: npx svelte-check
-        working-directory: ./client
-
-      - run: revive -config revive.toml -set_exit_status ./...
-        working-directory: ./server
-
-      - run: sqlfluff lint
-        working-directory: ./server
-
-      - run: buf lint
-
-      - run: nix fmt -- flake.nix --check
-
-      - run: nix flake check --all-systems
+      - name: Run checks
+        run: nix flake check --all-systems
