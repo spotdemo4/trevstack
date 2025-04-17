@@ -28,7 +28,7 @@ jobs:
 
       - name: Install NPM Packages
         working-directory: ./client
-        run: npm i && npm ci # https://github.com/npm/cli/issues/6787#issuecomment-2128344748
+        run: npm i && npm ci # https://github.com/npm/cli/issues/7793
 
       - uses: nicknovitski/nix-develop@v1
         

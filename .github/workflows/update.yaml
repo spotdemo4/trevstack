@@ -23,9 +23,15 @@ jobs:
           name: trevstack
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
+      # https://github.com/actions/checkout/issues/13
+      - name: Set Git Config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Install NPM Packages
         working-directory: ./client
-        run: npm i && npm ci # https://github.com/npm/cli/issues/6787#issuecomment-2128344748
+        run: npm i && npm ci # https://github.com/npm/cli/issues/7793
         
       - name: Update
         run: nix develop --command trevstack-update
