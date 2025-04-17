@@ -3,6 +3,14 @@
 git_root=$(git rev-parse --show-toplevel)
 updated=false
 
+echo "updating nix flake"
+cd "${git_root}"
+nix flake update
+if ! git diff --exit-code flake.nix; then
+    git add flake.nix
+    git commit -m "build(nix): updated nix dependencies"
+fi
+
 echo "updating client"
 cd "${git_root}/client"
 npm update --save && npm i
@@ -25,7 +33,7 @@ if ! git diff --exit-code go.mod go.sum; then
 fi
 
 if [ "${updated}" = true ]; then
-    echo "updating nix"
+    echo "updating nix hashes"
     cd "${git_root}"
     nix-update --flake --version=skip --subpackage trevstack-client trevstack
     git add flake.nix
