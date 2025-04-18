@@ -28,14 +28,14 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         
       - name: Build
-        run: >-
+        run: >
           nix build
-            .#trevstack-linux-amd64
-            .#trevstack-linux-arm64
-            .#trevstack-linux-arm
-            .#trevstack-windows-amd64
-            .#trevstack-darwin-amd64
-            .#trevstack-darwin-arm64
+          .#trevstack-linux-amd64
+          .#trevstack-linux-arm64
+          .#trevstack-linux-arm
+          .#trevstack-windows-amd64
+          .#trevstack-darwin-amd64
+          .#trevstack-darwin-arm64
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
