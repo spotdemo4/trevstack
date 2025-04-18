@@ -66,7 +66,18 @@
           }
       );
   in {
-    devShells = forSystem ({pkgs, ...}: {
+    devShells = forSystem ({pkgs, ...}: let
+      protoc-gen-connect-openapi = pkgs.buildGoModule {
+        name = "protoc-gen-connect-openapi";
+        src = pkgs.fetchFromGitHub {
+          owner = "sudorandom";
+          repo = "protoc-gen-connect-openapi";
+          rev = "v0.16.1";
+          sha256 = "sha256-3XBQCc9H9N/AZm/8J5bJRgBhVtoZKFvbdTB+glHxYdA=";
+        };
+        vendorHash = "sha256-CIiG/XhV8xxjYY0sZcSvIFcJ1Wh8LyDDwqem2cSSwBA=";
+      };
+    in {
       default = pkgs.mkShell {
         packages = with pkgs;
           [
@@ -91,16 +102,7 @@
             protoc-gen-go
             protoc-gen-connect-go
             protoc-gen-es
-            (buildGoModule {
-              name = "protoc-gen-connect-openapi";
-              src = pkgs.fetchFromGitHub {
-                owner = "sudorandom";
-                repo = "protoc-gen-connect-openapi";
-                rev = "v0.16.1";
-                sha256 = "sha256-3XBQCc9H9N/AZm/8J5bJRgBhVtoZKFvbdTB+glHxYdA=";
-              };
-              vendorHash = "sha256-CIiG/XhV8xxjYY0sZcSvIFcJ1Wh8LyDDwqem2cSSwBA=";
-            })
+            protoc-gen-connect-openapi
 
             # Client
             nodejs_22
@@ -175,6 +177,16 @@
 
     packages = forSystem (
       {pkgs, ...}: let
+        client = pkgs.buildNpmPackage {
+          inherit pname version;
+          src = ./client;
+          npmDepsHash = "sha256-u7zkBgaxDEB2XFrNl0f7/HtW0Oy2B7FVPot9MLPzXGc=";
+
+          installPhase = ''
+            cp -r build "$out"
+          '';
+        };
+
         server = pkgs.buildGoModule {
           inherit client pname version;
           src = ./server;
@@ -185,16 +197,6 @@
             cp -r ${client} client
           '';
         };
-        client = pkgs.buildNpmPackage {
-          pname = "${pname}-client";
-          inherit version;
-          src = ./client;
-          npmDepsHash = "sha256-u7zkBgaxDEB2XFrNl0f7/HtW0Oy2B7FVPot9MLPzXGc=";
-
-          installPhase = ''
-            cp -r build "$out"
-          '';
-        };
       in
         {
           default = server;
@@ -202,23 +204,25 @@
         // builtins.listToAttrs (builtins.map (x: {
             name = "${pname}-${x.GOOS}-${x.GOARCH}";
             value = server.overrideAttrs {
-                nativeBuildInputs = server.nativeBuildInputs ++ [
+              nativeBuildInputs =
+                server.nativeBuildInputs
+                ++ [
                   pkgs.rename
                 ];
-                env.CGO_ENABLED = 0;
-                env.GOOS = x.GOOS;
-                env.GOARCH = x.GOARCH;
+              env.CGO_ENABLED = 0;
+              env.GOOS = x.GOOS;
+              env.GOARCH = x.GOARCH;
 
-                installPhase = ''
-                  runHook preInstall
+              installPhase = ''
+                runHook preInstall
 
-                  mkdir -p $out/bin
-                  find $GOPATH/bin -type f -exec mv -t $out/bin {} +
-                  rename 's/(.+\/)(.+?)(\.[^.]*$|$)/$1${pname}-${x.GOOS}-${x.GOARCH}-${version}$3/' $out/bin/*
+                mkdir -p $out/bin
+                find $GOPATH/bin -type f -exec mv -t $out/bin {} +
+                rename 's/(.+\/)(.+?)(\.[^.]*$|$)/$1${pname}-${x.GOOS}-${x.GOARCH}-${version}$3/' $out/bin/*
 
-                  runHook postInstall
-                '';
-              };
+                runHook postInstall
+              '';
+            };
           })
           host-systems)
     );
