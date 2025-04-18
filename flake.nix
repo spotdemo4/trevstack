@@ -166,7 +166,7 @@
     apps = forSystem ({pkgs, ...}: {
       update = {
         type = "app";
-        program = pkgs.lib.getExe pkgs.writeShellApplication {
+        program = pkgs.lib.getExe (pkgs.writeShellApplication {
           name = "update";
           runtimeInputs = with pkgs; [
             git
@@ -176,12 +176,12 @@
             nix-update
           ];
           text = builtins.readFile ./.scripts/update.sh;
-        };
+        });
       };
 
       bump = {
         type = "app";
-        program = pkgs.lib.getExe pkgs.writeShellApplication {
+        program = pkgs.lib.getExe (pkgs.writeShellApplication {
           name = "bump";
           runtimeInputs = with pkgs; [
             git
@@ -189,7 +189,7 @@
             nix-update
           ];
           text = builtins.readFile ./.scripts/bump.sh;
-        };
+        });
       };
     });
 
