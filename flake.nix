@@ -79,43 +79,33 @@
       };
     in {
       default = pkgs.mkShell {
-        packages = with pkgs;
-          [
-            git
-            nix-update
-            treli.packages."${system}".default
+        packages = with pkgs; [
+          git
+          nix-update
+          treli.packages."${system}".default
 
-            # Server
-            go
-            gotools
-            gopls
-            revive
-            sqlc
+          # Server
+          go
+          gotools
+          gopls
+          revive
+          sqlc
 
-            # database
-            sqlite
-            dbmate
-            sqlfluff
+          # database
+          sqlite
+          dbmate
+          sqlfluff
 
-            # Protobuf
-            buf
-            protoc-gen-go
-            protoc-gen-connect-go
-            protoc-gen-es
-            protoc-gen-connect-openapi
+          # Protobuf
+          buf
+          protoc-gen-go
+          protoc-gen-connect-go
+          protoc-gen-es
+          protoc-gen-connect-openapi
 
-            # Client
-            nodejs_22
-          ]
-          # Use .scripts
-          ++ map (
-            x: (
-              pkgs.writeShellApplication {
-                name = "${pname}-${(lib.nameFromURL (baseNameOf x) ".")}";
-                text = builtins.readFile x;
-              }
-            )
-          ) (pkgs.lib.filesystem.listFilesRecursive ./.scripts);
+          # Client
+          nodejs_22
+        ];
       };
     });
 
@@ -171,6 +161,36 @@
           sqlfluff lint
           touch $out
         '';
+    });
+
+    apps = forSystem ({pkgs, ...}: {
+      update = {
+        type = "app";
+        program = pkgs.lib.getExe pkgs.writeShellApplication {
+          name = "update";
+          runtimeInputs = with pkgs; [
+            git
+            nix
+            nodejs_22
+            go
+            nix-update
+          ];
+          text = builtins.readFile ./.scripts/update.sh;
+        };
+      };
+
+      bump = {
+        type = "app";
+        program = pkgs.lib.getExe pkgs.writeShellApplication {
+          name = "bump";
+          runtimeInputs = with pkgs; [
+            git
+            nodejs_22
+            nix-update
+          ];
+          text = builtins.readFile ./.scripts/bump.sh;
+        };
+      };
     });
 
     formatter = forSystem ({pkgs, ...}: pkgs.alejandra);

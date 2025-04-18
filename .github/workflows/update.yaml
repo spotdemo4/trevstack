@@ -28,13 +28,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Install NPM Packages
-        working-directory: ./client
-        run: npm i && npm ci # https://github.com/npm/cli/issues/7793
         
       - name: Update
-        run: nix develop --command trevstack-update
+        run: nix run .#update
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7

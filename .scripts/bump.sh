@@ -7,13 +7,13 @@ next_version=$(echo "${version}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
 
 echo "bumping client"
 cd "${git_root}/client"
-npm version "${next_version}" && npm i
+npm version "${next_version}"
 git add package-lock.json
 git add package.json
 
 echo "bumping nix"
 cd "${git_root}"
-nix-update --flake --version "${next_version}" --subpackage trevstack-client trevstack
+nix-update --flake --version "${next_version}" --subpackage client default
 git add flake.nix
 
 git commit -m "bump: v${version} -> v${next_version}"

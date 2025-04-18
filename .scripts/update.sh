@@ -35,7 +35,7 @@ fi
 if [ "${updated}" = true ]; then
     echo "updating nix hashes"
     cd "${git_root}"
-    nix-update --flake --version=skip --subpackage trevstack-client trevstack
+    nix-update --flake --version=skip --subpackage client default
     git add flake.nix
     git commit -m "build(nix): updated nix hashes"
 else
