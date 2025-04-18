@@ -21,7 +21,7 @@
     ...
   }: let
     pname = "trevstack";
-    version = "0.0.19";
+    version = "0.0.20";
 
     build-systems = [
       "x86_64-linux"
@@ -138,7 +138,7 @@
           pname = "check-client";
           inherit version;
           src = ./client;
-          npmDepsHash = "sha256-KBoxBJ21RCM2gXGgSC4zntyrPkEQlaPN+JD31LFgHl8=";
+          npmDepsHash = "sha256-kZmwV99Qj6gjTk6PCMQZfqxGLzLHZOfZOqcYLufDztQ=";
           dontNpmInstall = true;
 
           buildPhase = ''
@@ -200,7 +200,7 @@
         client = pkgs.buildNpmPackage {
           inherit pname version;
           src = ./client;
-          npmDepsHash = "sha256-KBoxBJ21RCM2gXGgSC4zntyrPkEQlaPN+JD31LFgHl8=";
+          npmDepsHash = "sha256-kZmwV99Qj6gjTk6PCMQZfqxGLzLHZOfZOqcYLufDztQ=";
 
           installPhase = ''
             cp -r build "$out"
