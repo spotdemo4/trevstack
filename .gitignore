@@ -1,5 +1,5 @@
 .env
 /docker-compose.*
-/result
+/result*
 /.direnv/
 /build/

@@ -2,6 +2,7 @@ package database
 
 import (
 	"embed"
+	"io"
 	"log"
 	"net/url"
 
@@ -9,8 +10,9 @@ import (
 	_ "github.com/spotdemo4/dbmate-sqlite-modernc/pkg/driver/sqlite" // Modernc sqlite
 )
 
-func Migrate(dsn string, dbFS *embed.FS) error {
-	if dbFS == nil {
+func Migrate(dsn string, dbFS embed.FS) error {
+	_, err := dbFS.ReadDir(".")
+	if err == io.EOF {
 		return nil
 	}
 
@@ -22,6 +24,7 @@ func Migrate(dsn string, dbFS *embed.FS) error {
 	db := dbmate.New(dburl)
 	db.Driver()
 	db.FS = dbFS
+	db.AutoDumpSchema = false
 
 	log.Println("Migrations:")
 	migrations, err := db.FindMigrations()

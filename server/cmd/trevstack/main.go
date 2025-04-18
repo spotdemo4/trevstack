@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"embed"
 	"errors"
 	"fmt"
 	"log"
@@ -18,6 +17,7 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
+	embed "github.com/spotdemo4/trevstack/server"
 	"github.com/spotdemo4/trevstack/server/internal/database"
 	"github.com/spotdemo4/trevstack/server/internal/handlers/client"
 	"github.com/spotdemo4/trevstack/server/internal/handlers/file"
@@ -25,9 +25,6 @@ import (
 	"github.com/spotdemo4/trevstack/server/internal/handlers/user/v1"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 )
-
-var clientFS *embed.FS
-var dbFS *embed.FS
 
 func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
@@ -40,7 +37,7 @@ func main() {
 	}
 
 	// Migrate database
-	err = database.Migrate(env.DatabaseURL, dbFS)
+	err = database.Migrate(env.DatabaseURL, embed.DBFS)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -59,7 +56,7 @@ func main() {
 
 	// Serve web interface
 	mux := http.NewServeMux()
-	mux.Handle("/", client.NewClientHandler(env.Key, clientFS))
+	mux.Handle("/", client.NewClientHandler(env.Key, embed.ClientFS))
 	mux.Handle("/file/", file.NewFileHandler(sqlc, env.Key))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 

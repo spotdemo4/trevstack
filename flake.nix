@@ -23,14 +23,40 @@
     pname = "trevstack";
     version = "0.0.18";
 
-    supportedSystems = [
+    build-systems = [
       "x86_64-linux"
       "aarch64-linux"
       "x86_64-darwin"
       "aarch64-darwin"
     ];
+    host-systems = [
+      {
+        GOOS = "linux";
+        GOARCH = "amd64";
+      }
+      {
+        GOOS = "linux";
+        GOARCH = "arm64";
+      }
+      {
+        GOOS = "linux";
+        GOARCH = "arm";
+      }
+      {
+        GOOS = "windows";
+        GOARCH = "amd64";
+      }
+      {
+        GOOS = "darwin";
+        GOARCH = "amd64";
+      }
+      {
+        GOOS = "darwin";
+        GOARCH = "arm64";
+      }
+    ];
     forSystem = f:
-      nixpkgs.lib.genAttrs supportedSystems (
+      nixpkgs.lib.genAttrs build-systems (
         system:
           f {
             inherit system;
@@ -74,7 +100,6 @@
                 sha256 = "sha256-3XBQCc9H9N/AZm/8J5bJRgBhVtoZKFvbdTB+glHxYdA=";
               };
               vendorHash = "sha256-CIiG/XhV8xxjYY0sZcSvIFcJ1Wh8LyDDwqem2cSSwBA=";
-              nativeCheckInputs = with pkgs; [less];
             })
 
             # Client
@@ -148,29 +173,54 @@
 
     formatter = forSystem ({pkgs, ...}: pkgs.alejandra);
 
-    packages = forSystem ({pkgs, ...}: rec {
-      trevstack-client = pkgs.buildNpmPackage {
-        pname = "${pname}-client";
-        inherit version;
-        src = ./client;
-        npmDepsHash = "sha256-u7zkBgaxDEB2XFrNl0f7/HtW0Oy2B7FVPot9MLPzXGc=";
-        nodejs = pkgs.nodejs_22;
+    packages = forSystem (
+      {pkgs, ...}: let
+        server = pkgs.buildGoModule {
+          inherit client pname version;
+          src = ./server;
+          vendorHash = "sha256-uXyCYODrBWNm7nbibm66oO90SYXRvrNtjF0K4ZI7IkM=";
+          env.CGO_ENABLED = 0;
 
-        installPhase = ''
-          cp -r build "$out"
-          chmod -R u+w "$out"
-        '';
-      };
-      trevstack = pkgs.buildGoModule {
-        inherit trevstack-client pname version;
-        src = ./server;
-        vendorHash = "sha256-uXyCYODrBWNm7nbibm66oO90SYXRvrNtjF0K4ZI7IkM=";
+          preBuild = ''
+            cp -r ${client} client
+          '';
+        };
+        client = pkgs.buildNpmPackage {
+          pname = "${pname}-client";
+          inherit version;
+          src = ./client;
+          npmDepsHash = "sha256-u7zkBgaxDEB2XFrNl0f7/HtW0Oy2B7FVPot9MLPzXGc=";
 
-        preBuild = ''
-          cp -r ${trevstack-client} client
-        '';
-      };
-      default = trevstack;
-    });
+          installPhase = ''
+            cp -r build "$out"
+          '';
+        };
+      in
+        {
+          default = server;
+        }
+        // builtins.listToAttrs (builtins.map (x: {
+            name = "${pname}-${x.GOOS}-${x.GOARCH}";
+            value = server.overrideAttrs {
+                nativeBuildInputs = server.nativeBuildInputs ++ [
+                  pkgs.rename
+                ];
+                env.CGO_ENABLED = 0;
+                env.GOOS = x.GOOS;
+                env.GOARCH = x.GOARCH;
+
+                installPhase = ''
+                  runHook preInstall
+
+                  mkdir -p $out/bin
+                  find $GOPATH/bin -type f -exec mv -t $out/bin {} +
+                  rename 's/(.+\/)(.+?)(\.[^.]*$|$)/$1${pname}-${x.GOOS}-${x.GOARCH}-${version}$3/' $out/bin/*
+
+                  runHook postInstall
+                '';
+              };
+          })
+          host-systems)
+    );
   };
 }

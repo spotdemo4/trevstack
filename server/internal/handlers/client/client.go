@@ -2,14 +2,16 @@ package client
 
 import (
 	"embed"
+	"io"
 	"io/fs"
 	"net/http"
 
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
 )
 
-func NewClientHandler(key string, clientFS *embed.FS) http.Handler {
-	if clientFS == nil {
+func NewClientHandler(key string, clientFS embed.FS) http.Handler {
+	_, err := clientFS.ReadDir(".")
+	if err == io.EOF {
 		return http.NotFoundHandler()
 	}
 
