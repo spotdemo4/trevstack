@@ -17,6 +17,9 @@
 	let tabValue = $state('login');
 
 	async function redirect() {
+		localStorage.setItem('username', login.input.username);
+		login.input.password = '';
+
 		if (page.url.searchParams.has('redir')) {
 			const uri = decodeURIComponent(page.url.searchParams.get('redir')!);
 			await goto(uri);
@@ -27,6 +30,10 @@
 	}
 
 	const login = coolForm(AuthClient, AuthService.method.login, {
+		init: {
+			username: localStorage.getItem('username') ?? ''
+		},
+		reset: false,
 		onResult: () => {
 			redirect();
 		}
@@ -93,7 +100,7 @@
 					<div class="flex gap-1">
 						<Button type="submit" loading={login.loading()} class="grow">Submit</Button>
 						{#if login.input.username}
-							<Button type="button" onclick={passkeyLogin}><Fingerprint /></Button>
+							<Button type="button" onclick={passkeyLogin} class="min-w-18"><Fingerprint /></Button>
 						{/if}
 					</div>
 				</form>

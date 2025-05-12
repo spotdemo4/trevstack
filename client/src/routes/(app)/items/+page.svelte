@@ -27,11 +27,9 @@
 </script>
 
 <div class="mx-4 my-2 flex flex-wrap items-center justify-center gap-2">
-	<LoaderCircle class={cn('invisible animate-spin', get.loading() && 'visible')} />
-
 	<Input
 		bind:value={get.input.filter}
-		class="bg-based w-md"
+		class="bg-based max-w-sm"
 		placeholder="Filter"
 		onchange={() => {
 			get.submit();
@@ -65,6 +63,8 @@
 			get.submit();
 		}}
 	/>
+
+	<LoaderCircle class={cn('invisible animate-spin', get.loading() && 'visible')} />
 </div>
 
 {#snippet editModal(item: Item)}
@@ -260,9 +260,7 @@
 </div>
 
 <div class="flex flex-wrap justify-center gap-2 px-4 sm:hidden">
-	{#if get.loading() && get.output.items.length == 0}
-		<span>Loading</span>
-	{:else}
+	{#if get.output.items.length > 0}
 		{#each get.output.items as item (item.id)}
 			<Card class="flex flex-wrap gap-4">
 				<div class="flex flex-col">

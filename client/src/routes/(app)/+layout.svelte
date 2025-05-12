@@ -1,4 +1,5 @@
 <script lang="ts">
+	import pkg from '../../../package.json' with { type: 'json' };
 	import * as Sheet from '$lib/ui/sheet';
 	import * as DropdownMenu from '$lib/ui/dropdown-menu';
 	import * as Avatar from '$lib/ui/avatar';
@@ -223,6 +224,6 @@
 	</div>
 
 	<footer class="border-surface text-subtext bg-mantle flex justify-center border-t py-1 text-xs">
-		v. version
+		v. {pkg.version}
 	</footer>
 </div>

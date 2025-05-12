@@ -15,6 +15,9 @@ export default defineConfig({
 				changeOrigin: true
 			}
 		},
+		fs: {
+			allow: ['package.json']
+		},
 		host: '0.0.0.0'
 	}
 });

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -30,9 +29,6 @@ import (
 )
 
 func main() {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
-	slog.SetDefault(logger)
-
 	// Get env
 	env, err := getEnv()
 	if err != nil {
@@ -91,7 +87,7 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		sig := <-sigs
-		slog.Warn(fmt.Sprintf("Received signal %s, exiting", sig))
+		log.Printf("Received signal %s, exiting", sig)
 
 		// Close HTTP server
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -120,7 +116,7 @@ type env struct {
 func getEnv() (*env, error) {
 	err := godotenv.Load()
 	if err != nil {
-		slog.Warn("Failed to load .env file, using environment variables")
+		log.Println("Failed to load .env file, using environment variables")
 	}
 
 	// Create

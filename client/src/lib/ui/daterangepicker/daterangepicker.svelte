@@ -41,7 +41,11 @@
 <div class={cn('grid gap-2', className)}>
 	<Popover.Root>
 		<Popover.Trigger
-			class={cn(buttonVariants({ variant: 'input' }), 'bg-based', !value && 'text-subtext')}
+			class={cn(
+				buttonVariants({ variant: 'input' }),
+				'bg-based text-md md:text-sm',
+				!value && 'text-subtext'
+			)}
 		>
 			<CalendarIcon class="mr-2 size-4" />
 			{#if value && value.start}
