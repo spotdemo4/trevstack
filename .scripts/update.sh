@@ -6,8 +6,7 @@ updated=false
 echo "updating nix flake"
 cd "${git_root}"
 nix flake update
-if ! git diff --exit-code flake.nix; then
-    git add flake.nix
+if ! git diff --exit-code flake.lock; then
     git add flake.lock
     git commit -m "build(nix): updated nix dependencies"
 fi
@@ -29,7 +28,7 @@ go mod tidy
 if ! git diff --exit-code go.mod go.sum; then
     git add go.mod
     git add go.sum
-    git commit -m "build(go): updated go dependencies"
+    git commit -m "build(server): updated go dependencies"
     updated=true
 fi
 
