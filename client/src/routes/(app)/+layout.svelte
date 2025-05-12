@@ -51,7 +51,7 @@
 		class="bg-mantle border-surface text-text flex h-14 w-full items-center justify-between border-b px-4 py-4 lg:px-10"
 	>
 		<!-- Left -->
-		<a href="/" class="flex select-none items-center gap-2 text-2xl font-bold tracking-wider">
+		<a href="/" class="flex items-center gap-2 text-2xl font-bold tracking-wider select-none">
 			TrevStack
 			<LayoutGrid />
 		</a>

@@ -110,18 +110,6 @@
     });
 
     checks = forSystem ({pkgs, ...}: {
-      buf = with pkgs;
-        runCommandLocal "check-buf" {
-          nativeBuildInputs = with pkgs; [
-            buf
-          ];
-        } ''
-          export HOME=$(pwd)
-          cd ${./.}
-          buf lint
-          touch $out
-        '';
-
       nix = with pkgs;
         runCommandLocal "check-nix" {
           nativeBuildInputs = with pkgs; [

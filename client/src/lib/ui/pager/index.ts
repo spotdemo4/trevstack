@@ -1,5 +1,3 @@
-import Pager from './pager.svelte'
+import Pager from './pager.svelte';
 
-export {
-    Pager
-}
+export { Pager };

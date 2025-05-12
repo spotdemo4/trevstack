@@ -7,7 +7,7 @@
 
 	export const buttonVariants = tv({
 		base: cn(
-			'shadow-xs inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all',
+			'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap shadow-xs transition-all',
 
 			// Focus
 			'focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -16,14 +16,14 @@
 			'disabled:pointer-events-none disabled:opacity-50',
 
 			// Images
-			"[&_svg:not([class*='size-'])]:size-5 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+			"[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5"
 		),
 		variants: {
 			variant: {
 				default: 'text-crust bg-accent hover:bg-accent/90 shadow-xs',
 				red: 'text-crust bg-red hover:bg-red/90 shadow-xs',
-				outline: 'text-text border-surface-1 hover:bg-surface shadow-xs border bg-transparent',
-				input: 'text-text border-surface-1 hover:border-overlay shadow-xs border bg-transparent',
+				outline: 'text-text border-surface-1 hover:bg-surface border bg-transparent shadow-xs',
+				input: 'text-text border-surface-1 hover:border-overlay border bg-transparent shadow-xs',
 				ghost: 'text-text hover:bg-surface shadow-xs'
 			},
 			size: {
@@ -47,7 +47,6 @@
 			variant?: ButtonVariant;
 			size?: ButtonSize;
 			loading?: boolean;
-			scan?: boolean;
 		};
 </script>
 
@@ -60,7 +59,6 @@
 		href = undefined,
 		type = 'button',
 		loading,
-		scan,
 		children,
 		...restProps
 	}: ButtonProps = $props();

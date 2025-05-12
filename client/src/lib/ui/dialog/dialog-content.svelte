@@ -34,7 +34,7 @@
 		{@render children?.()}
 		<DialogPrimitive.Close
 			class={cn(
-				'text-text absolute top-4 right-4 cursor-pointer p-1 rounded hover:bg-crust transition-all disabled:pointer-events-none',
+				'text-text hover:bg-crust absolute top-4 right-4 cursor-pointer rounded p-1 transition-all disabled:pointer-events-none',
 
 				// Focus
 				'focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-2',

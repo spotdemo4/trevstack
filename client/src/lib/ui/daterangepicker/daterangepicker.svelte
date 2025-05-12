@@ -58,7 +58,7 @@
 				Pick a date range
 			{/if}
 		</Popover.Trigger>
-		<Popover.Content class="w-auto p-0 bg-based" align="start">
+		<Popover.Content class="bg-based w-auto p-0" align="start">
 			<RangeCalendar
 				bind:value
 				onStartValueChange={(v) => {

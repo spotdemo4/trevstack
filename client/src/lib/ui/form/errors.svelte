@@ -21,7 +21,7 @@
 
 <div bind:this={ref} class={cn('text-red text-sm', className)} {...restProps}>
 	{#if errors && Array.isArray(errors)}
-		{#each errors as error}
+		{#each errors as error (error)}
 			<label for={item?.id}>{error.message}</label>
 		{/each}
 	{:else if errors}

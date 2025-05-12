@@ -12,6 +12,6 @@
 <DropdownMenuPrimitive.Group
 	bind:ref
 	data-slot="dropdown-menu-group"
-	class={cn('border-b border-surface first:pt-0 last:pb-0 last:border-none', className)}
+	class={cn('border-surface border-b first:pt-0 last:border-none last:pb-0', className)}
 	{...restProps}
 />

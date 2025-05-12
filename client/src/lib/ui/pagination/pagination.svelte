@@ -18,7 +18,7 @@
 
 <svelte:window
 	onpopstate={(state) => {
-		const sks = state.state['sveltekit:states'] as {} | string;
+		const sks = state.state['sveltekit:states'] as object | string;
 		if (typeof sks === 'string' && sks.includes('#pagination-')) {
 			page = Number(sks.split('#pagination-')[1]);
 			onPageChange?.(page);

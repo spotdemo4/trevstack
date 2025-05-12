@@ -19,7 +19,7 @@
 	data-slot="select-trigger"
 	data-size={size}
 	class={cn(
-		'border-surface-1 bg-based hover:border-overlay text-text flex flex-row-reverse w-full cursor-pointer items-center justify-between gap-2 rounded-md border px-3 py-2 md:text-sm whitespace-nowrap shadow-xs transition-all',
+		'border-surface-1 bg-based hover:border-overlay text-text flex w-full cursor-pointer flex-row-reverse items-center justify-between gap-2 rounded-md border px-3 py-2 whitespace-nowrap shadow-xs transition-all md:text-sm',
 
 		// Focus
 		'focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-2',

@@ -14,7 +14,7 @@
 	data-slot="dropdown-menu-trigger"
 	class={cn(
 		'flex cursor-pointer items-center gap-1 transition-all',
-		
+
 		// Focus
 		'focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-2',
 		className

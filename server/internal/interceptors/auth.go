@@ -96,13 +96,7 @@ func (i *AuthInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 					ctx, err = newUserContext(ctx, subject)
 					if err == nil {
 						return next(ctx, req)
-					} else {
-						log.Println("huh")
-						log.Println(err)
 					}
-				} else {
-					log.Println("what")
-					log.Println(err)
 				}
 			}
 		}

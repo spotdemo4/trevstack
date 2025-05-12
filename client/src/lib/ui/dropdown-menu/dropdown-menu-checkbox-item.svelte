@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { DropdownMenu as DropdownMenuPrimitive, type WithoutChildrenOrChild } from "bits-ui";
-	import Check from "@lucide/svelte/icons/check";
-	import Minus from "@lucide/svelte/icons/minus";
-	import { cn } from "$lib/utils.js";
-	import type { Snippet } from "svelte";
+	import { DropdownMenu as DropdownMenuPrimitive, type WithoutChildrenOrChild } from 'bits-ui';
+	import Check from '@lucide/svelte/icons/check';
+	import Minus from '@lucide/svelte/icons/minus';
+	import { cn } from '$lib/utils.js';
+	import type { Snippet } from 'svelte';
 
 	let {
 		ref = $bindable(null),
@@ -23,13 +23,13 @@
 	bind:indeterminate
 	data-slot="dropdown-menu-checkbox-item"
 	class={cn(
-		"focus:bg-surface outline-hidden relative flex cursor-pointer select-none items-center gap-2 rounded-sm py-2 pl-8 pr-2 text-sm",
+		'focus:bg-surface relative flex cursor-pointer items-center gap-2 rounded-sm py-2 pr-2 pl-8 text-sm outline-hidden select-none',
 
 		// Disabled
-		"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+		'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
 
 		// Images
-		"[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+		"[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 		className
 	)}
 	{...restProps}
@@ -39,7 +39,7 @@
 			{#if indeterminate}
 				<Minus class="size-4" />
 			{:else}
-				<Check class={cn("size-4", !checked && "text-transparent")} />
+				<Check class={cn('size-4', !checked && 'text-transparent')} />
 			{/if}
 		</span>
 		{@render childrenProp?.()}

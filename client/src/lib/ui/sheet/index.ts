@@ -1,13 +1,13 @@
-import { Dialog as SheetPrimitive } from "bits-ui";
+import { Dialog as SheetPrimitive } from 'bits-ui';
 import Root from './sheet.svelte';
-import Trigger from "./sheet-trigger.svelte";
-import Close from "./sheet-close.svelte";
-import Overlay from "./sheet-overlay.svelte";
-import Content from "./sheet-content.svelte";
-import Header from "./sheet-header.svelte";
-import Footer from "./sheet-footer.svelte";
-import Title from "./sheet-title.svelte";
-import Description from "./sheet-description.svelte";
+import Trigger from './sheet-trigger.svelte';
+import Close from './sheet-close.svelte';
+import Overlay from './sheet-overlay.svelte';
+import Content from './sheet-content.svelte';
+import Header from './sheet-header.svelte';
+import Footer from './sheet-footer.svelte';
+import Title from './sheet-title.svelte';
+import Description from './sheet-description.svelte';
 
 const Portal = SheetPrimitive.Portal;
 
@@ -32,5 +32,5 @@ export {
 	Header as SheetHeader,
 	Footer as SheetFooter,
 	Title as SheetTitle,
-	Description as SheetDescription,
+	Description as SheetDescription
 };

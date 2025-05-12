@@ -15,10 +15,10 @@
 	bind:ref
 	data-slot="dropdown-menu-radio-item"
 	class={cn(
-		"focus:bg-surface text-text relative flex cursor-pointer items-center gap-2 py-2 pr-2 pl-8 text-sm select-none",
+		'focus:bg-surface text-text relative flex cursor-pointer items-center gap-2 py-2 pr-2 pl-8 text-sm select-none',
 
 		// Disabled
-		"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+		'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
 
 		// Images
 		"[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

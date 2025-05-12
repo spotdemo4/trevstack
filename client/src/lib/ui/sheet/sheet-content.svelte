@@ -9,7 +9,7 @@
 					'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 border-t',
 				left: 'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
 				right:
-					'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right max-w-2xs inset-y-0 right-0 h-full w-3/4 border-l'
+					'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 max-w-2xs border-l'
 			}
 		},
 		defaultVariants: {
@@ -51,7 +51,7 @@
 	>
 		{@render children?.()}
 		<SheetPrimitive.Close
-			class="rounded-xs focus:outline-hidden absolute right-4 top-4 cursor-pointer opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none"
+			class="absolute top-4 right-4 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden disabled:pointer-events-none"
 		>
 			<X class="size-4" />
 			<span class="sr-only">Close</span>

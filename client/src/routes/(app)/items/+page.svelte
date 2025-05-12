@@ -31,7 +31,7 @@
 
 	<Input
 		bind:value={get.input.filter}
-		class="w-md bg-based"
+		class="bg-based w-md"
 		placeholder="Filter"
 		onchange={() => {
 			get.submit();
@@ -241,7 +241,7 @@
 					<Table.Cell class="w-0"></Table.Cell>
 				</Table.Row>
 			{:else}
-				{#each get.output.items as item}
+				{#each get.output.items as item (item.id)}
 					<Table.Row>
 						<Table.Cell>{item.added ? timestampDate(item.added).toLocaleString() : ''}</Table.Cell>
 						<Table.Cell>{item.name}</Table.Cell>
@@ -296,7 +296,7 @@
 	{/if}
 </div>
 
-<div class="mx-4 mb-4 mt-2 flex justify-end sm:mt-1">
+<div class="mx-4 mt-2 mb-4 flex justify-end sm:mt-1">
 	{@render createModal()}
 </div>
 
