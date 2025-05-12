@@ -8,6 +8,7 @@ cd "${git_root}"
 nix flake update
 if ! git diff --exit-code flake.nix; then
     git add flake.nix
+    git add flake.lock
     git commit -m "build(nix): updated nix dependencies"
 fi
 
