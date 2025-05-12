@@ -1,4 +1,4 @@
-<div class="flex h-[calc(100vh-50px)]">
+<div class="flex h-body">
 	<div class="m-auto flex flex-col gap-2 p-4">
 		<h1 class="decoration-sky text-4xl font-bold underline underline-offset-4">
 			Welcome to TrevStack

@@ -230,6 +230,7 @@ components:
         name:
           type: string
           title: name
+          minLength: 3
         added:
           title: added
           $ref: '#/components/schemas/google.protobuf.Timestamp'
@@ -336,12 +337,48 @@ components:
           additionalProperties: true
       additionalProperties: true
       description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+    user.v1.BeginPasskeyLoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          title: username
+      title: BeginPasskeyLoginRequest
+      additionalProperties: false
+    user.v1.BeginPasskeyLoginResponse:
+      type: object
+      properties:
+        optionsJson:
+          type: string
+          title: options_json
+      title: BeginPasskeyLoginResponse
+      additionalProperties: false
+    user.v1.FinishPasskeyLoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          title: username
+        attestation:
+          type: string
+          title: attestation
+      title: FinishPasskeyLoginRequest
+      additionalProperties: false
+    user.v1.FinishPasskeyLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          title: token
+      title: FinishPasskeyLoginResponse
+      additionalProperties: false
     user.v1.LoginRequest:
       type: object
       properties:
         username:
           type: string
           title: username
+          minLength: 3
         password:
           type: string
           title: password
@@ -369,6 +406,7 @@ components:
         username:
           type: string
           title: username
+          minLength: 3
         password:
           type: string
           title: password
@@ -380,6 +418,30 @@ components:
     user.v1.SignUpResponse:
       type: object
       title: SignUpResponse
+      additionalProperties: false
+    user.v1.BeginPasskeyRegistrationRequest:
+      type: object
+      title: BeginPasskeyRegistrationRequest
+      additionalProperties: false
+    user.v1.BeginPasskeyRegistrationResponse:
+      type: object
+      properties:
+        optionsJson:
+          type: string
+          title: options_json
+      title: BeginPasskeyRegistrationResponse
+      additionalProperties: false
+    user.v1.FinishPasskeyRegistrationRequest:
+      type: object
+      properties:
+        attestation:
+          type: string
+          title: attestation
+      title: FinishPasskeyRegistrationRequest
+      additionalProperties: false
+    user.v1.FinishPasskeyRegistrationResponse:
+      type: object
+      title: FinishPasskeyRegistrationResponse
       additionalProperties: false
     user.v1.GetAPIKeyRequest:
       type: object
@@ -758,6 +820,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user.v1.LogoutResponse'
+  /user.v1.AuthService/BeginPasskeyLogin:
+    post:
+      tags:
+        - user.v1.AuthService
+      summary: BeginPasskeyLogin
+      operationId: user.v1.AuthService.BeginPasskeyLogin
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.BeginPasskeyLoginRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.BeginPasskeyLoginResponse'
+  /user.v1.AuthService/FinishPasskeyLogin:
+    post:
+      tags:
+        - user.v1.AuthService
+      summary: FinishPasskeyLogin
+      operationId: user.v1.AuthService.FinishPasskeyLogin
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.FinishPasskeyLoginRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.FinishPasskeyLoginResponse'
   /user.v1.UserService/GetUser:
     post:
       tags:
@@ -898,6 +1030,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user.v1.UpdateProfilePictureResponse'
+  /user.v1.UserService/BeginPasskeyRegistration:
+    post:
+      tags:
+        - user.v1.UserService
+      summary: BeginPasskeyRegistration
+      operationId: user.v1.UserService.BeginPasskeyRegistration
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.BeginPasskeyRegistrationRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.BeginPasskeyRegistrationResponse'
+  /user.v1.UserService/FinishPasskeyRegistration:
+    post:
+      tags:
+        - user.v1.UserService
+      summary: FinishPasskeyRegistration
+      operationId: user.v1.UserService.FinishPasskeyRegistration
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user.v1.FinishPasskeyRegistrationRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user.v1.FinishPasskeyRegistrationResponse'
 tags:
   - name: item.v1.ItemService
   - name: user.v1.AuthService

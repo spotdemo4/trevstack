@@ -1,16 +1,12 @@
 <script>
 	import '../app.css';
-	import { Toaster } from 'svelte-sonner';
+	import { Sonner } from '$lib/ui/sonner';
+	import { ModeWatcher } from 'mode-watcher';
 
 	let { children } = $props();
 </script>
 
-<Toaster
-	toastOptions={{
-		classes: {
-			toast: '!bg-mantle !text-text !border-surface-0'
-		}
-	}}
-/>
+<ModeWatcher />
+<Sonner />
 
 {@render children()}

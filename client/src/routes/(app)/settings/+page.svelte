@@ -1,186 +1,189 @@
 <script lang="ts">
+	import * as Avatar from '$lib/ui/avatar';
+	import * as Dialog from '$lib/ui/dialog';
+	import * as Form from '$lib/ui/form';
 	import { UserClient } from '$lib/transport';
-	import Button from '$lib/ui/Button.svelte';
-	import Modal from '$lib/ui/Modal.svelte';
-	import Input from '$lib/ui/Input.svelte';
-	import { ConnectError } from '@connectrpc/connect';
-	import { Separator } from 'bits-ui';
+	import { Button } from '$lib/ui/button';
+	import { Input } from '$lib/ui/input';
 	import { toast } from 'svelte-sonner';
 	import { userState } from '$lib/sharedState.svelte';
-	import Avatar from '$lib/ui/Avatar.svelte';
+	import { coolForm, newState } from '$lib/coolforms';
+	import { UserService } from '$lib/connect/user/v1/user_pb';
+	import { Card } from '$lib/ui/card';
+	import { Separator } from '$lib/ui/separator';
+	import { startRegistration } from '@simplewebauthn/browser';
+	import { ConnectError } from '@connectrpc/connect';
 
-	let openChangeProfilePicture = $state(false);
-	let key = $state('');
+	const updatePassword = coolForm(UserClient, UserService.method.updatePassword, {
+		reset: true,
+		onResult: () => {
+			toast.success('Successfully updated password');
+		}
+	});
+
+	async function createPasskey() {
+		const optionsJSON = JSON.parse(
+			(await UserClient.beginPasskeyRegistration({})).optionsJson
+		).publicKey;
+		const attResp = await startRegistration({ optionsJSON });
+
+		try {
+			await UserClient.finishPasskeyRegistration({
+				attestation: JSON.stringify(attResp)
+			});
+		} catch (e) {
+			if (!(e instanceof ConnectError)) {
+				throw e;
+			}
+
+			toast.error(e.message);
+			return;
+		}
+
+		toast.success('Added new passkey');
+	}
 </script>
 
-<div class="flex h-[calc(100vh-50px)]">
+{#snippet apiKeyModal()}
+	{@const s = newState({ open: false, key: '' })}
+	{@const apikey = coolForm(UserClient, UserService.method.getAPIKey, {
+		onResult: (result) => {
+			s.key = result.key;
+		}
+	})}
+
+	<Dialog.Root bind:open={s.open}>
+		<Dialog.Trigger>
+			{#snippet child({ props })}
+				<Button {...props}>Generate API Key</Button>
+			{/snippet}
+		</Dialog.Trigger>
+		<Dialog.Content>
+			{#if !s.key}
+				<Dialog.Header>
+					<Dialog.Title>Generate API Key</Dialog.Title>
+				</Dialog.Header>
+				<form use:apikey.impair class="flex flex-col gap-2">
+					<Form.Field name="password">
+						<Form.Label />
+						<Input type="password" bind:value={apikey.input.password} />
+						<Form.Errors bind:errors={apikey.errors.password} />
+					</Form.Field>
+
+					<Form.Field name="confirm_password">
+						<Form.Label />
+						<Input type="password" bind:value={apikey.input.confirmPassword} />
+						<Form.Errors bind:errors={apikey.errors.confirmPassword} />
+					</Form.Field>
+
+					<Form.Errors bind:errors={apikey.errors.form} />
+
+					<Button type="submit" loading={apikey.loading()}>Submit</Button>
+				</form>
+			{:else}
+				<Dialog.Header>
+					<Dialog.Title>API Key</Dialog.Title>
+				</Dialog.Header>
+				<span class="break-all">{s.key}</span>
+			{/if}
+		</Dialog.Content>
+	</Dialog.Root>
+{/snippet}
+
+{#snippet profilePictureModal()}
+	{@const s = newState({ open: false })}
+	{@const updatepp = coolForm(UserClient, UserService.method.updateProfilePicture, {
+		onSubmit: async (form, input) => {
+			const file = form.get('file');
+
+			if (file instanceof File) {
+				input.fileName = file.name;
+				input.data = await file.bytes();
+			}
+
+			return input;
+		},
+		onResult: () => {
+			s.open = false;
+		}
+	})}
+
+	<Dialog.Root bind:open={s.open}>
+		<Dialog.Trigger>
+			{#snippet child({ props })}
+				<Button {...props}>Change Profile Picture</Button>
+			{/snippet}
+		</Dialog.Trigger>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>Change Profile Picture</Dialog.Title>
+			</Dialog.Header>
+			<form use:updatepp.impair class="flex flex-col gap-2">
+				<Form.Field name="file">
+					<Form.Label />
+					<Input type="file" />
+					<Form.Errors bind:errors={updatepp.errors.data} />
+				</Form.Field>
+
+				<Form.Errors bind:errors={updatepp.errors.form} />
+
+				<Button type="submit" loading={updatepp.loading()}>Submit</Button>
+			</form>
+		</Dialog.Content>
+	</Dialog.Root>
+{/snippet}
+
+<div class="h-body flex">
 	<div class="m-auto flex w-96 flex-col gap-4 p-4">
 		<div class="flex items-center justify-center gap-4">
-			<div
-				class="outline-surface-2 bg-text text-crust h-9 w-9 rounded-full text-sm outline outline-offset-2 select-none"
-			>
-				<Avatar />
-			</div>
+			<Avatar.Root class="size-12">
+				{#if userState.user?.profilePictureId}
+					<Avatar.Image
+						src={`/file/${userState.user.profilePictureId}`}
+						alt={`${userState.user?.username}'s avatar`}
+					/>
+				{/if}
+				<Avatar.Fallback class="text-md"
+					>{userState.user?.username.substring(0, 2).toUpperCase()}</Avatar.Fallback
+				>
+			</Avatar.Root>
 			<h1 class="overflow-x-hidden text-2xl font-medium">{userState.user?.username}</h1>
 		</div>
 
-		<Separator.Root class="bg-surface-0 h-px" />
+		<Separator />
 
-		<div class="flex flex-wrap justify-around gap-2">
-			<Modal>
-				{#snippet trigger(props)}
-					<Button {...props} className="bg-text">Generate API Key</Button>
-				{/snippet}
+		<div class="flex flex-wrap justify-center gap-2">
+			{@render apiKeyModal()}
 
-				{#snippet title()}
-					Generate API Key
-				{/snippet}
+			{@render profilePictureModal()}
 
-				{#snippet content()}
-					{#if key == ''}
-						<form
-							onsubmit={async (e) => {
-								e.preventDefault();
-								const form = e.target as HTMLFormElement;
-								const formData = new FormData(form);
-
-								try {
-									const response = await UserClient.getAPIKey({
-										password: formData.get('password')?.toString(),
-										confirmPassword: formData.get('confirm-password')?.toString()
-									});
-
-									if (response.key) {
-										key = response.key;
-										form.reset();
-									}
-								} catch (err) {
-									const error = ConnectError.from(err);
-									toast.error(error.rawMessage);
-								}
-							}}
-						>
-							<div class="flex flex-col gap-4 p-3">
-								<div class="flex flex-col gap-1">
-									<label for="password" class="text-sm">Password</label>
-									<Input name="password" type="password" />
-								</div>
-								<div class="flex flex-col gap-1">
-									<label for="confirm-password" class="text-sm">Confirm Password</label>
-									<Input name="confirm-password" type="password" />
-								</div>
-								<Button type="submit">Submit</Button>
-							</div>
-						</form>
-					{:else}
-						<div class="p-3">
-							<span class="text-wrap break-all">{key}</span>
-						</div>
-					{/if}
-				{/snippet}
-			</Modal>
-
-			<Modal bind:open={openChangeProfilePicture}>
-				{#snippet trigger(props)}
-					<Button {...props} className="bg-text">Change Profile Picture</Button>
-				{/snippet}
-
-				{#snippet title()}
-					Change Profile Picture
-				{/snippet}
-
-				{#snippet content()}
-					<form
-						onsubmit={async (e) => {
-							e.preventDefault();
-							const form = e.target as HTMLFormElement;
-
-							let fileInput = document.getElementById('file') as HTMLInputElement;
-							let file = fileInput.files?.[0];
-
-							if (!file) {
-								toast.error('No file selected');
-								return;
-							}
-
-							const data = await file.bytes();
-
-							try {
-								const response = await UserClient.updateProfilePicture({
-									fileName: file.name,
-									data: data
-								});
-
-								if (response.user) {
-									toast.success('Profile picture updated');
-									form.reset();
-									openChangeProfilePicture = false;
-									userState.user = response.user;
-								}
-							} catch (err) {
-								const error = ConnectError.from(err);
-								toast.error(error.rawMessage);
-							}
-						}}
-					>
-						<div class="flex flex-col gap-4 p-3">
-							<div class="flex flex-col gap-1">
-								<label for="file" class="text-sm">Profile Picture</label>
-								<Input name="file" type="file" />
-							</div>
-							<Button type="submit">Submit</Button>
-						</div>
-					</form>
-				{/snippet}
-			</Modal>
-
-			<Button
-				className="bg-text"
-				onclick={async () => {
-					if (userState.user) {
-						//await createPasskey(userState.user.username, userState.user.id, "what");
-					}
-				}}>Register Device</Button
-			>
+			<Button onclick={createPasskey}>Register Device</Button>
 		</div>
 
-		<form
-			onsubmit={async (e) => {
-				e.preventDefault();
-				const form = e.target as HTMLFormElement;
-				const formData = new FormData(form);
+		<Card>
+			<form use:updatePassword.impair class="flex flex-col gap-2">
+				<Form.Field name="old_password">
+					<Form.Label />
+					<Input type="password" bind:value={updatePassword.input.oldPassword} />
+					<Form.Errors bind:errors={updatePassword.errors.oldPassword} />
+				</Form.Field>
 
-				try {
-					await UserClient.updatePassword({
-						oldPassword: formData.get('old-password')?.toString(),
-						newPassword: formData.get('new-password')?.toString(),
-						confirmPassword: formData.get('confirm-password')?.toString()
-					});
+				<Form.Field name="new_password">
+					<Form.Label />
+					<Input type="password" bind:value={updatePassword.input.newPassword} />
+					<Form.Errors bind:errors={updatePassword.errors.newPassword} />
+				</Form.Field>
 
-					toast.success('password updated successfully');
-					form.reset();
-				} catch (err) {
-					const error = ConnectError.from(err);
-					toast.error(error.rawMessage);
-				}
-			}}
-			class="bg-mantle border-surface-0 rounded border p-4 drop-shadow-md"
-		>
-			<div class="flex flex-col gap-4">
-				<div class="flex flex-col gap-1">
-					<label for="old-password" class="text-sm">Old Password</label>
-					<Input name="old-password" type="password" />
-				</div>
-				<div class="flex flex-col gap-1">
-					<label for="new-password" class="text-sm">New Password</label>
-					<Input name="new-password" type="password" />
-				</div>
-				<div class="flex flex-col gap-1">
-					<label for="confirm-password" class="text-sm">Confirm New Password</label>
-					<Input name="confirm-password" type="password" />
-				</div>
-				<Button type="submit">Submit</Button>
-			</div>
-		</form>
+				<Form.Field name="confirm_password">
+					<Form.Label />
+					<Input type="password" bind:value={updatePassword.input.confirmPassword} />
+					<Form.Errors bind:errors={updatePassword.errors.confirmPassword} />
+				</Form.Field>
+
+				<Form.Errors bind:errors={updatePassword.errors.form} />
+
+				<Button type="submit" loading={updatePassword.loading()}>Submit</Button>
+			</form>
+		</Card>
 	</div>
 </div>
