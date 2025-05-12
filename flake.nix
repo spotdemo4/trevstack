@@ -138,7 +138,7 @@
           pname = "check-client";
           inherit version;
           src = ./client;
-          npmDepsHash = "sha256-kZmwV99Qj6gjTk6PCMQZfqxGLzLHZOfZOqcYLufDztQ=";
+          npmDepsHash = "sha256-4IcUfpi+xx0A7dYSXI2pN2/8aq9xPTR48dFxuhod2cQ=";
           dontNpmInstall = true;
 
           buildPhase = ''
@@ -200,7 +200,7 @@
         client = pkgs.buildNpmPackage {
           inherit pname version;
           src = ./client;
-          npmDepsHash = "sha256-kZmwV99Qj6gjTk6PCMQZfqxGLzLHZOfZOqcYLufDztQ=";
+          npmDepsHash = "sha256-4IcUfpi+xx0A7dYSXI2pN2/8aq9xPTR48dFxuhod2cQ=";
 
           installPhase = ''
             cp -r build "$out"
@@ -210,7 +210,7 @@
         server = pkgs.buildGoModule {
           inherit client pname version;
           src = ./server;
-          vendorHash = "sha256-uXyCYODrBWNm7nbibm66oO90SYXRvrNtjF0K4ZI7IkM=";
+          vendorHash = "sha256-vz3QqAlcaIDrnSjnA3qcSM3y5FznHqr5z9b/EVVdaUA=";
           env.CGO_ENABLED = 0;
 
           preBuild = ''
