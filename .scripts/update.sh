@@ -38,6 +38,4 @@ if [ "${updated}" = true ]; then
     nix-update --flake --version=skip --subpackage client default
     git add flake.nix
     git commit -m "build(nix): updated nix hashes"
-else
-    echo "nothing to update"
 fi

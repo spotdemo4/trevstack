@@ -34,6 +34,7 @@ WHERE
         AND
         (added <= sqlc.narg('end') OR sqlc.narg('end') IS NULL)
     )
+ORDER BY added DESC
 LIMIT
     @limit
     OFFSET

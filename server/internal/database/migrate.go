@@ -2,7 +2,6 @@ package database
 
 import (
 	"embed"
-	"io"
 	"log"
 	"net/url"
 
@@ -11,8 +10,8 @@ import (
 )
 
 func Migrate(dsn string, dbFS embed.FS) error {
-	_, err := dbFS.ReadDir(".")
-	if err == io.EOF {
+	entries, err := dbFS.ReadDir(".")
+	if err != nil || len(entries) == 0 {
 		return nil
 	}
 
@@ -35,7 +34,7 @@ func Migrate(dsn string, dbFS embed.FS) error {
 		log.Println(m.Version, m.FilePath)
 	}
 
-	log.Println("\nApplying...")
+	log.Println("Applying...")
 	err = db.CreateAndMigrate()
 	if err != nil {
 		return err

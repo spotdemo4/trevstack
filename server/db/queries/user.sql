@@ -3,7 +3,8 @@ SELECT
     id,
     username,
     password,
-    profile_picture_id
+    profile_picture_id,
+    webauthn_id
 FROM user
 WHERE
     id = @id
@@ -14,7 +15,8 @@ SELECT
     id,
     username,
     password,
-    profile_picture_id
+    profile_picture_id,
+    webauthn_id
 FROM user
 WHERE
     username = @username
@@ -23,10 +25,12 @@ LIMIT 1;
 -- name: InsertUser :one
 INSERT INTO user (
     username,
-    password
+    password,
+    webauthn_id
 ) VALUES (
     @username,
-    @password
+    @password,
+    @webauthn_id
 )
 RETURNING id;
 

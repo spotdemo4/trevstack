@@ -5,6 +5,9 @@ managed:
   override:
     - file_option: go_package_prefix
       value: github.com/spotdemo4/trevstack/server/internal/connect
+  disable:
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate
 
 plugins:
   - local: protoc-gen-go
@@ -18,6 +21,7 @@ plugins:
   - local: protoc-gen-es
     out: client/src/lib/connect
     opt: target=ts
+    include_imports: true
 
   - local: protoc-gen-connect-openapi
     out: client/static/openapi

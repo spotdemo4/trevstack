@@ -2,17 +2,21 @@ syntax = "proto3";
 
 package user.v1;
 
+import "buf/validate/validate.proto";
+
 service AuthService {
   rpc Login (LoginRequest) returns (LoginResponse) {}
   rpc SignUp (SignUpRequest) returns (SignUpResponse) {}
   rpc Logout (LogoutRequest) returns (LogoutResponse) {}
-  // rpc GetPasskeyIDs (GetPasskeyIDsRequest) returns (GetPasskeyIDsResponse) {}
-  // rpc BeginPasskeyLogin (BeginPasskeyLoginRequest) returns (BeginPasskeyLoginResponse) {}
-  // rpc FinishPasskeyLogin (FinishPasskeyLoginRequest) returns (FinishPasskeyLoginResponse) {}
+
+  rpc BeginPasskeyLogin (BeginPasskeyLoginRequest) returns (BeginPasskeyLoginResponse) {}
+  rpc FinishPasskeyLogin (FinishPasskeyLoginRequest) returns (FinishPasskeyLoginResponse) {}
 }
 
 message LoginRequest {
-  string username = 1;
+  string username = 1 [
+    (buf.validate.field).string.min_len = 3
+  ];
   string password = 2;
 }
 message LoginResponse {
@@ -20,7 +24,9 @@ message LoginResponse {
 }
 
 message SignUpRequest {
-  string username = 1;
+  string username = 1 [
+    (buf.validate.field).string.min_len = 3
+  ];
   string password = 2; 
   string confirm_password = 3;
 }
@@ -29,15 +35,17 @@ message SignUpResponse {}
 message LogoutRequest {}
 message LogoutResponse {}
 
-// message GetPasskeyIDsRequest {
-//   string username = 1;
-// }
-// message GetPasskeyIDsResponse {
-//   repeated string passkey_ids = 1;
-// }
+message BeginPasskeyLoginRequest {
+  string username = 1;
+}
+message BeginPasskeyLoginResponse {
+  string options_json = 1;
+}
 
-// message BeginPasskeyLoginRequest {}
-// message BeginPasskeyLoginResponse {}
-
-// message FinishPasskeyLoginRequest {}
-// message FinishPasskeyLoginResponse {}
+message FinishPasskeyLoginRequest {
+  string username = 1;
+  string attestation = 2;
+}
+message FinishPasskeyLoginResponse {
+  string token = 1;
+}

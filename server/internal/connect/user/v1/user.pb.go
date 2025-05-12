@@ -457,6 +457,166 @@ func (x *UpdateProfilePictureResponse) GetUser() *User {
 	return nil
 }
 
+type BeginPasskeyRegistrationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BeginPasskeyRegistrationRequest) Reset() {
+	*x = BeginPasskeyRegistrationRequest{}
+	mi := &file_user_v1_user_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BeginPasskeyRegistrationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeginPasskeyRegistrationRequest) ProtoMessage() {}
+
+func (x *BeginPasskeyRegistrationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeginPasskeyRegistrationRequest.ProtoReflect.Descriptor instead.
+func (*BeginPasskeyRegistrationRequest) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{9}
+}
+
+type BeginPasskeyRegistrationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OptionsJson   string                 `protobuf:"bytes,1,opt,name=options_json,json=optionsJson,proto3" json:"options_json,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BeginPasskeyRegistrationResponse) Reset() {
+	*x = BeginPasskeyRegistrationResponse{}
+	mi := &file_user_v1_user_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BeginPasskeyRegistrationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeginPasskeyRegistrationResponse) ProtoMessage() {}
+
+func (x *BeginPasskeyRegistrationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeginPasskeyRegistrationResponse.ProtoReflect.Descriptor instead.
+func (*BeginPasskeyRegistrationResponse) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *BeginPasskeyRegistrationResponse) GetOptionsJson() string {
+	if x != nil {
+		return x.OptionsJson
+	}
+	return ""
+}
+
+type FinishPasskeyRegistrationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Attestation   string                 `protobuf:"bytes,1,opt,name=attestation,proto3" json:"attestation,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FinishPasskeyRegistrationRequest) Reset() {
+	*x = FinishPasskeyRegistrationRequest{}
+	mi := &file_user_v1_user_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FinishPasskeyRegistrationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FinishPasskeyRegistrationRequest) ProtoMessage() {}
+
+func (x *FinishPasskeyRegistrationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FinishPasskeyRegistrationRequest.ProtoReflect.Descriptor instead.
+func (*FinishPasskeyRegistrationRequest) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *FinishPasskeyRegistrationRequest) GetAttestation() string {
+	if x != nil {
+		return x.Attestation
+	}
+	return ""
+}
+
+type FinishPasskeyRegistrationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FinishPasskeyRegistrationResponse) Reset() {
+	*x = FinishPasskeyRegistrationResponse{}
+	mi := &file_user_v1_user_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FinishPasskeyRegistrationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FinishPasskeyRegistrationResponse) ProtoMessage() {}
+
+func (x *FinishPasskeyRegistrationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FinishPasskeyRegistrationResponse.ProtoReflect.Descriptor instead.
+func (*FinishPasskeyRegistrationResponse) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{12}
+}
+
 var File_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_user_v1_user_proto_rawDesc = "" +
@@ -485,12 +645,20 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\tfile_name\x18\x01 \x01(\tR\bfileName\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\fR\x04data\"A\n" +
 	"\x1cUpdateProfilePictureResponse\x12!\n" +
-	"\x04user\x18\x01 \x01(\v2\r.user.v1.UserR\x04user2\xcf\x02\n" +
+	"\x04user\x18\x01 \x01(\v2\r.user.v1.UserR\x04user\"!\n" +
+	"\x1fBeginPasskeyRegistrationRequest\"E\n" +
+	" BeginPasskeyRegistrationResponse\x12!\n" +
+	"\foptions_json\x18\x01 \x01(\tR\voptionsJson\"D\n" +
+	" FinishPasskeyRegistrationRequest\x12 \n" +
+	"\vattestation\x18\x01 \x01(\tR\vattestation\"#\n" +
+	"!FinishPasskeyRegistrationResponse2\xb8\x04\n" +
 	"\vUserService\x12>\n" +
 	"\aGetUser\x12\x17.user.v1.GetUserRequest\x1a\x18.user.v1.GetUserResponse\"\x00\x12S\n" +
 	"\x0eUpdatePassword\x12\x1e.user.v1.UpdatePasswordRequest\x1a\x1f.user.v1.UpdatePasswordResponse\"\x00\x12D\n" +
 	"\tGetAPIKey\x12\x19.user.v1.GetAPIKeyRequest\x1a\x1a.user.v1.GetAPIKeyResponse\"\x00\x12e\n" +
-	"\x14UpdateProfilePicture\x12$.user.v1.UpdateProfilePictureRequest\x1a%.user.v1.UpdateProfilePictureResponse\"\x00B\x9c\x01\n" +
+	"\x14UpdateProfilePicture\x12$.user.v1.UpdateProfilePictureRequest\x1a%.user.v1.UpdateProfilePictureResponse\"\x00\x12q\n" +
+	"\x18BeginPasskeyRegistration\x12(.user.v1.BeginPasskeyRegistrationRequest\x1a).user.v1.BeginPasskeyRegistrationResponse\"\x00\x12t\n" +
+	"\x19FinishPasskeyRegistration\x12).user.v1.FinishPasskeyRegistrationRequest\x1a*.user.v1.FinishPasskeyRegistrationResponse\"\x00B\x9c\x01\n" +
 	"\vcom.user.v1B\tUserProtoP\x01ZEgithub.com/spotdemo4/trevstack/server/internal/connect/user/v1;userv1\xa2\x02\x03UXX\xaa\x02\aUser.V1\xca\x02\aUser\\V1\xe2\x02\x13User\\V1\\GPBMetadata\xea\x02\bUser::V1b\x06proto3"
 
 var (
@@ -505,35 +673,43 @@ func file_user_v1_user_proto_rawDescGZIP() []byte {
 	return file_user_v1_user_proto_rawDescData
 }
 
-var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_user_v1_user_proto_goTypes = []any{
-	(*User)(nil),                         // 0: user.v1.User
-	(*GetUserRequest)(nil),               // 1: user.v1.GetUserRequest
-	(*GetUserResponse)(nil),              // 2: user.v1.GetUserResponse
-	(*UpdatePasswordRequest)(nil),        // 3: user.v1.UpdatePasswordRequest
-	(*UpdatePasswordResponse)(nil),       // 4: user.v1.UpdatePasswordResponse
-	(*GetAPIKeyRequest)(nil),             // 5: user.v1.GetAPIKeyRequest
-	(*GetAPIKeyResponse)(nil),            // 6: user.v1.GetAPIKeyResponse
-	(*UpdateProfilePictureRequest)(nil),  // 7: user.v1.UpdateProfilePictureRequest
-	(*UpdateProfilePictureResponse)(nil), // 8: user.v1.UpdateProfilePictureResponse
+	(*User)(nil),                              // 0: user.v1.User
+	(*GetUserRequest)(nil),                    // 1: user.v1.GetUserRequest
+	(*GetUserResponse)(nil),                   // 2: user.v1.GetUserResponse
+	(*UpdatePasswordRequest)(nil),             // 3: user.v1.UpdatePasswordRequest
+	(*UpdatePasswordResponse)(nil),            // 4: user.v1.UpdatePasswordResponse
+	(*GetAPIKeyRequest)(nil),                  // 5: user.v1.GetAPIKeyRequest
+	(*GetAPIKeyResponse)(nil),                 // 6: user.v1.GetAPIKeyResponse
+	(*UpdateProfilePictureRequest)(nil),       // 7: user.v1.UpdateProfilePictureRequest
+	(*UpdateProfilePictureResponse)(nil),      // 8: user.v1.UpdateProfilePictureResponse
+	(*BeginPasskeyRegistrationRequest)(nil),   // 9: user.v1.BeginPasskeyRegistrationRequest
+	(*BeginPasskeyRegistrationResponse)(nil),  // 10: user.v1.BeginPasskeyRegistrationResponse
+	(*FinishPasskeyRegistrationRequest)(nil),  // 11: user.v1.FinishPasskeyRegistrationRequest
+	(*FinishPasskeyRegistrationResponse)(nil), // 12: user.v1.FinishPasskeyRegistrationResponse
 }
 var file_user_v1_user_proto_depIdxs = []int32{
-	0, // 0: user.v1.GetUserResponse.user:type_name -> user.v1.User
-	0, // 1: user.v1.UpdatePasswordResponse.user:type_name -> user.v1.User
-	0, // 2: user.v1.UpdateProfilePictureResponse.user:type_name -> user.v1.User
-	1, // 3: user.v1.UserService.GetUser:input_type -> user.v1.GetUserRequest
-	3, // 4: user.v1.UserService.UpdatePassword:input_type -> user.v1.UpdatePasswordRequest
-	5, // 5: user.v1.UserService.GetAPIKey:input_type -> user.v1.GetAPIKeyRequest
-	7, // 6: user.v1.UserService.UpdateProfilePicture:input_type -> user.v1.UpdateProfilePictureRequest
-	2, // 7: user.v1.UserService.GetUser:output_type -> user.v1.GetUserResponse
-	4, // 8: user.v1.UserService.UpdatePassword:output_type -> user.v1.UpdatePasswordResponse
-	6, // 9: user.v1.UserService.GetAPIKey:output_type -> user.v1.GetAPIKeyResponse
-	8, // 10: user.v1.UserService.UpdateProfilePicture:output_type -> user.v1.UpdateProfilePictureResponse
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0,  // 0: user.v1.GetUserResponse.user:type_name -> user.v1.User
+	0,  // 1: user.v1.UpdatePasswordResponse.user:type_name -> user.v1.User
+	0,  // 2: user.v1.UpdateProfilePictureResponse.user:type_name -> user.v1.User
+	1,  // 3: user.v1.UserService.GetUser:input_type -> user.v1.GetUserRequest
+	3,  // 4: user.v1.UserService.UpdatePassword:input_type -> user.v1.UpdatePasswordRequest
+	5,  // 5: user.v1.UserService.GetAPIKey:input_type -> user.v1.GetAPIKeyRequest
+	7,  // 6: user.v1.UserService.UpdateProfilePicture:input_type -> user.v1.UpdateProfilePictureRequest
+	9,  // 7: user.v1.UserService.BeginPasskeyRegistration:input_type -> user.v1.BeginPasskeyRegistrationRequest
+	11, // 8: user.v1.UserService.FinishPasskeyRegistration:input_type -> user.v1.FinishPasskeyRegistrationRequest
+	2,  // 9: user.v1.UserService.GetUser:output_type -> user.v1.GetUserResponse
+	4,  // 10: user.v1.UserService.UpdatePassword:output_type -> user.v1.UpdatePasswordResponse
+	6,  // 11: user.v1.UserService.GetAPIKey:output_type -> user.v1.GetAPIKeyResponse
+	8,  // 12: user.v1.UserService.UpdateProfilePicture:output_type -> user.v1.UpdateProfilePictureResponse
+	10, // 13: user.v1.UserService.BeginPasskeyRegistration:output_type -> user.v1.BeginPasskeyRegistrationResponse
+	12, // 14: user.v1.UserService.FinishPasskeyRegistration:output_type -> user.v1.FinishPasskeyRegistrationResponse
+	9,  // [9:15] is the sub-list for method output_type
+	3,  // [3:9] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_user_v1_user_proto_init() }
@@ -548,7 +724,7 @@ func file_user_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_v1_user_proto_rawDesc), len(file_user_v1_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -3,13 +3,19 @@ package user
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"connectrpc.com/connect"
+	"connectrpc.com/validate"
+	"github.com/go-webauthn/webauthn/protocol"
+	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spotdemo4/trevstack/server/internal/auth"
 	userv1 "github.com/spotdemo4/trevstack/server/internal/connect/user/v1"
 	"github.com/spotdemo4/trevstack/server/internal/connect/user/v1/userv1connect"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
@@ -27,8 +33,12 @@ func userToConnect(item sqlc.User) *userv1.User {
 }
 
 type Handler struct {
-	db  *sqlc.Queries
-	key []byte
+	db       *sqlc.Queries
+	webAuthn *webauthn.WebAuthn
+	key      []byte
+
+	sessions *map[int64]*webauthn.SessionData
+	mu       sync.Mutex
 }
 
 func (h *Handler) GetUser(ctx context.Context, _ *connect.Request[userv1.GetUserRequest]) (*connect.Response[userv1.GetUserResponse], error) {
@@ -200,75 +210,149 @@ func (h *Handler) UpdateProfilePicture(ctx context.Context, req *connect.Request
 	return res, nil
 }
 
-// func (h *Handler) BeginPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.BeginPasskeyRegistrationRequest]) (*connect.Response[userv1.BeginPasskeyRegistrationResponse], error) {
-// 	// Get user ID from context
-// 	userid, ok := interceptors.GetUserContext(ctx)
-// 	if !ok {
-// 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
-// 	}
+func (h *Handler) BeginPasskeyRegistration(ctx context.Context, _ *connect.Request[userv1.BeginPasskeyRegistrationRequest]) (*connect.Response[userv1.BeginPasskeyRegistrationResponse], error) {
+	userid, ok := interceptors.GetUserContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
+	}
 
-// 	// Get user
-// 	user := models.User{}
-// 	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
-// 		return nil, connect.NewError(connect.CodeInternal, err)
-// 	}
+	// Get user
+	pUser, err := h.getPasskeyUser(ctx, userid)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
 
-// 	return connect.NewResponse(&userv1.BeginPasskeyRegistrationResponse{}), nil
-// }
+	// Get options for user
+	options, session, err := h.webAuthn.BeginRegistration(pUser)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
 
-// func (h *Handler) FinishPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.FinishPasskeyRegistrationRequest]) (*connect.Response[userv1.FinishPasskeyRegistrationResponse], error) {
-// 	// Get user ID from context
-// 	userid, ok := interceptors.GetUserContext(ctx)
-// 	if !ok {
-// 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("user not authenticated"))
-// 	}
+	// Turn options into json
+	optionsJSON, err := json.Marshal(options)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
 
-// 	// Get user
-// 	user := models.User{}
-// 	if err := h.db.First(&user, "id = ?", userid).Error; err != nil {
-// 		return nil, connect.NewError(connect.CodeInternal, err)
-// 	}
+	// Set session for validation later
+	h.setSession(userid, session)
 
-// 	return connect.NewResponse(&userv1.FinishPasskeyRegistrationResponse{}), nil
-// }
+	return connect.NewResponse(&userv1.BeginPasskeyRegistrationResponse{
+		OptionsJson: string(optionsJSON),
+	}), nil
+}
 
-// func BeginRegistration(ctx context.Context) error {
-// 	userid, ok := interceptors.GetUserContext(ctx)
-// 	if !ok {
-// 		return nil
-// 	}
+func (h *Handler) FinishPasskeyRegistration(ctx context.Context, req *connect.Request[userv1.FinishPasskeyRegistrationRequest]) (*connect.Response[userv1.FinishPasskeyRegistrationResponse], error) {
+	userid, ok := interceptors.GetUserContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
+	}
 
-// 	wconfig := &webauthn.Config{
-// 		RPDisplayName: "Go Webauthn",                               // Display Name for your site
-// 		RPID:          "go-webauthn.local",                         // Generally the FQDN for your site
-// 		RPOrigins:     []string{"https://login.go-webauthn.local"}, // The origin URLs allowed for WebAuthn requests
-// 	}
-// 	webAuthn, err := webauthn.New(wconfig)
-// 	if err != nil {
-// 		return nil
-// 	}
+	// Get user
+	pUser, err := h.getPasskeyUser(ctx, userid)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
 
-// 	var user webauthn.User
-// 	user.WebAuthnCredentials()
+	// Get the session data previously set
+	session, err := h.getSession(userid)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
 
-// 	var cred webauthn.Credential
-// 	cred.Verify()
+	// Parse the attestation response
+	parsedResponse, err := protocol.ParseCredentialCreationResponseBytes([]byte(req.Msg.Attestation))
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
 
-// 	var test metadata.Provider
-// 	test.
+	// Create the credential
+	credential, err := h.webAuthn.CreateCredential(pUser, *session, parsedResponse)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
 
-// 	options, session, err := webAuthn.BeginRegistration(user)
+	transports := transportsToString(credential.Transport)
 
-// 	return nil
-// }
+	// Save the credential
+	err = h.db.InsertCredential(ctx, sqlc.InsertCredentialParams{
+		CredID:                string(credential.ID),
+		CredPublicKey:         credential.PublicKey,
+		SignCount:             int64(credential.Authenticator.SignCount),
+		Transports:            &transports,
+		UserVerified:          &credential.Flags.UserVerified,
+		BackupEligible:        &credential.Flags.BackupEligible,
+		BackupState:           &credential.Flags.BackupState,
+		AttestationObject:     credential.Attestation.Object,
+		AttestationClientData: credential.Attestation.ClientDataJSON,
+		CreatedAt:             time.Now(),
+		LastUsed:              time.Now(),
+		UserID:                userid,
+	})
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
 
-func NewHandler(db *sqlc.Queries, key string) (string, http.Handler) {
-	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
+	return connect.NewResponse(&userv1.FinishPasskeyRegistrationResponse{}), nil
+}
 
+func (h *Handler) getPasskeyUser(ctx context.Context, userid int64) (*auth.User, error) {
+	user, err := h.db.GetUser(ctx, userid)
+	if err != nil {
+		return nil, err
+	}
+
+	creds, err := h.db.GetCredentials(ctx, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	webCreds := auth.NewCreds(creds)
+	webUser := auth.NewUser(user.WebauthnID, user.Username, webCreds)
+
+	return &webUser, nil
+}
+
+func (h *Handler) getSession(userid int64) (*webauthn.SessionData, error) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	session, ok := (*h.sessions)[userid]
+	if !ok {
+		return nil, errors.New("session does not exist")
+	}
+
+	delete(*h.sessions, userid)
+	return session, nil
+}
+
+func (h *Handler) setSession(userid int64, data *webauthn.SessionData) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	(*h.sessions)[userid] = data
+}
+
+func transportsToString(transports []protocol.AuthenticatorTransport) string {
+	s := ""
+	for _, transport := range transports {
+		s += string(transport) + ", "
+	}
+	return s
+}
+
+func NewHandler(vi *validate.Interceptor, db *sqlc.Queries, webauth *webauthn.WebAuthn, key string) (string, http.Handler) {
+	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key), vi)
+
+	sd := map[int64]*webauthn.SessionData{}
 	return userv1connect.NewUserServiceHandler(
 		&Handler{
-			db:  db,
-			key: []byte(key),
+			db:       db,
+			webAuthn: webauth,
+			key:      []byte(key),
+
+			sessions: &sd,
+			mu:       sync.Mutex{},
 		},
 		interceptors,
 	)

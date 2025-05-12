@@ -7,6 +7,7 @@
 package userv1
 
 import (
+	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -285,27 +286,222 @@ func (*LogoutResponse) Descriptor() ([]byte, []int) {
 	return file_user_v1_auth_proto_rawDescGZIP(), []int{5}
 }
 
+type BeginPasskeyLoginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BeginPasskeyLoginRequest) Reset() {
+	*x = BeginPasskeyLoginRequest{}
+	mi := &file_user_v1_auth_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BeginPasskeyLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeginPasskeyLoginRequest) ProtoMessage() {}
+
+func (x *BeginPasskeyLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_auth_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeginPasskeyLoginRequest.ProtoReflect.Descriptor instead.
+func (*BeginPasskeyLoginRequest) Descriptor() ([]byte, []int) {
+	return file_user_v1_auth_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *BeginPasskeyLoginRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+type BeginPasskeyLoginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OptionsJson   string                 `protobuf:"bytes,1,opt,name=options_json,json=optionsJson,proto3" json:"options_json,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BeginPasskeyLoginResponse) Reset() {
+	*x = BeginPasskeyLoginResponse{}
+	mi := &file_user_v1_auth_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BeginPasskeyLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeginPasskeyLoginResponse) ProtoMessage() {}
+
+func (x *BeginPasskeyLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_auth_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeginPasskeyLoginResponse.ProtoReflect.Descriptor instead.
+func (*BeginPasskeyLoginResponse) Descriptor() ([]byte, []int) {
+	return file_user_v1_auth_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *BeginPasskeyLoginResponse) GetOptionsJson() string {
+	if x != nil {
+		return x.OptionsJson
+	}
+	return ""
+}
+
+type FinishPasskeyLoginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Attestation   string                 `protobuf:"bytes,2,opt,name=attestation,proto3" json:"attestation,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FinishPasskeyLoginRequest) Reset() {
+	*x = FinishPasskeyLoginRequest{}
+	mi := &file_user_v1_auth_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FinishPasskeyLoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FinishPasskeyLoginRequest) ProtoMessage() {}
+
+func (x *FinishPasskeyLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_auth_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FinishPasskeyLoginRequest.ProtoReflect.Descriptor instead.
+func (*FinishPasskeyLoginRequest) Descriptor() ([]byte, []int) {
+	return file_user_v1_auth_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *FinishPasskeyLoginRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *FinishPasskeyLoginRequest) GetAttestation() string {
+	if x != nil {
+		return x.Attestation
+	}
+	return ""
+}
+
+type FinishPasskeyLoginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FinishPasskeyLoginResponse) Reset() {
+	*x = FinishPasskeyLoginResponse{}
+	mi := &file_user_v1_auth_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FinishPasskeyLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FinishPasskeyLoginResponse) ProtoMessage() {}
+
+func (x *FinishPasskeyLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_auth_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FinishPasskeyLoginResponse.ProtoReflect.Descriptor instead.
+func (*FinishPasskeyLoginResponse) Descriptor() ([]byte, []int) {
+	return file_user_v1_auth_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *FinishPasskeyLoginResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
 var File_user_v1_auth_proto protoreflect.FileDescriptor
 
 const file_user_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12user/v1/auth.proto\x12\auser.v1\"F\n" +
-	"\fLoginRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
+	"\x12user/v1/auth.proto\x12\auser.v1\x1a\x1bbuf/validate/validate.proto\"O\n" +
+	"\fLoginRequest\x12#\n" +
+	"\busername\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x03R\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"%\n" +
 	"\rLoginResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"r\n" +
-	"\rSignUpRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"{\n" +
+	"\rSignUpRequest\x12#\n" +
+	"\busername\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x03R\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12)\n" +
 	"\x10confirm_password\x18\x03 \x01(\tR\x0fconfirmPassword\"\x10\n" +
 	"\x0eSignUpResponse\"\x0f\n" +
 	"\rLogoutRequest\"\x10\n" +
-	"\x0eLogoutResponse2\xc1\x01\n" +
+	"\x0eLogoutResponse\"6\n" +
+	"\x18BeginPasskeyLoginRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\">\n" +
+	"\x19BeginPasskeyLoginResponse\x12!\n" +
+	"\foptions_json\x18\x01 \x01(\tR\voptionsJson\"Y\n" +
+	"\x19FinishPasskeyLoginRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12 \n" +
+	"\vattestation\x18\x02 \x01(\tR\vattestation\"2\n" +
+	"\x1aFinishPasskeyLoginResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token2\x80\x03\n" +
 	"\vAuthService\x128\n" +
 	"\x05Login\x12\x15.user.v1.LoginRequest\x1a\x16.user.v1.LoginResponse\"\x00\x12;\n" +
 	"\x06SignUp\x12\x16.user.v1.SignUpRequest\x1a\x17.user.v1.SignUpResponse\"\x00\x12;\n" +
-	"\x06Logout\x12\x16.user.v1.LogoutRequest\x1a\x17.user.v1.LogoutResponse\"\x00B\x9c\x01\n" +
+	"\x06Logout\x12\x16.user.v1.LogoutRequest\x1a\x17.user.v1.LogoutResponse\"\x00\x12\\\n" +
+	"\x11BeginPasskeyLogin\x12!.user.v1.BeginPasskeyLoginRequest\x1a\".user.v1.BeginPasskeyLoginResponse\"\x00\x12_\n" +
+	"\x12FinishPasskeyLogin\x12\".user.v1.FinishPasskeyLoginRequest\x1a#.user.v1.FinishPasskeyLoginResponse\"\x00B\x9c\x01\n" +
 	"\vcom.user.v1B\tAuthProtoP\x01ZEgithub.com/spotdemo4/trevstack/server/internal/connect/user/v1;userv1\xa2\x02\x03UXX\xaa\x02\aUser.V1\xca\x02\aUser\\V1\xe2\x02\x13User\\V1\\GPBMetadata\xea\x02\bUser::V1b\x06proto3"
 
 var (
@@ -320,24 +516,32 @@ func file_user_v1_auth_proto_rawDescGZIP() []byte {
 	return file_user_v1_auth_proto_rawDescData
 }
 
-var file_user_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_user_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_user_v1_auth_proto_goTypes = []any{
-	(*LoginRequest)(nil),   // 0: user.v1.LoginRequest
-	(*LoginResponse)(nil),  // 1: user.v1.LoginResponse
-	(*SignUpRequest)(nil),  // 2: user.v1.SignUpRequest
-	(*SignUpResponse)(nil), // 3: user.v1.SignUpResponse
-	(*LogoutRequest)(nil),  // 4: user.v1.LogoutRequest
-	(*LogoutResponse)(nil), // 5: user.v1.LogoutResponse
+	(*LoginRequest)(nil),               // 0: user.v1.LoginRequest
+	(*LoginResponse)(nil),              // 1: user.v1.LoginResponse
+	(*SignUpRequest)(nil),              // 2: user.v1.SignUpRequest
+	(*SignUpResponse)(nil),             // 3: user.v1.SignUpResponse
+	(*LogoutRequest)(nil),              // 4: user.v1.LogoutRequest
+	(*LogoutResponse)(nil),             // 5: user.v1.LogoutResponse
+	(*BeginPasskeyLoginRequest)(nil),   // 6: user.v1.BeginPasskeyLoginRequest
+	(*BeginPasskeyLoginResponse)(nil),  // 7: user.v1.BeginPasskeyLoginResponse
+	(*FinishPasskeyLoginRequest)(nil),  // 8: user.v1.FinishPasskeyLoginRequest
+	(*FinishPasskeyLoginResponse)(nil), // 9: user.v1.FinishPasskeyLoginResponse
 }
 var file_user_v1_auth_proto_depIdxs = []int32{
 	0, // 0: user.v1.AuthService.Login:input_type -> user.v1.LoginRequest
 	2, // 1: user.v1.AuthService.SignUp:input_type -> user.v1.SignUpRequest
 	4, // 2: user.v1.AuthService.Logout:input_type -> user.v1.LogoutRequest
-	1, // 3: user.v1.AuthService.Login:output_type -> user.v1.LoginResponse
-	3, // 4: user.v1.AuthService.SignUp:output_type -> user.v1.SignUpResponse
-	5, // 5: user.v1.AuthService.Logout:output_type -> user.v1.LogoutResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	6, // 3: user.v1.AuthService.BeginPasskeyLogin:input_type -> user.v1.BeginPasskeyLoginRequest
+	8, // 4: user.v1.AuthService.FinishPasskeyLogin:input_type -> user.v1.FinishPasskeyLoginRequest
+	1, // 5: user.v1.AuthService.Login:output_type -> user.v1.LoginResponse
+	3, // 6: user.v1.AuthService.SignUp:output_type -> user.v1.SignUpResponse
+	5, // 7: user.v1.AuthService.Logout:output_type -> user.v1.LogoutResponse
+	7, // 8: user.v1.AuthService.BeginPasskeyLogin:output_type -> user.v1.BeginPasskeyLoginResponse
+	9, // 9: user.v1.AuthService.FinishPasskeyLogin:output_type -> user.v1.FinishPasskeyLoginResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -354,7 +558,7 @@ func file_user_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_v1_auth_proto_rawDesc), len(file_user_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

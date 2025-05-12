@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
+	"connectrpc.com/validate"
 	itemv1 "github.com/spotdemo4/trevstack/server/internal/connect/item/v1"
 	"github.com/spotdemo4/trevstack/server/internal/connect/item/v1/itemv1connect"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
@@ -190,8 +191,8 @@ func (h *Handler) DeleteItem(ctx context.Context, req *connect.Request[itemv1.De
 	return res, nil
 }
 
-func NewHandler(db *sqlc.Queries, key string) (string, http.Handler) {
-	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key))
+func NewHandler(vi *validate.Interceptor, db *sqlc.Queries, key string) (string, http.Handler) {
+	interceptors := connect.WithInterceptors(vi, interceptors.NewAuthInterceptor(key))
 
 	return itemv1connect.NewItemServiceHandler(
 		&Handler{

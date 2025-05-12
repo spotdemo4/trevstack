@@ -2,7 +2,6 @@ package client
 
 import (
 	"embed"
-	"io"
 	"io/fs"
 	"net/http"
 
@@ -10,8 +9,8 @@ import (
 )
 
 func NewClientHandler(key string, clientFS embed.FS) http.Handler {
-	_, err := clientFS.ReadDir(".")
-	if err == io.EOF {
+	entries, err := clientFS.ReadDir(".")
+	if err != nil || len(entries) == 0 {
 		return http.NotFoundHandler()
 	}
 

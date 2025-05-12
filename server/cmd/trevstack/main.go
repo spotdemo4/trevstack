@@ -8,11 +8,14 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"connectrpc.com/validate"
+	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/joho/godotenv"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -48,11 +51,27 @@ func main() {
 		log.Fatalf("failed to connect to database: %s", err.Error())
 	}
 
+	// Create webauthn
+	webAuthn, err := webauthn.New(&webauthn.Config{
+		RPDisplayName: env.Name,
+		RPID:          env.URL.Hostname(),
+		RPOrigins:     []string{env.URL.String()},
+	})
+	if err != nil {
+		log.Fatalf("failed to create webauthn: %s", err.Error())
+	}
+
+	// Create validate interceptor
+	vi, err := validate.NewInterceptor()
+	if err != nil {
+		log.Fatalf("failed to create validator: %s", err.Error())
+	}
+
 	// Serve GRPC Handlers
 	api := http.NewServeMux()
-	api.Handle(interceptors.WithCORS(user.NewAuthHandler(sqlc, env.Key)))
-	api.Handle(interceptors.WithCORS(user.NewHandler(sqlc, env.Key)))
-	api.Handle(interceptors.WithCORS(item.NewHandler(sqlc, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewAuthHandler(vi, sqlc, webAuthn, env.Name, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewHandler(vi, sqlc, webAuthn, env.Key)))
+	api.Handle(interceptors.WithCORS(item.NewHandler(vi, sqlc, env.Key)))
 
 	// Serve web interface
 	mux := http.NewServeMux()
@@ -93,6 +112,8 @@ func main() {
 type env struct {
 	Port        string
 	Key         string
+	Name        string
+	URL         *url.URL
 	DatabaseURL string
 }
 
@@ -106,18 +127,35 @@ func getEnv() (*env, error) {
 	env := env{
 		Port:        os.Getenv("PORT"),
 		Key:         os.Getenv("KEY"),
+		Name:        os.Getenv("NAME"),
 		DatabaseURL: os.Getenv("DATABASE_URL"),
 	}
 
 	// Validate
 	if env.Port == "" {
 		env.Port = "8080"
+		log.Printf("env 'PORT' not found, defaulting to %s\n", env.Port)
 	}
 	if env.Key == "" {
-		return nil, errors.New("env 'key' not found")
+		return nil, errors.New("env 'KEY' not found")
+	}
+	if env.Name == "" {
+		env.Name = "trevstack"
+		log.Printf("env 'NAME' not found, defaulting to %s\n", env.Name)
 	}
 	if env.DatabaseURL == "" {
 		return nil, errors.New("env 'DATABASE_URL' not found")
+	}
+
+	// Parse URL
+	if os.Getenv("URL") == "" {
+		env.URL, _ = url.Parse("http://localhost:" + env.Port)
+		log.Printf("env 'URL' not found, defaulting to %s\n", env.URL.String())
+	} else {
+		env.URL, err = url.Parse(os.Getenv("URL"))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &env, nil

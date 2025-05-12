@@ -21,15 +21,15 @@ apps:
     dir: server
     exts:
       - go
-    onstart: go build -o ./tmp/app -tags dev && ./tmp/app
-    onchange: go build -o ./tmp/app -tags dev && ./tmp/app
+    onstart: go build -o ./tmp/app -tags dev cmd/trevstack/main.go && ./tmp/app
+    onchange: go build -o ./tmp/app -tags dev cmd/trevstack/main.go && ./tmp/app
 
   nix:
     color: "#74c7ec"
     exts:
       - nix
-    onstart: nix fmt
-    onchange: nix fmt
+    onstart: nix fmt .
+    onchange: nix fmt .
 
   prettier:
     color: "#fab387"

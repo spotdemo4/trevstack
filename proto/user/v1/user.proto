@@ -13,8 +13,9 @@ service UserService {
   rpc UpdatePassword (UpdatePasswordRequest) returns (UpdatePasswordResponse) {}
   rpc GetAPIKey (GetAPIKeyRequest) returns (GetAPIKeyResponse) {}
   rpc UpdateProfilePicture (UpdateProfilePictureRequest) returns (UpdateProfilePictureResponse) {}
-  // rpc BeginPasskeyRegistration (BeginPasskeyRegistrationRequest) returns (BeginPasskeyRegistrationResponse) {}
-  // rpc FinishPasskeyRegistration (FinishPasskeyRegistrationRequest) returns (FinishPasskeyRegistrationResponse) {}
+
+  rpc BeginPasskeyRegistration (BeginPasskeyRegistrationRequest) returns (BeginPasskeyRegistrationResponse) {}
+  rpc FinishPasskeyRegistration (FinishPasskeyRegistrationRequest) returns (FinishPasskeyRegistrationResponse) {}
 }
 
 message GetUserRequest {}
@@ -46,6 +47,16 @@ message UpdateProfilePictureRequest {
 message UpdateProfilePictureResponse {
   User user = 1;
 }
+
+message BeginPasskeyRegistrationRequest {}
+message BeginPasskeyRegistrationResponse {
+  string options_json = 1;
+}
+
+message FinishPasskeyRegistrationRequest {
+  string attestation = 1;
+}
+message FinishPasskeyRegistrationResponse {}
 
 // message BeginPasskeyRegistrationRequest {}
 // message BeginPasskeyRegistrationResponse {}

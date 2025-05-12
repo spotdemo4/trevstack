@@ -96,7 +96,13 @@ func (i *AuthInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 					ctx, err = newUserContext(ctx, subject)
 					if err == nil {
 						return next(ctx, req)
+					} else {
+						log.Println("huh")
+						log.Println(err)
 					}
+				} else {
+					log.Println("what")
+					log.Println(err)
 				}
 			}
 		}
@@ -176,7 +182,7 @@ func getCookies(rawCookies string) []*http.Cookie {
 }
 
 func validateToken(tokenString string, key string) (subject string, err error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
