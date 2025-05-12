@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint ."
 	},
 	"devDependencies": {
-		"@bufbuild/protovalidate": "^0.1.0",
+		"@bufbuild/protovalidate": "^0.1.1",
 		"@connectrpc/connect": "^2.0.2",
 		"@connectrpc/connect-web": "^2.0.2",
 		"@eslint/compat": "^1.2.9",
@@ -26,7 +26,7 @@
 		"@sveltejs/kit": "^2.20.8",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@tailwindcss/vite": "^4.1.6",
-		"bits-ui": "^1.4.7",
+		"bits-ui": "^1.4.8",
 		"clsx": "^2.1.1",
 		"eslint": "^9.26.0",
 		"eslint-config-prettier": "^10.1.5",
@@ -40,7 +40,7 @@
 		"svelte": "^5.28.2",
 		"svelte-check": "^4.1.7",
 		"svelte-sonner": "^0.3.28",
-		"tailwind-merge": "^3.2.0",
+		"tailwind-merge": "^3.3.0",
 		"tailwind-variants": "^1.0.0",
 		"tailwindcss": "^4.0.13",
 		"tw-animate-css": "^1.2.9",
