@@ -27,5 +27,5 @@ plugins:
     out: client/static/openapi
     strategy: all
     opt:
-      - base=openapi.base.yaml
+      - base=openapi.yaml
       - path=openapi.yaml
