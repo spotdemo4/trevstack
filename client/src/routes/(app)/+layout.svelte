@@ -1,27 +1,27 @@
 <script lang="ts">
-	import pkg from '../../../package.json' with { type: 'json' };
-	import * as Sheet from '$lib/ui/sheet';
-	import * as DropdownMenu from '$lib/ui/dropdown-menu';
-	import * as Avatar from '$lib/ui/avatar';
-	import {
-		LayoutGrid,
-		LogOut,
-		Menu,
-		LayoutList,
-		Book,
-		House,
-		Sun,
-		Moon,
-		Settings
-	} from '@lucide/svelte';
-	import { Button } from '$lib/ui/button';
-	import { toggleMode } from 'mode-watcher';
-	import { toast } from 'svelte-sonner';
-	import { goto } from '$app/navigation';
-	import { AuthClient, UserClient } from '$lib/transport';
-	import { userState } from '$lib/sharedState.svelte';
 	import type { Snippet } from 'svelte';
 	import type { PageData } from './$types';
+	import * as Avatar from '$lib/ui/avatar';
+	import { Button } from '$lib/ui/button';
+	import * as DropdownMenu from '$lib/ui/dropdown-menu';
+	import * as Sheet from '$lib/ui/sheet';
+	import {
+		Book,
+		House,
+		LayoutGrid,
+		LayoutList,
+		LogOut,
+		Menu,
+		Moon,
+		Settings,
+		Sun
+	} from '@lucide/svelte';
+	import { goto } from '$app/navigation';
+	import { userState } from '$lib/sharedState.svelte';
+	import { AuthClient, UserClient } from '$lib/transport';
+	import { toggleMode } from 'mode-watcher';
+	import { toast } from 'svelte-sonner';
+	import pkg from '../../../package.json' with { type: 'json' };
 
 	interface Props {
 		data: PageData | undefined;

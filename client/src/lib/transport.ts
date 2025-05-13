@@ -1,11 +1,12 @@
-import { createConnectTransport } from '@connectrpc/connect-web';
+import type { Interceptor } from '@connectrpc/connect';
 import { createValidator } from '@bufbuild/protovalidate';
-import { Code, ConnectError, createClient, type Interceptor } from '@connectrpc/connect';
-import { AuthService } from '$lib/connect/user/v1/auth_pb';
-import { UserService } from '$lib/connect/user/v1/user_pb';
-import { ItemService } from '$lib/connect/item/v1/item_pb';
+import { Code, ConnectError, createClient } from '@connectrpc/connect';
+import { createConnectTransport } from '@connectrpc/connect-web';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
+import { ItemService } from '$lib/connect/item/v1/item_pb';
+import { AuthService } from '$lib/connect/user/v1/auth_pb';
+import { UserService } from '$lib/connect/user/v1/user_pb';
 
 const redirector: Interceptor = (next) => async (req) => {
 	try {

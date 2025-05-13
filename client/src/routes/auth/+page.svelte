@@ -1,18 +1,18 @@
 <script lang="ts">
-	import * as Tabs from '$lib/ui/tabs';
+	import { Button } from '$lib/ui/button';
+	import { Card } from '$lib/ui/card';
 	import * as Form from '$lib/ui/form';
 	import { Input } from '$lib/ui/input';
-	import { Button } from '$lib/ui/button';
-	import { AuthClient } from '$lib/transport';
-	import { toast } from 'svelte-sonner';
-	import { AuthService } from '$lib/connect/user/v1/auth_pb';
-	import { coolForm } from '$lib/coolforms';
-	import { Card } from '$lib/ui/card';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import { startAuthentication } from '@simplewebauthn/browser';
+	import * as Tabs from '$lib/ui/tabs';
 	import { ConnectError } from '@connectrpc/connect';
 	import { Fingerprint } from '@lucide/svelte';
+	import { startAuthentication } from '@simplewebauthn/browser';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { AuthService } from '$lib/connect/user/v1/auth_pb';
+	import { coolForm } from '$lib/coolforms';
+	import { AuthClient } from '$lib/transport';
+	import { toast } from 'svelte-sonner';
 
 	let tabValue = $state('login');
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { HTMLInputAttributes, HTMLInputTypeAttribute } from 'svelte/elements';
 	import type { WithElementRef } from 'bits-ui';
+	import type { HTMLInputAttributes, HTMLInputTypeAttribute } from 'svelte/elements';
 	import { cn } from '$lib/utils.js';
 	import { getFormContext } from '../form/context.svelte';
 

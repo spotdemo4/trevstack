@@ -1,5 +1,7 @@
 <script lang="ts" module>
-	import { tv, type VariantProps } from 'tailwind-variants';
+	import type { VariantProps } from 'tailwind-variants';
+	import { tv } from 'tailwind-variants';
+
 	export const sheetVariants = tv({
 		base: 'bg-mantle border-surface data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 gap-4 p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
 		variants: {
@@ -21,11 +23,12 @@
 </script>
 
 <script lang="ts">
-	import { Dialog as SheetPrimitive, type WithoutChildrenOrChild } from 'bits-ui';
-	import X from '@lucide/svelte/icons/x';
+	import type { WithoutChildrenOrChild } from 'bits-ui';
 	import type { Snippet } from 'svelte';
-	import SheetOverlay from './sheet-overlay.svelte';
+	import X from '@lucide/svelte/icons/x';
 	import { cn } from '$lib/utils.js';
+	import { Dialog as SheetPrimitive } from 'bits-ui';
+	import SheetOverlay from './sheet-overlay.svelte';
 
 	let {
 		ref = $bindable(null),

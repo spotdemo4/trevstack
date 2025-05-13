@@ -1,14 +1,11 @@
-import {
-	create,
-	type DescMessage,
-	type DescService,
-	type MessageShape,
-	type MessageInitShape
-} from '@bufbuild/protobuf';
-import { ValidationError, type Violation } from '@bufbuild/protovalidate';
-import { Validator } from '../transport';
-import { ConnectError, type Client } from '@connectrpc/connect';
+import type { DescMessage, DescService, MessageInitShape, MessageShape } from '@bufbuild/protobuf';
+import type { Violation } from '@bufbuild/protovalidate';
+import type { Client } from '@connectrpc/connect';
 import type { Action } from 'svelte/action';
+import { create } from '@bufbuild/protobuf';
+import { ValidationError } from '@bufbuild/protovalidate';
+import { ConnectError } from '@connectrpc/connect';
+import { Validator } from '../transport';
 
 type Options<Input extends DescMessage, Output extends DescMessage> = {
 	init?: MessageInitShape<Input>;
@@ -30,9 +27,7 @@ export function coolForm<Service extends DescService, Method extends Service['me
 ) {
 	const input = $state(create(method.input as Method['input'], options?.init));
 	const output = $state(create(method.output as Method['output']));
-	const errors: Violations<Method['input']['field']> & {
-		form?: ConnectError;
-	} = $state({});
+	const errors: Violations<Method['input']['field']> & { form?: ConnectError } = $state({});
 	let loading = $state(false);
 
 	const validate = () => {

@@ -1,16 +1,12 @@
 <script lang="ts">
-	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import type { DateValue } from '@internationalized/date';
 	import type { DateRange } from 'bits-ui';
-	import {
-		CalendarDate,
-		DateFormatter,
-		type DateValue,
-		getLocalTimeZone
-	} from '@internationalized/date';
-	import { cn } from '$lib/utils.js';
 	import { buttonVariants } from '$lib/ui/button';
-	import { RangeCalendar } from '$lib/ui/range-calendar';
 	import * as Popover from '$lib/ui/popover';
+	import { RangeCalendar } from '$lib/ui/range-calendar';
+	import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date';
+	import CalendarIcon from '@lucide/svelte/icons/calendar';
+	import { cn } from '$lib/utils.js';
 
 	let {
 		className,

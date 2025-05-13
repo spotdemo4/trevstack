@@ -1,7 +1,37 @@
 {
-    "go.lintTool": "revive",
-    "go.lintFlags": [
-        "--config=server/revive.toml"
-    ],
-    "sqlfluff.config": "server/db/.sqlfluff",
+  "editor.formatOnSave": true,
+
+  // Go
+  "go.lintTool": "revive",
+  "go.formatTool": "goimports",
+  "go.lintFlags": ["--config=server/revive.toml"],
+  "gopls": { "ui.semanticTokens": true },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+
+  // SQLFluff
+  "sqlfluff.config": "server/db/.sqlfluff",
+
+  // ESLint
+  "eslint.workingDirectories": ["./client"],
+  "eslint.validate": ["svelte", "javascript", "typescript"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Svelte
+  "svelte.enable-ts-plugin": true,
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  },
+
+  // Prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

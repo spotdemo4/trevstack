@@ -1,18 +1,18 @@
 <script lang="ts">
 	import * as Avatar from '$lib/ui/avatar';
+	import { Button } from '$lib/ui/button';
+	import { Card } from '$lib/ui/card';
 	import * as Dialog from '$lib/ui/dialog';
 	import * as Form from '$lib/ui/form';
-	import { UserClient } from '$lib/transport';
-	import { Button } from '$lib/ui/button';
 	import { Input } from '$lib/ui/input';
-	import { toast } from 'svelte-sonner';
-	import { userState } from '$lib/sharedState.svelte';
-	import { coolForm, newState } from '$lib/coolforms';
-	import { UserService } from '$lib/connect/user/v1/user_pb';
-	import { Card } from '$lib/ui/card';
 	import { Separator } from '$lib/ui/separator';
-	import { startRegistration } from '@simplewebauthn/browser';
 	import { ConnectError } from '@connectrpc/connect';
+	import { startRegistration } from '@simplewebauthn/browser';
+	import { UserService } from '$lib/connect/user/v1/user_pb';
+	import { coolForm, newState } from '$lib/coolforms';
+	import { userState } from '$lib/sharedState.svelte';
+	import { UserClient } from '$lib/transport';
+	import { toast } from 'svelte-sonner';
 
 	const updatePassword = coolForm(UserClient, UserService.method.updatePassword, {
 		reset: true,

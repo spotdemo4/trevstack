@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { cn } from '$lib/utils';
-	import { setFormContext } from './context.svelte';
 	import type { WithElementRef } from 'bits-ui';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { cn } from '$lib/utils';
+	import { setFormContext } from './context.svelte';
 
 	type Props = WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		name?: string;

@@ -39,7 +39,7 @@ apps:
       - ts
       - svelte
     onstart: npx prettier --check .
-    onchange: npx prettier --check . || npx prettier --write .
+    onchange: npx prettier --check .
   
   revive:
     color: "#89dceb"
