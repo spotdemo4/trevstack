@@ -5,6 +5,11 @@ git_version=$(git describe --tags --abbrev=0)
 version=${git_version#v}
 next_version=$(echo "${version}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
 
+echo "bumping openapi"
+cd "${git_root}"
+sed -i -e "s/${version}/${next_version}/g" openapi.yaml
+git add openapi.yaml
+
 echo "bumping client"
 cd "${git_root}/client"
 npm version "${next_version}"
