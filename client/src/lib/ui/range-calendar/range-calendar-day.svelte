@@ -17,7 +17,7 @@
 	class={cn(
 		buttonVariants({ variant: 'ghost' }),
 		'size-9 p-0 font-normal',
-		'[&[data-today]:not([data-selected])]:bg-blue [&[data-today]:not([data-selected])]:text-crust [&[data-today]:not([data-selected])]:rounded-md',
+		'[&[data-today]:not([data-selected])]:bg-accent [&[data-today]:not([data-selected])]:text-crust [&[data-today]:not([data-selected])]:rounded-md',
 		// Selected
 		'data-[selected]:bg-surface data-[selected]:hover:bg-surface-1 data-[selected]:rounded-none data-[selected]:opacity-100',
 		// Selection Start

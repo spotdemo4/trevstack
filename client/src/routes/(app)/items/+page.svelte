@@ -294,7 +294,7 @@
 	{/if}
 </div>
 
-<div class="mx-4 mt-2 mb-4 flex justify-end sm:mt-1">
+<div class="mx-4 my-2 flex justify-end">
 	{@render createModal()}
 </div>
 

@@ -74,7 +74,7 @@
 	}
 </script>
 
-<div class="flex h-screen flex-col items-center justify-center">
+<div class="flex h-dvh flex-col items-center justify-center">
 	<Tabs.Root bind:value={tabValue} class="min-w-full px-2 sm:min-w-sm">
 		<Tabs.List class="w-full">
 			<Tabs.Trigger value="login">Log In</Tabs.Trigger>

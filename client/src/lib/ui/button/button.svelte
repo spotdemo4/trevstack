@@ -7,7 +7,7 @@
 
 	export const buttonVariants = tv({
 		base: cn(
-			'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap shadow-xs transition-all',
+			'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all',
 
 			// Focus
 			'focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -24,7 +24,7 @@
 				red: 'text-crust bg-red hover:bg-red/90 shadow-xs',
 				outline: 'text-text border-surface-1 hover:bg-surface border bg-transparent shadow-xs',
 				input: 'text-text border-surface-1 hover:border-overlay border bg-transparent shadow-xs',
-				ghost: 'text-text hover:bg-surface shadow-xs'
+				ghost: 'text-text hover:bg-surface'
 			},
 			size: {
 				default: 'h-9 px-4 py-2 has-[>svg]:px-3',

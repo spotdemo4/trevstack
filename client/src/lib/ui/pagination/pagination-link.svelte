@@ -33,7 +33,7 @@
 			size
 		}),
 		'text-text',
-		isActive && 'bg-surface-1',
+		isActive && 'bg-surface',
 		className
 	)}
 	children={children || Fallback}

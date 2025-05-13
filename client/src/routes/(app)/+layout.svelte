@@ -47,9 +47,9 @@
 	}
 </script>
 
-<div class="flex min-h-screen flex-col justify-between gap-2">
+<div class="flex min-h-dvh flex-col justify-between gap-2">
 	<header
-		class="bg-mantle border-surface text-text flex h-14 w-full items-center justify-between border-b px-4 py-4 lg:px-10"
+		class="bg-mantle border-surface text-text sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b px-4 py-4 lg:px-10"
 	>
 		<!-- Left -->
 		<a href="/" class="flex items-center gap-2 text-2xl font-bold tracking-wider select-none">
@@ -58,7 +58,7 @@
 		</a>
 
 		<!-- Center -->
-		<div class="bg-crust hidden items-center gap-3 rounded-md p-1 lg:flex">
+		<div class="bg-crust hidden items-center gap-2 rounded-md p-1 lg:flex">
 			<Button variant="ghost" class="hover:bg-based" href="/">
 				<House />
 				Home
@@ -81,6 +81,7 @@
 						<Avatar.Root {...props}>
 							{#if userState.user?.profilePictureId}
 								<Avatar.Image
+									class="hover:brightness-125"
 									src={`/file/${userState.user.profilePictureId}`}
 									alt={`${userState.user?.username}'s avatar`}
 								/>

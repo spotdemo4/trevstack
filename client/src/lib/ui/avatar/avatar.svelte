@@ -13,7 +13,8 @@
 	bind:ref
 	data-slot="avatar"
 	class={cn(
-		'outline-surface-1 relative flex size-9 shrink-0 overflow-hidden rounded-full outline outline-offset-2',
+		'outline-surface-1 relative flex size-9 shrink-0 overflow-hidden rounded-full shadow-xs outline outline-offset-2',
+
 		className
 	)}
 	{...restProps}

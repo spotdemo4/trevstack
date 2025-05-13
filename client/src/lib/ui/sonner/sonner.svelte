@@ -12,7 +12,7 @@
 				'bg-based text-sm flex gap-2 px-4 border border-surface-1 p-2 rounded-md items-center text-text w-full min-h-12',
 			title: 'text-text',
 			description: 'text-subtext text-xs',
-			actionButton: 'bg-blue',
+			actionButton: 'bg-accent',
 			cancelButton: 'bg-red',
 			closeButton: 'bg-green'
 		}
