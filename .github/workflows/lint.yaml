@@ -22,7 +22,7 @@ jobs:
         uses: cachix/cachix-action@v16
         with:
           name: trevstack
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Run checks
+      - name: Check
         run: nix flake check
