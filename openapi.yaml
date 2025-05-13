@@ -4,7 +4,7 @@ servers:
 info:
   title: Trevstack API
   version: 1.0.0
-  description: API for trevstack
+  description: API for Trevstack
   contact:
     name: Trev
     email: spam@trev.xyz
