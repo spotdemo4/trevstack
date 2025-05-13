@@ -2,6 +2,7 @@
   "recommendations": [
     "golang.go",
     "dorzey.vscode-sqlfluff",
+    "zxh404.vscode-proto3",
     "dbaeumer.vscode-eslint",
     "svelte.svelte-vscode",
     "esbenp.prettier-vscode"
