@@ -29,6 +29,8 @@ import (
 )
 
 func main() {
+	name := "TrevStack"
+
 	// Get env
 	env, err := getEnv()
 	if err != nil {
@@ -49,7 +51,7 @@ func main() {
 
 	// Create webauthn
 	webAuthn, err := webauthn.New(&webauthn.Config{
-		RPDisplayName: env.Name,
+		RPDisplayName: name,
 		RPID:          env.URL.Hostname(),
 		RPOrigins:     []string{env.URL.String()},
 	})
@@ -63,9 +65,9 @@ func main() {
 		log.Fatalf("failed to create validator: %s", err.Error())
 	}
 
-	// Serve GRPC Handlers
+	// Serve gRPC Handlers
 	api := http.NewServeMux()
-	api.Handle(interceptors.WithCORS(user.NewAuthHandler(vi, sqlc, webAuthn, env.Name, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewAuthHandler(vi, sqlc, webAuthn, name, env.Key)))
 	api.Handle(interceptors.WithCORS(user.NewHandler(vi, sqlc, webAuthn, env.Key)))
 	api.Handle(interceptors.WithCORS(item.NewHandler(vi, sqlc, env.Key)))
 
@@ -108,7 +110,6 @@ func main() {
 type env struct {
 	Port        string
 	Key         string
-	Name        string
 	URL         *url.URL
 	DatabaseURL string
 }
@@ -123,7 +124,6 @@ func getEnv() (*env, error) {
 	env := env{
 		Port:        os.Getenv("PORT"),
 		Key:         os.Getenv("KEY"),
-		Name:        os.Getenv("NAME"),
 		DatabaseURL: os.Getenv("DATABASE_URL"),
 	}
 
@@ -134,10 +134,6 @@ func getEnv() (*env, error) {
 	}
 	if env.Key == "" {
 		return nil, errors.New("env 'KEY' not found")
-	}
-	if env.Name == "" {
-		env.Name = "trevstack"
-		log.Printf("env 'NAME' not found, defaulting to %s\n", env.Name)
 	}
 	if env.DatabaseURL == "" {
 		return nil, errors.New("env 'DATABASE_URL' not found")

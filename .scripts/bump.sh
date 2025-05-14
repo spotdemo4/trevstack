@@ -1,9 +1,20 @@
 #!/usr/bin/env bash
 
-git_root=$(git rev-parse --show-toplevel)
+#git_root=$(git rev-parse --show-toplevel)
 git_version=$(git describe --tags --abbrev=0)
 version=${git_version#v}
-next_version=$(echo "${version}" | awk -F. -v OFS=. '{$NF += 1 ; print}')
+
+major=$(echo "${version}" | cut -d . -f1)
+minor=$(echo "${version}" | cut -d . -f2)
+patch=$(echo "${version}" | cut -d . -f3)
+case "${1}" in
+    major) major=$((major + 1)) ;;
+    minor) minor=$((minor + 1)) ;;
+    *) patch=$((patch + 1)) ;;
+esac
+next_version="${major}.${minor}.${patch}"
+
+echo "${version} -> ${next_version}"
 
 echo "bumping openapi"
 cd "${git_root}"

@@ -81,9 +81,9 @@
     in {
       default = pkgs.mkShell {
         packages = with pkgs; [
+          treli.packages."${system}".default
           git
           nix-update
-          treli.packages."${system}".default
 
           # Server
           go
