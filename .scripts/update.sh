@@ -11,6 +11,13 @@ if ! git diff --exit-code flake.lock; then
     git commit -m "build(nix): updated nix dependencies"
 fi
 
+echo "updating protobuf deps"
+buf dep update
+if ! git diff --exit-code buf.lock; then
+    git add buf.lock
+    git commit -m "build(buf): updated buf dependencies"
+fi
+
 echo "updating client"
 cd "${git_root}/client"
 npm update --save && npm i
