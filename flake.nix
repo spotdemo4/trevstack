@@ -205,6 +205,7 @@
 
           preBuild = ''
             cp -r ${client} client
+            HOME=$PWD
           '';
         };
       in
