@@ -43,7 +43,6 @@ jobs:
           REPO_OWNER_SLASH_NAME="${{ gitea.repository }}"
 
           if ! git ls-remote --exit-code origin update; then
-
             git push origin update --force
 
             PR_RESPONSE=$(curl -s -X POST -H "Authorization: token $PAT" \
@@ -59,7 +58,5 @@ jobs:
               "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls/$PR_NUMBER/merge"
 
           else
-
             git push origin update --force
-
           fi
