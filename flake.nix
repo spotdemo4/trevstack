@@ -92,7 +92,7 @@
           revive
           sqlc
 
-          # database
+          # Database
           sqlite
           dbmate
           sqlfluff
@@ -160,9 +160,10 @@
           runtimeInputs = with pkgs; [
             git
             nix
-            nodejs_22
-            go
             nix-update
+            go
+            buf
+            nodejs_22
           ];
           text = builtins.readFile ./.scripts/update.sh;
         });
