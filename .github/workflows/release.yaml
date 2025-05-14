@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 jobs:
-  release:
+  check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,6 +29,24 @@ jobs:
 
       - name: Check
         run: nix flake check
+
+  release:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Use Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: trevstack
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Build
         run: >
