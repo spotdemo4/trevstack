@@ -1,9 +1,0 @@
-{
-  "extends": ["config:recommended"],
-  "repositories": ["trev/trevstack"],
-  "platform": "gitea",
-  "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
-  "nix": {
-    "enabled": true
-  }
-}

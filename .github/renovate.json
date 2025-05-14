@@ -1,9 +1,0 @@
-{
-  "extends": ["config:recommended"],
-  "repositories": ["spotdemo4/trevstack"],
-  "platform": "github",
-  "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
-  "nix": {
-    "enabled": true
-  }
-}
