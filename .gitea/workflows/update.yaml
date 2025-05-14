@@ -30,7 +30,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B create-pull-request/patch
+          git checkout -B update
 
       - name: Update
         run: nix run .#update
@@ -42,19 +42,24 @@ jobs:
         run: |
           REPO_OWNER_SLASH_NAME="${{ gitea.repository }}"
 
-          git push origin create-pull-request/patch --force
+          if ! git ls-remote --exit-code origin update; then
 
-          CURRENT_PR=$(curl -s -X GET -H "Authorization: token $PAT" "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls/main/create-pull-request/patch")
+            git push origin update --force
 
-          if [ "$( jq 'has("errors")' <<< $CURRENT_PR )" == "true" ]; then
             PR_RESPONSE=$(curl -s -X POST -H "Authorization: token $PAT" \
               -H "Content-Type: application/json" \
-              -d '{"title":"update","body":"automatic update pr","head":"create-pull-request/patch","base":"main"}' \
+              -d '{"title":"update","body":"automatic update","head":"update","base":"main"}' \
               "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls")
+            
             PR_NUMBER=$(echo "$PR_RESPONSE" | jq -r '.number')
 
             curl -s -X POST -H "Authorization: token $PAT" \
               -H "Content-Type: application/json" \
-              -d '{"Do":"merge","merge_when_checks_succeed":true}' \
+              -d '{"Do":"merge","merge_when_checks_succeed":true,"delete_branch_after_merge":true}' \
               "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls/$PR_NUMBER/merge"
+
+          else
+
+            git push origin update --force
+
           fi
