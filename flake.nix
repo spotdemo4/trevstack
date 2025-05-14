@@ -29,6 +29,17 @@
       "x86_64-darwin"
       "aarch64-darwin"
     ];
+    forSystem = f:
+      nixpkgs.lib.genAttrs build-systems (
+        system:
+          f {
+            inherit system;
+            pkgs = import nixpkgs {
+              inherit system;
+            };
+          }
+      );
+
     host-systems = [
       {
         GOOS = "linux";
@@ -55,16 +66,6 @@
         GOARCH = "arm64";
       }
     ];
-    forSystem = f:
-      nixpkgs.lib.genAttrs build-systems (
-        system:
-          f {
-            inherit system;
-            pkgs = import nixpkgs {
-              inherit system;
-            };
-          }
-      );
   in {
     devShells = forSystem ({pkgs, ...}: let
       protoc-gen-connect-openapi = pkgs.buildGoModule {
@@ -126,7 +127,7 @@
           pname = "check-client";
           inherit version;
           src = ./client;
-          npmDepsHash = "sha256-rL8fnFzIuseYEmUkZ2eN+RB7UZCYA7mV4Ck9aZVR2to=";
+          npmDepsHash = "sha256-TRfAYMEGMDV2F5lSB/g3VjojxA6Z/6fQasI1SQvU68A=";
           dontNpmInstall = true;
 
           buildPhase = ''
@@ -188,7 +189,7 @@
         client = pkgs.buildNpmPackage {
           inherit pname version;
           src = ./client;
-          npmDepsHash = "sha256-rL8fnFzIuseYEmUkZ2eN+RB7UZCYA7mV4Ck9aZVR2to=";
+          npmDepsHash = "sha256-TRfAYMEGMDV2F5lSB/g3VjojxA6Z/6fQasI1SQvU68A=";
 
           installPhase = ''
             cp -r build "$out"
