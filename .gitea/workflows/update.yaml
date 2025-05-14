@@ -42,7 +42,7 @@ jobs:
         run: |
           REPO_OWNER_SLASH_NAME="${{ gitea.repository }}"
 
-          git push origin create-pull-request/patch
+          git push origin create-pull-request/patch --force
 
           curl -s -X POST -H "Authorization: token $PAT" \
             -H "Content-Type: application/json" \
