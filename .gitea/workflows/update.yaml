@@ -39,7 +39,10 @@ jobs:
           PAT: ${{ secrets.PAT }}
         run: |
           REPO_OWNER_SLASH_NAME="${{ gitea.repository }}"
+
+          git push origin create-pull-request/patch
+
           curl -s -X POST -H "Authorization: token $PAT" \
             -H "Content-Type: application/json" \
             -d '{"title":"update","body":"automatic update pr","head":"create-pull-request/patch","base":"main"}' \
-            "$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls"
+            "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls"
