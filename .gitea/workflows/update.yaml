@@ -32,8 +32,10 @@ jobs:
       - name: Update
         run: nix run .#update
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+      - name: Create Gitea PR
+        uses: infinilbas/gitea-pr@v0
         with:
-          title: update
-          body: automatic update
+          url: ${{ vars.URL }}
+          token: ${{ secrets.PAT }}
+          title: "update"
+          body: "This PR was created automatically"
