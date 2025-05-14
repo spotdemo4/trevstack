@@ -44,7 +44,17 @@ jobs:
 
           git push origin create-pull-request/patch --force
 
-          curl -s -X POST -H "Authorization: token $PAT" \
-            -H "Content-Type: application/json" \
-            -d '{"title":"update","body":"automatic update pr","head":"create-pull-request/patch","base":"main"}' \
-            "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls"
+          CURRENT_PR=$(curl -s -X GET -H "Authorization: token $PAT" "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls/main/create-pull-request/patch")
+
+          if [ "$( jq 'has("errors")' <<< $CURRENT_PR )" == "true" ]; then
+            PR_RESPONSE=$(curl -s -X POST -H "Authorization: token $PAT" \
+              -H "Content-Type: application/json" \
+              -d '{"title":"update","body":"automatic update pr","head":"create-pull-request/patch","base":"main"}' \
+              "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls")
+            PR_NUMBER=$(echo "$PR_RESPONSE" | jq -r '.number')
+
+            curl -s -X POST -H "Authorization: token $PAT" \
+              -H "Content-Type: application/json" \
+              -d '{"Do":"merge","merge_when_checks_succeed":true}' \
+              "https://$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls/$PR_NUMBER/merge"
+          fi
