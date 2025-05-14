@@ -7,7 +7,7 @@ version=${git_version#v}
 major=$(echo "${version}" | cut -d . -f1)
 minor=$(echo "${version}" | cut -d . -f2)
 patch=$(echo "${version}" | cut -d . -f3)
-case "${1}" in
+case "${1-patch}" in
     major) major=$((major + 1)) ;;
     minor) minor=$((minor + 1)) ;;
     *) patch=$((patch + 1)) ;;
