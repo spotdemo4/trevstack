@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#git_root=$(git rev-parse --show-toplevel)
+git_root=$(git rev-parse --show-toplevel)
 git_version=$(git describe --tags --abbrev=0)
 version=${git_version#v}
 
