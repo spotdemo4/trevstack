@@ -1,5 +1,6 @@
 {
   "extends": ["config:recommended"],
+  "autodiscover": true,
   "platform": "gitea",
   "nix": {
     "enabled": true

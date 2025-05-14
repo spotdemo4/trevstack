@@ -1,5 +1,6 @@
 {
   "extends": ["config:recommended"],
+  "autodiscover": true,
   "platform": "github",
   "nix": {
     "enabled": true
