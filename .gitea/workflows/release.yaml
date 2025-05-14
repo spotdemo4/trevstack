@@ -72,7 +72,6 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             ${{ github.repository }}
-            ghcr.io/${{ github.repository }}
           # generate Docker tags based on the following events/attributes
           tags: |
             type=ref,event=branch
