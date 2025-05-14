@@ -28,14 +28,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B create-pull-request/patch
 
       - name: Update
         run: nix run .#update
 
       - name: Create Gitea PR
-        uses: infinilbas/gitea-pr@v0
-        with:
-          url: ${{ vars.URL }}
-          token: ${{ secrets.PAT }}
-          title: "update"
-          body: "This PR was created automatically"
+        env:
+          URL: ${{ vars.URL }}
+          PAT: ${{ secrets.PAT }}
+        run: |
+          REPO_OWNER_SLASH_NAME="${{ gitea.repository }}"
+          curl -s -X POST -H "Authorization: token $PAT" \
+            -H "Content-Type: application/json" \
+            -d '{"title":"update","body":"automatic update pr","head":"create-pull-request/patch","base":"main"}' \
+            "$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls"
