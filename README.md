@@ -55,7 +55,7 @@ To use github actions for CI/CD, you'll need to create a fine-grained personal a
 - Contents (read and write)
 - Pull requests (read and write)
 
-and change some settings for the repository:
+And change some settings for the repository:
 
 - General -> Allow auto-merge: true
 - Rules -> Rulesets -> New ruleset
@@ -75,7 +75,7 @@ To use gitea actions for CI/CD, you'll need to create an [API token](https://doc
 - write:repository
 - write:package
 
-and change some settings for the repository:
+And change some settings for the repository:
 
 - Repository -> Delete pull request branch after merge by default: true
 - Branches -> Add New Rule
