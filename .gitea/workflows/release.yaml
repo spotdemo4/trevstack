@@ -66,11 +66,11 @@ jobs:
     needs: release # Wait for binary cache to propagate
     steps:
       - name: Get domain
-          id: get_domain
-          run: |
-            DOMAIN=$(basename ${{ gitea.server_url }})
-            echo $DOMAIN
-            echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
+        id: get_domain
+        run: |
+          DOMAIN=$(basename ${{ gitea.server_url }})
+          echo $DOMAIN
+          echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
 
       - name: Docker meta
         id: meta
