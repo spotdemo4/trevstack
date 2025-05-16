@@ -42,7 +42,7 @@ It's that simple. If you're feeling fancy, install [direnv](https://direnv.net/)
 
 - `nix flake check`: runs all validations
 
-- `buf lint` & `buf generate`: lints and generates code from protocol buffers
+- `buf lint proto` & `buf generate`: lints and generates code from protocol buffers
 
 - `sqlc vet` & `sqlc generate`: verifies and generates code from SQL files
 

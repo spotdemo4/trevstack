@@ -3,8 +3,8 @@ servers:
   - url: /grpc
 info:
   title: Trevstack API
-  version: 1.0.0
-  description: API for trevstack
+  version: 0.0.33
+  description: API for Trevstack
   contact:
     name: Trev
     email: spam@trev.xyz
