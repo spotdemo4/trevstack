@@ -37,6 +37,7 @@ jobs:
         run: nix run .#update
 
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
           branch: update
@@ -44,6 +45,6 @@ jobs:
           body: automatic update
 
       - name: Enable Automerge
-        run: gh pr merge --merge --auto "1"
+        run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.PAT }}

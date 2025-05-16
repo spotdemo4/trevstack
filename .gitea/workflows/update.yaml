@@ -35,7 +35,7 @@ jobs:
       - name: Update
         run: nix run .#update
 
-      - name: Create Gitea PR
+      - name: Create Pull Request
         env:
           URL: ${{ vars.URL }}
           PAT: ${{ secrets.PAT }}
