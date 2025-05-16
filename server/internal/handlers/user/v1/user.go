@@ -36,6 +36,7 @@ type Handler struct {
 	db       *sqlc.Queries
 	webAuthn *webauthn.WebAuthn
 	key      []byte
+	name     string
 
 	sessions *map[int64]*webauthn.SessionData
 	mu       sync.Mutex
@@ -132,7 +133,7 @@ func (h *Handler) GetAPIKey(ctx context.Context, req *connect.Request[userv1.Get
 
 	// Generate JWT
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Issuer:  "trevstack",
+		Issuer:  h.name,
 		Subject: strconv.FormatInt(user.ID, 10),
 		IssuedAt: &jwt.NumericDate{
 			Time: time.Now(),
@@ -341,8 +342,8 @@ func transportsToString(transports []protocol.AuthenticatorTransport) string {
 	return s
 }
 
-func NewHandler(vi *validate.Interceptor, db *sqlc.Queries, webauth *webauthn.WebAuthn, key string) (string, http.Handler) {
-	interceptors := connect.WithInterceptors(interceptors.NewAuthInterceptor(key), vi)
+func NewHandler(vi *validate.Interceptor, db *sqlc.Queries, webauth *webauthn.WebAuthn, name string, key string) (string, http.Handler) {
+	interceptors := connect.WithInterceptors(vi, interceptors.NewAuthInterceptor(key))
 
 	sd := map[int64]*webauthn.SessionData{}
 	return userv1connect.NewUserServiceHandler(
@@ -350,6 +351,7 @@ func NewHandler(vi *validate.Interceptor, db *sqlc.Queries, webauth *webauthn.We
 			db:       db,
 			webAuthn: webauth,
 			key:      []byte(key),
+			name:     name,
 
 			sessions: &sd,
 			mu:       sync.Mutex{},

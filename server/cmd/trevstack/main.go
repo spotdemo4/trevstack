@@ -68,7 +68,7 @@ func main() {
 	// Serve gRPC Handlers
 	api := http.NewServeMux()
 	api.Handle(interceptors.WithCORS(user.NewAuthHandler(vi, sqlc, webAuthn, name, env.Key)))
-	api.Handle(interceptors.WithCORS(user.NewHandler(vi, sqlc, webAuthn, env.Key)))
+	api.Handle(interceptors.WithCORS(user.NewHandler(vi, sqlc, webAuthn, name, env.Key)))
 	api.Handle(interceptors.WithCORS(item.NewHandler(vi, sqlc, env.Key)))
 
 	// Serve web interface

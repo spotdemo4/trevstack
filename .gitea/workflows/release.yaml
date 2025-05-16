@@ -81,8 +81,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ vars.URL }}
-          username: ${{ vars.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.PAT }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
