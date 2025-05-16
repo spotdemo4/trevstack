@@ -12,8 +12,8 @@ jobs:
     name: check
     runs-on: ubuntu-latest
     if: |
-      contains(github.event.head_commit.message, 'bump:') == false &&
-      contains(github.event.head_commit.message, 'Merge pull request') == false
+      contains(gitea.event.head_commit.message, 'bump:') == false &&
+      contains(gitea.event.head_commit.message, 'Merge pull request') == false
     steps:
       - name: Checkout
         uses: actions/checkout@v4

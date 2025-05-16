@@ -47,12 +47,12 @@ jobs:
       - name: Build
         run: >
           nix build
-          .#trevstack-linux-amd64
-          .#trevstack-linux-arm64
-          .#trevstack-linux-arm
-          .#trevstack-windows-amd64
-          .#trevstack-darwin-amd64
-          .#trevstack-darwin-arm64
+           #trevstack-linux-amd64
+           #trevstack-linux-arm64
+           #trevstack-linux-arm
+           #trevstack-windows-amd64
+           #trevstack-darwin-amd64
+           #trevstack-darwin-arm64
 
       - name: Release
         uses: akkuman/gitea-release-action@v1
@@ -71,7 +71,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ${{ vars.URL }}/${{ github.repository }}
+            ${{ gitea.server_url }}/${{ gitea.repository }}
           # generate Docker tags based on the following events/attributes
           tags: |
             type=ref,event=branch
@@ -80,8 +80,8 @@ jobs:
       - name: Login to Gitea Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ vars.URL }}
-          username: ${{ github.actor }}
+          registry: ${{ gitea.server_url }}
+          username: ${{ gitea.actor }}
           password: ${{ secrets.PAT }}
 
       - name: Set up QEMU

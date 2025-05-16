@@ -7,6 +7,7 @@ This is a CRUD app to use as a template for starting projects
 - **Communicate anywhere**. Define a [protocol buffer](https://protobuf.dev/), and [Connect](https://connectrpc.com/) generates type-safe code to facilitate communication between the server and any client (web, mobile, embedded, etc). The protocol buffers can contain annotations to validate fields on the client and server. For clients that cannot use Connect, an OpenAPI spec is also generated
 - **Build anywhere**. The dev environment, testing and building is all declared in a single [Nix](https://nixos.org/) flake. Every developer and server can use the same environment
 - **Deploy anywhere**. CI/CD is already set up using github actions. New versions are automatically released for every major platform, along with a docker image. The binaries created require zero run-time dependencies and are relatively small (this app is 26 MiB)
+- Can be entirely self-hosted
 - Authentication is rolled in, including API key, fingerprint & passkey
 - Automatic database migration on startup
 - Light & dark modes with the [catppuccin](https://catppuccin.com/palette/) color palette
@@ -27,7 +28,7 @@ URL=http://localhost:5173
 DATABASE_URL=sqlite:/home/trev/.config/trevstack/sqlite.db
 ```
 
-4. Run `treli`
+4. Run `treli` to start the server & client
 
 It's that simple. If you're feeling fancy, install [direnv](https://direnv.net/) and the dev environment will load automatically.
 
@@ -37,11 +38,52 @@ It's that simple. If you're feeling fancy, install [direnv](https://direnv.net/)
 
 - `nix run #bump [major | minor]`: bumps the current version up one. Defaults to "patch" (0.0.1 -> 0.0.2)
 
-- `buf lint` & `buf generate`: Lints and generates code from protocol buffers
+- `nix build [#trevstack-(GOOS)-(GOARCH)]`: builds the application. Defaults to building for your current platform, but can be built to many by specifying the GOOS and GOARCH values
 
-- `sqlc vet` & `sqlc generate`: Verifies and generates code from SQL files
+- `nix flake check`: runs all validations
 
-- `dbmate new` & `dbmate up`: Creates a new migration file and runs pending migrations
+- `buf lint` & `buf generate`: lints and generates code from protocol buffers
+
+- `sqlc vet` & `sqlc generate`: verifies and generates code from SQL files
+
+- `dbmate new` & `dbmate up`: creates a new migration file and runs pending migrations
+
+### Github Actions
+
+To use github actions for CI/CD, you'll need to create a fine-grained personal access token for the repository with the permissions:
+
+- Contents (read and write)
+- Pull requests (read and write)
+
+and change some settings for the repository:
+
+- General -> Allow auto-merge: true
+- Rules -> Rulesets -> New ruleset
+  - Branch targeting criteria: Default
+  - Branch rules
+    - Require status checks to pass -> Add checks -> "check"
+- Actions -> General -> Workflow permissions
+  - Read and write permissions: true
+  - Allow GitHub Actions to create and approve pull requests: true
+- Secrets and variables -> Actions -> Repository secrets
+  - PAT: (personal access token)
+
+### Gitea Actions
+
+To use gitea actions for CI/CD, you'll need to create an [API token](https://docs.gitea.com/development/api-usage) with the scopes:
+
+- write:repository
+- write:package
+
+and change some settings for the repository:
+
+- Repository -> Delete pull request branch after merge by default: true
+- Branches -> Add New Rule
+  - Protected Branch Name Pattern: main
+  - Enable Status Check: true
+  - Status check patterns: Check / check\*
+- Actions -> Secrets
+  - PAT: (API token)
 
 ## Components
 

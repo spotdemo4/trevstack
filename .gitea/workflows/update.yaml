@@ -37,9 +37,9 @@ jobs:
 
       - name: Create Pull Request
         env:
-          URL: ${{ vars.URL }}
           PAT: ${{ secrets.PAT }}
         run: |
+          URL="${{ gitea.server_url }}"
           REPO_OWNER_SLASH_NAME="${{ gitea.repository }}"
 
           if ! git ls-remote --exit-code origin update; then
