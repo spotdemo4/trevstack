@@ -21,9 +21,6 @@ RUN cp -R $(nix-store -qR result/) /tmp/nix-store-closure
 # but they're fully self-contained so we don't need Nix anymore.
 FROM scratch
 
-# Label for container registry
-LABEL org.opencontainers.image.source=https://github.com/spotdemo4/trevstack
-
 WORKDIR /app
 
 # Copy /nix/store
