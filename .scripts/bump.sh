@@ -19,7 +19,9 @@ echo "${version} -> ${next_version}"
 echo "bumping openapi"
 cd "${git_root}"
 sed -i -e "s/${version}/${next_version}/g" openapi.yaml
+sed -i -e "s/${version}/${next_version}/g" client/static/openapi/openapi.yaml
 git add openapi.yaml
+git add client/static/openapi/openapi.yaml
 
 echo "bumping client"
 cd "${git_root}/client"
