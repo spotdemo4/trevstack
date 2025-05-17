@@ -12,6 +12,7 @@ if ! git diff --exit-code flake.lock; then
 fi
 
 echo "updating protobuf deps"
+cd "${git_root}/proto"
 buf dep update
 if ! git diff --exit-code buf.lock; then
     git add buf.lock
