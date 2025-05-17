@@ -12,22 +12,12 @@ jobs:
     name: check
     runs-on: ubuntu-latest
     if: |
-      contains(gitea.event.head_commit.message, 'bump:') == false &&
-      contains(gitea.event.head_commit.message, 'Merge pull request') == false
+      contains(github.event.head_commit.message, 'bump:') == false &&
+      contains(github.event.head_commit.message, 'Merge pull request') == false
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      - uses: actions/checkout@v4
+      - uses: ./.actions/init
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
+          token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Use Cachix
-        uses: cachix/cachix-action@v16
-        with:
-          name: trevstack
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-
-      - name: Check
-        run: nix flake check
+      - run: nix flake check

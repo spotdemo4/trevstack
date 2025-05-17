@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/init
+      - uses: ./.actions/init
         with:
           token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
@@ -25,7 +25,7 @@ jobs:
     needs: check
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/init
+      - uses: ./.actions/init
         with:
           token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
@@ -49,18 +49,9 @@ jobs:
     needs: release
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/init
+      - uses: ./.actions/init
         with:
           token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-
-      - name: Set env
-        run: |
-          TAG=${{ github.ref_name }}
-          VERSION=${TAG#v}
-          REGISTRY="ghcr.io"
-
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "REGISTRY=${REGISTRY}" >> $GITHUB_ENV
 
       - uses: docker/login-action@v3
         with:
@@ -75,32 +66,8 @@ jobs:
           nix build .#trevstack-linux-arm-image && ./result | docker load
 
       - name: Push images
-        run: |
-          docker image tag trevstack:$VERSION-amd64 $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64
-          docker push $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64
-
-          docker image tag trevstack:$VERSION-arm64 $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64
-          docker push $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64
-
-          docker image tag trevstack:$VERSION-arm $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
-          docker push $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
-
-      - name: Push manifest
-        run: |
-          docker manifest create $REGISTRY/$GITHUB_REPOSITORY:$VERSION \
-            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 \
-            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 \
-            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
-          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:$VERSION $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 --arch amd64
-          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:$VERSION $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 --arch arm64
-          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:$VERSION $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm --arch arm
-          docker manifest push $REGISTRY/$GITHUB_REPOSITORY:$VERSION
-
-          docker manifest create $REGISTRY/$GITHUB_REPOSITORY:latest \
-            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 \
-            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 \
-            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
-          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:latest $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 --arch amd64
-          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:latest $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 --arch arm64
-          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:latest $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm --arch arm
-          docker manifest push $REGISTRY/$GITHUB_REPOSITORY:latest
+        uses: ./.actions/push
+        with:
+          server_url: ${{ github.server_url }}
+          repository: ${{ github.repository }}
+          tag: ${{ github.ref_name }}
