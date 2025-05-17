@@ -13,19 +13,7 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Use Cachix
-        uses: cachix/cachix-action@v16
-        with:
-          name: trevstack
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - uses: ./.github/actions/init
 
       # https://github.com/actions/checkout/issues/13
       - name: Set Git Config

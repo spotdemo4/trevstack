@@ -13,76 +13,39 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Use Cachix
-        uses: cachix/cachix-action@v16
-        with:
-          name: trevstack
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - uses: ./.github/actions/init
 
       - name: Check
         run: nix flake check
 
-  # release:
-  #   runs-on: ubuntu-latest
-  #   needs: check
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+  release:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: ./.github/actions/init
 
-  #     - name: Install Nix
-  #       uses: cachix/install-nix-action@v31
-  #       with:
-  #         nix_path: nixpkgs=channel:nixos-unstable
+      - name: Build
+        run: >
+          nix build
+          .#trevstack-linux-amd64
+          .#trevstack-linux-arm64
+          .#trevstack-linux-arm
+          .#trevstack-windows-amd64
+          .#trevstack-darwin-amd64
+          .#trevstack-darwin-arm64
 
-  #     - name: Use Cachix
-  #       uses: cachix/cachix-action@v16
-  #       with:
-  #         name: trevstack
-  #         authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |-
+            result*/bin/*
 
-  #     - name: Build
-  #       run: >
-  #         nix build
-  #         .#trevstack-linux-amd64
-  #         .#trevstack-linux-arm64
-  #         .#trevstack-linux-arm
-  #         .#trevstack-windows-amd64
-  #         .#trevstack-darwin-amd64
-  #         .#trevstack-darwin-arm64
-
-  #     - name: Release
-  #       uses: softprops/action-gh-release@v2
-  #       with:
-  #         generate_release_notes: true
-  #         files: |-
-  #           result*/bin/*
-
-  # https://docs.docker.com/build/ci/github-actions/manage-tags-labels/
   package:
     runs-on: ubuntu-latest
-    needs: check # Wait for binary cache to propagate
+    needs: release
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Use Cachix
-        uses: cachix/cachix-action@v16
-        with:
-          name: trevstack
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - uses: ./.github/actions/init
 
       - name: Set env
         run: |
