@@ -13,6 +13,7 @@ runs:
   using: "composite"
   steps:
     - name: Set env
+      shell: bash
       run: |
         REGISTRY=$(basename ${{ inputs.server_url }})
 
@@ -29,6 +30,7 @@ runs:
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
     - name: Push images
+      shell: bash
       run: |
         docker image tag $REPOSITORY:$VERSION-amd64 $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION-amd64
         docker push $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION-amd64
@@ -40,6 +42,7 @@ runs:
         docker push $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION-arm
 
     - name: Push manifest
+      shell: bash
       run: |
         docker manifest create $HOST/$REPOSITORY:$VERSION \
           $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION-amd64 \

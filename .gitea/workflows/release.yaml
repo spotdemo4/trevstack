@@ -52,7 +52,7 @@ jobs:
         with:
           registry: ${{ github.server_url }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.PAT }}
 
       - name: Build & load images
         run: |
