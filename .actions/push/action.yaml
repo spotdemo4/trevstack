@@ -1,5 +1,5 @@
-name: "docker push"
-description: "push to docker registry"
+name: "Docker Push"
+description: "Push to docker registry"
 
 inputs:
   server_url:

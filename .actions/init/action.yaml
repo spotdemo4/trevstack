@@ -1,5 +1,5 @@
 name: "Initialize"
-description: "install nix & use cachix"
+description: "Install nix & use cachix"
 
 inputs:
   token:
