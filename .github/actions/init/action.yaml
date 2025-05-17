@@ -1,4 +1,11 @@
 name: "initialize"
+description: "install nix & use cachix"
+
+inputs:
+  token:
+    description: "cachix auth token"
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -11,4 +18,4 @@ runs:
       uses: cachix/cachix-action@v16
       with:
         name: trevstack
-        authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+        authToken: "${{ inputs.token }}"
