@@ -13,7 +13,7 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: ../actions/init
+      - uses: ./.github/actions/init
 
       # https://github.com/actions/checkout/issues/13
       - name: Set Git Config

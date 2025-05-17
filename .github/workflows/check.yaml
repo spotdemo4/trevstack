@@ -15,7 +15,7 @@ jobs:
       contains(github.event.head_commit.message, 'bump:') == false &&
       contains(github.event.head_commit.message, 'Merge pull request') == false
     steps:
-      - uses: ../actions/init
+      - uses: ./.github/actions/init
 
       - name: Check
         run: nix flake check
