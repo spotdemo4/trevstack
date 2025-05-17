@@ -20,5 +20,4 @@ jobs:
         with:
           token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Check
-        run: nix flake check
+      - run: nix flake check

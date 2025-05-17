@@ -19,15 +19,14 @@ jobs:
           token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       # https://github.com/actions/checkout/issues/13
-      - name: set git config
+      - name: Set git config
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: update
-        run: nix run .#update
+      - run: nix run .#update
 
-      - name: create pull request
+      - name: Create pull request
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
@@ -35,7 +34,7 @@ jobs:
           title: update
           body: automatic update
 
-      - name: enable automerge
+      - name: Enable automerge
         run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.PAT }}
