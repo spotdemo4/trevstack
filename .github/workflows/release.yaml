@@ -68,6 +68,6 @@ jobs:
       - name: Push images
         uses: ./.actions/push
         with:
-          server_url: ${{ github.server_url }}
+          server_url: ghcr.io
           repository: ${{ github.repository }}
           tag: ${{ github.ref_name }}
