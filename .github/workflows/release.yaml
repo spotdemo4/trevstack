@@ -88,13 +88,9 @@ jobs:
         run: |
           TAG=${{ github.ref_name }}
           VERSION=${TAG#v}
-          REPOSITORY=${{ github.repository }}
-          NAME="${REPOSITORY}:${VERSION}"
           REGISTRY="ghcr.io"
 
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "REPOSITORY=${REPOSITORY}" >> $GITHUB_ENV
-          echo "NAME=${NAME}" >> $GITHUB_ENV
           echo "REGISTRY=${REGISTRY}" >> $GITHUB_ENV
 
       - name: Login to GitHub Container Registry
@@ -112,32 +108,31 @@ jobs:
 
       - name: Push Images
         run: |
-          docker image tag trevstack:${VERSION}-amd64 ${REGISTRY}/${NAME}-amd64
-          docker push ${REGISTRY}/${NAME}-amd64
+          docker image tag trevstack:$VERSION-amd64 $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64
+          docker push $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64
 
-          docker image tag trevstack:${VERSION}-arm64 ${REGISTRY}/${NAME}-arm64
-          docker push ${REGISTRY}/${NAME}-arm64
+          docker image tag trevstack:$VERSION-arm64 $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64
+          docker push $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64
 
-          docker image tag trevstack:${VERSION}-arm ${REGISTRY}/${NAME}-arm
-          docker push ${REGISTRY}/${NAME}-arm
+          docker image tag trevstack:$VERSION-arm $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
+          docker push $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
 
       - name: Push Manifest
         run: |
-          docker manifest create ${REGISTRY}/${NAME} \
-            ${REGISTRY}/${NAME}-amd64 \
-            ${REGISTRY}/${NAME}-arm64 \
-            ${REGISTRY}/${NAME}-arm
-          docker manifest annotate ${REGISTRY}/${NAME} ${REGISTRY}/${NAME}-amd64 --arch amd64
-          docker manifest annotate ${REGISTRY}/${NAME} ${REGISTRY}/${NAME}-arm64 --arch arm64
-          docker manifest annotate ${REGISTRY}/${NAME} ${REGISTRY}/${NAME}-arm --arch arm
+          docker manifest create $REGISTRY/$GITHUB_REPOSITORY:$VERSION \
+            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 \
+            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 \
+            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
+          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:$VERSION $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 --arch amd64
+          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:$VERSION $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 --arch arm64
+          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:$VERSION $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm --arch arm
+          docker manifest push $REGISTRY/$GITHUB_REPOSITORY:$VERSION
 
-          docker manifest create ${REGISTRY}/${REPOSITORY}:latest \
-            ${REGISTRY}/${NAME}-amd64 \
-            ${REGISTRY}/${NAME}-arm64 \
-            ${REGISTRY}/${NAME}-arm
-          docker manifest annotate ${REGISTRY}/${REPOSITORY}:latest ${REGISTRY}/${NAME}-amd64 --arch amd64
-          docker manifest annotate ${REGISTRY}/${REPOSITORY}:latest ${REGISTRY}/${NAME}-arm64 --arch arm64
-          docker manifest annotate ${REGISTRY}/${REPOSITORY}:latest ${REGISTRY}/${NAME}-arm --arch arm
-
-          docker manifest push ${REGISTRY}/${NAME}
-          docker manifest push ${REGISTRY}/${REPOSITORY}:latest
+          docker manifest create $REGISTRY/$GITHUB_REPOSITORY:latest \
+            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 \
+            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 \
+            $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm
+          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:latest $REGISTRY/$GITHUB_REPOSITORY:$VERSION-amd64 --arch amd64
+          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:latest $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm64 --arch arm64
+          docker manifest annotate $REGISTRY/$GITHUB_REPOSITORY:latest $REGISTRY/$GITHUB_REPOSITORY:$VERSION-arm --arch arm
+          docker manifest push $REGISTRY/$GITHUB_REPOSITORY:latest
