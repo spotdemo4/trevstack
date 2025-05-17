@@ -1,16 +1,13 @@
-name: "Initialize"
+name: "initialize"
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Install Nix
+    - name: install nix
       uses: cachix/install-nix-action@v31
       with:
         nix_path: nixpkgs=channel:nixos-unstable
 
-    - name: Use Cachix
+    - name: use cachix
       uses: cachix/cachix-action@v16
       with:
         name: trevstack

@@ -15,6 +15,7 @@ jobs:
       contains(github.event.head_commit.message, 'bump:') == false &&
       contains(github.event.head_commit.message, 'Merge pull request') == false
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/init
 
       - name: Check

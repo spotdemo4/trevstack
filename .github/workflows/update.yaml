@@ -13,18 +13,19 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/init
 
       # https://github.com/actions/checkout/issues/13
-      - name: Set Git Config
+      - name: set git config
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Update
+      - name: update
         run: nix run .#update
 
-      - name: Create Pull Request
+      - name: create pull request
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
@@ -32,7 +33,7 @@ jobs:
           title: update
           body: automatic update
 
-      - name: Enable Automerge
+      - name: enable automerge
         run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ secrets.PAT }}
