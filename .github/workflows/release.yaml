@@ -70,17 +70,33 @@ jobs:
     runs-on: ubuntu-latest
     needs: release # Wait for binary cache to propagate
     steps:
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
         with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ghcr.io/${{ github.repository }}
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Use Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: trevstack
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Set env
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          VERSION=${TAG#v}
+
+          NAME="trevstack:${VERSION}"
+
+          REPOSITORY=${{ github.repository }}
+          REGISTRY="ghcr.io/${REPOSITORY}"
+
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "NAME=${NAME}" >> $GITHUB_ENV
+          echo "REGISTRY=${REGISTRY}" >> $GITHUB_ENV
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -89,15 +105,42 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - name: Build & Load Images
+        run: |
+          nix build .#trevstack-linux-amd64-image && ./result | docker load
+          nix build .#trevstack-linux-arm64-image && ./result | docker load
+          nix build .#trevstack-linux-arm-image && ./result | docker load
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Push Images
+        run: |
+          docker image tag ${NAME}-amd64 ${REGISTRY}/${NAME}-amd64
+          docker push ${REGISTRY}/${NAME}-amd64
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          docker image tag ${NAME}-arm64 ${REGISTRY}/${NAME}-arm64
+          docker push ${REGISTRY}/${NAME}-arm64
+
+          docker image tag ${NAME}-arm ${REGISTRY}/${NAME}-arm
+          docker push ${REGISTRY}/${NAME}-arm
+
+      - name: Push Manifest
+        run: |
+          docker manifest create ${REGISTRY}/${NAME} \
+            ${REGISTRY}/${NAME}-amd64 \
+            ${REGISTRY}/${NAME}-arm64 \
+            ${REGISTRY}/${NAME}-arm
+
+          docker manifest annotate ${REGISTRY}/${NAME} ${REGISTRY}/${NAME}-amd64 --arch amd64
+          docker manifest annotate ${REGISTRY}/${NAME} ${REGISTRY}/${NAME}-arm64 --arch arm64
+          docker manifest annotate ${REGISTRY}/${NAME} ${REGISTRY}/${NAME}-arm --arch arm
+
+          docker manifest create ${REGISTRY}/trevstack:latest \
+            ${REGISTRY}/${NAME}-amd64 \
+            ${REGISTRY}/${NAME}-arm64 \
+            ${REGISTRY}/${NAME}-arm
+
+          docker manifest annotate ${REGISTRY}/trevstack:latest ${REGISTRY}/${NAME}-amd64 --arch amd64
+          docker manifest annotate ${REGISTRY}/trevstack:latest ${REGISTRY}/${NAME}-arm64 --arch arm64
+          docker manifest annotate ${REGISTRY}/trevstack:latest ${REGISTRY}/${NAME}-arm --arch arm
+
+          docker manifest push ${REGISTRY}/${NAME}
+          docker manifest push ${REGISTRY}/trevstack:latest

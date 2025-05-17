@@ -83,7 +83,10 @@
         packages = with pkgs; [
           treli.packages."${system}".default
           git
+
+          # Nix
           nix-update
+          alejandra
 
           # Server
           go
@@ -208,11 +211,8 @@
             HOME=$PWD
           '';
         };
-      in
-        {
-          default = server;
-        }
-        // builtins.listToAttrs (builtins.map (x: {
+
+        binaries = builtins.listToAttrs (builtins.map (x: {
             name = "${pname}-${x.GOOS}-${x.GOARCH}";
             value = server.overrideAttrs {
               nativeBuildInputs =
@@ -235,7 +235,28 @@
               '';
             };
           })
-          host-systems)
+          host-systems);
+
+        images = builtins.listToAttrs (builtins.map (x: {
+            name = "${pname}-${x.GOOS}-${x.GOARCH}-image";
+            value = pkgs.dockerTools.streamLayeredImage {
+              name = "${pname}";
+              tag = "${version}-${x.GOARCH}";
+              created = "now";
+              architecture = "${x.GOARCH}";
+              contents = [binaries."${pname}-${x.GOOS}-${x.GOARCH}"];
+              config = {
+                Cmd = ["${binaries."${pname}-${x.GOOS}-${x.GOARCH}"}/bin/${pname}-${x.GOOS}-${x.GOARCH}-${version}"];
+              };
+            };
+          })
+          (builtins.filter (x: x.GOOS == "linux") host-systems));
+      in
+        {
+          default = server;
+        }
+        // binaries
+        // images
     );
   };
 }
