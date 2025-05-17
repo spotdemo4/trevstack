@@ -44,7 +44,7 @@ runs:
     - name: Push manifest
       shell: bash
       run: |
-        docker manifest create $HOST/$REPOSITORY:$VERSION \
+        docker manifest create $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION \
           $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION-amd64 \
           $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION-arm64 \
           $REGISTRY/$NAMESPACE/$REPOSITORY:$VERSION-arm
