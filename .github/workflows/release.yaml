@@ -13,7 +13,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/init
+      - uses: ../actions/init
 
       - name: Check
         run: nix flake check
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: check
     steps:
-      - uses: ./.github/actions/init
+      - uses: ../actions/init
 
       - name: Build
         run: >
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: release
     steps:
-      - uses: ./.github/actions/init
+      - uses: ../actions/init
 
       - name: Set env
         run: |
