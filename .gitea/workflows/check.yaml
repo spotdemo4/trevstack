@@ -5,6 +5,7 @@ on:
     branches:
       - main
   pull_request:
+    types: [opened, reopened, edited, auto_merge_enabled, synchronize]
 
 jobs:
   check:

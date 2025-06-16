@@ -148,6 +148,7 @@
             sqlfluff
           ];
         } ''
+          HOME=$PWD
           cd ${./server}
           revive -config revive.toml -set_exit_status ./...
           sqlfluff lint
