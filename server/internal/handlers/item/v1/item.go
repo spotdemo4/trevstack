@@ -12,8 +12,8 @@ import (
 	itemv1 "github.com/spotdemo4/trevstack/server/internal/connect/item/v1"
 	"github.com/spotdemo4/trevstack/server/internal/connect/item/v1/itemv1connect"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
+	"github.com/spotdemo4/trevstack/server/internal/putil"
 	"github.com/spotdemo4/trevstack/server/internal/sqlc"
-	"github.com/spotdemo4/trevstack/server/internal/util"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -80,9 +80,9 @@ func (h *Handler) GetItems(ctx context.Context, req *connect.Request[itemv1.GetI
 	// Get items
 	items, err := h.db.GetItems(ctx, sqlc.GetItemsParams{
 		UserID: userid,
-		Name:   util.NullLike(req.Msg.Filter),
-		Start:  util.NullTimestamp(req.Msg.Start),
-		End:    util.NullTimestamp(req.Msg.End),
+		Name:   putil.NullLike(req.Msg.Filter),
+		Start:  putil.NullTimestamp(req.Msg.Start),
+		End:    putil.NullTimestamp(req.Msg.End),
 		Offset: int64(offset),
 		Limit:  int64(limit),
 	})
@@ -97,9 +97,9 @@ func (h *Handler) GetItems(ctx context.Context, req *connect.Request[itemv1.GetI
 	// Get items count
 	count, err := h.db.GetItemsCount(ctx, sqlc.GetItemsCountParams{
 		UserID: userid,
-		Name:   util.NullLike(req.Msg.Filter),
-		Start:  util.NullTimestamp(req.Msg.Start),
-		End:    util.NullTimestamp(req.Msg.End),
+		Name:   putil.NullLike(req.Msg.Filter),
+		Start:  putil.NullTimestamp(req.Msg.Start),
+		End:    putil.NullTimestamp(req.Msg.End),
 	})
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -157,8 +157,8 @@ func (h *Handler) UpdateItem(ctx context.Context, req *connect.Request[itemv1.Up
 		// set
 		Name:        req.Msg.Name,
 		Description: req.Msg.Description,
-		Price:       util.NullFloat64(req.Msg.Price),
-		Quantity:    util.NullInt64(req.Msg.Quantity),
+		Price:       putil.NullFloat64(req.Msg.Price),
+		Quantity:    putil.NullInt64(req.Msg.Quantity),
 
 		// where
 		ID:     req.Msg.Id,

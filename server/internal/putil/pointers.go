@@ -1,4 +1,4 @@
-package util
+package putil
 
 func DerefOrEmpty[T any](val *T) T {
 	if val == nil {

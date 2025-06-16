@@ -19,8 +19,8 @@ import (
 	userv1 "github.com/spotdemo4/trevstack/server/internal/connect/user/v1"
 	"github.com/spotdemo4/trevstack/server/internal/connect/user/v1/userv1connect"
 	"github.com/spotdemo4/trevstack/server/internal/interceptors"
+	"github.com/spotdemo4/trevstack/server/internal/putil"
 	"github.com/spotdemo4/trevstack/server/internal/sqlc"
-	"github.com/spotdemo4/trevstack/server/internal/util"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -96,7 +96,7 @@ func (h *Handler) UpdatePassword(ctx context.Context, req *connect.Request[userv
 
 	// Update password
 	err = h.db.UpdateUser(ctx, sqlc.UpdateUserParams{
-		Password: util.ToPointer(string(hash)),
+		Password: putil.ToPointer(string(hash)),
 		ID:       userid,
 	})
 	if err != nil {
