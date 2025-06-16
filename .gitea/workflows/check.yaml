@@ -16,8 +16,16 @@ jobs:
       contains(github.event.head_commit.message, 'Merge pull request') == false
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.actions/init
+
+      - name: Install nix
+        uses: cachix/install-nix-action@v31
         with:
-          token: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Use cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: trevstack
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - run: nix flake check
