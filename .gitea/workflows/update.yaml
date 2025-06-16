@@ -35,24 +35,25 @@ jobs:
         env:
           PAT: ${{ secrets.PAT }}
         run: |
+          git push origin update --force
+
           URL="${{ gitea.server_url }}"
           REPO_OWNER_SLASH_NAME="${{ gitea.repository }}"
 
-          if ! git ls-remote --exit-code origin update; then
-            git push origin update --force
+          PRS=$(curl -s -X GET -H "Authorization: token $PAT" \
+            -H "Content-Type: application/json" \
+            "$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls?state=open")
+          PR_UPDATE=$(echo "$PRS" | jq -cr '.[] | select( .title | contains("update") )')
 
-            PR_RESPONSE=$(curl -s -X POST -H "Authorization: token $PAT" \
+          if [ ! -z "$PR_UPDATE" ]; then
+            PR_CREATE=$(curl -s -X POST -H "Authorization: token $PAT" \
               -H "Content-Type: application/json" \
               -d '{"title":"update","body":"automatic update","head":"update","base":"main"}' \
               "$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls")
-            
-            PR_NUMBER=$(echo "$PR_RESPONSE" | jq -r '.number')
+            PR_NUMBER=$(echo "$PR_CREATE" | jq -r '.number')
 
             curl -s -X POST -H "Authorization: token $PAT" \
               -H "Content-Type: application/json" \
               -d '{"Do":"merge","merge_when_checks_succeed":true,"delete_branch_after_merge":true}' \
               "$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls/$PR_NUMBER/merge"
-
-          else
-            git push origin update --force
           fi

@@ -5,7 +5,7 @@ updated=false
 
 echo "updating nix flake"
 cd "${git_root}"
-nix flake update
+nix flake update --accept-flake-config
 if ! git diff --exit-code flake.lock; then
     git add flake.lock
     git commit -m "build(nix): updated nix dependencies"
