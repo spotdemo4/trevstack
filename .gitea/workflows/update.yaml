@@ -44,10 +44,8 @@ jobs:
             -H "Content-Type: application/json" \
             "$URL/api/v1/repos/$REPO_OWNER_SLASH_NAME/pulls?state=open")
           PR_UPDATE=$(echo "$PRS" | jq -cr '.[] | select( .title | contains("update") )')
-          echo "$PRS"
-          echo "PR_UPDATE"
 
-          if [ ! -z "$PR_UPDATE" ]; then
+          if [ -z "$PR_UPDATE" ]; then
             echo "Creating pull request"
 
             PR_CREATE=$(curl -s -X POST -H "Authorization: token $PAT" \
