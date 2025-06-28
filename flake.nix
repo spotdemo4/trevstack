@@ -130,7 +130,7 @@
           pname = "check-client";
           inherit version;
           src = ./client;
-          npmDepsHash = "sha256-nKEuEcHJ+1CqXF2AOchCVC9GP/uxGUgBuVUUCAepA+8=";
+          npmDepsHash = "sha256-dPuZ9uNqiWMxdCZbmLU8Al8GxF5jK5fjMWIm+O8jjEY=";
           dontNpmInstall = true;
 
           buildPhase = ''
@@ -194,7 +194,7 @@
         client = pkgs.buildNpmPackage {
           inherit pname version;
           src = ./client;
-          npmDepsHash = "sha256-nKEuEcHJ+1CqXF2AOchCVC9GP/uxGUgBuVUUCAepA+8=";
+          npmDepsHash = "sha256-dPuZ9uNqiWMxdCZbmLU8Al8GxF5jK5fjMWIm+O8jjEY=";
 
           installPhase = ''
             cp -r build "$out"
