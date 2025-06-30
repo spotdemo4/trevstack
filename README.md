@@ -34,9 +34,7 @@ It's that simple. If you're feeling fancy, install [direnv](https://direnv.net/)
 
 ### Useful Commands
 
-- `nix run #update`: updates all of the dependencies
-
-- `nix run #bump [major | minor]`: bumps the current version up one. Defaults to "patch" (0.0.1 -> 0.0.2)
+- `bump [major | minor]`: bumps the current version up one. Defaults to "patch" (0.0.1 -> 0.0.2)
 
 - `nix build [#trevstack-(GOOS)-(GOARCH)]`: builds the application. Defaults to building for your current platform, but can be built to many by specifying the GOOS and GOARCH values
 

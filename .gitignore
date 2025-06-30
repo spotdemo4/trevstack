@@ -1,7 +1,1 @@
-.env
-/docker-compose.*
-/build/
-
-# Nix
-/result*
-/.direnv/
+.direnv

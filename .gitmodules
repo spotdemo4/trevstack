@@ -1,0 +1,9 @@
+[submodule "ts-web"]
+	path = ts-web
+	url = git@github.com:spotdemo4/ts-web.git
+[submodule "ts-server"]
+	path = ts-server
+	url = git@github.com:spotdemo4/ts-server.git
+[submodule "ts-proto"]
+	path = ts-proto
+	url = git@github.com:spotdemo4/ts-proto.git

@@ -1,0 +1,20 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:recommended"],
+	"lockFileMaintenance": {
+		"enabled": true,
+		"automerge": true
+	},
+	"git-submodules": {
+		"enabled": true
+	},
+	"nix": {
+		"enabled": true
+	},
+	"packageRules": [
+		{
+			"matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+			"automerge": true
+		}
+	]
+}
