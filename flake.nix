@@ -9,7 +9,6 @@
     build-systems = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
       "aarch64-darwin"
     ];
     forSystem = f:
@@ -22,25 +21,20 @@
             };
           }
       );
-  in {
+  in rec {
     devShells = forSystem ({pkgs, ...}: {
       default = pkgs.mkShell {
         packages = with pkgs; [
           git
-
-          # Nix
+          renovate
           nix-update
           alejandra
         ];
       };
+    });
 
-      ci = pkgs.mkShell {
-        packages = with pkgs; [
-          git
-          renovate
-          nix-update
-        ];
-      };
+    checks = forSystem ({system, ...}: {
+      shell = devShells."${system}".default;
     });
 
     formatter = forSystem ({pkgs, ...}: pkgs.alejandra);

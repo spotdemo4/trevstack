@@ -15,6 +15,16 @@
 		{
 			"matchUpdateTypes": ["minor", "patch", "pin", "digest"],
 			"automerge": true
+		},
+		{
+			"matchManagers": ["nix"],
+			"matchUpdateTypes": ["digest"],
+			"enabled": false
+		},
+		{
+			"matchManagers": ["github-actions"],
+			"matchPackageNames": ["*"],
+			"groupName": "GitHub Actions"
 		}
 	]
 }
