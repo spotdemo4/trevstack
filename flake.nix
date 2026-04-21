@@ -100,14 +100,16 @@
 
         checks = pkgs.mkChecks {
           go = {
-            src = self.packages.${system}.default;
+            root = ./server;
             packages = with pkgs; [
+              gcc
+              go
               go-tools
             ];
             script = ''
-              go test ./...
-              go vet ./...
-              staticcheck ./...
+              go test -tags dev ./...
+              go vet -tags dev ./...
+              staticcheck -tags dev ./...
             '';
           };
 
