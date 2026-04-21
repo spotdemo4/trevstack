@@ -226,12 +226,12 @@
               vendorHash = null;
 
               preBuild = ''
-                cp -r ${web} web
+                cp -r ${self.packages.${system}.web} web
               '';
 
               meta = {
                 mainProgram = "server";
-                description = "trevstack-server";
+                description = "Template for TrevStack applications";
                 license = licenses.mit;
                 platforms = platforms.all;
                 homepage = "https://github.com/spotdemo4/trevstack";
