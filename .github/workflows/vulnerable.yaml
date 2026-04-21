@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  go:
+  server:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -20,7 +20,24 @@ jobs:
           shell: vulnerable
 
       - name: Run govulncheck
-        run: govulncheck ./...
+        run: |
+          cd server
+          govulncheck ./...
+
+  web:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@757d5ba1fa0749e877484703bece0e17c7bd5670 # v1.43.0
+        with:
+          shell: vulnerable
+
+      - name: Run npm audit
+        run: |
+          cd web
+          npm audit --audit-level moderate
 
   flake:
     runs-on: ubuntu-latest

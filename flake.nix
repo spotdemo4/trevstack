@@ -77,12 +77,14 @@
             packages = with pkgs; [
               renovate
               go # go mod vendor
+              nodejs_24 # npm audit fix
             ];
           };
 
           vulnerable = pkgs.mkShell {
             packages = with pkgs; [
               govulncheck # go
+              nodejs_24 # npm audit
               flake-checker # nix
               zizmor # actions
             ];
