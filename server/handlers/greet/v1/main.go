@@ -11,10 +11,10 @@ import (
 
 type Handler struct{}
 
-func New(opt connect.HandlerOption) (string, http.Handler) {
+func New(opt ...connect.HandlerOption) (string, http.Handler) {
 	return greetv1connect.NewGreetServiceHandler(
 		&Handler{},
-		opt,
+		opt...,
 	)
 }
 

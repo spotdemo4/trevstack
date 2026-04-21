@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -15,16 +16,20 @@ import (
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
 	greetv1handler "github.com/spotdemo4/trevstack/server/handlers/greet/v1"
+	"github.com/spotdemo4/trevstack/server/interceptors"
 )
 
 func main() {
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer cancel()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+	li := interceptors.NewLogInterceptor(logger)
 	vi := validate.NewInterceptor()
 	api := http.NewServeMux()
 
-	api.Handle(greetv1handler.New(connect.WithInterceptors(vi)))
+	api.Handle(greetv1handler.New(connect.WithInterceptors(li, vi)))
 
 	mux := http.NewServeMux()
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
@@ -35,7 +40,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:      fmt.Sprintf(":%d", 8080),
-		Handler:   mux,
+		Handler:   interceptors.WithCORS(mux),
 		Protocols: p,
 		BaseContext: func(_ net.Listener) context.Context {
 			return ctx
