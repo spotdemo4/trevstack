@@ -20,9 +20,7 @@ jobs:
           shell: vulnerable
 
       - name: Run govulncheck
-        run: |
-          cd server
-          govulncheck ./...
+        run: cd server && govulncheck ./...
 
   web:
     runs-on: ubuntu-latest
@@ -35,9 +33,7 @@ jobs:
           shell: vulnerable
 
       - name: Run npm audit
-        run: |
-          cd web
-          npm audit --audit-level moderate
+        run: cd web && npm audit --audit-level moderate
 
   flake:
     runs-on: ubuntu-latest
