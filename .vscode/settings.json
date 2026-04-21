@@ -1,0 +1,34 @@
+{
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "renovate.json": "jsonc",
+    ".envrc.project": "dotenv",
+    ".envrc": "dotenv"
+  },
+
+  // go
+  "gopls": { "ui.semanticTokens": true },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+
+  // nix
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nixd",
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+
+  // toml
+  "[toml]": {
+    "editor.defaultFormatter": "tombi-toml.tombi"
+  },
+
+  // actions
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // json
+  "json.schemaDownload.trustedDomains": {
+    "https://docs.renovatebot.com/": true
+  }
+}
