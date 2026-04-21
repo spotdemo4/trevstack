@@ -1,5 +1,7 @@
 #:schema https://www.schemastore.org/treefmt.json
 
+excludes = ["server/vendor/*", "server/connect/*", "web/connect/*"]
+
 [formatter.go]
 command = "gofmt"
 includes = ["*.go"]
