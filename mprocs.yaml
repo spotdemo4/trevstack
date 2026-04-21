@@ -1,0 +1,7 @@
+procs:
+  server:
+    cwd: server
+    shell: "air"
+  web:
+    cwd: web
+    shell: "npm run dev"

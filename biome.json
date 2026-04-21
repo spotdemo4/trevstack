@@ -1,0 +1,30 @@
+{
+  "$schema": "https://biomejs.dev/schemas/latest/schema.json",
+
+  "formatter": {
+    "enabled": true
+  },
+
+  "linter": {
+    "enabled": true
+  },
+
+  "assist": {
+    "enabled": true
+  },
+
+  "json": {
+    "formatter": {
+      "enabled": false
+    },
+    "parser": {
+      "allowComments": true
+    }
+  },
+
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  }
+}

@@ -4,6 +4,11 @@
 command = "gofmt"
 includes = ["*.go"]
 
+[formatter.biome]
+command = "biome"
+options = ["format", "--write"]
+includes = ["*.js", "*.ts", "*.html", "*.css"]
+
 [formatter.nix]
 command = "nixfmt"
 includes = ["*.nix"]

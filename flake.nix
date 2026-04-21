@@ -37,6 +37,9 @@
               gotools
               gopls
 
+              # solid
+              nodejs_24
+
               # lint
               go-tools
 
@@ -46,6 +49,7 @@
               prettier
 
               # util
+              mprocs
               air
               bumper
             ];
@@ -95,6 +99,21 @@
               go test ./...
               go vet ./...
               staticcheck ./...
+            '';
+          };
+
+          biome = {
+            root = ./.;
+            filter = file: file.hasExt "ts" || file.hasExt "tsx" || file.hasExt "html" || file.hasExt "css";
+            include = [
+              ./.gitignore
+              ./biome.json
+            ];
+            packages = with pkgs; [
+              biome
+            ];
+            script = ''
+              biome ci
             '';
           };
 
@@ -164,40 +183,83 @@
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
             go
+            biome
             nixfmt
             tombi
             prettier
           ];
         };
 
-        packages.default = pkgs.buildGo125Module (
-          final: with pkgs.lib; {
-            pname = "go-template";
-            version = "0.7.2";
+        packages = rec {
+          default = server;
 
-            src = fileset.toSource {
-              root = ./server;
-              fileset = fileset.unions [
-                ./server/go.mod
-                ./server/go.sum
-                (fileset.fileFilter (file: file.hasExt "go") ./server)
-                (fileset.maybeMissing ./server/vendor)
-              ];
-            };
-            goSum = ./server/go.sum;
-            vendorHash = null;
+          server = pkgs.buildGo125Module (
+            final: with pkgs.lib; {
+              pname = "trevstack-server";
+              version = "0.0.1";
 
-            meta = {
-              mainProgram = "go-template";
-              description = "go template";
-              license = licenses.mit;
-              platforms = platforms.all;
-              homepage = "https://github.com/spotdemo4/go-template";
-              changelog = "https://github.com/spotdemo4/go-template/releases/tag/v${final.version}";
-              downloadPage = "https://github.com/spotdemo4/go-template/releases/tag/v${final.version}";
-            };
-          }
-        );
+              src = fileset.toSource {
+                root = ./server;
+                fileset = fileset.unions [
+                  ./server/go.mod
+                  ./server/go.sum
+                  (fileset.fileFilter (file: file.hasExt "go") ./server)
+                  (fileset.maybeMissing ./server/vendor)
+                ];
+              };
+              goSum = ./server/go.sum;
+              vendorHash = null;
+
+              meta = {
+                mainProgram = "server";
+                description = "trevstack-server";
+                license = licenses.mit;
+                platforms = platforms.all;
+                homepage = "https://github.com/spotdemo4/trevstack";
+                changelog = "https://github.com/spotdemo4/trevstack/releases/tag/v${final.version}";
+                downloadPage = "https://github.com/spotdemo4/trevstack/releases/tag/v${final.version}";
+              };
+            }
+          );
+
+          web = pkgs.buildNpmPackage (
+            final: with pkgs.lib; {
+              pname = "trevstack-web";
+              version = "0.0.1";
+
+              src = fileset.toSource {
+                root = ./web;
+                fileset = fileset.unions [
+                  ./web/.npmrc
+                  ./web/index.html
+                  ./web/package.json
+                  ./web/package-lock.json
+                  ./web/tsconfig.json
+                  ./web/vite.config.ts
+                  ./web/src
+                ];
+              };
+
+              nodejs = pkgs.nodejs_24;
+              npmConfigHook = pkgs.importNpmLock.npmConfigHook;
+              npmDeps = pkgs.importNpmLock {
+                npmRoot = final.src;
+              };
+
+              installPhase = ''
+                cp -r dist "$out"
+              '';
+
+              meta = {
+                description = "trevstack-web";
+                license = licenses.mit;
+                platforms = platforms.all;
+                homepage = "https://github.com/spotdemo4/trevstack";
+                changelog = "https://github.com/spotdemo4/trevstack/releases/tag/v${final.version}";
+              };
+            }
+          );
+        };
 
         images.default = pkgs.mkImage {
           src = self.packages.${system}.default;

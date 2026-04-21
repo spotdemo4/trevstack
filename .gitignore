@@ -2,10 +2,17 @@
 /.envrc
 /docker-compose*
 
+# mprocs
+/mprocs.log
+
 # nix
 /result*
 /.direnv/
 
-# backend
-/backend/build/
-/backend/tmp/
+# go
+/server/build/
+/server/tmp/
+
+# solid
+/web/node_modules/
+/web/dist/
