@@ -3,7 +3,7 @@
 [![check](https://img.shields.io/github/actions/workflow/status/spotdemo4/trevstack/check.yaml?branch=main&logo=github&logoColor=%23bac2de&label=check&labelColor=%23313244)](https://github.com/spotdemo4/trevstack/actions/workflows/check.yaml/)
 [![vulnerable](https://img.shields.io/github/actions/workflow/status/spotdemo4/trevstack/vulnerable.yaml?branch=main&logo=github&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](https://github.com/spotdemo4/trevstack/actions/workflows/vulnerable.yaml)
 [![nix](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fspotdemo4%2Ftrevstack%2Frefs%2Fheads%2Fmain%2Fflake.lock&query=%24.nodes.nixpkgs.original.ref&logo=nixos&logoColor=%23bac2de&label=channel&labelColor=%23313244&color=%234d6fb7)](https://nixos.org/)
-[![go](https://img.shields.io/github/go-mod/go-version/spotdemo4/trevstack?logo=go&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%2300ADD8)](https://go.dev/doc/devel/release)
+[![go](https://img.shields.io/github/go-mod/go-version/spotdemo4/trevstack?filename=server%2Fgo.mod&logo=go&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%2300ADD8)](https://go.dev/doc/devel/release)
 [![flakehub](https://img.shields.io/endpoint?url=https://flakehub.com/f/spotdemo4/trevstack/badge&labelColor=%23313244)](https://flakehub.com/flake/spotdemo4/trevstack)
 
 template for starting TrevStack projects
