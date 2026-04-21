@@ -1,15 +1,18 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
+  "name": "trevstack-web",
+  "version": "0.0.1",
+  "description": "TrevStack web client",
+  "license": "MIT",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/spotdemo4/trevstack"
+  },
   "scripts": {
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview"
   },
-  "license": "MIT",
   "devDependencies": {
     "@catppuccin/tailwindcss": "^1.0.0",
     "@tailwindcss/vite": "^4.2.4",

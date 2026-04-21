@@ -5,14 +5,19 @@
   "onboarding": false,
   "requireConfig": "ignored",
   "platform": "github",
-  "repositories": ["spotdemo4/go-template"],
+  "repositories": ["spotdemo4/trevstack"],
+  "allowedCommands": ["npm audit fix --prefix web"],
 
   // repository
   "extends": ["config:recommended"],
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
-    "schedule": ["* * * * 0"] // sunday
+    "schedule": ["* * * * 0"], // sunday
+    "skipInstalls": false,
+    "postUpgradeTasks": {
+      "commands": ["npm audit fix --prefix web"]
+    }
   },
   "nix": {
     "enabled": true
@@ -31,8 +36,23 @@
       "groupName": "github actions"
     },
     {
+      "matchManagers": ["npm"],
+      "rangeStrategy": "bump",
+      "postUpdateOptions": ["npmInstallTwice"]
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["engines"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "node packages"
+    },
+    {
       "matchManagers": ["gomod"],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "go modules"
     }
   ]

@@ -6,7 +6,7 @@
 [![go](https://img.shields.io/github/go-mod/go-version/spotdemo4/go-template?logo=go&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%2300ADD8)](https://go.dev/doc/devel/release)
 [![flakehub](https://img.shields.io/endpoint?url=https://flakehub.com/f/spotdemo4/go-template/badge&labelColor=%23313244)](https://flakehub.com/flake/spotdemo4/go-template)
 
-template for starting [Go](https://go.dev/) projects
+template for starting TrevStack projects
 
 part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
@@ -47,7 +47,7 @@ nix build
 ### release
 
 ```elm
-bumper "action.yaml" ".github/README.md"
+bumper "openapi.yaml" ".github/README.md"
 ```
 
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes
@@ -64,12 +64,6 @@ releases are automatically created for [significant](https://www.conventionalcom
 | MacOS   | arm64        | [go-template_0.7.2_darwin_arm64](https://github.com/spotdemo4/go-template/releases/download/v0.7.2/go-template_0.7.2_darwin_arm64)           |
 | Windows | amd64        | [go-template_0.7.2_windows_amd64.exe](https://github.com/spotdemo4/go-template/releases/download/v0.7.2/go-template_0.7.2_windows_amd64.exe) |
 
-### go
-
-```elm
-go run github.com/spotdemo4/go-template@v0.7.2
-```
-
 ### docker
 
 ```elm
@@ -80,10 +74,4 @@ docker run ghcr.io/spotdemo4/go-template:0.7.2
 
 ```elm
 nix run github:spotdemo4/go-template
-```
-
-### action
-
-```yaml
-- uses: spotdemo4/go-template@v0.6.1
 ```
