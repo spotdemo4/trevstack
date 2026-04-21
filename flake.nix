@@ -125,7 +125,7 @@
           };
 
           actions = {
-            root = ./.;
+            root = ./.github;
             files = ./.github/workflows;
             packages = with pkgs; [
               action-validator
