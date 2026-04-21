@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@catppuccin/tailwindcss": "^1.0.0",
     "@tailwindcss/vite": "^4.2.4",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
@@ -20,6 +21,7 @@
   "dependencies": {
     "@connectrpc/connect": "^2.1.1",
     "@connectrpc/connect-web": "^2.1.1",
+    "@kobalte/core": "^0.13.11",
     "solid-js": "^1.9.12"
   }
 }

@@ -51,7 +51,10 @@ func main() {
 	wg := sync.WaitGroup{}
 	wg.Go((func() {
 		log.Println("Starting server on port 8080")
-		server.ListenAndServe()
+		err := server.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server failed: %v", err)
+		}
 	}))
 
 	<-ctx.Done()

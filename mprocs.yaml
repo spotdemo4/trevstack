@@ -1,7 +1,7 @@
 procs:
   server:
     cwd: server
-    shell: "air"
+    shell: "go run ."
   web:
     cwd: web
     shell: "npm run dev"

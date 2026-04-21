@@ -57,7 +57,6 @@
 
               # util
               mprocs
-              air
               bumper
             ];
           };
