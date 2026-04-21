@@ -40,6 +40,13 @@
               # solid
               nodejs_24
 
+              # proto
+              buf
+              protoc-gen-go
+              protoc-gen-connect-go
+              protoc-gen-es
+              protoc-gen-connect-openapi
+
               # lint
               go-tools
 
@@ -84,9 +91,10 @@
         };
 
         apps = pkgs.mkApps {
-          default = "go run .";
-          dev = "air";
-          vendor = "go mod tidy && go mod vendor";
+          default = "mprocs";
+          server = "cd server && air";
+          web = "cd web && npm run dev";
+          vendor = "cd server && go mod tidy && go mod vendor";
         };
 
         checks = pkgs.mkChecks {

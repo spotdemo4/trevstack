@@ -1,0 +1,21 @@
+openapi: 3.1.0
+servers:
+  - url: /grpc
+
+info:
+  title: TrevStack API
+  version: 0.0.1
+  description: API for TrevStack
+  contact:
+    name: Trev
+    email: spam@trev.xyz
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

@@ -9,6 +9,11 @@ command = "biome"
 options = ["format", "--write"]
 includes = ["*.js", "*.ts", "*.html", "*.css"]
 
+[formatter.buf]
+command = "buf"
+options = ["format", "--write"]
+includes = ["*.proto"]
+
 [formatter.nix]
 command = "nixfmt"
 includes = ["*.nix"]

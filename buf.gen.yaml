@@ -1,0 +1,33 @@
+version: v2
+
+plugins:
+  - local: protoc-gen-go
+    out: server/connect
+    opt: paths=source_relative
+
+  - local: protoc-gen-connect-go
+    out: server/connect
+    opt:
+      - paths=source_relative
+      - simple
+
+  - local: protoc-gen-es
+    out: web/connect
+    opt: target=ts
+    include_imports: true
+
+  - local: protoc-gen-connect-openapi
+    out: web/assets/openapi
+    strategy: all
+    opt:
+      - base=openapi.yaml
+      - path=openapi.yaml
+
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/spotdemo4/trevstack/server/connect
+  disable:
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate

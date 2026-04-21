@@ -1,6 +1,8 @@
 {
   "recommendations": [
     "golang.go",
+    "biomejs.biome",
+    "bufbuild.vscode-buf",
     "jnoortheen.nix-ide",
     "tombi-toml.tombi",
     "esbenp.prettier-vscode"
