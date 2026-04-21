@@ -40,5 +40,6 @@ jobs:
           GITHUB_TOKEN: ${{ steps.init.outputs.token }}
           FORCE: ${{ inputs.force }}
           PATHS: |
+            web
+            openapi.yaml
             .github/README.md
-            action.yaml

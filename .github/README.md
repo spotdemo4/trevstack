@@ -47,7 +47,7 @@ nix build
 ### release
 
 ```elm
-bumper "openapi.yaml" ".github/README.md"
+bumper "web" "openapi.yaml" ".github/README.md"
 ```
 
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes
