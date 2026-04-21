@@ -1,6 +1,6 @@
 {
   "name": "trevstack-web",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "TrevStack web client",
   "license": "MIT",
   "type": "module",

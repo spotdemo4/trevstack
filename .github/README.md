@@ -58,16 +58,16 @@ releases are automatically created for [significant](https://www.conventionalcom
 
 | OS      | Architecture | Download                                                                                                                               |
 | ------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Linux   | amd64        | [trevstack_0.0.2_linux_amd64](https://github.com/spotdemo4/trevstack/releases/download/v0.0.2/trevstack_0.0.2_linux_amd64)             |
-| Linux   | arm64        | [trevstack_0.0.2_linux_arm64](https://github.com/spotdemo4/trevstack/releases/download/v0.0.2/trevstack_0.0.2_linux_arm64)             |
-| Linux   | arm          | [trevstack_0.0.2_linux_arm](https://github.com/spotdemo4/trevstack/releases/download/v0.0.2/trevstack_0.0.2_linux_arm)                 |
-| MacOS   | arm64        | [trevstack_0.0.2_darwin_arm64](https://github.com/spotdemo4/trevstack/releases/download/v0.0.2/trevstack_0.0.2_darwin_arm64)           |
-| Windows | amd64        | [trevstack_0.0.2_windows_amd64.exe](https://github.com/spotdemo4/trevstack/releases/download/v0.0.2/trevstack_0.0.2_windows_amd64.exe) |
+| Linux   | amd64        | [trevstack_0.0.3_linux_amd64](https://github.com/spotdemo4/trevstack/releases/download/v0.0.3/trevstack_0.0.3_linux_amd64)             |
+| Linux   | arm64        | [trevstack_0.0.3_linux_arm64](https://github.com/spotdemo4/trevstack/releases/download/v0.0.3/trevstack_0.0.3_linux_arm64)             |
+| Linux   | arm          | [trevstack_0.0.3_linux_arm](https://github.com/spotdemo4/trevstack/releases/download/v0.0.3/trevstack_0.0.3_linux_arm)                 |
+| MacOS   | arm64        | [trevstack_0.0.3_darwin_arm64](https://github.com/spotdemo4/trevstack/releases/download/v0.0.3/trevstack_0.0.3_darwin_arm64)           |
+| Windows | amd64        | [trevstack_0.0.3_windows_amd64.exe](https://github.com/spotdemo4/trevstack/releases/download/v0.0.3/trevstack_0.0.3_windows_amd64.exe) |
 
 ### docker
 
 ```elm
-docker run ghcr.io/spotdemo4/trevstack:0.0.2
+docker run ghcr.io/spotdemo4/trevstack:0.0.3
 ```
 
 ### nix
