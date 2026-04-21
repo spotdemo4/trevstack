@@ -206,7 +206,7 @@
 
           server = pkgs.buildGo125Module (
             final: with pkgs.lib; {
-              pname = "trevstack-server";
+              pname = "trevstack";
               version = "0.0.2";
 
               src = fileset.toSource {
