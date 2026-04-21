@@ -91,7 +91,7 @@
 
         apps = pkgs.mkApps {
           default = "mprocs";
-          server = "cd server && air";
+          server = "cd server && go run -tags dev .";
           web = "cd web && npm run dev";
           vendor = "cd server && go mod tidy && go mod vendor";
         };
@@ -151,7 +151,7 @@
           nix = {
             root = ./.;
             filter = file: file.hasExt "nix";
-            ignore = pkgs.lib.fileset.maybeMissing ./server/vendor;
+            ignore = ./server/vendor;
             packages = with pkgs; [
               nixfmt
             ];
@@ -163,7 +163,7 @@
           prettier = {
             root = ./.;
             filter = file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md";
-            ignore = pkgs.lib.fileset.maybeMissing ./server/vendor;
+            ignore = ./server/vendor;
             packages = with pkgs; [
               prettier
             ];
@@ -175,7 +175,7 @@
           tombi = {
             root = ./.;
             filter = file: file.hasExt "toml";
-            ignore = pkgs.lib.fileset.maybeMissing ./server/vendor;
+            ignore = ./server/vendor;
             packages = with pkgs; [
               tombi
             ];
@@ -208,14 +208,22 @@
               src = fileset.toSource {
                 root = ./server;
                 fileset = fileset.unions [
+                  ./server/embed.go
                   ./server/go.mod
                   ./server/go.sum
-                  (fileset.fileFilter (file: file.hasExt "go") ./server)
-                  (fileset.maybeMissing ./server/vendor)
+                  ./server/main.go
+                  ./server/connect
+                  ./server/handlers
+                  ./server/interceptors
+                  ./server/vendor
                 ];
               };
               goSum = ./server/go.sum;
               vendorHash = null;
+
+              preBuild = ''
+                cp -r ${web} web
+              '';
 
               meta = {
                 mainProgram = "server";
@@ -243,6 +251,9 @@
                   ./web/package-lock.json
                   ./web/tsconfig.json
                   ./web/vite.config.ts
+                  ./web/assets
+                  ./web/connect
+                  ./web/lib
                   ./web/src
                 ];
               };

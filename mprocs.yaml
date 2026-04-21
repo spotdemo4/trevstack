@@ -1,7 +1,7 @@
 procs:
   server:
     cwd: server
-    shell: "go run ."
+    shell: "go run -tags dev ."
   web:
     cwd: web
     shell: "npm run dev"
