@@ -57,17 +57,17 @@ components:
         details:
           type: array
           items:
-            $ref: '#/components/schemas/connect.error_details.Any'
+            $ref: "#/components/schemas/connect.error_details.Any"
           description: A list of messages that carry the error details. There is no limit on the number of messages.
       title: Connect Error
       additionalProperties: true
-      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
+      description: "Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation"
     connect.error_details.Any:
       type: object
       properties:
         type:
           type: string
-          description: 'A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`. This is used to determine the schema of the data in the `value` field and is the discriminator for the `debug` field.'
+          description: "A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`. This is used to determine the schema of the data in the `value` field and is the discriminator for the `debug` field."
         value:
           type: string
           format: binary
@@ -211,7 +211,7 @@ components:
       properties:
         timestamp:
           title: timestamp
-          $ref: '#/components/schemas/google.protobuf.Timestamp'
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
         name:
           type: string
           title: name
@@ -257,12 +257,12 @@ components:
           minimum: 0
         start:
           oneOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
             - type: "null"
           title: start
         end:
           oneOf:
-            - $ref: '#/components/schemas/google.protobuf.Timestamp'
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
             - type: "null"
           title: end
       title: ListRequest
@@ -275,7 +275,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/number.v1.Item'
+            $ref: "#/components/schemas/number.v1.Item"
           title: items
         nextCursor:
           type:
@@ -300,16 +300,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: '#/components/schemas/connect-protocol-version'
+            $ref: "#/components/schemas/connect-protocol-version"
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: '#/components/schemas/connect-timeout-header'
+            $ref: "#/components/schemas/connect-timeout-header"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/number.v1.AddRequest'
+              $ref: "#/components/schemas/number.v1.AddRequest"
         required: true
       responses:
         default:
@@ -317,13 +317,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/connect.error'
+                $ref: "#/components/schemas/connect.error"
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/number.v1.AddResponse'
+                $ref: "#/components/schemas/number.v1.AddResponse"
   /number.v1.NumberService/List:
     post:
       tags:
@@ -335,16 +335,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: '#/components/schemas/connect-protocol-version'
+            $ref: "#/components/schemas/connect-protocol-version"
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: '#/components/schemas/connect-timeout-header'
+            $ref: "#/components/schemas/connect-timeout-header"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/number.v1.ListRequest'
+              $ref: "#/components/schemas/number.v1.ListRequest"
         required: true
       responses:
         default:
@@ -352,12 +352,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/connect.error'
+                $ref: "#/components/schemas/connect.error"
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/number.v1.ListResponse'
+                $ref: "#/components/schemas/number.v1.ListResponse"
 tags:
   - name: number.v1.NumberService

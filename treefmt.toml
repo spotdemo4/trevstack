@@ -15,6 +15,7 @@ includes = ["*.js", "*.ts", "*.html", "*.css"]
 command = "buf"
 options = ["format", "--write"]
 includes = ["*.proto"]
+no-positional-arg-support = true
 
 [formatter.sql]
 command = "sqlfluff"
