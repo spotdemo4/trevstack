@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package number.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+message Item {
+  google.protobuf.Timestamp timestamp = 1;
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+  uint32 number = 3 [(buf.validate.field).uint32 = {
+    gte: 0
+    lte: 1000000
+  }];
+}
+
+message ListRequest {
+  optional int64 cursor = 1;
+  optional string name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+  optional uint32 min = 3 [(buf.validate.field).uint32 = {
+    gte: 0
+    lte: 1000000
+  }];
+  optional uint32 max = 4 [(buf.validate.field).uint32 = {
+    gte: 0
+    lte: 1000000
+  }];
+  optional google.protobuf.Timestamp start = 5;
+  optional google.protobuf.Timestamp end = 6;
+
+  option (buf.validate.message).cel = {
+    id: "end_after_start"
+    message: "End must be after start"
+    expression: "this.end > this.start"
+  };
+}
+
+message ListResponse {
+  repeated Item items = 1;
+  optional int64 next_cursor = 2;
+}

@@ -15,7 +15,8 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
-	greetv1handler "github.com/spotdemo4/trevstack/server/handlers/greet/v1"
+	"github.com/spotdemo4/trevstack/server/database"
+	numberv1handler "github.com/spotdemo4/trevstack/server/handlers/number/v1"
 	"github.com/spotdemo4/trevstack/server/interceptors"
 	"github.com/spotdemo4/trevstack/server/logger"
 )
@@ -27,11 +28,18 @@ func main() {
 	log := logger.New()
 	ctx = logger.WithLog(ctx, log)
 
+	db, err := database.New(ctx)
+	if err != nil {
+		log.ErrorContext(ctx, "could not initialize database", "error", err)
+		return
+	}
+	ctx = database.WithDatabase(ctx, db)
+
 	li := interceptors.NewLogInterceptor(log)
 	vi := validate.NewInterceptor()
 	api := http.NewServeMux()
 
-	api.Handle(greetv1handler.New(connect.WithInterceptors(li, vi)))
+	api.Handle(numberv1handler.New(connect.WithInterceptors(li, vi)))
 
 	mux := http.NewServeMux()
 	mux.Handle("/", webHandler())

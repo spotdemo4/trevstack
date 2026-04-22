@@ -1,7 +1,7 @@
 import { Toast } from "@kobalte/core";
 import type { Component } from "solid-js";
 import { Portal } from "solid-js/web";
-import GreetForm from "./GreetForm";
+import AddForm from "./AddForm";
 import logo from "./logo.svg";
 
 const App: Component = () => {
@@ -9,7 +9,7 @@ const App: Component = () => {
 		<>
 			<div class="flex flex-col items-center justify-center gap-4 h-screen text-ctp-text">
 				<img src={logo} class="h-28" alt="logo" />
-				<GreetForm />
+				<AddForm />
 			</div>
 			<Portal>
 				<Toast.Region>

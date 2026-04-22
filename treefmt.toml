@@ -16,6 +16,11 @@ command = "buf"
 options = ["format", "--write"]
 includes = ["*.proto"]
 
+[formatter.sql]
+command = "sqlfluff"
+options = ["format"]
+includes = ["*.sql"]
+
 [formatter.nix]
 command = "nixfmt"
 includes = ["*.nix"]

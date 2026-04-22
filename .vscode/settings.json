@@ -51,6 +51,11 @@
     "editor.defaultFormatter": "bufbuild.vscode-buf"
   },
 
+  // sql
+  "[sql]": {
+    "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
+  },
+
   // nix
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nixd",

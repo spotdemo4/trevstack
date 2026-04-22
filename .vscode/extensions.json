@@ -3,6 +3,7 @@
     "golang.go",
     "biomejs.biome",
     "bufbuild.vscode-buf",
+    "sqlfluff.vscode-sqlfluff",
     "jnoortheen.nix-ide",
     "tombi-toml.tombi",
     "esbenp.prettier-vscode",

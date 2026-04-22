@@ -1,7 +1,7 @@
 import { ConnectError, createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
 import { createValidateInterceptor } from "@connectrpc/validate";
-import { GreetService } from "$connect/greet/v1/greet_pb";
+import { NumberService } from "$connect/number/v1/service_pb";
 
 const transport = createConnectTransport({
 	baseUrl: `${window.location.origin}/grpc`,
@@ -37,6 +37,6 @@ function createSafeClient<T extends object>(client: T): SafeClient<T> {
 	}) as SafeClient<T>;
 }
 
-export const GreetClient = createSafeClient(
-	createClient(GreetService, transport),
+export const NumberClient = createSafeClient(
+	createClient(NumberService, transport),
 );

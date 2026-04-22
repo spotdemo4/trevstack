@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package number.v1;
+
+import "number/v1/add.proto";
+import "number/v1/list.proto";
+
+service NumberService {
+  rpc Add(AddRequest) returns (AddResponse) {}
+  rpc List(ListRequest) returns (ListResponse) {}
+}

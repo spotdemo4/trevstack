@@ -49,6 +49,8 @@
 
               # lint
               go-tools
+              biome
+              sqlfluff
 
               # format
               nixfmt
