@@ -28,6 +28,7 @@
     "@connectrpc/validate": "^0.2.0",
     "@kobalte/core": "^0.13.11",
     "@tanstack/solid-form": "^1.29.1",
+    "lucide-solid": "^1.8.0",
     "solid-js": "^1.9.12"
   }
 }

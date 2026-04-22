@@ -3,7 +3,8 @@
   "files.associations": {
     "renovate.json": "jsonc",
     ".envrc.project": "dotenv",
-    ".envrc": "dotenv"
+    ".envrc": "dotenv",
+    "*.css": "tailwindcss"
   },
 
   // go
@@ -28,6 +29,9 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[tailwindcss]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
   "editor.codeActionsOnSave": {

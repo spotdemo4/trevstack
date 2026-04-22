@@ -23,6 +23,7 @@ const GreetForm: Component = () => {
 			}
 
 			toast.success(response.greeting);
+			form.reset();
 		},
 	}));
 
