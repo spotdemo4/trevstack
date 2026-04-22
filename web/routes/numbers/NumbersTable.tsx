@@ -19,7 +19,7 @@ const NumbersTable: Component<{
 		}
 		isUpdating = true;
 
-		while (instance.range.endIndex > items().length) {
+		while (instance.range.endIndex > items().length - 1) {
 			const [response, err] = await NumberClient.list({
 				cursor: cursor,
 			});
