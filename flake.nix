@@ -284,7 +284,7 @@
                   ./web/connect
                   ./web/layout
                   ./web/lib
-                  ./web/src
+                  ./web/routes
                 ];
               };
 
