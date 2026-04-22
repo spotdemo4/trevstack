@@ -48,5 +48,6 @@ message ListRequest {
 
 message ListResponse {
   repeated Item items = 1;
-  optional int64 next_cursor = 2;
+  int64 total_count = 2;
+  int64 next_cursor = 3;
 }

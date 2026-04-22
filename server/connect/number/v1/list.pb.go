@@ -170,7 +170,8 @@ func (x *ListRequest) GetEnd() *timestamppb.Timestamp {
 type ListResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	NextCursor    *int64                 `protobuf:"varint,2,opt,name=next_cursor,json=nextCursor,proto3,oneof" json:"next_cursor,omitempty"`
+	TotalCount    int64                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	NextCursor    int64                  `protobuf:"varint,3,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -212,9 +213,16 @@ func (x *ListResponse) GetItems() []*Item {
 	return nil
 }
 
+func (x *ListResponse) GetTotalCount() int64 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
+}
+
 func (x *ListResponse) GetNextCursor() int64 {
-	if x != nil && x.NextCursor != nil {
-		return *x.NextCursor
+	if x != nil {
+		return x.NextCursor
 	}
 	return 0
 }
@@ -242,12 +250,13 @@ const file_number_v1_list_proto_rawDesc = "" +
 	"\x04_minB\x06\n" +
 	"\x04_maxB\b\n" +
 	"\x06_startB\x06\n" +
-	"\x04_end\"k\n" +
+	"\x04_end\"w\n" +
 	"\fListResponse\x12%\n" +
-	"\x05items\x18\x01 \x03(\v2\x0f.number.v1.ItemR\x05items\x12$\n" +
-	"\vnext_cursor\x18\x02 \x01(\x03H\x00R\n" +
-	"nextCursor\x88\x01\x01B\x0e\n" +
-	"\f_next_cursorB\xa1\x01\n" +
+	"\x05items\x18\x01 \x03(\v2\x0f.number.v1.ItemR\x05items\x12\x1f\n" +
+	"\vtotal_count\x18\x02 \x01(\x03R\n" +
+	"totalCount\x12\x1f\n" +
+	"\vnext_cursor\x18\x03 \x01(\x03R\n" +
+	"nextCursorB\xa1\x01\n" +
 	"\rcom.number.v1B\tListProtoP\x01Z@github.com/spotdemo4/trevstack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 
@@ -288,7 +297,6 @@ func file_number_v1_list_proto_init() {
 		return
 	}
 	file_number_v1_list_proto_msgTypes[1].OneofWrappers = []any{}
-	file_number_v1_list_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

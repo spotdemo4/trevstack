@@ -13,6 +13,9 @@ import (
 //go:embed list.sql
 var listSQL string
 
+//go:embed count.sql
+var countSQL string
+
 const listPageSize = 50
 
 func (h *Handler) List(
@@ -48,15 +51,15 @@ func (h *Handler) List(
 		startArg, startArg,
 		endArg, endArg,
 		cursorArg, cursorArg,
-		listPageSize+1,
+		listPageSize,
 	)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	items := make([]*numberv1.Item, 0, listPageSize+1)
-	rowIDs := make([]int64, 0, listPageSize+1)
+	items := make([]*numberv1.Item, 0, listPageSize)
+	rowIDs := make([]int64, 0, listPageSize)
 	for rows.Next() {
 		var rowid int64
 		var ts time.Time
@@ -76,13 +79,22 @@ func (h *Handler) List(
 		return nil, err
 	}
 
-	resp := &numberv1.ListResponse{}
-	// Overfetch by one to detect if another page exists.
-	if len(items) > listPageSize {
-		items = items[:listPageSize]
-		resp.NextCursor = &rowIDs[listPageSize-1]
+	totalCount := int64(0)
+	if err := db.QueryRowContext(ctx, countSQL,
+		nameArg, nameArg,
+		minArg, minArg,
+		maxArg, maxArg,
+		startArg, startArg,
+		endArg, endArg,
+	).Scan(&totalCount); err != nil {
+		return nil, err
 	}
-	resp.Items = items
+
+	resp := &numberv1.ListResponse{
+		Items:      items,
+		NextCursor: rowIDs[len(items)-1],
+		TotalCount: totalCount,
+	}
 
 	return resp, nil
 }
