@@ -237,6 +237,7 @@
                   ./server/go.sum
                   ./server/main.go
                   ./server/connect
+                  ./server/database
                   ./server/handlers
                   ./server/interceptors
                   ./server/logger
