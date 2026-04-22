@@ -7,6 +7,13 @@
     "*.css": "tailwindcss"
   },
 
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json",
+    "flake.nix": "flake.lock",
+    "buf.yaml": "buf.lock",
+    "go.mod": "go.sum"
+  },
+
   // go
   "go.buildTags": "dev",
   "gopls": { "ui.semanticTokens": true },

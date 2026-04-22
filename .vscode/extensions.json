@@ -5,6 +5,7 @@
     "bufbuild.vscode-buf",
     "jnoortheen.nix-ide",
     "tombi-toml.tombi",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss"
   ]
 }
