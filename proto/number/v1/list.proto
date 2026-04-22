@@ -37,7 +37,12 @@ message ListRequest {
   option (buf.validate.message).cel = {
     id: "end_after_start"
     message: "End must be after start"
-    expression: "this.end > this.start"
+    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
+  };
+  option (buf.validate.message).cel = {
+    id: "min_less_than_max"
+    message: "Min must be less than max"
+    expression: "!has(this.min) || !has(this.max) || this.min < this.max"
   };
 }
 

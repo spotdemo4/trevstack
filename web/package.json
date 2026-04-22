@@ -29,6 +29,8 @@
     "@kobalte/core": "^0.13.11",
     "@solidjs/router": "^0.16.1",
     "@tanstack/solid-form": "^1.29.1",
+    "@tanstack/solid-table": "^8.21.3",
+    "@tanstack/solid-virtual": "^3.13.24",
     "lucide-solid": "^1.8.0",
     "solid-js": "^1.9.12"
   }

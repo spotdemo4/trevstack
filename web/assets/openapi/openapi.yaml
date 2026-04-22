@@ -269,6 +269,7 @@ components:
       additionalProperties: false
       description: |
         end_after_start // End must be after start
+        min_less_than_max // Min must be less than max
     number.v1.ListResponse:
       type: object
       properties:

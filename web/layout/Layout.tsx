@@ -10,8 +10,8 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 	const resolved = children(() => props.children);
 
 	return (
-		<div class="flex h-dvh flex-col">
-			<header class="flex items-center justify-between border-ctp-surface0 border-b bg-ctp-base px-4 py-3">
+		<div class="flex min-h-dvh flex-col">
+			<header class="sticky top-0 z-50 flex h-12 items-center justify-between border-ctp-surface0 border-b bg-ctp-base px-4 py-3">
 				<h1 class="flex cursor-default items-center gap-2 font-mono font-semibold text-lg">
 					TrevStack <img src={logo} class="h-6" alt="logo" />
 				</h1>
@@ -43,7 +43,7 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 					</NavigationMenu.Viewport>
 				</NavigationMenu>
 			</header>
-			<main class="grow overflow-auto p-4">{resolved()}</main>
+			<main class="grow p-4">{resolved()}</main>
 			<Portal>
 				<Toast.Region>
 					<Toast.List class="fixed top-4 right-4 z-50 flex w-96 max-w-[calc(100vw-2rem)] flex-col gap-2 outline-none" />
