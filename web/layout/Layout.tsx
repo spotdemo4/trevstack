@@ -19,7 +19,8 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 					<NavigationMenu.Trigger
 						as={A}
 						href="/"
-						activeClass="underline decoration-ctp-sky underline-offset-4 decoration-2"
+						class="rounded underline decoration-2 decoration-transparent underline-offset-4 transition-colors hover:decoration-ctp-overlay0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40"
+						activeClass="!decoration-ctp-sky"
 						end={true}
 					>
 						Home
@@ -27,7 +28,8 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 					<NavigationMenu.Trigger
 						as={A}
 						href="/numbers"
-						activeClass="underline decoration-ctp-sky underline-offset-4 decoration-2"
+						class="rounded underline decoration-2 decoration-transparent underline-offset-4 transition-colors hover:decoration-ctp-overlay0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40"
+						activeClass="!decoration-ctp-sky"
 					>
 						Numbers
 					</NavigationMenu.Trigger>
@@ -35,6 +37,7 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 						as="a"
 						href="https://github.com/spotdemo4/trevstack"
 						target="_blank"
+						class="rounded text-ctp-text transition-colors hover:text-ctp-sky focus:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40"
 					>
 						<CodeXml />
 					</NavigationMenu.Trigger>
