@@ -158,6 +158,18 @@
             '';
           };
 
+          sql = {
+            root = ./.;
+            filter = file: file.hasExt "sql";
+            ignore = ./server/vendor;
+            packages = with pkgs; [
+              sqlfluff
+            ];
+            forEach = ''
+              sqlfluff lint --dialect sqlite "$file"
+            '';
+          };
+
           nix = {
             root = ./.;
             filter = file: file.hasExt "nix";
@@ -201,6 +213,8 @@
           runtimeInputs = with pkgs; [
             go
             biome
+            buf
+            sqlfluff
             nixfmt
             tombi
             prettier
