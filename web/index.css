@@ -4,6 +4,8 @@
 @theme {
 	--animate-toast-in: toast-in 200ms ease-out;
 	--animate-toast-out: toast-out 150ms ease-in forwards;
+	--spacing-header: calc(var(--spacing) * 12);
+	--spacing-body: calc(100dvh - var(--spacing-header));
 }
 
 @keyframes toast-in {

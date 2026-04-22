@@ -44,7 +44,7 @@ const NumbersTable: Component<{
 	});
 
 	return (
-		<div ref={parentRef} class="h-96 w-full overflow-auto">
+		<div ref={parentRef} class="h-full w-full overflow-auto">
 			{/* The large inner element to hold all of the items */}
 			<div
 				style={{
@@ -76,10 +76,25 @@ const NumbersTable: Component<{
 
 const NumbersTableRow: Component<{ item?: Item }> = (props) => {
 	return (
-		<Show when={props.item} fallback={<div>Loading...</div>} keyed>
+		<Show
+			when={props.item}
+			fallback={
+				<div class="flex w-full animate-pulse flex-row items-center gap-4 rounded-md px-4 py-2">
+					<div class="h-4 w-48 shrink-0 rounded bg-ctp-surface2" />
+					<div class="h-4 flex-1 rounded bg-ctp-surface2" />
+					<div class="h-4 w-12 shrink-0 rounded bg-ctp-surface2" />
+				</div>
+			}
+			keyed
+		>
 			{(item) => (
-				<div class="flex w-full flex-row items-center justify-between rounded-md bg-ctp-surface1 px-4 py-2">
-					{timestampDate(item.timestamp!).toLocaleString()}
+				<div class="flex w-full flex-row items-center gap-4 rounded-md px-4 py-2">
+					<span class="w-48 shrink-0 text-ctp-subtext0 text-sm tabular-nums">
+						{/** biome-ignore lint/style/noNonNullAssertion: timestamps are good */}
+						{timestampDate(item.timestamp!).toLocaleString()}
+					</span>
+					<span class="flex-1 truncate font-medium">{item.name}</span>
+					<span class="shrink-0 font-mono tabular-nums">{item.number}</span>
 				</div>
 			)}
 		</Show>
