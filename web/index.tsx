@@ -3,9 +3,11 @@
 import { Route, Router } from "@solidjs/router";
 import { render } from "solid-js/web";
 
-import Home from "./routes/home";
-
 import "./index.css";
+
+import Layout from "./layout/Layout";
+import Home from "./routes/home";
+import Numbers from "./routes/numbers";
 
 const wrapper = document.getElementById("app");
 
@@ -15,8 +17,9 @@ if (!wrapper) {
 
 render(
 	() => (
-		<Router>
+		<Router root={Layout}>
 			<Route path="/" component={Home} />
+			<Route path="/numbers" component={Numbers} />
 		</Router>
 	),
 	wrapper,

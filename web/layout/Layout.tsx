@@ -1,0 +1,56 @@
+import { Toast } from "@kobalte/core";
+import { NavigationMenu } from "@kobalte/core/navigation-menu";
+import { A } from "@solidjs/router";
+import { CodeXml } from "lucide-solid";
+import { type Component, children, type JSX } from "solid-js";
+import { Portal } from "solid-js/web";
+import logo from "$assets/logo.svg";
+
+const Layout: Component<{ children?: JSX.Element }> = (props) => {
+	const resolved = children(() => props.children);
+
+	return (
+		<div class="flex h-dvh flex-col">
+			<header class="flex items-center justify-between border-ctp-surface0 border-b bg-ctp-base px-4 py-3">
+				<h1 class="flex cursor-default items-center gap-2 font-mono font-semibold text-lg">
+					TrevStack <img src={logo} class="h-6" alt="logo" />
+				</h1>
+				<NavigationMenu class="flex gap-5">
+					<NavigationMenu.Trigger
+						as={A}
+						href="/"
+						activeClass="underline decoration-ctp-sky underline-offset-4 decoration-2"
+						end={true}
+					>
+						Home
+					</NavigationMenu.Trigger>
+					<NavigationMenu.Trigger
+						as={A}
+						href="/numbers"
+						activeClass="underline decoration-ctp-sky underline-offset-4 decoration-2"
+					>
+						Numbers
+					</NavigationMenu.Trigger>
+					<NavigationMenu.Trigger
+						as="a"
+						href="https://github.com/spotdemo4/trevstack"
+						target="_blank"
+					>
+						<CodeXml />
+					</NavigationMenu.Trigger>
+					<NavigationMenu.Viewport>
+						<NavigationMenu.Arrow />
+					</NavigationMenu.Viewport>
+				</NavigationMenu>
+			</header>
+			<main class="grow overflow-auto p-4">{resolved()}</main>
+			<Portal>
+				<Toast.Region>
+					<Toast.List class="fixed top-4 right-4 z-50 flex w-96 max-w-[calc(100vw-2rem)] flex-col gap-2 outline-none" />
+				</Toast.Region>
+			</Portal>
+		</div>
+	);
+};
+
+export default Layout;

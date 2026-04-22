@@ -56,6 +56,7 @@
               nixfmt
               tombi
               prettier
+              treefmt
 
               # util
               mprocs
@@ -281,6 +282,7 @@
                   ./web/vite.config.ts
                   ./web/assets
                   ./web/connect
+                  ./web/layout
                   ./web/lib
                   ./web/src
                 ];

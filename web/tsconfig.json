@@ -19,6 +19,7 @@
 
     // Paths
     "paths": {
+      "$assets/*": ["./assets/*"],
       "$connect/*": ["./connect/*"],
       "$lib/*": ["./lib/*"]
     }
