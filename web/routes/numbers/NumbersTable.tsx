@@ -45,6 +45,11 @@ const NumbersTable: Component<{
 
 	return (
 		<div ref={parentRef} class="h-full w-full overflow-auto">
+			<div class="sticky top-0 z-10 flex w-full flex-row items-center gap-4 border-ctp-surface0 border-b bg-ctp-base px-4 py-2 font-semibold text-ctp-subtext1 text-xs uppercase tracking-wide">
+				<span class="w-48 shrink-0">Timestamp</span>
+				<span class="flex-1">Name</span>
+				<span class="shrink-0">Number</span>
+			</div>
 			{/* The large inner element to hold all of the items */}
 			<div
 				style={{
