@@ -67,7 +67,7 @@ releases are automatically created for [significant](https://www.conventionalcom
 ### docker
 
 ```elm
-docker run ghcr.io/spotdemo4/trevstack:0.0.3
+docker run -P ghcr.io/spotdemo4/trevstack:0.0.3
 ```
 
 ### nix

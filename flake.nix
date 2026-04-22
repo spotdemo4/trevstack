@@ -291,6 +291,9 @@
         images.default = pkgs.mkImage {
           src = self.packages.${system}.default;
           contents = with pkgs; [ dockerTools.caCertificates ];
+          config.ExposedPorts = {
+            "8080/tcp" = { };
+          };
         };
 
         schemas = trev.schemas;
