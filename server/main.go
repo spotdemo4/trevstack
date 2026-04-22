@@ -6,8 +6,6 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"log"
-	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -19,15 +17,17 @@ import (
 	"connectrpc.com/validate"
 	greetv1handler "github.com/spotdemo4/trevstack/server/handlers/greet/v1"
 	"github.com/spotdemo4/trevstack/server/interceptors"
+	"github.com/spotdemo4/trevstack/server/logger"
 )
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	log := logger.New()
+	ctx = logger.WithLog(ctx, log)
 
-	li := interceptors.NewLogInterceptor(logger)
+	li := interceptors.NewLogInterceptor(log)
 	vi := validate.NewInterceptor()
 	api := http.NewServeMux()
 
@@ -41,8 +41,13 @@ func main() {
 	p.SetHTTP1(true)
 	p.SetUnencryptedHTTP2(true) // Use h2c so we can serve HTTP/2 without TLS.
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	server := &http.Server{
-		Addr:      fmt.Sprintf(":%d", 8080),
+		Addr:      fmt.Sprintf(":%s", port),
 		Handler:   interceptors.WithCORS(mux),
 		Protocols: p,
 		BaseContext: func(_ net.Listener) context.Context {
@@ -53,15 +58,15 @@ func main() {
 
 	wg := sync.WaitGroup{}
 	wg.Go((func() {
-		log.Println("Starting server on port 8080")
+		log.InfoContext(ctx, "starting", "port", port)
 		err := server.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Server failed: %v", err)
+			log.ErrorContext(ctx, "could not listen and serve", "error", err)
 		}
 	}))
 
 	<-ctx.Done()
-	log.Println("Shutting down server")
+	log.InfoContext(ctx, "shutting down")
 	server.Shutdown(context.Background())
 
 	wg.Wait()

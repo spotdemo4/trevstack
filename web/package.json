@@ -22,9 +22,12 @@
     "vite-plugin-solid": "^2.11.12"
   },
   "dependencies": {
+    "@bufbuild/protovalidate": "^1.1.1",
     "@connectrpc/connect": "^2.1.1",
     "@connectrpc/connect-web": "^2.1.1",
+    "@connectrpc/validate": "^0.2.0",
     "@kobalte/core": "^0.13.11",
+    "@tanstack/solid-form": "^1.29.1",
     "solid-js": "^1.9.12"
   }
 }

@@ -1,10 +1,11 @@
 import { ConnectError, createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-
+import { createValidateInterceptor } from "@connectrpc/validate";
 import { GreetService } from "$connect/greet/v1/greet_pb";
 
 const transport = createConnectTransport({
 	baseUrl: `${window.location.origin}/grpc`,
+	interceptors: [createValidateInterceptor()],
 });
 
 type Result<T> = [T, null] | [null, ConnectError];

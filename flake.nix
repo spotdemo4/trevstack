@@ -219,6 +219,7 @@
                   ./server/connect
                   ./server/handlers
                   ./server/interceptors
+                  ./server/logger
                   ./server/vendor
                 ];
               };
