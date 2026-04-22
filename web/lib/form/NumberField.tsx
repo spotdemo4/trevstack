@@ -24,22 +24,20 @@ export function NumberField(props: { label?: string }) {
 					{props.label}
 				</NumberFieldPrimative.Label>
 			</Show>
-			<div class="flex gap-1">
-				<NumberFieldPrimative.Input class="grow rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40" />
-				<div class="flex flex-col rounded-md border border-ctp-surface1 bg-ctp-base text-ctp-text">
-					<NumberFieldPrimative.IncrementTrigger
-						aria-label="Increment"
-						class="cursor-pointer rounded-t-sm transition-colors hover:bg-ctp-surface1"
-					>
-						<ChevronUp size={18} />
-					</NumberFieldPrimative.IncrementTrigger>
-					<NumberFieldPrimative.DecrementTrigger
-						aria-label="Decrement"
-						class="cursor-pointer rounded-b-sm transition-colors hover:bg-ctp-surface1"
-					>
-						<ChevronDown size={18} />
-					</NumberFieldPrimative.DecrementTrigger>
-				</div>
+			<div class="relative">
+				<NumberFieldPrimative.Input class="w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40" />
+				<NumberFieldPrimative.IncrementTrigger
+					aria-label="Increment"
+					class="absolute top-1 right-1 cursor-pointer rounded-t-sm transition-colors hover:bg-ctp-surface1"
+				>
+					<ChevronUp size={15} />
+				</NumberFieldPrimative.IncrementTrigger>
+				<NumberFieldPrimative.DecrementTrigger
+					aria-label="Decrement"
+					class="absolute right-1 bottom-1 cursor-pointer rounded-b-sm transition-colors hover:bg-ctp-surface1"
+				>
+					<ChevronDown size={15} />
+				</NumberFieldPrimative.DecrementTrigger>
 			</div>
 			<NumberFieldPrimative.ErrorMessage class="text-ctp-red text-xs">
 				{field()
