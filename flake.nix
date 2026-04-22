@@ -1,5 +1,5 @@
 {
-  description = "go template";
+  description = "TrevStack is a template for full-stack applications built with Go, SolidJS, and ConnectRPC.";
 
   nixConfig = {
     extra-substituters = [

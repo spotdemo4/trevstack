@@ -6,7 +6,7 @@
 [![go](https://img.shields.io/github/go-mod/go-version/spotdemo4/trevstack?filename=server%2Fgo.mod&logo=go&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%2300ADD8)](https://go.dev/doc/devel/release)
 [![flakehub](https://img.shields.io/endpoint?url=https://flakehub.com/f/spotdemo4/trevstack/badge&labelColor=%23313244)](https://flakehub.com/flake/spotdemo4/trevstack)
 
-template for starting TrevStack projects
+TrevStack is a template for full-stack applications built with Go, SolidJS, and ConnectRPC
 
 part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
