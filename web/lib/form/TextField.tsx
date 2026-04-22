@@ -19,12 +19,12 @@ export function TextField(props: { label?: string }) {
 			class="flex flex-col gap-1.5"
 		>
 			<Show when={props.label}>
-				<TextFieldPrimative.Label class="text-sm font-medium text-ctp-subtext1 data-invalid:text-ctp-red">
+				<TextFieldPrimative.Label class="font-medium text-ctp-subtext1 text-sm data-invalid:text-ctp-red">
 					{props.label}
 				</TextFieldPrimative.Label>
 			</Show>
-			<TextFieldPrimative.Input class="rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text placeholder:text-ctp-overlay0 transition-colors hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40" />
-			<TextFieldPrimative.ErrorMessage class="text-xs text-ctp-red">
+			<TextFieldPrimative.Input class="rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40" />
+			<TextFieldPrimative.ErrorMessage class="text-ctp-red text-xs">
 				{field()
 					.state.meta.errors.map((err) => err.message)
 					.join(",")}

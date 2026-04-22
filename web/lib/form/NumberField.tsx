@@ -20,28 +20,28 @@ export function NumberField(props: { label?: string }) {
 			class="flex flex-col gap-1.5"
 		>
 			<Show when={props.label}>
-				<NumberFieldPrimative.Label class="text-sm font-medium text-ctp-subtext1 data-invalid:text-ctp-red">
+				<NumberFieldPrimative.Label class="font-medium text-ctp-subtext1 text-sm data-invalid:text-ctp-red">
 					{props.label}
 				</NumberFieldPrimative.Label>
 			</Show>
 			<div class="flex gap-1">
-				<NumberFieldPrimative.Input class="rounded-md grow border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text placeholder:text-ctp-overlay0 transition-colors hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40" />
+				<NumberFieldPrimative.Input class="grow rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40" />
 				<div class="flex flex-col rounded-md border border-ctp-surface1 bg-ctp-base text-ctp-text">
 					<NumberFieldPrimative.IncrementTrigger
 						aria-label="Increment"
-						class="cursor-pointer transition-colors rounded-t-sm hover:bg-ctp-surface1"
+						class="cursor-pointer rounded-t-sm transition-colors hover:bg-ctp-surface1"
 					>
 						<ChevronUp size={18} />
 					</NumberFieldPrimative.IncrementTrigger>
 					<NumberFieldPrimative.DecrementTrigger
 						aria-label="Decrement"
-						class="cursor-pointer transition-colors rounded-b-sm hover:bg-ctp-surface1"
+						class="cursor-pointer rounded-b-sm transition-colors hover:bg-ctp-surface1"
 					>
 						<ChevronDown size={18} />
 					</NumberFieldPrimative.DecrementTrigger>
 				</div>
 			</div>
-			<NumberFieldPrimative.ErrorMessage class="text-xs text-ctp-red">
+			<NumberFieldPrimative.ErrorMessage class="text-ctp-red text-xs">
 				{field()
 					.state.meta.errors.map((err) => err.message)
 					.join(",")}

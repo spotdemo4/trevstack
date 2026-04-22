@@ -12,7 +12,7 @@ export function Form(props: { children?: JSX.Element }) {
 				e.stopPropagation();
 				form.handleSubmit();
 			}}
-			class="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-ctp-surface0 bg-ctp-mantle p-6 shadow-lg shadow-ctp-crust/40"
+			class="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-ctp-surface0 bg-ctp-mantle p-6 shadow-ctp-crust/40 shadow-lg"
 		>
 			{resolved()}
 		</form>

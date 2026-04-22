@@ -6,7 +6,12 @@
   },
 
   "linter": {
-    "enabled": true
+    "enabled": true,
+    "rules": {
+      "nursery": {
+        "useSortedClasses": "error"
+      }
+    }
   },
 
   "assist": {

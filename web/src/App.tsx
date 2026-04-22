@@ -7,7 +7,7 @@ import logo from "./logo.svg";
 const App: Component = () => {
 	return (
 		<>
-			<div class="flex flex-col items-center justify-center gap-4 h-screen text-ctp-text">
+			<div class="flex h-screen flex-col items-center justify-center gap-4 text-ctp-text">
 				<img src={logo} class="h-28" alt="logo" />
 				<AddForm />
 			</div>

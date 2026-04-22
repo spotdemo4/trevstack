@@ -6,10 +6,15 @@ excludes = ["server/vendor/*", "server/connect/*", "web/connect/*"]
 command = "gofmt"
 includes = ["*.go"]
 
-[formatter.biome]
+[formatter.biome-format]
 command = "biome"
 options = ["format", "--write"]
-includes = ["*.js", "*.ts", "*.html", "*.css"]
+includes = ["*.ts", "*.tsx", "*.html", "*.css"]
+
+[formatter.biome-lint]
+command = "biome"
+options = ["lint", "--unsafe", "--write"]
+includes = ["*.ts", "*.tsx", "*.html", "*.css"]
 
 [formatter.buf]
 command = "buf"
