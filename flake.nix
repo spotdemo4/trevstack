@@ -272,7 +272,9 @@
                 root = ./web;
                 fileset = fileset.unions [
                   ./web/.npmrc
+                  ./web/index.css
                   ./web/index.html
+                  ./web/index.tsx
                   ./web/package.json
                   ./web/package-lock.json
                   ./web/tsconfig.json
