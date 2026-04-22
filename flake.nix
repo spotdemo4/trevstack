@@ -120,6 +120,10 @@
               ./.gitignore
               ./biome.json
             ];
+            ignore = [
+              ./server/vendor
+              ./web/connect
+            ];
             packages = with pkgs; [
               biome
             ];

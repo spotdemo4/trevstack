@@ -1,10 +1,6 @@
 {
   "$schema": "https://biomejs.dev/schemas/latest/schema.json",
 
-  "files": {
-    "includes": ["**", "!!**/connect", "!!**/vendor"]
-  },
-
   "formatter": {
     "enabled": true
   },
