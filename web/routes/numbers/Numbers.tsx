@@ -1,4 +1,5 @@
 import { createAsync } from "@solidjs/router";
+import { LoaderCircle } from "lucide-solid";
 import { type Component, Show, Suspense } from "solid-js";
 import { NumberClient } from "$lib/transport";
 import NumbersTable from "./NumbersTable";
@@ -15,9 +16,9 @@ const App: Component = () => {
 	});
 
 	return (
-		<div class="flex h-body flex-col items-center justify-center gap-4 pt-4">
+		<div class="flex h-body flex-col items-center gap-4 pt-4">
 			<h1 class="font-bold text-2xl">Numbers</h1>
-			<Suspense fallback={<span>Loading account stats...</span>}>
+			<Suspense fallback={<LoaderCircle class="animate-spin" />}>
 				<Show when={numbers()} fallback={<span>No numbers found.</span>} keyed>
 					{(resp) => (
 						<NumbersTable
