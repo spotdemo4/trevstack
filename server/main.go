@@ -5,7 +5,6 @@ import (
 	"context"
 	"embed"
 	"fmt"
-	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -17,9 +16,12 @@ import (
 	"connectrpc.com/validate"
 	"github.com/spotdemo4/trevstack/server/database"
 	numberv1handler "github.com/spotdemo4/trevstack/server/handlers/number/v1"
+	"github.com/spotdemo4/trevstack/server/handlers/web"
 	"github.com/spotdemo4/trevstack/server/interceptors"
 	"github.com/spotdemo4/trevstack/server/logger"
 )
+
+var WebFS embed.FS
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -38,10 +40,7 @@ func main() {
 	li := interceptors.NewLogInterceptor(log)
 	vi := validate.NewInterceptor()
 
-	web := webHandler()
-	if web == http.NotFoundHandler() {
-		log.WarnContext(ctx, "web build not found, UI will not be available")
-	}
+	web := web.Handler(ctx, WebFS)
 
 	api := http.NewServeMux()
 	api.Handle(numberv1handler.New(connect.WithInterceptors(li, vi)))
@@ -84,20 +83,4 @@ func main() {
 	server.Shutdown(context.Background())
 
 	wg.Wait()
-}
-
-var WebFS embed.FS
-
-func webHandler() http.Handler {
-	entries, err := WebFS.ReadDir(".")
-	if err != nil || len(entries) == 0 {
-		return http.NotFoundHandler()
-	}
-
-	web, err := fs.Sub(WebFS, "web")
-	if err != nil {
-		return http.NotFoundHandler()
-	}
-
-	return http.FileServer(http.FS(web))
 }
