@@ -48,7 +48,6 @@ const App: Component = () => {
 	const totalCount = createMemo(() => response()?.totalCount);
 
 	const onSubmit = (value: Request) => {
-		console.log("what??", value);
 		setRequest(value);
 	};
 

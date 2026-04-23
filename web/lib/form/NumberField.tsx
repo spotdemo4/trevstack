@@ -5,12 +5,19 @@ import { useFieldContext } from "./context";
 
 export function NumberField(props: { label?: string }) {
 	const field = useFieldContext<number>();
+	const name = field().name;
 
 	return (
 		<NumberFieldPrimative
-			name={field().name}
-			rawValue={field().state.value}
-			onRawValueChange={field().handleChange}
+			name={name}
+			rawValue={field().state.value ?? undefined}
+			onRawValueChange={(c) => {
+				if (Number.isNaN(c)) {
+					field().form.deleteField(name);
+				} else {
+					field().handleChange(c);
+				}
+			}}
 			onBlur={field().handleBlur}
 			validationState={
 				field().state.meta.isTouched && !field().state.meta.isValid

@@ -4,12 +4,19 @@ import { useFieldContext } from "./context";
 
 export function TextField(props: { label?: string }) {
 	const field = useFieldContext<string>();
+	const name = field().name;
 
 	return (
 		<TextFieldPrimative
-			name={field().name}
+			name={name}
 			value={field().state.value}
-			onChange={field().handleChange}
+			onChange={(c) => {
+				if (c === "") {
+					field().form.deleteField(name);
+				} else {
+					field().handleChange(c);
+				}
+			}}
 			onBlur={field().handleBlur}
 			validationState={
 				field().state.meta.isTouched && !field().state.meta.isValid
