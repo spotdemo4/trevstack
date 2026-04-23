@@ -37,12 +37,18 @@ func main() {
 
 	li := interceptors.NewLogInterceptor(log)
 	vi := validate.NewInterceptor()
-	api := http.NewServeMux()
 
+	web := webHandler()
+	if web == http.NotFoundHandler() {
+		log.WarnContext(ctx, "web build not found, UI will not be available")
+	}
+
+	api := http.NewServeMux()
 	api.Handle(numberv1handler.New(connect.WithInterceptors(li, vi)))
 
 	mux := http.NewServeMux()
-	mux.Handle("/", webHandler())
+	mux.Handle("/", web)
+	mux.Handle("/numbers/", http.StripPrefix("/numbers", web))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
 	p := new(http.Protocols)

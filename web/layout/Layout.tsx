@@ -27,7 +27,7 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 					</NavigationMenu.Trigger>
 					<NavigationMenu.Trigger
 						as={A}
-						href="/numbers"
+						href="/numbers/"
 						class="rounded underline decoration-2 decoration-transparent underline-offset-4 transition-colors hover:decoration-ctp-overlay0 focus:outline-none"
 						activeClass="!decoration-ctp-sky"
 					>

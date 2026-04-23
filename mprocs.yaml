@@ -4,4 +4,4 @@ procs:
     shell: "go run -tags dev ."
   web:
     cwd: web
-    shell: "npm run dev"
+    shell: "npm i && npm run dev"
