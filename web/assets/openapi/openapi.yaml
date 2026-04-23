@@ -240,7 +240,6 @@ components:
             - "null"
           title: name
           maxLength: 50
-          minLength: 1
         min:
           type:
             - integer

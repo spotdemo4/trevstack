@@ -1,39 +1,30 @@
 import type { Component } from "solid-js";
-import { AddRequestSchema } from "$connect/number/v1/add_pb";
+import { type AddRequest, AddRequestSchema } from "$connect/number/v1/add_pb";
 import { useAppForm } from "$lib/form/hook";
 import { createSchema } from "$lib/schema";
-import { toast } from "$lib/toast";
-import { NumberClient } from "$lib/transport";
 
+type Request = Omit<AddRequest, "$typeName">;
 const schema = createSchema(AddRequestSchema);
 
-const AddForm: Component = () => {
+const AddForm: Component<{
+	onSubmit: (value: Request) => void;
+}> = (props) => {
 	const form = useAppForm(() => ({
 		defaultValues: {
 			name: "",
-			number: 0,
-		},
+		} as Request,
 		validators: {
 			onChange: schema,
 		},
 		onSubmit: async ({ value }) => {
-			const [response, err] = await NumberClient.add({
-				name: value.name,
-				number: value.number,
-			});
-			if (err) {
-				toast.error(`Failed to add: ${err.message}`);
-				return;
-			}
-
-			toast.success(`Total: ${response.sum}`);
+			props.onSubmit(value);
 			form.reset();
 		},
 	}));
 
 	return (
 		<form.AppForm>
-			<form.Form>
+			<form.Form class="max-w-sm flex-col">
 				<form.AppField
 					name="name"
 					children={(field) => <field.TextField label="Name" />}

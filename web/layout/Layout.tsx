@@ -49,7 +49,7 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 			<main class="grow">{resolved()}</main>
 			<Portal>
 				<Toast.Region>
-					<Toast.List class="fixed top-4 right-4 z-50 flex w-96 max-w-[calc(100vw-2rem)] flex-col gap-2 outline-none" />
+					<Toast.List class="fixed right-4 bottom-4 z-50 flex w-96 max-w-[calc(100vw-2rem)] flex-col gap-2 outline-none" />
 				</Toast.Region>
 			</Portal>
 		</div>

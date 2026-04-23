@@ -1,34 +1,96 @@
-import { createAsync } from "@solidjs/router";
+import type { Virtualizer } from "@tanstack/solid-virtual";
 import { LoaderCircle } from "lucide-solid";
-import { type Component, Show, Suspense } from "solid-js";
+import {
+	type Component,
+	createMemo,
+	createResource,
+	createSignal,
+	Match,
+	Show,
+	Switch,
+} from "solid-js";
+import type { ListRequest, ListResponse } from "$connect/number/v1/list_pb";
 import { NumberClient } from "$lib/transport";
-import NumbersTable from "./NumbersTable";
+import Form from "./Form";
+import Table from "./Table";
+
+type Request = Omit<ListRequest, "$typeName">;
+type Response = Omit<ListResponse, "$typeName">;
 
 const App: Component = () => {
-	const numbers = createAsync(async () => {
-		const [response, err] = await NumberClient.list({});
-		if (err) {
-			console.error("Failed to fetch numbers:", err);
-			return;
-		}
+	const [request, setRequest] = createSignal<Request>({});
 
-		return response;
-	});
+	const [response] = createResource<Response | undefined, Request>(
+		request,
+		async (req, info) => {
+			const [resp, err] = await NumberClient.list(req);
+			if (err) {
+				console.error("Failed to fetch numbers:", err);
+				return info.value;
+			}
+
+			if (resp.totalCount === info.value?.totalCount) {
+				return {
+					items: [...(info.value?.items ?? []), ...(resp.items ?? [])],
+					totalCount: resp.totalCount,
+					nextCursor: resp.nextCursor,
+				};
+			}
+
+			return {
+				items: resp.items,
+				totalCount: resp.totalCount,
+				nextCursor: resp.nextCursor,
+			};
+		},
+	);
+
+	const totalCount = createMemo(() => response()?.totalCount);
+
+	const onSubmit = (value: Request) => {
+		console.log("what??", value);
+		setRequest(value);
+	};
+
+	const onScroll = (instance: Virtualizer<HTMLDivElement, Element>) => {
+		const req = request();
+		const resp = response.latest;
+
+		if (!resp || !instance.range) return;
+		if (resp.nextCursor === req?.cursor) return;
+		if (instance.range.endIndex < resp.items.length - 5) return;
+		setRequest({ ...req, cursor: resp.nextCursor });
+	};
 
 	return (
-		<div class="flex h-body flex-col items-center gap-4 pt-4">
-			<h1 class="font-bold text-2xl">Numbers</h1>
-			<Suspense fallback={<LoaderCircle class="animate-spin" />}>
-				<Show when={numbers()} fallback={<span>No numbers found.</span>} keyed>
-					{(resp) => (
-						<NumbersTable
-							count={resp.totalCount}
-							cursor={resp.nextCursor}
-							items={resp.items}
-						/>
-					)}
-				</Show>
-			</Suspense>
+		<div class="flex h-body items-center gap-4">
+			<div class="h-full border-ctp-surface0 border-r bg-ctp-mantle p-6 shadow-ctp-crust/40 shadow-lg">
+				<Form onSubmit={onSubmit} />
+			</div>
+			<Show
+				when={totalCount()}
+				fallback={
+					<div class="flex h-full w-full items-center justify-center">
+						<Switch>
+							<Match when={totalCount() === undefined}>
+								<LoaderCircle class="animate-spin" />
+							</Match>
+							<Match when={totalCount() === BigInt(0)}>
+								<p>No numbers found :(</p>
+							</Match>
+						</Switch>
+					</div>
+				}
+				keyed
+			>
+				{(resp) => (
+					<Table
+						count={resp}
+						items={() => response()?.items ?? []}
+						onScroll={onScroll}
+					/>
+				)}
+			</Show>
 		</div>
 	);
 };

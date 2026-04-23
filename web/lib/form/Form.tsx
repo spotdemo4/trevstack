@@ -1,7 +1,8 @@
 import { children, type JSX } from "solid-js";
+import { twMerge } from "tailwind-merge";
 import { useFormContext } from "./context";
 
-export function Form(props: { children?: JSX.Element }) {
+export function Form(props: { children?: JSX.Element; class?: string }) {
 	const form = useFormContext();
 	const resolved = children(() => props.children);
 
@@ -12,7 +13,7 @@ export function Form(props: { children?: JSX.Element }) {
 				e.stopPropagation();
 				form.handleSubmit();
 			}}
-			class="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-ctp-surface0 bg-ctp-mantle p-6 shadow-ctp-crust/40 shadow-lg"
+			class={twMerge("flex w-full flex-col gap-4", props.class)}
 		>
 			{resolved()}
 		</form>

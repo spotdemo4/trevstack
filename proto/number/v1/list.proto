@@ -20,7 +20,7 @@ message Item {
 message ListRequest {
   optional int64 cursor = 1;
   optional string name = 2 [(buf.validate.field).string = {
-    min_len: 1
+    min_len: 0
     max_len: 50
   }];
   optional uint32 min = 3 [(buf.validate.field).uint32 = {

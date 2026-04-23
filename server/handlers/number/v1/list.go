@@ -68,6 +68,7 @@ func (h *Handler) List(
 		if err := rows.Scan(&rowid, &ts, &name, &number); err != nil {
 			return nil, err
 		}
+
 		items = append(items, &numberv1.Item{
 			Timestamp: timestamppb.New(ts),
 			Name:      name,
@@ -90,10 +91,17 @@ func (h *Handler) List(
 		return nil, err
 	}
 
+	nextCursor := int64(0)
+	if len(items) > 0 {
+		nextCursor = rowIDs[len(items)-1]
+	} else if req.Cursor != nil {
+		nextCursor = *req.Cursor
+	}
+
 	resp := &numberv1.ListResponse{
 		Items:      items,
-		NextCursor: rowIDs[len(items)-1],
 		TotalCount: totalCount,
+		NextCursor: nextCursor,
 	}
 
 	return resp, nil
