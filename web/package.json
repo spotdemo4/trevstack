@@ -18,11 +18,11 @@
     "@tailwindcss/vite": "^4.2.4",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
-    "vite": "^8.0.9",
+    "vite": "^8.0.10",
     "vite-plugin-solid": "^2.11.12"
   },
   "dependencies": {
-    "@bufbuild/protovalidate": "^1.1.1",
+    "@bufbuild/protovalidate": "^1.2.0",
     "@connectrpc/connect": "^2.1.1",
     "@connectrpc/connect-web": "^2.1.1",
     "@connectrpc/validate": "^0.2.0",
