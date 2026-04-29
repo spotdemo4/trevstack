@@ -101,114 +101,6 @@
           vendor = "cd server && go mod tidy && go mod vendor";
         };
 
-        checks = pkgs.mkChecks {
-          go = {
-            root = ./server;
-            packages = with pkgs; [
-              gcc
-              go
-              go-tools
-            ];
-            script = ''
-              go test -tags dev ./...
-              go vet -tags dev ./...
-              staticcheck -tags dev ./...
-            '';
-          };
-
-          biome = {
-            root = ./.;
-            filter = file: file.hasExt "ts" || file.hasExt "tsx" || file.hasExt "html" || file.hasExt "css";
-            include = [
-              ./.gitignore
-              ./biome.json
-            ];
-            ignore = [
-              ./server/vendor
-              ./web/connect
-            ];
-            packages = with pkgs; [
-              biome
-            ];
-            script = ''
-              biome ci
-            '';
-          };
-
-          actions = {
-            root = ./.github;
-            files = ./.github/workflows;
-            packages = with pkgs; [
-              action-validator
-              zizmor
-            ];
-            forEach = ''
-              action-validator "$file"
-              zizmor --offline "$file"
-            '';
-          };
-
-          renovate = {
-            root = ./.github;
-            files = ./.github/renovate.json;
-            packages = with pkgs; [
-              renovate
-            ];
-            script = ''
-              renovate-config-validator renovate.json
-            '';
-          };
-
-          sql = {
-            root = ./.;
-            filter = file: file.hasExt "sql";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              sqlfluff
-            ];
-            forEach = ''
-              sqlfluff lint --dialect sqlite "$file"
-            '';
-          };
-
-          nix = {
-            root = ./.;
-            filter = file: file.hasExt "nix";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              nixfmt
-            ];
-            forEach = ''
-              nixfmt --check "$file"
-            '';
-          };
-
-          prettier = {
-            root = ./.;
-            filter = file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              prettier
-            ];
-            forEach = ''
-              prettier --check "$file"
-            '';
-          };
-
-          tombi = {
-            root = ./.;
-            filter = file: file.hasExt "toml";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              tombi
-            ];
-            forEach = ''
-              tombi format --offline --check "$file"
-              tombi lint --offline --error-on-warnings "$file"
-            '';
-          };
-        };
-
         formatter = pkgs.treefmt.withConfig {
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
@@ -299,7 +191,7 @@
               '';
 
               meta = {
-                description = "trevstack-web";
+                description = "Template for TrevStack applications - web client";
                 license = licenses.mit;
                 platforms = platforms.all;
                 homepage = "https://github.com/spotdemo4/trevstack";
@@ -317,7 +209,113 @@
           };
         };
 
-        schemas = trev.schemas;
+        checks = pkgs.mkChecks {
+          go = {
+            root = ./server;
+            packages = with pkgs; [
+              gcc
+              go
+              go-tools
+            ];
+            script = ''
+              go test -tags dev ./...
+              go vet -tags dev ./...
+              staticcheck -tags dev ./...
+            '';
+          };
+
+          biome = {
+            root = ./.;
+            filter = file: file.hasExt "ts" || file.hasExt "tsx" || file.hasExt "html" || file.hasExt "css";
+            include = [
+              ./.gitignore
+              ./biome.json
+            ];
+            ignore = [
+              ./server/vendor
+              ./web/connect
+            ];
+            packages = with pkgs; [
+              biome
+            ];
+            script = ''
+              biome ci
+            '';
+          };
+
+          actions = {
+            root = ./.github/workflows;
+            filter = file: file.hasExt "yaml";
+            packages = with pkgs; [
+              action-validator
+              zizmor
+            ];
+            forEach = ''
+              action-validator "$file"
+              zizmor --offline "$file"
+            '';
+          };
+
+          renovate = {
+            root = ./.github;
+            files = ./.github/renovate.json;
+            packages = with pkgs; [
+              renovate
+            ];
+            script = ''
+              renovate-config-validator renovate.json
+            '';
+          };
+
+          sql = {
+            root = ./.;
+            filter = file: file.hasExt "sql";
+            ignore = ./server/vendor;
+            packages = with pkgs; [
+              sqlfluff
+            ];
+            forEach = ''
+              sqlfluff lint --dialect sqlite "$file"
+            '';
+          };
+
+          nix = {
+            root = ./.;
+            filter = file: file.hasExt "nix";
+            ignore = ./server/vendor;
+            packages = with pkgs; [
+              nixfmt
+            ];
+            forEach = ''
+              nixfmt --check "$file"
+            '';
+          };
+
+          prettier = {
+            root = ./.;
+            filter = file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md";
+            ignore = ./server/vendor;
+            packages = with pkgs; [
+              prettier
+            ];
+            forEach = ''
+              prettier --check "$file"
+            '';
+          };
+
+          tombi = {
+            root = ./.;
+            filter = file: file.hasExt "toml";
+            ignore = ./server/vendor;
+            packages = with pkgs; [
+              tombi
+            ];
+            forEach = ''
+              tombi format --offline --check "$file"
+              tombi lint --offline --error-on-warnings "$file"
+            '';
+          };
+        };
       }
     );
 }

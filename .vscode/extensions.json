@@ -1,12 +1,12 @@
 {
   "recommendations": [
-    "golang.go",
     "biomejs.biome",
+    "bradlc.vscode-tailwindcss",
     "bufbuild.vscode-buf",
-    "sqlfluff.vscode-sqlfluff",
-    "jnoortheen.nix-ide",
-    "tombi-toml.tombi",
     "esbenp.prettier-vscode",
-    "bradlc.vscode-tailwindcss"
+    "golang.go",
+    "jnoortheen.nix-ide",
+    "sqlfluff.vscode-sqlfluff",
+    "tombi-toml.tombi"
   ]
 }

@@ -1,17 +1,56 @@
 {
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "files.associations": {
     "renovate.json": "jsonc",
     ".envrc.project": "dotenv",
     ".envrc": "dotenv",
+    ".sqlfluff": "toml",
     "*.css": "tailwindcss"
   },
 
   "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json",
-    "flake.nix": "flake.lock",
-    "buf.yaml": "buf.lock",
-    "go.mod": "go.sum"
+    ".envrc.project": ".envrc",
+    "buf.yaml": "buf.gen.yaml,buf.lock",
+    "flake.nix": "flake.lock,treefmt.toml",
+    "README.md": "*.md,LICENSE"
+  },
+
+  "json.schemaDownload.trustedDomains": {
+    "https://docs.renovatebot.com/": true
+  },
+
+  "chat.tools.terminal.autoApprove": {
+    "treefmt": true,
+
+    // nix
+    "nix build": true,
+    "nix flake check": true,
+
+    // npm
+    "npm run dev": true,
+    "npm install": true,
+    "npm update": true,
+    "npm audit fix": true,
+
+    // go
+    "go run": true,
+    "go mod tidy": true,
+    "go mod vendor": true
+  },
+
+  // nix
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nixd",
+  "nix.serverSettings": {
+    "nixd": {
+      "nixpkgs": {
+        "expr": "(builtins.getFlake (builtins.toString ./.)).outputs.nixpkgs.${builtins.currentSystem}"
+      }
+    }
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
 
   // go
@@ -21,7 +60,7 @@
     "editor.defaultFormatter": "golang.go"
   },
 
-  // solid
+  // biome
   "biome.enabled": true,
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
@@ -56,23 +95,8 @@
     "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
   },
 
-  // nix
-  "nix.enableLanguageServer": true,
-  "nix.serverPath": "nixd",
-  "[nix]": {
-    "editor.defaultFormatter": "jnoortheen.nix-ide"
-  },
-
   // toml
   "[toml]": {
     "editor.defaultFormatter": "tombi-toml.tombi"
-  },
-
-  // actions
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-
-  // json
-  "json.schemaDownload.trustedDomains": {
-    "https://docs.renovatebot.com/": true
   }
 }

@@ -36,6 +36,11 @@
       "groupName": "github actions"
     },
     {
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "go modules"
+    },
+    {
       "matchManagers": ["npm"],
       "rangeStrategy": "bump",
       "postUpdateOptions": ["npmInstallTwice"]
@@ -49,11 +54,6 @@
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "node packages"
-    },
-    {
-      "matchManagers": ["gomod"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "go modules"
     }
   ]
 }

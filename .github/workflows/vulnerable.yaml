@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  server:
+  go:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -22,7 +22,7 @@ jobs:
       - name: Run govulncheck
         run: cd server && govulncheck ./...
 
-  web:
+  npm:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -35,7 +35,7 @@ jobs:
       - name: Run npm audit
         run: cd web && npm audit --audit-level moderate
 
-  flake:
+  nix:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
