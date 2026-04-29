@@ -13,7 +13,8 @@
     ".envrc.project": ".envrc",
     "buf.yaml": "buf.gen.yaml,buf.lock",
     "flake.nix": "flake.lock,treefmt.toml",
-    "README.md": "*.md,LICENSE"
+    "README.md": "*.md,LICENSE",
+    "package.json": "package-lock.json,.npmrc"
   },
 
   "json.schemaDownload.trustedDomains": {
