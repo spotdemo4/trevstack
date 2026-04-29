@@ -227,13 +227,13 @@
           biome = {
             root = ./.;
             filter = file: file.hasExt "ts" || file.hasExt "tsx" || file.hasExt "html" || file.hasExt "css";
-            include = [
-              ./.gitignore
-              ./biome.json
-            ];
             ignore = [
               ./server/vendor
               ./web/connect
+            ];
+            include = [
+              ./.gitignore
+              ./biome.json
             ];
             packages = with pkgs; [
               biome
