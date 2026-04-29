@@ -10,7 +10,7 @@ message AddRequest {
     max_len: 50
   }];
   uint32 number = 2 [(buf.validate.field).uint32 = {
-    gte: 0
+    gte: 1
     lte: 1000000
   }];
 }

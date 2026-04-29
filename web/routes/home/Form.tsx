@@ -10,10 +10,9 @@ const AddForm: Component<{
 	onSubmit: (value: Request) => void;
 }> = (props) => {
 	const form = useAppForm(() => ({
-		defaultValues: {
-			name: "",
-		} as Request,
+		defaultValues: {} as Request,
 		validators: {
+			onMount: schema,
 			onChange: schema,
 		},
 		onSubmit: async ({ value }) => {

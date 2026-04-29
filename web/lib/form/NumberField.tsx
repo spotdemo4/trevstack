@@ -1,6 +1,6 @@
 import { NumberField as NumberFieldPrimative } from "@kobalte/core/number-field";
 import { ChevronDown, ChevronUp } from "lucide-solid";
-import { Show } from "solid-js";
+import { For, Show } from "solid-js";
 import { useFieldContext } from "./context";
 
 export function NumberField(props: { label?: string }) {
@@ -12,17 +12,17 @@ export function NumberField(props: { label?: string }) {
 			name={name}
 			rawValue={field().state.value ?? undefined}
 			onRawValueChange={(c) => {
-				if (Number.isNaN(c)) {
-					field().form.deleteField(name);
-				} else {
+				if (Number.isNaN(c) && field().state.value !== undefined) {
+					field().form.resetField(name);
+					field().form.validateField(name, "change");
+				} else if (!Number.isNaN(c)) {
 					field().handleChange(c);
 				}
 			}}
-			onBlur={field().handleBlur}
 			validationState={
-				field().state.meta.isTouched && !field().state.meta.isValid
-					? "invalid"
-					: "valid"
+				field().state.meta.isValid || !field().state.meta.isBlurred
+					? "valid"
+					: "invalid"
 			}
 			class="flex flex-col gap-1.5"
 		>
@@ -32,7 +32,10 @@ export function NumberField(props: { label?: string }) {
 				</NumberFieldPrimative.Label>
 			</Show>
 			<div class="relative">
-				<NumberFieldPrimative.Input class="w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40" />
+				<NumberFieldPrimative.Input
+					onBlur={field().handleBlur}
+					class="w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
+				/>
 				<NumberFieldPrimative.IncrementTrigger
 					aria-label="Increment"
 					class="absolute top-1 right-1 cursor-pointer rounded-t-sm transition-colors hover:bg-ctp-surface1"
@@ -46,11 +49,13 @@ export function NumberField(props: { label?: string }) {
 					<ChevronDown size={15} />
 				</NumberFieldPrimative.DecrementTrigger>
 			</div>
-			<NumberFieldPrimative.ErrorMessage class="text-ctp-red text-xs">
-				{field()
-					.state.meta.errors.map((err) => err.message)
-					.join(",")}
-			</NumberFieldPrimative.ErrorMessage>
+			<For each={field().state.meta.errors}>
+				{(err) => (
+					<NumberFieldPrimative.ErrorMessage class="text-ctp-red text-xs">
+						{err.message}
+					</NumberFieldPrimative.ErrorMessage>
+				)}
+			</For>
 		</NumberFieldPrimative>
 	);
 }

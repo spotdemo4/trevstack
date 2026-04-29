@@ -17,7 +17,13 @@ export function Form(props: { children?: JSX.Element; class?: string }) {
 					onSubmit={async (e) => {
 						e.preventDefault();
 						e.stopPropagation();
-						form.handleSubmit();
+
+						if (document.activeElement instanceof HTMLElement) {
+							document.activeElement.blur();
+						}
+
+						await form.handleSubmit();
+						form.validate("change");
 					}}
 					class={twMerge("flex w-full flex-col gap-4", props.class)}
 				>
