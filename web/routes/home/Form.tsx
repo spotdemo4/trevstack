@@ -1,19 +1,17 @@
+import { create } from "@bufbuild/protobuf";
+import { createStandardSchema } from "@bufbuild/protovalidate";
 import type { Component } from "solid-js";
 import { type AddRequest, AddRequestSchema } from "$connect/number/v1/add_pb";
-import { useAppForm } from "$lib/form/hook";
-import { createSchema } from "$lib/schema";
-
-type Request = Omit<AddRequest, "$typeName">;
-const schema = createSchema(AddRequestSchema);
+import { useForm } from "$lib/form/hook";
 
 const AddForm: Component<{
-	onSubmit: (value: Request) => void;
+	onSubmit: (value: AddRequest) => void;
 }> = (props) => {
-	const form = useAppForm(() => ({
-		defaultValues: {} as Request,
+	const form = useForm(() => ({
+		defaultValues: create(AddRequestSchema),
 		validators: {
-			onMount: schema,
-			onChange: schema,
+			onMount: createStandardSchema(AddRequestSchema),
+			onChange: createStandardSchema(AddRequestSchema),
 		},
 		onSubmit: async ({ value }) => {
 			props.onSubmit(value);
@@ -24,14 +22,12 @@ const AddForm: Component<{
 	return (
 		<form.AppForm>
 			<form.Form class="max-w-sm flex-col">
-				<form.AppField
-					name="name"
-					children={(field) => <field.TextField label="Name" />}
-				/>
-				<form.AppField
-					name="number"
-					children={(field) => <field.NumberField label="Number" />}
-				/>
+				<form.AppField name="name">
+					{(field) => <field.TextField label="Name" />}
+				</form.AppField>
+				<form.AppField name="number">
+					{(field) => <field.NumberField label="Number" />}
+				</form.AppField>
 				<form.SubmitButton />
 			</form.Form>
 		</form.AppForm>

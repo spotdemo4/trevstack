@@ -1,21 +1,19 @@
+import { create } from "@bufbuild/protobuf";
+import { createStandardSchema } from "@bufbuild/protovalidate";
 import type { Component } from "solid-js";
 import {
 	type ListRequest,
 	ListRequestSchema,
 } from "$connect/number/v1/list_pb";
-import { useAppForm } from "$lib/form/hook";
-import { createSchema } from "$lib/schema";
-
-type Request = Omit<ListRequest, "$typeName">;
-const requestSchema = createSchema(ListRequestSchema);
+import { useForm } from "$lib/form/hook";
 
 const Form: Component<{
-	onSubmit: (value: Request) => void;
+	onSubmit: (value: ListRequest) => void;
 }> = (props) => {
-	const form = useAppForm(() => ({
-		defaultValues: {} as Request,
+	const form = useForm(() => ({
+		defaultValues: create(ListRequestSchema),
 		validators: {
-			onChange: requestSchema,
+			onChange: createStandardSchema(ListRequestSchema),
 		},
 		onSubmit: async ({ value }) => {
 			props.onSubmit(value);
@@ -31,11 +29,11 @@ const Form: Component<{
 				/>
 				<form.AppField
 					name="min"
-					children={(field) => <field.NumberField label="Min" />}
+					children={(field) => <field.NumberField label="Minimum" />}
 				/>
 				<form.AppField
 					name="max"
-					children={(field) => <field.NumberField label="Max" />}
+					children={(field) => <field.NumberField label="Maximum" />}
 				/>
 				<form.SubmitButton />
 			</form.Form>

@@ -1,24 +1,31 @@
 import type { Component } from "solid-js";
 import type { AddRequest } from "$connect/number/v1/add_pb";
 import { Card } from "$lib/card";
-import { toast } from "$lib/toast";
+import { toaster } from "$lib/toast";
 import { NumberClient } from "$lib/transport";
 import Form from "./Form";
 
-type Request = Omit<AddRequest, "$typeName">;
-
-const App: Component = () => {
-	const onSubmit = async (value: Request) => {
+const Home: Component = () => {
+	const onSubmit = async (value: AddRequest) => {
 		const [response, err] = await NumberClient.add({
 			name: value.name,
 			number: value.number,
 		});
+
 		if (err) {
-			toast.error(`Failed to add: ${err.message}`);
+			toaster.error({
+				title: "Failed to add number",
+				description: err.message,
+				closable: true,
+			});
 			return;
 		}
 
-		toast.success(`Total: ${response.sum}`);
+		toaster.success({
+			title: "Number added",
+			description: `new sum: ${response.sum}`,
+			closable: true,
+		});
 	};
 
 	return (
@@ -31,4 +38,4 @@ const App: Component = () => {
 	);
 };
 
-export default App;
+export default Home;

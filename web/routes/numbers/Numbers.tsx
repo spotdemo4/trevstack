@@ -10,6 +10,7 @@ import {
 	Switch,
 } from "solid-js";
 import type { ListRequest, ListResponse } from "$connect/number/v1/list_pb";
+import Splitter from "$lib/splitter";
 import { NumberClient } from "$lib/transport";
 import Form from "./Form";
 import Table from "./Table";
@@ -17,7 +18,7 @@ import Table from "./Table";
 type Request = Omit<ListRequest, "$typeName">;
 type Response = Omit<ListResponse, "$typeName">;
 
-const App: Component = () => {
+const Numbers: Component = () => {
 	const [request, setRequest] = createSignal<Request>({});
 
 	const [response] = createResource<Response | undefined, Request>(
@@ -47,10 +48,6 @@ const App: Component = () => {
 
 	const totalCount = createMemo(() => response()?.totalCount);
 
-	const onSubmit = (value: Request) => {
-		setRequest(value);
-	};
-
 	const onScroll = (instance: Virtualizer<HTMLDivElement, Element>) => {
 		const req = request();
 		const resp = response.latest;
@@ -58,40 +55,58 @@ const App: Component = () => {
 		if (!resp || !instance.range) return;
 		if (resp.nextCursor === req?.cursor) return;
 		if (instance.range.endIndex < resp.items.length - 5) return;
+
 		setRequest({ ...req, cursor: resp.nextCursor });
 	};
 
 	return (
-		<div class="flex h-body items-center gap-4">
-			<div class="h-full border-ctp-surface0 border-r bg-ctp-mantle p-6 shadow-ctp-crust/40 shadow-lg">
-				<Form onSubmit={onSubmit} />
-			</div>
-			<Show
-				when={totalCount()}
-				fallback={
-					<div class="flex h-full w-full items-center justify-center">
-						<Switch>
-							<Match when={totalCount() === undefined}>
-								<LoaderCircle class="animate-spin" />
-							</Match>
-							<Match when={totalCount() === BigInt(0)}>
-								<p>No numbers found :(</p>
-							</Match>
-						</Switch>
-					</div>
-				}
-				keyed
+		<div class="h-body">
+			<Splitter.Root
+				panels={[
+					{
+						id: "a",
+						minSize: 15,
+						maxSize: 50,
+					},
+					{ id: "b" },
+				]}
+				defaultSize={[15, 50]}
 			>
-				{(resp) => (
-					<Table
-						count={resp}
-						items={() => response()?.items ?? []}
-						onScroll={onScroll}
-					/>
-				)}
-			</Show>
+				<Splitter.Panel id="a" class="bg-ctp-mantle p-4">
+					<Form onSubmit={(req) => setRequest(req)} />
+				</Splitter.Panel>
+
+				<Splitter.ResizeTrigger id="a:b" />
+
+				<Splitter.Panel id="b">
+					<Show
+						when={totalCount()}
+						fallback={
+							<div class="flex h-full w-full items-center justify-center">
+								<Switch>
+									<Match when={totalCount() === undefined}>
+										<LoaderCircle class="animate-spin" />
+									</Match>
+									<Match when={totalCount() === BigInt(0)}>
+										<p>No numbers found :(</p>
+									</Match>
+								</Switch>
+							</div>
+						}
+						keyed
+					>
+						{(resp) => (
+							<Table
+								count={resp}
+								items={() => response()?.items ?? []}
+								onScroll={onScroll}
+							/>
+						)}
+					</Show>
+				</Splitter.Panel>
+			</Splitter.Root>
 		</div>
 	);
 };
 
-export default App;
+export default Numbers;

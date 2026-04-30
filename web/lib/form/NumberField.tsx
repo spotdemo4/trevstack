@@ -1,61 +1,74 @@
-import { NumberField as NumberFieldPrimative } from "@kobalte/core/number-field";
+import { Field } from "@ark-ui/solid/field";
+import { NumberInput } from "@ark-ui/solid/number-input";
 import { ChevronDown, ChevronUp } from "lucide-solid";
-import { For, Show } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 import { useFieldContext } from "./context";
 
 export function NumberField(props: { label?: string }) {
 	const field = useFieldContext<number>();
 	const name = field().name;
+	const errors = createMemo(() => [
+		...new Set(field().state.meta.errors.map((err) => err.message as string)),
+	]);
 
 	return (
-		<NumberFieldPrimative
-			name={name}
-			rawValue={field().state.value ?? undefined}
-			onRawValueChange={(c) => {
-				if (Number.isNaN(c) && field().state.value !== undefined) {
-					field().form.resetField(name);
-					field().form.validateField(name, "change");
-				} else if (!Number.isNaN(c)) {
-					field().handleChange(c);
-				}
-			}}
-			validationState={
-				field().state.meta.isValid || !field().state.meta.isBlurred
-					? "valid"
-					: "invalid"
-			}
+		<Field.Root
+			invalid={!(field().state.meta.isValid || !field().state.meta.isBlurred)}
 			class="flex flex-col gap-1.5"
 		>
-			<Show when={props.label}>
-				<NumberFieldPrimative.Label class="font-medium text-ctp-subtext1 text-sm data-invalid:text-ctp-red">
-					{props.label}
-				</NumberFieldPrimative.Label>
-			</Show>
-			<div class="relative">
-				<NumberFieldPrimative.Input
-					onBlur={field().handleBlur}
-					class="w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
-				/>
-				<NumberFieldPrimative.IncrementTrigger
-					aria-label="Increment"
-					class="absolute top-1 right-1 cursor-pointer rounded-t-sm transition-colors hover:bg-ctp-surface1"
-				>
-					<ChevronUp size={15} />
-				</NumberFieldPrimative.IncrementTrigger>
-				<NumberFieldPrimative.DecrementTrigger
-					aria-label="Decrement"
-					class="absolute right-1 bottom-1 cursor-pointer rounded-b-sm transition-colors hover:bg-ctp-surface1"
-				>
-					<ChevronDown size={15} />
-				</NumberFieldPrimative.DecrementTrigger>
-			</div>
-			<For each={field().state.meta.errors}>
+			<NumberInput.Root
+				name={name}
+				value={field().state.value ? String(field().state.value) : ""}
+				class="flex flex-col gap-1.5"
+				onValueChange={(c) => {
+					// remove undefined numbers from form state
+					if (
+						Number.isNaN(c.valueAsNumber) &&
+						field().state.value !== undefined
+					) {
+						field().form.resetField(name);
+					}
+
+					// only handle change if the value is a valid number
+					if (!Number.isNaN(c.valueAsNumber)) {
+						field().handleChange(c.valueAsNumber);
+					} else {
+						// still validate
+						field().form.validateField(name, "change");
+					}
+				}}
+			>
+				<Show when={props.label}>
+					<NumberInput.Label class="font-medium text-ctp-subtext1 text-sm data-invalid:text-ctp-red">
+						{props.label}
+					</NumberInput.Label>
+				</Show>
+				<NumberInput.Control class="relative isolate">
+					<NumberInput.Input
+						onBlur={field().handleBlur}
+						class="w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-ctp-text text-sm transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:outline-none focus:ring-2 focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
+					/>
+					<div class="absolute top-0 right-1 bottom-0 flex w-4 flex-col justify-center">
+						<NumberInput.IncrementTrigger
+							aria-label="Increment"
+							class="cursor-pointer rounded transition-colors hover:bg-ctp-surface1"
+						>
+							<ChevronUp size={16} />
+						</NumberInput.IncrementTrigger>
+						<NumberInput.DecrementTrigger
+							aria-label="Decrement"
+							class="cursor-pointer rounded transition-colors hover:bg-ctp-surface1"
+						>
+							<ChevronDown size={16} />
+						</NumberInput.DecrementTrigger>
+					</div>
+				</NumberInput.Control>
+			</NumberInput.Root>
+			<For each={errors()}>
 				{(err) => (
-					<NumberFieldPrimative.ErrorMessage class="text-ctp-red text-xs">
-						{err.message}
-					</NumberFieldPrimative.ErrorMessage>
+					<Field.ErrorText class="text-ctp-red text-xs">{err}</Field.ErrorText>
 				)}
 			</For>
-		</NumberFieldPrimative>
+		</Field.Root>
 	);
 }

@@ -6,7 +6,7 @@ import { ResetButton } from "./ResetButton";
 import { SubmitButton } from "./SubmitButton";
 import { TextField } from "./TextField";
 
-export const { useAppForm, withForm } = createFormHook({
+const { useAppForm, withForm } = createFormHook({
 	fieldComponents: {
 		TextField,
 		NumberField,
@@ -19,3 +19,5 @@ export const { useAppForm, withForm } = createFormHook({
 	fieldContext,
 	formContext,
 });
+
+export { useAppForm as useForm, withForm };
