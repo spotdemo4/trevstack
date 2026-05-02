@@ -13,8 +13,8 @@
   inputs = {
     systems.url = "github:spotdemo4/systems";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    trev = {
-      url = "github:spotdemo4/nur";
+    trevpkgs = {
+      url = "github:spotdemo4/trevpkgs";
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -23,10 +23,10 @@
   outputs =
     {
       self,
-      trev,
+      trevpkgs,
       ...
     }:
-    trev.libs.mkFlake (
+    trevpkgs.libs.mkFlake (
       system: pkgs: {
         devShells = {
           default = pkgs.mkShell {
@@ -34,8 +34,8 @@
             packages = with pkgs; [
               # go
               go
-              gotools
               gopls
+              gotools
 
               # solid
               nodejs_24
@@ -48,14 +48,13 @@
               protoc-gen-connect-openapi
 
               # lint
-              go-tools
-              biome
+              oxlint
               sqlfluff
+              go-tools
 
               # format
+              oxfmt
               nixfmt
-              tombi
-              prettier
               treefmt
 
               # util
@@ -209,113 +208,108 @@
           };
         };
 
-        checks = pkgs.mkChecks {
-          go = {
-            root = ./server;
-            packages = with pkgs; [
-              gcc
-              go
-              go-tools
-            ];
-            script = ''
-              go test -tags dev ./...
-              go vet -tags dev ./...
-              staticcheck -tags dev ./...
-            '';
-          };
-
-          biome = {
-            root = ./.;
-            filter = file: file.hasExt "ts" || file.hasExt "tsx" || file.hasExt "html" || file.hasExt "css";
-            ignore = [
+        checks =
+          let
+            generated = [
               ./server/vendor
+              ./server/connect
               ./web/connect
             ];
-            include = [
-              ./.gitignore
-              ./biome.json
-            ];
-            packages = with pkgs; [
-              biome
-            ];
-            script = ''
-              biome ci
-            '';
-          };
+          in
+          pkgs.mkChecks {
+            format = {
+              root = ./.;
+              filter =
+                file:
+                file.hasExt "ts"
+                || file.hasExt "tsx"
+                || file.hasExt "yaml"
+                || file.hasExt "json"
+                || file.hasExt "toml"
+                || file.hasExt "md";
+              ignore = generated;
+              packages = with pkgs; [
+                oxfmt
+              ];
+              script = ''
+                oxfmt --check
+              '';
+            };
 
-          actions = {
-            root = ./.github/workflows;
-            filter = file: file.hasExt "yaml";
-            packages = with pkgs; [
-              action-validator
-              zizmor
-            ];
-            forEach = ''
-              action-validator "$file"
-              zizmor --offline "$file"
-            '';
-          };
+            typescript = {
+              root = ./.;
+              filter = file: file.hasExt "ts" || file.hasExt "tsx";
+              ignore = generated;
+              packages = with pkgs; [
+                oxlint
+              ];
+              script = ''
+                oxlint --deny-warnings
+              '';
+            };
 
-          renovate = {
-            root = ./.github;
-            files = ./.github/renovate.json;
-            packages = with pkgs; [
-              renovate
-            ];
-            script = ''
-              renovate-config-validator renovate.json
-            '';
-          };
+            sql = {
+              root = ./.;
+              filter = file: file.hasExt "sql";
+              ignore = generated;
+              packages = with pkgs; [
+                sqlfluff
+              ];
+              forEach = ''
+                sqlfluff lint --dialect sqlite "$file"
+              '';
+            };
 
-          sql = {
-            root = ./.;
-            filter = file: file.hasExt "sql";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              sqlfluff
-            ];
-            forEach = ''
-              sqlfluff lint --dialect sqlite "$file"
-            '';
-          };
+            nix = {
+              root = ./.;
+              filter = file: file.hasExt "nix";
+              ignore = generated;
+              packages = with pkgs; [
+                nixfmt
+              ];
+              forEach = ''
+                nixfmt --check "$file"
+              '';
+            };
 
-          nix = {
-            root = ./.;
-            filter = file: file.hasExt "nix";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              nixfmt
-            ];
-            forEach = ''
-              nixfmt --check "$file"
-            '';
-          };
+            go = {
+              root = ./server;
+              packages = with pkgs; [
+                gcc
+                go
+                go-tools
+              ];
+              script = ''
+                go test -tags dev ./...
+                go vet -tags dev ./...
+                staticcheck -tags dev ./...
+              '';
+            };
 
-          prettier = {
-            root = ./.;
-            filter = file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              prettier
-            ];
-            forEach = ''
-              prettier --check "$file"
-            '';
-          };
+            actions = {
+              root = ./.github/workflows;
+              filter = file: file.hasExt "yaml";
+              packages = with pkgs; [
+                action-validator
+                zizmor
+              ];
+              forEach = ''
+                action-validator "$file"
+                zizmor --offline "$file"
+              '';
+            };
 
-          tombi = {
-            root = ./.;
-            filter = file: file.hasExt "toml";
-            ignore = ./server/vendor;
-            packages = with pkgs; [
-              tombi
-            ];
-            forEach = ''
-              tombi format --offline --check "$file"
-              tombi lint --offline --error-on-warnings "$file"
-            '';
+            renovate = {
+              root = ./.github;
+              files = ./.github/renovate.json;
+              packages = with pkgs; [
+                renovate
+              ];
+              script = ''
+                renovate-config-validator renovate.json
+              '';
+            };
           };
-        };
       }
     );
 }

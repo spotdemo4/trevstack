@@ -1,120 +1,123 @@
 import { useLocation } from "@solidjs/router";
 import {
-	type Accessor,
-	type Component,
-	createContext,
-	createEffect,
-	createSignal,
-	type JSX,
-	onCleanup,
-	onMount,
-	useContext,
+  type Accessor,
+  type Component,
+  createContext,
+  createMemo,
+  createSignal,
+  createEffect,
+  on,
+  onCleanup,
+  type JSX,
+  onMount,
+  useContext,
 } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 type NavbarProps = {
-	children?: JSX.Element;
-	class?: string;
+  children?: JSX.Element;
+  class?: string;
 };
 
 type NavbarContextValue = {
-	indicatorStyle: Accessor<JSX.CSSProperties>;
+  indicatorStyle: Accessor<JSX.CSSProperties>;
 };
 
 const NavbarContext = createContext<NavbarContextValue>();
 
 const NavbarRoot: Component<NavbarProps> = (props) => {
-	const location = useLocation();
-	const [indicatorStyle, setIndicatorStyle] = createSignal<JSX.CSSProperties>({
-		transform: "translateX(0px)",
-		width: "0px",
-		opacity: "0",
-	});
-	let navRef: HTMLElement | undefined;
+  const [indicatorStyle, setIndicatorStyle] = createSignal<JSX.CSSProperties>({
+    transform: "translateX(0px)",
+    width: "0px",
+    opacity: "0",
+  });
 
-	const updateIndicator = () => {
-		if (!navRef) {
-			return;
-		}
+  // oxlint-disable-next-line no-unassigned-vars
+  let navRef!: HTMLElement;
 
-		const activeLink = navRef.querySelector<HTMLAnchorElement>(
-			'a[aria-current="page"], a.text-ctp-text',
-		);
-		if (!activeLink) {
-			setIndicatorStyle((prevStyle) => ({
-				...prevStyle,
-				opacity: "0",
-			}));
-			return;
-		}
+  const updateIndicator = () => {
+    if (!navRef) {
+      return;
+    }
 
-		const navRect = navRef.getBoundingClientRect();
-		const activeRect = activeLink.getBoundingClientRect();
-		setIndicatorStyle({
-			transform: `translateX(${activeRect.left - navRect.left}px)`,
-			width: `${activeRect.width}px`,
-			opacity: "1",
-		});
-	};
+    const activeLink = navRef.querySelector<HTMLAnchorElement>(
+      'a[aria-current="page"], a.text-ctp-text',
+    );
+    if (!activeLink) {
+      setIndicatorStyle((prevStyle) => ({
+        ...prevStyle,
+        opacity: "0",
+      }));
+      return;
+    }
 
-	onMount(() => {
-		updateIndicator();
+    const navRect = navRef.getBoundingClientRect();
+    const activeRect = activeLink.getBoundingClientRect();
+    setIndicatorStyle({
+      transform: `translateX(${activeRect.left - navRect.left}px)`,
+      width: `${activeRect.width}px`,
+      opacity: "1",
+    });
+  };
 
-		if (!navRef) {
-			return;
-		}
+  onMount(() => {
+    updateIndicator();
 
-		const resizeObserver = new ResizeObserver(updateIndicator);
-		resizeObserver.observe(navRef);
-		const navLinks = navRef.querySelectorAll("a");
-		navLinks.forEach((link) => {
-			resizeObserver.observe(link);
-		});
+    if (!navRef) {
+      return;
+    }
 
-		window.addEventListener("resize", updateIndicator);
-		onCleanup(() => {
-			resizeObserver.disconnect();
-			window.removeEventListener("resize", updateIndicator);
-		});
-	});
+    const resizeObserver = new ResizeObserver(updateIndicator);
+    resizeObserver.observe(navRef);
+    const navLinks = navRef.querySelectorAll("a");
+    navLinks.forEach((link) => {
+      resizeObserver.observe(link);
+    });
 
-	createEffect(() => {
-		location.pathname;
-		requestAnimationFrame(updateIndicator);
-	});
+    window.addEventListener("resize", updateIndicator);
+    onCleanup(() => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateIndicator);
+    });
+  });
 
-	return (
-		<NavbarContext.Provider value={{ indicatorStyle }}>
-			<nav
-				ref={navRef}
-				class={twMerge("relative flex items-center gap-6", props.class)}
-			>
-				{props.children}
-			</nav>
-		</NavbarContext.Provider>
-	);
+  const location = useLocation();
+  const pathname = createMemo(() => location.pathname);
+  createEffect(
+    on(pathname, () => {
+      requestAnimationFrame(updateIndicator);
+    }),
+  );
+
+  return (
+    <NavbarContext.Provider value={{ indicatorStyle }}>
+      <nav ref={navRef} class={twMerge("relative flex items-center gap-6", props.class)}>
+        {props.children}
+      </nav>
+    </NavbarContext.Provider>
+  );
 };
 
 const Indicator: Component = () => {
-	const context = useContext(NavbarContext);
+  const context = useContext(NavbarContext);
 
-	if (!context) {
-		return null;
-	}
+  if (!context) {
+    return null;
+  }
 
-	return (
-		<span
-			aria-hidden="true"
-			class="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-ctp-sky transition-[transform,width,opacity] duration-300 ease-out"
-			style={context.indicatorStyle()}
-		/>
-	);
+  return (
+    <span
+      aria-hidden="true"
+      class="bg-ctp-sky pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full transition-[transform,width,opacity] duration-300 ease-out"
+      style={context.indicatorStyle()}
+    />
+  );
 };
 
 type NavbarComponent = Component<NavbarProps> & {
-	Indicator: Component;
+  Indicator: Component;
 };
 
 export const Navbar = Object.assign(NavbarRoot, {
-	Indicator,
+  Indicator,
 }) as NavbarComponent;

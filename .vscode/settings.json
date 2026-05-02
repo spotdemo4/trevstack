@@ -1,6 +1,4 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
   "files.associations": {
     "renovate.json": "jsonc",
     ".envrc.project": "dotenv",
@@ -24,9 +22,10 @@
   "chat.tools.terminal.autoApprove": {
     "treefmt": true,
 
-    // nix
-    "nix build": true,
-    "nix flake check": true,
+    // go
+    "go run": true,
+    "go mod tidy": true,
+    "go mod vendor": true,
 
     // npm
     "npm run dev": true,
@@ -34,13 +33,30 @@
     "npm update": true,
     "npm audit fix": true,
 
-    // go
-    "go run": true,
-    "go mod tidy": true,
-    "go mod vendor": true
+    // nix
+    "nix build": true,
+    "nix flake check": true
   },
 
-  // nix
+  // oxc.oxc-vscode
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always" // oxlint
+  },
+
+  // golang.go
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "go.buildTags": "dev",
+  "gopls": { "ui.semanticTokens": true },
+
+  // jnoortheen.nix-ide
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nixd",
   "nix.serverSettings": {
@@ -50,54 +66,14 @@
       }
     }
   },
-  "[nix]": {
-    "editor.defaultFormatter": "jnoortheen.nix-ide"
-  },
 
-  // go
-  "go.buildTags": "dev",
-  "gopls": { "ui.semanticTokens": true },
-  "[go]": {
-    "editor.defaultFormatter": "golang.go"
-  },
-
-  // biome
-  "biome.enabled": true,
-  "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[tailwindcss]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
-  },
-
-  // proto
+  // bufbuild.vscode-buf
   "[proto]": {
     "editor.defaultFormatter": "bufbuild.vscode-buf"
   },
 
-  // sql
+  // sqlfluff.vscode-sqlfluff
   "[sql]": {
     "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
-  },
-
-  // toml
-  "[toml]": {
-    "editor.defaultFormatter": "tombi-toml.tombi"
   }
 }

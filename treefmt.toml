@@ -1,20 +1,16 @@
 #:schema https://www.schemastore.org/treefmt.json
 
+# exclude vendored dependencies and generated code
 excludes = ["server/vendor/*", "server/connect/*", "web/connect/*"]
+
+[formatter.oxfmt]
+command = "oxfmt"
+options = ["--write"]
+includes = ["*.ts", "*.tsx", "*.html", "*.css", "*.json", "*.yaml", "*.toml", "*.md"]
 
 [formatter.go]
 command = "gofmt"
 includes = ["*.go"]
-
-[formatter.biome-format]
-command = "biome"
-options = ["format", "--write"]
-includes = ["*.ts", "*.tsx", "*.html", "*.css"]
-
-[formatter.biome-lint]
-command = "biome"
-options = ["lint", "--unsafe", "--write"]
-includes = ["*.ts", "*.tsx", "*.html", "*.css"]
 
 [formatter.buf]
 command = "buf"
@@ -30,13 +26,3 @@ includes = ["*.sql"]
 [formatter.nix]
 command = "nixfmt"
 includes = ["*.nix"]
-
-[formatter.toml]
-command = "tombi"
-options = ["format"]
-includes = ["*.toml"]
-
-[formatter.prettier]
-command = "prettier"
-options = ["--write"]
-includes = ["*.yaml", "*.json", "*.md"]
