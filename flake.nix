@@ -97,7 +97,12 @@
           default = "mprocs";
           server = "cd server && go run -tags dev .";
           web = "cd web && npm run dev";
-          vendor = "cd server && go mod tidy && go mod vendor";
+          gen = ''
+            buf generate
+            cd server && go mod tidy && go mod vendor && cd ..
+            cd web && npm install && cd ..
+            treefmt
+          '';
         };
 
         formatter = pkgs.treefmt.withConfig {

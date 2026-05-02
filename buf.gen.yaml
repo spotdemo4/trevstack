@@ -24,6 +24,7 @@ plugins:
     opt:
       - base=openapi.yaml
       - path=openapi.yaml
+      - features=connectrpc;protovalidate
 
 managed:
   enabled: true
