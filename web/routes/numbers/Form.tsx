@@ -12,17 +12,15 @@ const Form: Component<{
     validators: {
       onChange: createStandardSchema(ListRequestSchema),
     },
-    onSubmit: async ({ value }) => {
-      props.onSubmit(value);
-    },
+    onSubmit: async ({ value }) => props.onSubmit(value),
   }));
 
   return (
     <form.AppForm>
       <form.Form class="justify-center">
-        <form.AppField name="name" children={(field) => <field.TextField label="Name" />} />
-        <form.AppField name="min" children={(field) => <field.NumberField label="Minimum" />} />
-        <form.AppField name="max" children={(field) => <field.NumberField label="Maximum" />} />
+        <form.AppField name="name">{(field) => <field.TextField label="Name" />}</form.AppField>
+        <form.AppField name="min">{(field) => <field.NumberField label="Minimum" />}</form.AppField>
+        <form.AppField name="max">{(field) => <field.NumberField label="Maximum" />}</form.AppField>
         <form.SubmitButton />
       </form.Form>
     </form.AppForm>

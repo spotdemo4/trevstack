@@ -1,11 +1,12 @@
 import { ListRequestSchema, type ListRequest, type ListResponse } from "$connect/number/v1/list_pb";
 import Splitter from "$lib/splitter";
+import Table from "$lib/table";
 import { NumberClient } from "$lib/transport";
 import { create } from "@bufbuild/protobuf";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { type Component, createResource, createSignal } from "solid-js";
 
 import Form from "./Form";
-import Table from "./Table";
 
 const Numbers: Component = () => {
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
@@ -50,15 +51,30 @@ const Numbers: Component = () => {
         <Splitter.ResizeTrigger id="a:b" />
 
         <Splitter.Panel id="b">
-          <Table
-            count={() => response()?.totalCount}
-            items={() => response()?.items ?? []}
+          <Table.Table
             onScroll={async (_, end) => {
               while (!response()?.items[end]) {
                 await refetch();
               }
             }}
-          />
+          >
+            <Table.Header>
+              <span class="w-40">Timestamp</span>
+              <span>Name</span>
+              <span>Number</span>
+            </Table.Header>
+            <Table.Rows count={() => response()?.totalCount} items={() => response()?.items ?? []}>
+              {(item) => (
+                <>
+                  <span class="text-sm text-ctp-subtext0 tabular-nums">
+                    {timestampDate(item.timestamp!).toLocaleString()}
+                  </span>
+                  <span class="truncate font-medium">{item.name}</span>
+                  <span class="font-mono tabular-nums">{item.number}</span>
+                </>
+              )}
+            </Table.Rows>
+          </Table.Table>
         </Splitter.Panel>
       </Splitter.Root>
     </div>
