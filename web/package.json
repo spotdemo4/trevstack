@@ -19,6 +19,7 @@
     "@connectrpc/connect": "^2.1.1",
     "@connectrpc/connect-web": "^2.1.1",
     "@connectrpc/validate": "^0.2.0",
+    "@solid-primitives/scheduled": "^1.5.3",
     "@solidjs/router": "^0.16.1",
     "@tanstack/solid-form": "^1.29.1",
     "@tanstack/solid-table": "^8.21.3",

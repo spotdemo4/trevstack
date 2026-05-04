@@ -8,7 +8,7 @@ export const Virtualizer: Component<{
   count: number;
   overscan?: number;
   size?: number;
-  onChange: VirtualizerOptions<HTMLDivElement, Element>["onChange"];
+  onChange?: VirtualizerOptions<HTMLDivElement, Element>["onChange"];
   children: (index: number) => JSX.Element;
 }> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
@@ -19,7 +19,7 @@ export const Virtualizer: Component<{
     overscan: props.overscan ?? 5,
     estimateSize: () => props.size ?? 35,
     getScrollElement: () => parentRef,
-    onChange: props.onChange,
+    onChange: props?.onChange,
   });
 
   return (

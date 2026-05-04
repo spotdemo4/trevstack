@@ -2,7 +2,7 @@ import { ListRequestSchema, type ListRequest, type ListResponse } from "$connect
 import Splitter from "$lib/splitter";
 import { NumberClient } from "$lib/transport";
 import { create } from "@bufbuild/protobuf";
-import { type Component, createMemo, createResource, createSignal } from "solid-js";
+import { type Component, createResource, createSignal } from "solid-js";
 
 import Form from "./Form";
 import Table from "./Table";
@@ -44,18 +44,19 @@ const Numbers: Component = () => {
         defaultSize={[15, 50]}
       >
         <Splitter.Panel id="a" class="bg-ctp-mantle p-4">
-          <Form onSubmit={(req) => setRequest(req)} />
+          <Form onSubmit={setRequest} />
         </Splitter.Panel>
 
         <Splitter.ResizeTrigger id="a:b" />
 
         <Splitter.Panel id="b">
           <Table
-            count={createMemo(() => response()?.totalCount)}
+            count={() => response()?.totalCount}
             items={() => response()?.items ?? []}
-            onScroll={(_, end) => {
-              if (response()?.items[end]) return;
-              refetch();
+            onScroll={async (_, end) => {
+              while (!response()?.items[end]) {
+                await refetch();
+              }
             }}
           />
         </Splitter.Panel>

@@ -1,6 +1,7 @@
 import type { Item } from "$connect/number/v1/list_pb";
 import { Virtualizer } from "$lib/virtualizer";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
+import { debounce } from "@solid-primitives/scheduled";
 import { LoaderCircle } from "lucide-solid";
 import type { Accessor } from "solid-js";
 import { type Component, createMemo, Show } from "solid-js";
@@ -11,6 +12,9 @@ const Table: Component<{
   onScroll?: (start: number, end: number) => void;
 }> = (props) => {
   const count = createMemo(() => props.count());
+  const onScroll = debounce(props.onScroll ?? (() => {}), 100);
+  let start = 0;
+  let end = 0;
 
   return (
     <div class="flex h-full flex-col">
@@ -27,10 +31,14 @@ const Table: Component<{
         {(count) => (
           <Virtualizer
             count={Number(count)}
+            overscan={5}
             onChange={(i) => {
-              const end = i.range?.endIndex ?? 0;
-              const start = i.range?.startIndex ?? 0;
-              props.onScroll?.(start, end);
+              if (!i.range) return;
+              if (i.range.startIndex === start && i.range.endIndex === end) return;
+
+              start = i.range.startIndex;
+              end = i.range.endIndex;
+              onScroll(start, end);
             }}
           >
             {(index) => <Row item={props.items()[index]} />}
