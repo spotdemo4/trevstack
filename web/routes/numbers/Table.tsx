@@ -1,56 +1,42 @@
 import type { Item } from "$connect/number/v1/list_pb";
+import { Virtualizer } from "$lib/virtualizer";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
-import { createVirtualizer, type Virtualizer } from "@tanstack/solid-virtual";
+import { LoaderCircle } from "lucide-solid";
 import type { Accessor } from "solid-js";
-import { type Component, Index, Show } from "solid-js";
+import { type Component, createMemo, Show } from "solid-js";
 
 const Table: Component<{
-  count: bigint;
+  count: Accessor<bigint | undefined>;
   items: Accessor<Item[]>;
-  onScroll: (instance: Virtualizer<HTMLDivElement, Element>) => void;
+  onScroll?: (start: number, end: number) => void;
 }> = (props) => {
-  // oxlint-disable-next-line no-unassigned-vars
-  let parentRef!: HTMLDivElement;
-
-  const rowVirtualizer = createVirtualizer({
-    count: Number(props.count),
-    getScrollElement: () => parentRef,
-    estimateSize: () => 35,
-    overscan: 5,
-    onChange: props.onScroll,
-  });
+  const count = createMemo(() => props.count());
 
   return (
-    <div ref={parentRef} class="h-full w-full overflow-auto">
-      <div class="border-ctp-surface0 bg-ctp-base text-ctp-subtext1 sticky top-0 z-10 flex w-full flex-row items-center gap-4 border-b px-4 pt-4 pb-2 text-xs font-semibold tracking-wide uppercase">
+    <div class="flex h-full flex-col">
+      <div class="border-ctp-surface0 bg-ctp-base text-ctp-subtext1 flex w-full flex-row items-center gap-4 border-b px-4 pt-4 pb-2 text-xs font-semibold tracking-wide uppercase">
         <span class="w-48 shrink-0">Timestamp</span>
         <span class="flex-1">Name</span>
         <span class="shrink-0">Number</span>
       </div>
-      <div
-        style={{
-          height: `${rowVirtualizer.getTotalSize()}px`,
-          width: "100%",
-          position: "relative",
-        }}
+      <Show
+        when={count()}
+        fallback={<LoaderCircle class="text-ctp-subtext0 mx-auto mt-8 animate-spin" size={24} />}
+        keyed
       >
-        <Index each={rowVirtualizer.getVirtualItems()}>
-          {(virtualItem) => (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: `${virtualItem().size}px`,
-                transform: `translateY(${virtualItem().start}px)`,
-              }}
-            >
-              <Row item={props.items()[virtualItem().index]} />
-            </div>
-          )}
-        </Index>
-      </div>
+        {(count) => (
+          <Virtualizer
+            count={Number(count)}
+            onChange={(i) => {
+              const end = i.range?.endIndex ?? 0;
+              const start = i.range?.startIndex ?? 0;
+              props.onScroll?.(start, end);
+            }}
+          >
+            {(index) => <Row item={props.items()[index]} />}
+          </Virtualizer>
+        )}
+      </Show>
     </div>
   );
 };
@@ -71,7 +57,6 @@ const Row: Component<{ item?: Item }> = (props) => {
       {(item) => (
         <div class="flex w-full flex-row items-center gap-4 rounded-md px-4 py-2">
           <span class="text-ctp-subtext0 w-48 shrink-0 text-sm tabular-nums">
-            {/** biome-ignore lint/style/noNonNullAssertion: timestamps are good */}
             {timestampDate(item.timestamp!).toLocaleString()}
           </span>
           <span class="flex-1 truncate font-medium">{item.name}</span>
