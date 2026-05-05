@@ -1,12 +1,12 @@
 import { ListRequestSchema, type ListRequest, type ListResponse } from "$connect/number/v1/list_pb";
+import { useForm } from "$lib/form/hook";
 import Splitter from "$lib/splitter";
 import Table from "$lib/table";
 import { NumberClient } from "$lib/transport";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
+import { createStandardSchema } from "@bufbuild/protovalidate";
 import { type Component, createResource, createSignal } from "solid-js";
-
-import Form from "./Form";
 
 const Numbers: Component = () => {
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
@@ -31,25 +31,41 @@ const Numbers: Component = () => {
     },
   );
 
+  const form = useForm(() => ({
+    defaultValues: create(ListRequestSchema),
+    validators: {
+      onChange: createStandardSchema(ListRequestSchema),
+    },
+    onSubmit: async ({ value }) => setRequest(value),
+  }));
+
   return (
     <div class="h-body">
       <Splitter.Root
-        panels={[
-          {
-            id: "a",
-            minSize: 15,
-            maxSize: 50,
-          },
-          { id: "b" },
-        ]}
         defaultSize={[15, 50]}
+        panels={[{ id: "a", minSize: 15, maxSize: 50 }, { id: "b" }]}
       >
         <Splitter.Panel id="a" class="bg-ctp-mantle p-4">
-          <Form onSubmit={setRequest} />
+          <form.AppForm>
+            <form.Form class="justify-center">
+              <form.AppField name="name">
+                {(field) => <field.TextField label="Name" />}
+              </form.AppField>
+              <form.AppField name="min">
+                {(field) => <field.NumberField label="Minimum" />}
+              </form.AppField>
+              <form.AppField name="max">
+                {(field) => <field.NumberField label="Maximum" />}
+              </form.AppField>
+              <form.AppField name="start">
+                {(field) => <field.DateField label="Start" />}
+              </form.AppField>
+              <form.AppField name="end">{(field) => <field.DateField label="End" />}</form.AppField>
+              <form.SubmitButton />
+            </form.Form>
+          </form.AppForm>
         </Splitter.Panel>
-
         <Splitter.ResizeTrigger id="a:b" />
-
         <Splitter.Panel id="b">
           <Table.Table
             columns="12rem 2fr 1fr"
