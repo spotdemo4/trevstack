@@ -1,5 +1,6 @@
 {
   "semantic_tokens": "combined",
+  "language_servers": ["!eslint", "..."],
   "lsp": {
     "oxlint": {
       "initialization_options": {
