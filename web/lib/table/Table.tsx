@@ -5,9 +5,12 @@ import type { Accessor, JSX } from "solid-js";
 import {
   type Component,
   createContext,
+  createEffect,
   createMemo,
+  createSignal,
   Index,
   Match,
+  onCleanup,
   Show,
   Switch,
   useContext,
@@ -49,6 +52,8 @@ const useTableContext = (componentName: string) => {
 
   return context;
 };
+
+const LOADING_STATE_DELAY_MS = 150;
 
 const Table: Component<{
   class?: string;
@@ -174,20 +179,34 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
 const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
   useTableContext("Table.Body");
   const count = createMemo(() => props.count());
+  const [showLoadingState, setShowLoadingState] = createSignal(false);
+
+  createEffect(() => {
+    if (count() !== undefined) {
+      setShowLoadingState(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setShowLoadingState(true);
+    }, LOADING_STATE_DELAY_MS);
+
+    onCleanup(() => clearTimeout(timeoutId));
+  });
 
   return (
     <Show
       when={count()}
       fallback={
         <Switch>
-          <Match when={count() === undefined}>
-            <div class="flex w-full items-center justify-center gap-2 py-10 text-ctp-subtext0">
+          <Match when={count() === undefined && showLoadingState()}>
+            <div class="flex w-full animate-fade-in items-center justify-center gap-2 py-10 text-ctp-subtext0 motion-reduce:animate-none">
               <LoaderCircle class="animate-spin" size={20} />
               <span class="text-sm">Loading…</span>
             </div>
           </Match>
           <Match when={count() === BigInt(0)}>
-            <div class="flex w-full flex-col items-center justify-center gap-2 py-10 text-ctp-overlay1">
+            <div class="flex w-full animate-fade-in flex-col items-center justify-center gap-2 py-10 text-ctp-overlay1 motion-reduce:animate-none">
               <CircleSlash2 size={24} />
               <span class="text-sm">No results</span>
             </div>
