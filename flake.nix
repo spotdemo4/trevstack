@@ -108,13 +108,11 @@
         formatter = pkgs.treefmt.withConfig {
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
-            go
-            biome
+            oxfmt
+            go-tools
             buf
             sqlfluff
             nixfmt
-            tombi
-            prettier
           ];
         };
 
