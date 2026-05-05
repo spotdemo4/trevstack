@@ -60,9 +60,9 @@ const Numbers: Component = () => {
             }}
           >
             <Table.Header>
-              <th scope="col">Timestamp</th>
-              <th scope="col">Name</th>
-              <th scope="col">Number</th>
+              <th>Timestamp</th>
+              <th>Name</th>
+              <th>Number</th>
             </Table.Header>
             <Table.Body count={() => response()?.totalCount} items={() => response()?.items ?? []}>
               {(item) => (
