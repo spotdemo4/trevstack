@@ -93,7 +93,7 @@ const Header: Component<HeaderProps> = (props) => {
     <thead class="sticky top-0 z-10 bg-ctp-mantle/95 backdrop-blur supports-backdrop-filter:bg-ctp-mantle/75">
       <tr
         class={twMerge(
-          "text-left text-xs font-semibold uppercase tracking-wider text-ctp-subtext1",
+          "text-left text-xs font-semibold tracking-wider text-ctp-subtext1 uppercase",
           "[&>th]:border-b [&>th]:border-ctp-surface0",
           props.class,
         )}

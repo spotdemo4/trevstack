@@ -21,6 +21,8 @@ const Form: Component<{
         <form.AppField name="name">{(field) => <field.TextField label="Name" />}</form.AppField>
         <form.AppField name="min">{(field) => <field.NumberField label="Minimum" />}</form.AppField>
         <form.AppField name="max">{(field) => <field.NumberField label="Maximum" />}</form.AppField>
+        <form.AppField name="start">{(field) => <field.DateField label="Start" />}</form.AppField>
+        <form.AppField name="end">{(field) => <field.DateField label="End" />}</form.AppField>
         <form.SubmitButton />
       </form.Form>
     </form.AppForm>
