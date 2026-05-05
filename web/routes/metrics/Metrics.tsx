@@ -9,7 +9,7 @@ import { Card } from "$lib/card";
 import { useForm } from "$lib/form/hook";
 import { NumberClient } from "$lib/transport";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
-import { type Component, createMemo, createResource, createSignal, Show } from "solid-js";
+import { type Component, createMemo, createResource, createSignal } from "solid-js";
 
 import DistributionChart from "./DistributionChart";
 import SummaryCards from "./SummaryCards";
