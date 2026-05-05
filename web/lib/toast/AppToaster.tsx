@@ -17,7 +17,7 @@ export const AppToaster: Component = () => {
 
           return (
             <Toast.Root
-              class={`text-ctp-text shadow-ctp-crust/35 data-[state=closed]:animate-toast-out data-[state=open]:animate-toast-in pointer-events-auto relative flex w-[min(92vw,24rem)] items-start gap-3 overflow-hidden rounded-lg border p-3 shadow-lg ${tone().root}`}
+              class={`pointer-events-auto relative flex w-[min(92vw,24rem)] items-start gap-3 overflow-hidden rounded-lg border p-3 text-ctp-text shadow-lg shadow-ctp-crust/35 data-[state=closed]:animate-toast-out data-[state=open]:animate-toast-in ${tone().root}`}
             >
               <div class={`flex h-6 w-6 shrink-0 items-center justify-center ${tone().icon}`}>
                 {renderToastIcon(toast().type)}
@@ -28,19 +28,19 @@ export const AppToaster: Component = () => {
                   {toast().title ?? "Notification"}
                 </Toast.Title>
                 <Show when={toast().description}>
-                  <Toast.Description class="text-ctp-subtext1 mt-1 text-sm leading-5">
+                  <Toast.Description class="mt-1 text-sm leading-5 text-ctp-subtext1">
                     {toast().description}
                   </Toast.Description>
                 </Show>
                 <Show when={toast().action?.label}>
-                  <Toast.ActionTrigger class="border-ctp-surface1 bg-ctp-base hover:bg-ctp-surface0 focus-visible:ring-ctp-sky/40 mt-3 inline-flex items-center rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none">
+                  <Toast.ActionTrigger class="mt-3 inline-flex items-center rounded-md border border-ctp-surface1 bg-ctp-base px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-ctp-surface0 focus-visible:ring-2 focus-visible:ring-ctp-sky/40 focus-visible:outline-none">
                     {toast().action?.label}
                   </Toast.ActionTrigger>
                 </Show>
               </div>
 
               <Show when={toast().closable}>
-                <Toast.CloseTrigger class="text-ctp-subtext0 hover:bg-ctp-surface0/75 hover:text-ctp-text focus-visible:ring-ctp-sky/40 mt-0.5 ml-1 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none">
+                <Toast.CloseTrigger class="mt-0.5 ml-1 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-ctp-subtext0 transition-colors hover:bg-ctp-surface0/75 hover:text-ctp-text focus-visible:ring-2 focus-visible:ring-ctp-sky/40 focus-visible:outline-none">
                   <X size={14} />
                 </Toast.CloseTrigger>
               </Show>

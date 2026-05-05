@@ -34,7 +34,7 @@ export function Form(props: { children?: JSX.Element; class?: string }) {
             class={twMerge("flex w-full flex-col gap-4", props.class)}
           >
             {child()}
-            <For each={errors()}>{(err) => <span class="text-ctp-red text-xs">{err}</span>}</For>
+            <For each={errors()}>{(err) => <span class="text-xs text-ctp-red">{err}</span>}</For>
           </form>
         );
       }}

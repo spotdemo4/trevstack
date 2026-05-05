@@ -30,7 +30,7 @@ const Home: Component = () => {
   };
 
   return (
-    <div class="h-body flex flex-col items-center justify-center gap-4">
+    <div class="flex h-body flex-col items-center justify-center gap-4">
       <h1 class="text-2xl font-bold">Add Numbers</h1>
       <Card class="w-full max-w-sm">
         <Form onSubmit={onSubmit} />

@@ -16,19 +16,19 @@ export function TextField(props: { label?: string }) {
       class="flex flex-col gap-1.5"
     >
       <Show when={props.label}>
-        <Field.Label class="text-ctp-subtext1 data-invalid:text-ctp-red text-sm font-medium">
+        <Field.Label class="text-sm font-medium text-ctp-subtext1 data-invalid:text-ctp-red">
           {props.label}
         </Field.Label>
       </Show>
       <Field.Input
         name={name}
         value={field().state.value ?? ""}
-        class="border-ctp-surface1 bg-ctp-base text-ctp-text placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40 rounded-md border px-3 py-2 text-sm transition-colors focus:ring-2 focus:outline-none"
+        class="rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
         onInput={(e) => field().handleChange(e.target.value)}
         onBlur={field().handleBlur}
       />
       <For each={errors()}>
-        {(err) => <Field.ErrorText class="text-ctp-red text-xs">{err}</Field.ErrorText>}
+        {(err) => <Field.ErrorText class="text-xs text-ctp-red">{err}</Field.ErrorText>}
       </For>
     </Field.Root>
   );

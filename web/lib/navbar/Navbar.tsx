@@ -108,7 +108,7 @@ const Indicator: Component = () => {
   return (
     <span
       aria-hidden="true"
-      class="bg-ctp-sky pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full transition-[transform,width,opacity] duration-300 ease-out"
+      class="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-ctp-sky transition-[transform,width,opacity] duration-300 ease-out"
       style={context.indicatorStyle()}
     />
   );

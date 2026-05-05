@@ -9,7 +9,7 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
 
   return (
     <div class="flex min-h-dvh flex-col">
-      <header class="h-header border-ctp-surface1 bg-ctp-crust sticky top-0 z-50 flex justify-between border-b px-4">
+      <header class="sticky top-0 z-50 flex h-header justify-between border-b border-ctp-surface1 bg-ctp-crust px-4">
         <h1 class="flex cursor-default items-center gap-2 font-mono text-lg font-semibold">
           TrevStack <img src={logo} class="h-6" alt="logo" />
         </h1>
@@ -17,14 +17,14 @@ const Layout: Component<{ children?: JSX.Element }> = (props) => {
           <A
             end
             href="/"
-            class="text-ctp-subtext0 hover:text-ctp-text inline-flex px-1 text-sm transition-colors"
+            class="inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
             activeClass="text-ctp-text"
           >
             Home
           </A>
           <A
             href="/numbers"
-            class="text-ctp-subtext0 hover:text-ctp-text inline-flex px-1 text-sm transition-colors"
+            class="inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
             activeClass="text-ctp-text"
           >
             Numbers
