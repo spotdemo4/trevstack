@@ -1,3 +1,4 @@
+import { Skeleton } from "$lib/skeleton";
 import { debounce } from "@solid-primitives/scheduled";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import { CircleSlash2, LoaderCircle } from "lucide-solid";
@@ -39,18 +40,18 @@ type RowsProps<T> = {
 type TableProps = {
   class?: string;
   /**
-   * CSS `grid-template-columns` value applied to header and body rows so that
-   * every `<th>` and `<td>` auto-aligns. Example: `"200px 1fr 120px"` or
-   * `"auto auto auto"`.
+   * Column track sizes applied to header and body rows so that every `<th>`
+   * and `<td>` auto-aligns. Each entry is a `grid-template-columns` track
+   * value. Example: `["200px", "1fr", "120px"]`.
    */
-  columns: string;
+  columns: string[];
   onScroll?: (start: number, end: number) => void;
   children?: JSX.Element;
 };
 
 type TableContextValue = {
   ref: () => HTMLDivElement | undefined;
-  columns: () => string;
+  columns: () => string[];
   onScroll?: (start: number, end: number) => void;
 };
 
@@ -104,7 +105,7 @@ const Header: Component<HeaderProps> = (props) => {
           "[&>th]:border-b [&>th]:border-ctp-surface0",
           props.class,
         )}
-        style={{ display: "grid", "grid-template-columns": table.columns() }}
+        style={{ display: "grid", "grid-template-columns": table.columns().join(" ") }}
       >
         {props.children}
       </tr>
@@ -156,7 +157,7 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
               )}
               style={{
                 display: "grid",
-                "grid-template-columns": table.columns(),
+                "grid-template-columns": table.columns().join(" "),
                 position: "absolute",
                 height: `${virtualItem().size}px`,
                 transform: `translateY(${virtualItem().start}px)`, //this should always be a `style` as it changes on scroll
@@ -165,7 +166,15 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
             >
               <Show
                 when={props.items()[virtualItem().index]}
-                fallback={<td class="text-ctp-overlay0">Loading...</td>}
+                fallback={
+                  <Index each={table.columns()}>
+                    {() => (
+                      <td>
+                        <Skeleton class="w-full" />
+                      </td>
+                    )}
+                  </Index>
+                }
                 keyed
               >
                 {(item) => props.children(item as T)}

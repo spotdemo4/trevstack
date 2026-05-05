@@ -109,7 +109,7 @@
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
             oxfmt
-            go-tools
+            go
             buf
             sqlfluff
             nixfmt

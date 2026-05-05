@@ -68,7 +68,7 @@ const Numbers: Component = () => {
         <Splitter.ResizeTrigger id="a:b" />
         <Splitter.Panel id="b">
           <Table.Table
-            columns="12rem 2fr 1fr"
+            columns={["12rem", "2fr", "1fr"]}
             onScroll={async (_, end) => {
               while (!response()?.items[end]) {
                 await refetch();
