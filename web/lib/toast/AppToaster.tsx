@@ -8,6 +8,8 @@ import { renderToastIcon } from "./icon";
 import { toaster } from "./toaster";
 import { resolveToastTone } from "./tone";
 
+import styles from "./toast.module.css";
+
 export const AppToaster: Component = () => {
   return (
     <Portal>
@@ -17,7 +19,7 @@ export const AppToaster: Component = () => {
 
           return (
             <Toast.Root
-              class={`pointer-events-auto relative flex w-[min(92vw,24rem)] items-start gap-3 overflow-hidden rounded-lg border p-3 text-ctp-text shadow-lg shadow-ctp-crust/35 data-[state=closed]:animate-toast-out data-[state=open]:animate-toast-in ${tone().root}`}
+              class={`${styles.toastRoot} pointer-events-auto relative flex w-[min(92vw,24rem)] items-start gap-3 overflow-hidden rounded-lg border p-3 text-ctp-text shadow-lg shadow-ctp-crust/35 ${tone().root}`}
             >
               <div class={`flex h-6 w-6 shrink-0 items-center justify-center ${tone().icon}`}>
                 {renderToastIcon(toast().type)}
