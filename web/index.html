@@ -2,13 +2,21 @@
 <html lang="en">
   <head>
     <style>
-      html {
-        background-color: #1e1e2e;
+      @media (prefers-color-scheme: light) {
+        html {
+          background-color: #eff1f5;
+        }
+      }
+      @media (prefers-color-scheme: dark) {
+        html {
+          background-color: #1e1e2e;
+        }
       }
     </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#04a5e5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#89dceb" media="(prefers-color-scheme: dark)" />
     <link rel="shortcut icon" type="image/ico" href="/assets/favicon.ico" />
     <title>TrevStack</title>
   </head>
