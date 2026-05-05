@@ -1,0 +1,70 @@
+.Root {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.FadeIndicator {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+
+  &[data-state="open"] {
+    animation-name: fade-in, spin-in;
+    animation-duration: 180ms;
+    animation-timing-function: ease-out;
+  }
+
+  &[data-state="closed"] {
+    animation-name: fade-out, spin-out;
+    animation-duration: 120ms;
+    animation-timing-function: ease-in;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes spin-in {
+  from {
+    transform: rotate(-12deg) scale(0.82);
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes spin-out {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(12deg) scale(0.82);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .FadeIndicator {
+    &[data-state="open"],
+    &[data-state="closed"] {
+      animation: none;
+    }
+  }
+}

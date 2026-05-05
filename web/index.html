@@ -1,16 +1,24 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <style>
-      @media (prefers-color-scheme: light) {
-        html {
-          background-color: #eff1f5;
-        }
+    <script>
+      if (
+        localStorage.theme === "dark" ||
+        (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.add("mocha");
+      } else {
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.add("latte");
       }
-      @media (prefers-color-scheme: dark) {
-        html {
-          background-color: #1e1e2e;
-        }
+    </script>
+    <style>
+      html {
+        background-color: #eff1f5;
+      }
+      html.dark {
+        background-color: #1e1e2e;
       }
     </style>
     <meta charset="utf-8" />

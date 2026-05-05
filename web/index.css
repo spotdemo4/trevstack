@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@catppuccin/tailwindcss/mocha.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --spacing-header: calc(var(--spacing) * 12);
   --spacing-body: calc(100dvh - var(--spacing-header));

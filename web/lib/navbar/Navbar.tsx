@@ -91,7 +91,7 @@ const NavbarRoot: Component<NavbarProps> = (props) => {
 
   return (
     <NavbarContext.Provider value={{ indicatorStyle }}>
-      <nav ref={navRef} class={twMerge("relative flex items-center gap-6", props.class)}>
+      <nav ref={navRef} class={twMerge("relative flex h-full items-center gap-6", props.class)}>
         {props.children}
       </nav>
     </NavbarContext.Provider>
