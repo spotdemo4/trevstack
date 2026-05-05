@@ -37,12 +37,26 @@ const (
 	NumberServiceAddProcedure = "/number.v1.NumberService/Add"
 	// NumberServiceListProcedure is the fully-qualified name of the NumberService's List RPC.
 	NumberServiceListProcedure = "/number.v1.NumberService/List"
+	// NumberServiceSummaryProcedure is the fully-qualified name of the NumberService's Summary RPC.
+	NumberServiceSummaryProcedure = "/number.v1.NumberService/Summary"
+	// NumberServiceTimeSeriesProcedure is the fully-qualified name of the NumberService's TimeSeries
+	// RPC.
+	NumberServiceTimeSeriesProcedure = "/number.v1.NumberService/TimeSeries"
+	// NumberServiceDistributionProcedure is the fully-qualified name of the NumberService's
+	// Distribution RPC.
+	NumberServiceDistributionProcedure = "/number.v1.NumberService/Distribution"
+	// NumberServiceTopNamesProcedure is the fully-qualified name of the NumberService's TopNames RPC.
+	NumberServiceTopNamesProcedure = "/number.v1.NumberService/TopNames"
 )
 
 // NumberServiceClient is a client for the number.v1.NumberService service.
 type NumberServiceClient interface {
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
 	List(context.Context, *v1.ListRequest) (*v1.ListResponse, error)
+	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
+	TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error)
+	Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error)
+	TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error)
 }
 
 // NewNumberServiceClient constructs a client for the number.v1.NumberService service. By default,
@@ -68,13 +82,41 @@ func NewNumberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(numberServiceMethods.ByName("List")),
 			connect.WithClientOptions(opts...),
 		),
+		summary: connect.NewClient[v1.SummaryRequest, v1.SummaryResponse](
+			httpClient,
+			baseURL+NumberServiceSummaryProcedure,
+			connect.WithSchema(numberServiceMethods.ByName("Summary")),
+			connect.WithClientOptions(opts...),
+		),
+		timeSeries: connect.NewClient[v1.TimeSeriesRequest, v1.TimeSeriesResponse](
+			httpClient,
+			baseURL+NumberServiceTimeSeriesProcedure,
+			connect.WithSchema(numberServiceMethods.ByName("TimeSeries")),
+			connect.WithClientOptions(opts...),
+		),
+		distribution: connect.NewClient[v1.DistributionRequest, v1.DistributionResponse](
+			httpClient,
+			baseURL+NumberServiceDistributionProcedure,
+			connect.WithSchema(numberServiceMethods.ByName("Distribution")),
+			connect.WithClientOptions(opts...),
+		),
+		topNames: connect.NewClient[v1.TopNamesRequest, v1.TopNamesResponse](
+			httpClient,
+			baseURL+NumberServiceTopNamesProcedure,
+			connect.WithSchema(numberServiceMethods.ByName("TopNames")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // numberServiceClient implements NumberServiceClient.
 type numberServiceClient struct {
-	add  *connect.Client[v1.AddRequest, v1.AddResponse]
-	list *connect.Client[v1.ListRequest, v1.ListResponse]
+	add          *connect.Client[v1.AddRequest, v1.AddResponse]
+	list         *connect.Client[v1.ListRequest, v1.ListResponse]
+	summary      *connect.Client[v1.SummaryRequest, v1.SummaryResponse]
+	timeSeries   *connect.Client[v1.TimeSeriesRequest, v1.TimeSeriesResponse]
+	distribution *connect.Client[v1.DistributionRequest, v1.DistributionResponse]
+	topNames     *connect.Client[v1.TopNamesRequest, v1.TopNamesResponse]
 }
 
 // Add calls number.v1.NumberService.Add.
@@ -95,10 +137,50 @@ func (c *numberServiceClient) List(ctx context.Context, req *v1.ListRequest) (*v
 	return nil, err
 }
 
+// Summary calls number.v1.NumberService.Summary.
+func (c *numberServiceClient) Summary(ctx context.Context, req *v1.SummaryRequest) (*v1.SummaryResponse, error) {
+	response, err := c.summary.CallUnary(ctx, connect.NewRequest(req))
+	if response != nil {
+		return response.Msg, err
+	}
+	return nil, err
+}
+
+// TimeSeries calls number.v1.NumberService.TimeSeries.
+func (c *numberServiceClient) TimeSeries(ctx context.Context, req *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error) {
+	response, err := c.timeSeries.CallUnary(ctx, connect.NewRequest(req))
+	if response != nil {
+		return response.Msg, err
+	}
+	return nil, err
+}
+
+// Distribution calls number.v1.NumberService.Distribution.
+func (c *numberServiceClient) Distribution(ctx context.Context, req *v1.DistributionRequest) (*v1.DistributionResponse, error) {
+	response, err := c.distribution.CallUnary(ctx, connect.NewRequest(req))
+	if response != nil {
+		return response.Msg, err
+	}
+	return nil, err
+}
+
+// TopNames calls number.v1.NumberService.TopNames.
+func (c *numberServiceClient) TopNames(ctx context.Context, req *v1.TopNamesRequest) (*v1.TopNamesResponse, error) {
+	response, err := c.topNames.CallUnary(ctx, connect.NewRequest(req))
+	if response != nil {
+		return response.Msg, err
+	}
+	return nil, err
+}
+
 // NumberServiceHandler is an implementation of the number.v1.NumberService service.
 type NumberServiceHandler interface {
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
 	List(context.Context, *v1.ListRequest) (*v1.ListResponse, error)
+	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
+	TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error)
+	Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error)
+	TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error)
 }
 
 // NewNumberServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -120,12 +202,44 @@ func NewNumberServiceHandler(svc NumberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(numberServiceMethods.ByName("List")),
 		connect.WithHandlerOptions(opts...),
 	)
+	numberServiceSummaryHandler := connect.NewUnaryHandlerSimple(
+		NumberServiceSummaryProcedure,
+		svc.Summary,
+		connect.WithSchema(numberServiceMethods.ByName("Summary")),
+		connect.WithHandlerOptions(opts...),
+	)
+	numberServiceTimeSeriesHandler := connect.NewUnaryHandlerSimple(
+		NumberServiceTimeSeriesProcedure,
+		svc.TimeSeries,
+		connect.WithSchema(numberServiceMethods.ByName("TimeSeries")),
+		connect.WithHandlerOptions(opts...),
+	)
+	numberServiceDistributionHandler := connect.NewUnaryHandlerSimple(
+		NumberServiceDistributionProcedure,
+		svc.Distribution,
+		connect.WithSchema(numberServiceMethods.ByName("Distribution")),
+		connect.WithHandlerOptions(opts...),
+	)
+	numberServiceTopNamesHandler := connect.NewUnaryHandlerSimple(
+		NumberServiceTopNamesProcedure,
+		svc.TopNames,
+		connect.WithSchema(numberServiceMethods.ByName("TopNames")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/number.v1.NumberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case NumberServiceAddProcedure:
 			numberServiceAddHandler.ServeHTTP(w, r)
 		case NumberServiceListProcedure:
 			numberServiceListHandler.ServeHTTP(w, r)
+		case NumberServiceSummaryProcedure:
+			numberServiceSummaryHandler.ServeHTTP(w, r)
+		case NumberServiceTimeSeriesProcedure:
+			numberServiceTimeSeriesHandler.ServeHTTP(w, r)
+		case NumberServiceDistributionProcedure:
+			numberServiceDistributionHandler.ServeHTTP(w, r)
+		case NumberServiceTopNamesProcedure:
+			numberServiceTopNamesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -141,4 +255,20 @@ func (UnimplementedNumberServiceHandler) Add(context.Context, *v1.AddRequest) (*
 
 func (UnimplementedNumberServiceHandler) List(context.Context, *v1.ListRequest) (*v1.ListResponse, error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.List is not implemented"))
+}
+
+func (UnimplementedNumberServiceHandler) Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.Summary is not implemented"))
+}
+
+func (UnimplementedNumberServiceHandler) TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.TimeSeries is not implemented"))
+}
+
+func (UnimplementedNumberServiceHandler) Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.Distribution is not implemented"))
+}
+
+func (UnimplementedNumberServiceHandler) TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.TopNames is not implemented"))
 }

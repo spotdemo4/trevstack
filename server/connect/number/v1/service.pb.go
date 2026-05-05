@@ -24,29 +24,50 @@ var File_number_v1_service_proto protoreflect.FileDescriptor
 
 const file_number_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x17number/v1/service.proto\x12\tnumber.v1\x1a\x13number/v1/add.proto\x1a\x14number/v1/list.proto2\x82\x01\n" +
+	"\x17number/v1/service.proto\x12\tnumber.v1\x1a\x13number/v1/add.proto\x1a\x14number/v1/list.proto\x1a\x17number/v1/metrics.proto2\xad\x03\n" +
 	"\rNumberService\x126\n" +
 	"\x03Add\x12\x15.number.v1.AddRequest\x1a\x16.number.v1.AddResponse\"\x00\x129\n" +
-	"\x04List\x12\x16.number.v1.ListRequest\x1a\x17.number.v1.ListResponse\"\x00B\xa4\x01\n" +
+	"\x04List\x12\x16.number.v1.ListRequest\x1a\x17.number.v1.ListResponse\"\x00\x12B\n" +
+	"\aSummary\x12\x19.number.v1.SummaryRequest\x1a\x1a.number.v1.SummaryResponse\"\x00\x12K\n" +
+	"\n" +
+	"TimeSeries\x12\x1c.number.v1.TimeSeriesRequest\x1a\x1d.number.v1.TimeSeriesResponse\"\x00\x12Q\n" +
+	"\fDistribution\x12\x1e.number.v1.DistributionRequest\x1a\x1f.number.v1.DistributionResponse\"\x00\x12E\n" +
+	"\bTopNames\x12\x1a.number.v1.TopNamesRequest\x1a\x1b.number.v1.TopNamesResponse\"\x00B\xa4\x01\n" +
 	"\rcom.number.v1B\fServiceProtoP\x01Z@github.com/spotdemo4/trevstack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 
 var file_number_v1_service_proto_goTypes = []any{
-	(*AddRequest)(nil),   // 0: number.v1.AddRequest
-	(*ListRequest)(nil),  // 1: number.v1.ListRequest
-	(*AddResponse)(nil),  // 2: number.v1.AddResponse
-	(*ListResponse)(nil), // 3: number.v1.ListResponse
+	(*AddRequest)(nil),           // 0: number.v1.AddRequest
+	(*ListRequest)(nil),          // 1: number.v1.ListRequest
+	(*SummaryRequest)(nil),       // 2: number.v1.SummaryRequest
+	(*TimeSeriesRequest)(nil),    // 3: number.v1.TimeSeriesRequest
+	(*DistributionRequest)(nil),  // 4: number.v1.DistributionRequest
+	(*TopNamesRequest)(nil),      // 5: number.v1.TopNamesRequest
+	(*AddResponse)(nil),          // 6: number.v1.AddResponse
+	(*ListResponse)(nil),         // 7: number.v1.ListResponse
+	(*SummaryResponse)(nil),      // 8: number.v1.SummaryResponse
+	(*TimeSeriesResponse)(nil),   // 9: number.v1.TimeSeriesResponse
+	(*DistributionResponse)(nil), // 10: number.v1.DistributionResponse
+	(*TopNamesResponse)(nil),     // 11: number.v1.TopNamesResponse
 }
 var file_number_v1_service_proto_depIdxs = []int32{
-	0, // 0: number.v1.NumberService.Add:input_type -> number.v1.AddRequest
-	1, // 1: number.v1.NumberService.List:input_type -> number.v1.ListRequest
-	2, // 2: number.v1.NumberService.Add:output_type -> number.v1.AddResponse
-	3, // 3: number.v1.NumberService.List:output_type -> number.v1.ListResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: number.v1.NumberService.Add:input_type -> number.v1.AddRequest
+	1,  // 1: number.v1.NumberService.List:input_type -> number.v1.ListRequest
+	2,  // 2: number.v1.NumberService.Summary:input_type -> number.v1.SummaryRequest
+	3,  // 3: number.v1.NumberService.TimeSeries:input_type -> number.v1.TimeSeriesRequest
+	4,  // 4: number.v1.NumberService.Distribution:input_type -> number.v1.DistributionRequest
+	5,  // 5: number.v1.NumberService.TopNames:input_type -> number.v1.TopNamesRequest
+	6,  // 6: number.v1.NumberService.Add:output_type -> number.v1.AddResponse
+	7,  // 7: number.v1.NumberService.List:output_type -> number.v1.ListResponse
+	8,  // 8: number.v1.NumberService.Summary:output_type -> number.v1.SummaryResponse
+	9,  // 9: number.v1.NumberService.TimeSeries:output_type -> number.v1.TimeSeriesResponse
+	10, // 10: number.v1.NumberService.Distribution:output_type -> number.v1.DistributionResponse
+	11, // 11: number.v1.NumberService.TopNames:output_type -> number.v1.TopNamesResponse
+	6,  // [6:12] is the sub-list for method output_type
+	0,  // [0:6] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_number_v1_service_proto_init() }
@@ -56,6 +77,7 @@ func file_number_v1_service_proto_init() {
 	}
 	file_number_v1_add_proto_init()
 	file_number_v1_list_proto_init()
+	file_number_v1_metrics_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

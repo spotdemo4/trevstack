@@ -4,8 +4,13 @@ package number.v1;
 
 import "number/v1/add.proto";
 import "number/v1/list.proto";
+import "number/v1/metrics.proto";
 
 service NumberService {
   rpc Add(AddRequest) returns (AddResponse) {}
   rpc List(ListRequest) returns (ListResponse) {}
+  rpc Summary(SummaryRequest) returns (SummaryResponse) {}
+  rpc TimeSeries(TimeSeriesRequest) returns (TimeSeriesResponse) {}
+  rpc Distribution(DistributionRequest) returns (DistributionResponse) {}
+  rpc TopNames(TopNamesRequest) returns (TopNamesResponse) {}
 }

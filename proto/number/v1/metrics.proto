@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package number.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+// Scalar summary metrics across all items, suitable for stat cards.
+message SummaryRequest {
+  optional google.protobuf.Timestamp start = 1;
+  optional google.protobuf.Timestamp end = 2;
+
+  option (buf.validate.message).cel = {
+    id: "end_after_start"
+    message: "End must be after start"
+    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
+  };
+}
+
+message SummaryResponse {
+  int64 total_count = 1;
+  uint64 total_sum = 2;
+  double average = 3;
+  uint32 min = 4;
+  uint32 max = 5;
+  uint32 distinct_names = 6;
+}
+
+// Time-bucketed counts and sums, suitable for line/area charts.
+enum TimeInterval {
+  TIME_INTERVAL_UNSPECIFIED = 0;
+  TIME_INTERVAL_HOUR = 1;
+  TIME_INTERVAL_DAY = 2;
+  TIME_INTERVAL_WEEK = 3;
+  TIME_INTERVAL_MONTH = 4;
+}
+
+message TimeSeriesRequest {
+  TimeInterval interval = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  optional google.protobuf.Timestamp start = 2;
+  optional google.protobuf.Timestamp end = 3;
+
+  option (buf.validate.message).cel = {
+    id: "end_after_start"
+    message: "End must be after start"
+    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
+  };
+}
+
+message TimeSeriesPoint {
+  google.protobuf.Timestamp bucket = 1;
+  int64 count = 2;
+  uint64 sum = 3;
+  double average = 4;
+}
+
+message TimeSeriesResponse {
+  repeated TimeSeriesPoint points = 1;
+}
+
+// Histogram of `number` values across equal-width buckets, suitable for bar charts.
+message DistributionRequest {
+  uint32 bucket_count = 1 [(buf.validate.field).uint32 = {
+    gte: 1
+    lte: 100
+  }];
+  optional google.protobuf.Timestamp start = 2;
+  optional google.protobuf.Timestamp end = 3;
+
+  option (buf.validate.message).cel = {
+    id: "end_after_start"
+    message: "End must be after start"
+    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
+  };
+}
+
+message DistributionBucket {
+  uint32 lower = 1;
+  uint32 upper = 2;
+  int64 count = 3;
+}
+
+message DistributionResponse {
+  repeated DistributionBucket buckets = 1;
+}
+
+// Top N names by frequency and total value, suitable for bar/pie charts.
+message TopNamesRequest {
+  uint32 limit = 1 [(buf.validate.field).uint32 = {
+    gte: 1
+    lte: 100
+  }];
+  optional google.protobuf.Timestamp start = 2;
+  optional google.protobuf.Timestamp end = 3;
+
+  option (buf.validate.message).cel = {
+    id: "end_after_start"
+    message: "End must be after start"
+    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
+  };
+}
+
+message TopName {
+  string name = 1;
+  int64 count = 2;
+  uint64 sum = 3;
+  double average = 4;
+}
+
+message TopNamesResponse {
+  repeated TopName names = 1;
+}

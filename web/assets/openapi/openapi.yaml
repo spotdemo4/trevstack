@@ -3,7 +3,7 @@ servers:
   - url: /grpc
 info:
   title: TrevStack API
-  version: 0.3.0
+  version: 0.4.0
   description: API for TrevStack
   contact:
     name: Trev
@@ -206,6 +206,56 @@ components:
           format: int64
       title: AddResponse
       additionalProperties: false
+    number.v1.DistributionBucket:
+      type: object
+      properties:
+        lower:
+          type: integer
+          title: lower
+        upper:
+          type: integer
+          title: upper
+        count:
+          type:
+            - integer
+            - string
+          title: count
+          format: int64
+      title: DistributionBucket
+      additionalProperties: false
+    number.v1.DistributionRequest:
+      type: object
+      properties:
+        bucketCount:
+          type: integer
+          title: bucket_count
+          maximum: 100
+          minimum: 1
+        start:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: start
+        end:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: end
+      title: DistributionRequest
+      additionalProperties: false
+      description: |
+        Histogram of `number` values across equal-width buckets, suitable for bar charts.
+        end_after_start // End must be after start
+    number.v1.DistributionResponse:
+      type: object
+      properties:
+        buckets:
+          type: array
+          items:
+            $ref: "#/components/schemas/number.v1.DistributionBucket"
+          title: buckets
+      title: DistributionResponse
+      additionalProperties: false
     number.v1.Item:
       type: object
       properties:
@@ -291,6 +341,178 @@ components:
           format: int64
       title: ListResponse
       additionalProperties: false
+    number.v1.SummaryRequest:
+      type: object
+      properties:
+        start:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: start
+        end:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: end
+      title: SummaryRequest
+      additionalProperties: false
+      description: |
+        Scalar summary metrics across all items, suitable for stat cards.
+        end_after_start // End must be after start
+    number.v1.SummaryResponse:
+      type: object
+      properties:
+        totalCount:
+          type:
+            - integer
+            - string
+          title: total_count
+          format: int64
+        totalSum:
+          type:
+            - integer
+            - string
+          title: total_sum
+          format: int64
+        average:
+          type: number
+          title: average
+          format: double
+        min:
+          type: integer
+          title: min
+        max:
+          type: integer
+          title: max
+        distinctNames:
+          type: integer
+          title: distinct_names
+      title: SummaryResponse
+      additionalProperties: false
+    number.v1.TimeInterval:
+      type: string
+      title: TimeInterval
+      enum:
+        - TIME_INTERVAL_UNSPECIFIED
+        - TIME_INTERVAL_HOUR
+        - TIME_INTERVAL_DAY
+        - TIME_INTERVAL_WEEK
+        - TIME_INTERVAL_MONTH
+      description: Time-bucketed counts and sums, suitable for line/area charts.
+    number.v1.TimeSeriesPoint:
+      type: object
+      properties:
+        bucket:
+          title: bucket
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
+        count:
+          type:
+            - integer
+            - string
+          title: count
+          format: int64
+        sum:
+          type:
+            - integer
+            - string
+          title: sum
+          format: int64
+        average:
+          type: number
+          title: average
+          format: double
+      title: TimeSeriesPoint
+      additionalProperties: false
+    number.v1.TimeSeriesRequest:
+      type: object
+      properties:
+        interval:
+          not:
+            enum:
+              - TIME_INTERVAL_UNSPECIFIED
+          title: interval
+          $ref: "#/components/schemas/number.v1.TimeInterval"
+        start:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: start
+        end:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: end
+      title: TimeSeriesRequest
+      additionalProperties: false
+      description: |
+        end_after_start // End must be after start
+    number.v1.TimeSeriesResponse:
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: "#/components/schemas/number.v1.TimeSeriesPoint"
+          title: points
+      title: TimeSeriesResponse
+      additionalProperties: false
+    number.v1.TopName:
+      type: object
+      properties:
+        name:
+          type: string
+          title: name
+        count:
+          type:
+            - integer
+            - string
+          title: count
+          format: int64
+        sum:
+          type:
+            - integer
+            - string
+          title: sum
+          format: int64
+        average:
+          type: number
+          title: average
+          format: double
+      title: TopName
+      additionalProperties: false
+    number.v1.TopNamesRequest:
+      type: object
+      properties:
+        limit:
+          type: integer
+          title: limit
+          maximum: 100
+          minimum: 1
+        start:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: start
+        end:
+          oneOf:
+            - $ref: "#/components/schemas/google.protobuf.Timestamp"
+            - type: "null"
+          title: end
+      title: TopNamesRequest
+      additionalProperties: false
+      description: |
+        Top N names by frequency and total value, suitable for bar/pie charts.
+        end_after_start // End must be after start
+    number.v1.TopNamesResponse:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            $ref: "#/components/schemas/number.v1.TopName"
+          title: names
+      title: TopNamesResponse
+      additionalProperties: false
 security:
   - bearerAuth: []
 paths:
@@ -329,6 +551,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/number.v1.AddResponse"
+  /number.v1.NumberService/Distribution:
+    post:
+      tags:
+        - number.v1.NumberService
+      summary: Distribution
+      operationId: number.v1.NumberService.Distribution
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/number.v1.DistributionRequest"
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/number.v1.DistributionResponse"
   /number.v1.NumberService/List:
     post:
       tags:
@@ -364,5 +621,110 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/number.v1.ListResponse"
+  /number.v1.NumberService/Summary:
+    post:
+      tags:
+        - number.v1.NumberService
+      summary: Summary
+      operationId: number.v1.NumberService.Summary
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/number.v1.SummaryRequest"
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/number.v1.SummaryResponse"
+  /number.v1.NumberService/TimeSeries:
+    post:
+      tags:
+        - number.v1.NumberService
+      summary: TimeSeries
+      operationId: number.v1.NumberService.TimeSeries
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/number.v1.TimeSeriesRequest"
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/number.v1.TimeSeriesResponse"
+  /number.v1.NumberService/TopNames:
+    post:
+      tags:
+        - number.v1.NumberService
+      summary: TopNames
+      operationId: number.v1.NumberService.TopNames
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/number.v1.TopNamesRequest"
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/number.v1.TopNamesResponse"
 tags:
   - name: number.v1.NumberService
