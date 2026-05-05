@@ -4,7 +4,11 @@ import { AppToaster } from "$lib/toast";
 import { A } from "@solidjs/router";
 import { type Component, children, type JSX } from "solid-js";
 
-const Layout: Component<{ children?: JSX.Element }> = (props) => {
+type LayoutProps = {
+  children?: JSX.Element;
+};
+
+const Layout: Component<LayoutProps> = (props) => {
   const resolved = children(() => props.children);
 
   return (

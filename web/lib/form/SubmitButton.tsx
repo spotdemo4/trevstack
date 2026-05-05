@@ -1,9 +1,13 @@
 import { Ellipsis } from "lucide-solid";
-import { Show } from "solid-js";
+import { Show, type Component } from "solid-js";
 
 import { useFormContext } from "./context";
 
-export function SubmitButton(props: { label?: string }) {
+type SubmitButtonProps = {
+  label?: string;
+};
+
+export const SubmitButton: Component<SubmitButtonProps> = (props) => {
   const form = useFormContext();
 
   return (
@@ -27,4 +31,4 @@ export function SubmitButton(props: { label?: string }) {
       )}
     </form.Subscribe>
   );
-}
+};

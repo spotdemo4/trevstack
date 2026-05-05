@@ -5,7 +5,7 @@ import { type Timestamp, timestampDate, timestampFromDate } from "@bufbuild/prot
 import { CalendarDate, parseDate, fromDate, toCalendarDate } from "@internationalized/date";
 import { mergeProps } from "@zag-js/solid";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-solid";
-import { createMemo, For, Index, Show } from "solid-js";
+import { createMemo, For, Index, Show, type Component } from "solid-js";
 import { Portal } from "solid-js/web";
 
 import { useFieldContext } from "./context";
@@ -23,7 +23,11 @@ function calendarDateToTimestamp(value: CalendarDate): Timestamp {
   return timestampFromDate(jsDate);
 }
 
-export function DateField(props: { label?: string }) {
+type DateFieldProps = {
+  label?: string;
+};
+
+export const DateField: Component<DateFieldProps> = (props) => {
   const field = useFieldContext<Timestamp | undefined>();
   const name = field().name;
   const errors = createMemo(() => [
@@ -259,4 +263,4 @@ export function DateField(props: { label?: string }) {
       </For>
     </Field.Root>
   );
-}
+};

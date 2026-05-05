@@ -1,9 +1,13 @@
 import { Field } from "@ark-ui/solid/field";
-import { createMemo, For, Show } from "solid-js";
+import { createMemo, For, Show, type Component } from "solid-js";
 
 import { useFieldContext } from "./context";
 
-export function TextField(props: { label?: string }) {
+type TextFieldProps = {
+  label?: string;
+};
+
+export const TextField: Component<TextFieldProps> = (props) => {
   const field = useFieldContext<string>();
   const name = field().name;
   const errors = createMemo(() => [
@@ -32,4 +36,4 @@ export function TextField(props: { label?: string }) {
       </For>
     </Field.Root>
   );
-}
+};

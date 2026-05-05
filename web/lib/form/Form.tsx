@@ -1,9 +1,14 @@
-import { children, createMemo, For, type JSX } from "solid-js";
+import { children, createMemo, For, type Component, type JSX } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 import { useFormContext } from "./context";
 
-export function Form(props: { children?: JSX.Element; class?: string }) {
+type FormProps = {
+  children?: JSX.Element;
+  class?: string;
+};
+
+export const Form: Component<FormProps> = (props) => {
   const form = useFormContext();
   const child = children(() => props.children);
 
@@ -40,7 +45,7 @@ export function Form(props: { children?: JSX.Element; class?: string }) {
       }}
     </form.Subscribe>
   );
-}
+};
 
 type Error = {
   message?: string;

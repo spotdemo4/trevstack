@@ -1,11 +1,15 @@
 import { Field } from "@ark-ui/solid/field";
 import { NumberInput } from "@ark-ui/solid/number-input";
 import { ChevronDown, ChevronUp } from "lucide-solid";
-import { createMemo, For, Show } from "solid-js";
+import { createMemo, For, Show, type Component } from "solid-js";
 
 import { useFieldContext } from "./context";
 
-export function NumberField(props: { label?: string }) {
+type NumberFieldProps = {
+  label?: string;
+};
+
+export const NumberField: Component<NumberFieldProps> = (props) => {
   const field = useFieldContext<number>();
   const name = field().name;
   const errors = createMemo(() => [
@@ -67,4 +71,4 @@ export function NumberField(props: { label?: string }) {
       </For>
     </Field.Root>
   );
-}
+};

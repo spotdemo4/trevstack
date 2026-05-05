@@ -3,14 +3,16 @@ import type { JSX } from "solid-js";
 import { type Component, Index } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
-export const Virtualizer: Component<{
+type VirtualizerProps = {
   class?: string;
   count: number;
   overscan?: number;
   size?: number;
   onChange?: VirtualizerOptions<HTMLDivElement, Element>["onChange"];
   children: (index: number) => JSX.Element;
-}> = (props) => {
+};
+
+export const Virtualizer: Component<VirtualizerProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let parentRef!: HTMLDivElement;
 

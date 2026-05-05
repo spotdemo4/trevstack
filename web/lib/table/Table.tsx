@@ -36,6 +36,18 @@ type RowsProps<T> = {
   children: (item: T) => JSX.Element;
 };
 
+type TableProps = {
+  class?: string;
+  /**
+   * CSS `grid-template-columns` value applied to header and body rows so that
+   * every `<th>` and `<td>` auto-aligns. Example: `"200px 1fr 120px"` or
+   * `"auto auto auto"`.
+   */
+  columns: string;
+  onScroll?: (start: number, end: number) => void;
+  children?: JSX.Element;
+};
+
 type TableContextValue = {
   ref: () => HTMLDivElement | undefined;
   columns: () => string;
@@ -55,17 +67,7 @@ const useTableContext = (componentName: string) => {
 
 const LOADING_STATE_DELAY_MS = 150;
 
-const Table: Component<{
-  class?: string;
-  /**
-   * CSS `grid-template-columns` value applied to header and body rows so that
-   * every `<th>` and `<td>` auto-aligns. Example: `"200px 1fr 120px"` or
-   * `"auto auto auto"`.
-   */
-  columns: string;
-  onScroll?: (start: number, end: number) => void;
-  children?: JSX.Element;
-}> = (props) => {
+const Table: Component<TableProps> = (props) => {
   let parentRef: HTMLDivElement | undefined;
 
   return (

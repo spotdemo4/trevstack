@@ -1,7 +1,12 @@
-import type { JSX } from "solid-js";
+import type { Component, JSX } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
-export function Card(props: { children?: JSX.Element; class?: string }) {
+type CardProps = {
+  children?: JSX.Element;
+  class?: string;
+};
+
+export const Card: Component<CardProps> = (props) => {
   return (
     <div
       class={twMerge(
@@ -12,4 +17,4 @@ export function Card(props: { children?: JSX.Element; class?: string }) {
       {props.children}
     </div>
   );
-}
+};

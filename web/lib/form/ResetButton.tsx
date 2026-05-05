@@ -1,6 +1,12 @@
+import type { Component } from "solid-js";
+
 import { useFormContext } from "./context";
 
-export function ResetButton(props: { label?: string }) {
+type ResetButtonProps = {
+  label?: string;
+};
+
+export const ResetButton: Component<ResetButtonProps> = (props) => {
   const form = useFormContext();
 
   return (
@@ -21,4 +27,4 @@ export function ResetButton(props: { label?: string }) {
       }}
     />
   );
-}
+};
