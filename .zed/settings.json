@@ -65,23 +65,6 @@
         }
       ]
     },
-    "JavaScript": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "language_servers": ["!eslint", "..."],
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        },
-        {
-          "code_action": "source.fixAll.oxc"
-        }
-      ]
-    },
     "JSON": {
       "format_on_save": "on",
       "prettier": {
@@ -126,12 +109,15 @@
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["!eslint", "..."],
+      "language_servers": ["!eslint", "tsgo", "vtsls", "oxlint", "oxfmt", "..."],
       "formatter": [
         {
           "language_server": {
             "name": "oxfmt"
           }
+        },
+        {
+          "code_action": "source.fixAll.oxc"
         }
       ]
     },
@@ -140,12 +126,15 @@
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["!eslint", "..."],
+      "language_servers": ["!eslint", "tsgo", "vtsls", "oxlint", "oxfmt", "..."],
       "formatter": [
         {
           "language_server": {
             "name": "oxfmt"
           }
+        },
+        {
+          "code_action": "source.fixAll.oxc"
         }
       ]
     },

@@ -7,6 +7,7 @@ import { mergeProps } from "@zag-js/solid";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-solid";
 import { createMemo, For, Index, Show, type Component } from "solid-js";
 import { Portal } from "solid-js/web";
+import { twMerge } from "tailwind-merge";
 
 import { useFieldContext } from "./context";
 
@@ -24,6 +25,7 @@ function calendarDateToTimestamp(value: CalendarDate): Timestamp {
 }
 
 type DateFieldProps = {
+  class?: string;
   label?: string;
 };
 
@@ -69,7 +71,12 @@ export const DateField: Component<DateFieldProps> = (props) => {
             {props.label}
           </DateInput.Label>
         </Show>
-        <DateInput.Control class="flex items-center gap-2 rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2 data-invalid:border-ctp-red data-invalid:focus-within:ring-ctp-red/40">
+        <DateInput.Control
+          class={twMerge(
+            "flex items-center gap-2 rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2 data-invalid:border-ctp-red data-invalid:focus-within:ring-ctp-red/40",
+            props.class,
+          )}
+        >
           <DatePicker.RootProvider value={datePicker} class="flex flex-1 items-center">
             <DatePicker.Control class="flex flex-1 items-center gap-2">
               <DateInput.SegmentGroup

@@ -37,6 +37,13 @@ const Layout: Component<LayoutProps> = (props) => {
             >
               Numbers
             </A>
+            <A
+              href="/metrics"
+              class="inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
+              activeClass="text-ctp-text"
+            >
+              Metrics
+            </A>
             <Navbar.Indicator />
           </Navbar>
           <div class="h-6 w-px bg-ctp-surface1" />

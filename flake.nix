@@ -167,6 +167,7 @@
                 root = ./web;
                 fileset = fileset.unions [
                   ./web/.npmrc
+                  ./web/.oxlintrc.json
                   ./web/index.css
                   ./web/index.html
                   ./web/index.tsx
@@ -240,9 +241,7 @@
             };
 
             typescript = {
-              root = ./.;
-              filter = file: file.hasExt "ts" || file.hasExt "tsx";
-              ignore = generated;
+              src = self.packages.${system}.web;
               packages = with pkgs; [
                 oxlint
               ];

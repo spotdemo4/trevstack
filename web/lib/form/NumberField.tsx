@@ -36,7 +36,7 @@ export const NumberField: Component<NumberFieldProps> = (props) => {
             field().handleChange(c.valueAsNumber);
           } else {
             // still validate
-            field().form.validateField(name, "change");
+            void field().form.validateField(name, "change");
           }
         }}
       >

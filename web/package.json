@@ -24,6 +24,7 @@
     "@tanstack/solid-form": "^1.29.1",
     "@tanstack/solid-table": "^8.21.3",
     "@tanstack/solid-virtual": "^3.13.24",
+    "d3": "^7.9.0",
     "lucide-solid": "^1.14.0",
     "solid-js": "^1.9.12",
     "tailwind-merge": "^3.5.0"
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@catppuccin/tailwindcss": "^1.0.0",
     "@tailwindcss/vite": "^4.2.4",
+    "@types/d3": "^7.4.3",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
     "vite": "^8.0.10",

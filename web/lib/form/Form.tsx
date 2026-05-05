@@ -34,7 +34,7 @@ export const Form: Component<FormProps> = (props) => {
               await form.handleSubmit();
 
               // Manually trigger validation after submission to update error messages
-              form.validate("change");
+              void form.validate("change");
             }}
             class={twMerge("flex w-full flex-col gap-4", props.class)}
           >
