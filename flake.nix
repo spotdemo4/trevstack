@@ -122,7 +122,7 @@
           server = pkgs.buildGo125Module (
             final: with pkgs.lib; {
               pname = "trevstack";
-              version = "0.4.0";
+              version = "0.5.0";
 
               src = fileset.toSource {
                 root = ./server;
@@ -161,7 +161,7 @@
           web = pkgs.buildNpmPackage (
             final: with pkgs.lib; {
               pname = "trevstack-web";
-              version = "0.4.0";
+              version = "0.5.0";
 
               src = fileset.toSource {
                 root = ./web;
