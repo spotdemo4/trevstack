@@ -19,7 +19,7 @@ export function NumberField(props: { label?: string }) {
     >
       <NumberInput.Root
         name={name}
-        value={field().state.value ? String(field().state.value) : ""}
+        value={field().state.value != undefined ? String(field().state.value) : ""}
         class="flex flex-col gap-1.5"
         onValueChange={(c) => {
           // remove undefined numbers from form state
@@ -37,25 +37,25 @@ export function NumberField(props: { label?: string }) {
         }}
       >
         <Show when={props.label}>
-          <NumberInput.Label class="text-ctp-subtext1 data-invalid:text-ctp-red text-sm font-medium">
+          <NumberInput.Label class="text-sm font-medium text-ctp-subtext1 data-invalid:text-ctp-red">
             {props.label}
           </NumberInput.Label>
         </Show>
         <NumberInput.Control class="relative isolate">
           <NumberInput.Input
             onBlur={field().handleBlur}
-            class="border-ctp-surface1 bg-ctp-base text-ctp-text placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-ctp-sky/40 data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40 w-full rounded-md border px-3 py-2 text-sm transition-colors focus:ring-2 focus:outline-none"
+            class="w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
           />
           <div class="absolute top-0 right-1 bottom-0 flex w-4 flex-col justify-center">
             <NumberInput.IncrementTrigger
               aria-label="Increment"
-              class="hover:bg-ctp-surface1 cursor-pointer rounded transition-colors"
+              class="cursor-pointer rounded transition-colors hover:bg-ctp-surface1"
             >
               <ChevronUp size={16} />
             </NumberInput.IncrementTrigger>
             <NumberInput.DecrementTrigger
               aria-label="Decrement"
-              class="hover:bg-ctp-surface1 cursor-pointer rounded transition-colors"
+              class="cursor-pointer rounded transition-colors hover:bg-ctp-surface1"
             >
               <ChevronDown size={16} />
             </NumberInput.DecrementTrigger>
@@ -63,7 +63,7 @@ export function NumberField(props: { label?: string }) {
         </NumberInput.Control>
       </NumberInput.Root>
       <For each={errors()}>
-        {(err) => <Field.ErrorText class="text-ctp-red text-xs">{err}</Field.ErrorText>}
+        {(err) => <Field.ErrorText class="text-xs text-ctp-red">{err}</Field.ErrorText>}
       </For>
     </Field.Root>
   );
