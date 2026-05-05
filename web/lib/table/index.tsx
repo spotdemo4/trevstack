@@ -1,7 +1,7 @@
-import { Table, Header, Rows } from "./Table";
+import { Table, Header, Body } from "./Table";
 
 export default {
   Table,
   Header,
-  Rows,
+  Body,
 };

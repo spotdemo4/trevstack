@@ -52,6 +52,7 @@ const Numbers: Component = () => {
 
         <Splitter.Panel id="b">
           <Table.Table
+            columns="12rem 2fr 1fr"
             onScroll={async (_, end) => {
               while (!response()?.items[end]) {
                 await refetch();
@@ -59,21 +60,21 @@ const Numbers: Component = () => {
             }}
           >
             <Table.Header>
-              <span class="w-40">Timestamp</span>
-              <span>Name</span>
-              <span>Number</span>
+              <th scope="col">Timestamp</th>
+              <th scope="col">Name</th>
+              <th scope="col">Number</th>
             </Table.Header>
-            <Table.Rows count={() => response()?.totalCount} items={() => response()?.items ?? []}>
+            <Table.Body count={() => response()?.totalCount} items={() => response()?.items ?? []}>
               {(item) => (
                 <>
-                  <span class="text-sm text-ctp-subtext0 tabular-nums">
+                  <td class="text-sm text-ctp-subtext0 tabular-nums">
                     {timestampDate(item.timestamp!).toLocaleString()}
-                  </span>
-                  <span class="truncate font-medium">{item.name}</span>
-                  <span class="font-mono tabular-nums">{item.number}</span>
+                  </td>
+                  <td class="truncate font-medium">{item.name}</td>
+                  <td class="font-mono tabular-nums">{item.number}</td>
                 </>
               )}
-            </Table.Rows>
+            </Table.Body>
           </Table.Table>
         </Splitter.Panel>
       </Splitter.Root>

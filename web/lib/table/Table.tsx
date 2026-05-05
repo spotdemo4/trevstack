@@ -1,6 +1,5 @@
-import { Skeleton } from "$lib/skeleton";
-import { Virtualizer } from "$lib/virtualizer";
 import { debounce } from "@solid-primitives/scheduled";
+import { createVirtualizer } from "@tanstack/solid-virtual";
 import { CircleSlash2, LoaderCircle } from "lucide-solid";
 import type { Accessor, JSX } from "solid-js";
 import {
@@ -20,15 +19,23 @@ type HeaderProps = {
   children?: JSX.Element;
 };
 
-type RowsProps<T> = {
+type BodyProps<T> = {
   class?: string;
   count: Accessor<bigint | undefined>;
   items: Accessor<T[]>;
-  columns?: number;
+  children: (item: T) => JSX.Element;
+};
+
+type RowsProps<T> = {
+  class?: string;
+  count: bigint;
+  items: Accessor<T[]>;
   children: (item: T) => JSX.Element;
 };
 
 type TableContextValue = {
+  ref: () => HTMLDivElement | undefined;
+  columns: () => string;
   onScroll?: (start: number, end: number) => void;
 };
 
@@ -45,70 +52,128 @@ const useTableContext = (componentName: string) => {
 
 const Table: Component<{
   class?: string;
+  /**
+   * CSS `grid-template-columns` value applied to header and body rows so that
+   * every `<th>` and `<td>` auto-aligns. Example: `"200px 1fr 120px"` or
+   * `"auto auto auto"`.
+   */
+  columns: string;
   onScroll?: (start: number, end: number) => void;
   children?: JSX.Element;
 }> = (props) => {
+  let parentRef: HTMLDivElement | undefined;
+
   return (
     <TableContext.Provider
       value={{
+        ref: () => parentRef,
+        columns: () => props.columns,
         onScroll: props.onScroll,
       }}
     >
-      <div class={twMerge("flex h-full min-w-0 flex-col", props.class)}>{props.children}</div>
+      <div
+        ref={(node) => (parentRef = node)}
+        class={twMerge(
+          "h-full overflow-auto rounded-md border border-ctp-surface0 bg-ctp-base",
+          props.class,
+        )}
+      >
+        <table class="w-full border-separate border-spacing-0 text-ctp-text [&_td]:truncate [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
+          {props.children}
+        </table>
+      </div>
     </TableContext.Provider>
   );
 };
 
 const Header: Component<HeaderProps> = (props) => {
-  useTableContext("Table.Header");
+  const table = useTableContext("Table.Header");
 
   return (
-    <div
-      class={twMerge(
-        "flex w-full flex-row items-center gap-4 border-b border-ctp-surface0 bg-ctp-base px-4 pt-4 pb-2 text-xs font-semibold tracking-wide text-ctp-subtext1 uppercase *:min-w-0 [&>*:last-child]:ml-auto",
-        props.class,
-      )}
-    >
-      {props.children}
-    </div>
-  );
-};
-
-const Row = <T extends unknown>(props: {
-  index: number;
-  class?: string;
-  items: Accessor<T[]>;
-  columns?: number;
-  children: (item: T) => JSX.Element;
-}): JSX.Element => {
-  const item = createMemo(() => props.items()[props.index]);
-  const columns = Array.from({ length: props.columns ?? 1 }, (_, i) => i);
-
-  return (
-    <div
-      class={twMerge(
-        "flex w-full flex-row items-center gap-4 px-4 py-2 *:min-w-0 [&>*:last-child]:ml-auto",
-        props.class,
-      )}
-    >
-      <Show
-        when={item()}
-        keyed
-        fallback={<Index each={columns}>{() => <Skeleton class="w-full" />}</Index>}
+    <thead class="sticky top-0 z-10 bg-ctp-mantle/95 backdrop-blur supports-backdrop-filter:bg-ctp-mantle/75">
+      <tr
+        class={twMerge(
+          "text-left text-xs font-semibold uppercase tracking-wider text-ctp-subtext1",
+          "[&>th]:border-b [&>th]:border-ctp-surface0",
+          props.class,
+        )}
+        style={{ display: "grid", "grid-template-columns": table.columns() }}
       >
-        {(item) => props.children(item as T)}
-      </Show>
-    </div>
+        {props.children}
+      </tr>
+    </thead>
   );
 };
 
 const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
   const table = useTableContext("Table.Rows");
-  const count = createMemo(() => props.count());
   const onScroll = table.onScroll ? debounce(table.onScroll, 100) : undefined;
 
   let start = 0;
   let end = 0;
+
+  const virtualizer = createVirtualizer({
+    count: Number(props.count),
+    overscan: 5,
+    estimateSize: () => 35,
+    getScrollElement: () => table.ref() ?? null,
+    onChange: (i) => {
+      if (!i.range) return;
+      if (i.range.startIndex === start && i.range.endIndex === end) return;
+      start = i.range.startIndex;
+      end = i.range.endIndex;
+      onScroll?.(start, end);
+    },
+  });
+
+  return (
+    <>
+      {/* The large inner element to hold all of the items */}
+      <tbody
+        style={{
+          height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+          position: "relative", //needed for absolute positioning of rows
+        }}
+      >
+        {/* Only the visible items in the virtualizer, manually positioned to be in view */}
+        <Index each={virtualizer.getVirtualItems()}>
+          {(virtualItem) => (
+            <tr
+              data-index={virtualItem().index}
+              class={twMerge(
+                "border-b border-ctp-surface0/60 text-sm transition-colors",
+                "hover:bg-ctp-surface0/40",
+                "odd:bg-ctp-base even:bg-ctp-mantle/40",
+                "[&>td]:flex [&>td]:items-center",
+                props.class,
+              )}
+              style={{
+                display: "grid",
+                "grid-template-columns": table.columns(),
+                position: "absolute",
+                height: `${virtualItem().size}px`,
+                transform: `translateY(${virtualItem().start}px)`, //this should always be a `style` as it changes on scroll
+                width: "100%",
+              }}
+            >
+              <Show
+                when={props.items()[virtualItem().index]}
+                fallback={<td class="text-ctp-overlay0">Loading...</td>}
+                keyed
+              >
+                {(item) => props.children(item as T)}
+              </Show>
+            </tr>
+          )}
+        </Index>
+      </tbody>
+    </>
+  );
+};
+
+const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
+  useTableContext("Table.Body");
+  const count = createMemo(() => props.count());
 
   return (
     <Show
@@ -116,13 +181,15 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
       fallback={
         <Switch>
           <Match when={count() === undefined}>
-            <div class="flex w-full items-center justify-center py-10">
-              <LoaderCircle class="animate-spin" size={24} />
+            <div class="flex w-full items-center justify-center gap-2 py-10 text-ctp-subtext0">
+              <LoaderCircle class="animate-spin" size={20} />
+              <span class="text-sm">Loading…</span>
             </div>
           </Match>
           <Match when={count() === BigInt(0)}>
-            <div class="flex w-full items-center justify-center py-10">
+            <div class="flex w-full flex-col items-center justify-center gap-2 py-10 text-ctp-overlay1">
               <CircleSlash2 size={24} />
+              <span class="text-sm">No results</span>
             </div>
           </Match>
         </Switch>
@@ -130,26 +197,12 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
       keyed
     >
       {(count) => (
-        <Virtualizer
-          count={Number(count)}
-          overscan={5}
-          onChange={(i) => {
-            if (!i.range) return;
-            if (i.range.startIndex === start && i.range.endIndex === end) return;
-            start = i.range.startIndex;
-            end = i.range.endIndex;
-            onScroll?.(start, end);
-          }}
-        >
-          {(index) => (
-            <Row index={index} class={props.class} items={props.items} columns={props.columns}>
-              {props.children}
-            </Row>
-          )}
-        </Virtualizer>
+        <Rows count={count} items={props.items} class={props.class}>
+          {props.children}
+        </Rows>
       )}
     </Show>
   );
 };
 
-export { Table, Header, Rows };
+export { Table, Header, Body };
