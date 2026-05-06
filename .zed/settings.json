@@ -43,7 +43,7 @@
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["tailwindcss-intellisense-css", "!vscode-css-language-server", "..."],
+      "language_servers": ["!vscode-css-language-server", "tailwindcss-intellisense-css", "..."],
       "formatter": [
         {
           "language_server": {
@@ -109,7 +109,7 @@
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["!eslint", "tsgo", "vtsls", "oxlint", "oxfmt", "..."],
+      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
       "formatter": [
         {
           "language_server": {
@@ -126,7 +126,7 @@
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["!eslint", "tsgo", "vtsls", "oxlint", "oxfmt", "..."],
+      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
       "formatter": [
         {
           "language_server": {
