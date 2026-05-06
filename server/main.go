@@ -37,6 +37,12 @@ func main() {
 	}
 	ctx = database.WithDatabase(ctx, db)
 
+	err = database.Migrate(ctx, db)
+	if err != nil {
+		log.ErrorContext(ctx, "could not migrate database", "error", err)
+		return
+	}
+
 	li := interceptors.NewLogInterceptor(log)
 	vi := validate.NewInterceptor()
 

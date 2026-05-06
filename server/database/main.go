@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	_ "embed"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -51,9 +50,6 @@ var options = []string{
 	"_cache_size=-32768", // -32768 means 32 MiB of cache.
 }
 
-//go:embed numbers.sql
-var numbersSQL string
-
 func New(ctx context.Context) (*sql.DB, error) {
 	userConfigDir, err := os.UserConfigDir()
 	if err != nil {
@@ -77,39 +73,5 @@ func New(ctx context.Context) (*sql.DB, error) {
 		return nil, err
 	}
 
-	_, err = db.ExecContext(ctx, numbersSQL)
-	if err != nil {
-		return nil, err
-	}
-
 	return db, nil
-}
-
-type key struct{}
-
-func WithDatabase(ctx context.Context, db *sql.DB) context.Context {
-	return context.WithValue(ctx, key{}, db)
-}
-
-func FromContext(ctx context.Context) *sql.DB {
-	if ctx == nil {
-		ndb, err := New(ctx)
-		if err != nil {
-			return nil
-		}
-
-		return ndb
-	}
-
-	db, ok := ctx.Value(key{}).(*sql.DB)
-	if !ok {
-		ndb, err := New(ctx)
-		if err != nil {
-			return nil
-		}
-
-		return ndb
-	}
-
-	return db
 }
