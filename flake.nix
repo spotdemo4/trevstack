@@ -48,9 +48,11 @@
               protoc-gen-connect-openapi
 
               # lint
+              go-tools
               oxlint
               sqlfluff
-              go-tools
+              nixd
+              nil
 
               # format
               oxfmt
