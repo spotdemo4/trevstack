@@ -126,21 +126,7 @@
               pname = "trevstack";
               version = "0.5.0";
 
-              src = fileset.toSource {
-                root = ./server;
-                fileset = fileset.unions [
-                  ./server/embed.go
-                  ./server/go.mod
-                  ./server/go.sum
-                  ./server/main.go
-                  ./server/connect
-                  ./server/database
-                  ./server/handlers
-                  ./server/interceptors
-                  ./server/logger
-                  ./server/vendor
-                ];
-              };
+              src = ./server;
               goSum = ./server/go.sum;
               vendorHash = null;
 
@@ -165,26 +151,7 @@
               pname = "trevstack-web";
               version = "0.5.0";
 
-              src = fileset.toSource {
-                root = ./web;
-                fileset = fileset.unions [
-                  ./web/.npmrc
-                  ./web/.oxlintrc.json
-                  ./web/index.css
-                  ./web/index.html
-                  ./web/index.tsx
-                  ./web/package.json
-                  ./web/package-lock.json
-                  ./web/tsconfig.json
-                  ./web/vite.config.ts
-                  ./web/assets
-                  ./web/connect
-                  ./web/layout
-                  ./web/lib
-                  ./web/routes
-                ];
-              };
-
+              src = ./web;
               nodejs = pkgs.nodejs_24;
               npmConfigHook = pkgs.importNpmLock.npmConfigHook;
               npmDeps = pkgs.importNpmLock {
