@@ -16,7 +16,7 @@ import (
 	"connectrpc.com/validate"
 	"github.com/spotdemo4/trevstack/server/database"
 	numberv1handler "github.com/spotdemo4/trevstack/server/handlers/number/v1"
-	"github.com/spotdemo4/trevstack/server/handlers/web"
+	webhandler "github.com/spotdemo4/trevstack/server/handlers/web"
 	"github.com/spotdemo4/trevstack/server/interceptors"
 	"github.com/spotdemo4/trevstack/server/logger"
 )
@@ -46,14 +46,11 @@ func main() {
 	li := interceptors.NewLogInterceptor(log)
 	vi := validate.NewInterceptor()
 
-	web := web.Handler(ctx, WebFS)
-
 	api := http.NewServeMux()
 	api.Handle(numberv1handler.New(connect.WithInterceptors(li, vi)))
 
 	mux := http.NewServeMux()
-	mux.Handle("/", web)
-	mux.Handle("/numbers/", http.StripPrefix("/numbers", web))
+	mux.Handle("/", webhandler.New(ctx, WebFS))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
 	p := new(http.Protocols)
