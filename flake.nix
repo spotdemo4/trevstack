@@ -124,7 +124,7 @@
           server = pkgs.buildGo125Module (
             final: with pkgs.lib; {
               pname = "trevstack";
-              version = "0.5.0";
+              version = "0.6.0";
 
               src = ./server;
               goSum = ./server/go.sum;
@@ -149,7 +149,7 @@
           web = pkgs.buildNpmPackage (
             final: with pkgs.lib; {
               pname = "trevstack-web";
-              version = "0.5.0";
+              version = "0.6.0";
 
               src = ./web;
               nodejs = pkgs.nodejs_24;
