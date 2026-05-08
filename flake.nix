@@ -62,6 +62,7 @@
               # util
               mprocs
               bumper
+              nix-fix-hash
             ];
           };
 
@@ -82,6 +83,7 @@
               renovate
               go # go get
               nodejs_24 # npm audit fix
+              nix-fix-hash # vendorHash & bufDeps
             ];
           };
 
@@ -89,7 +91,7 @@
             packages = with pkgs; [
               govulncheck # go
               nodejs_24 # npm audit
-              flake-checker # nix
+              flake-checker # nix flake
               zizmor # actions
             ];
           };
@@ -211,11 +213,9 @@
           oxfmt = {
             root = ./.;
             filter = file: file.hasExt "json" || file.hasExt "yaml" || file.hasExt "toml" || file.hasExt "md";
-
             packages = with pkgs; [
               oxfmt
             ];
-
             script = ''
               oxfmt --check
             '';
@@ -227,11 +227,9 @@
             include = [
               ./.sqlfluff
             ];
-
             packages = with pkgs; [
               sqlfluff
             ];
-
             script = ''
               sqlfluff lint
             '';
@@ -240,11 +238,9 @@
           nixfmt = {
             root = ./.;
             filter = file: file.hasExt "nix";
-
             packages = with pkgs; [
               nixfmt
             ];
-
             forEach = ''
               nixfmt --check "$file"
             '';
@@ -258,17 +254,15 @@
               ./buf.yaml
               ./buf.gen.yaml
             ];
-
             bufDeps = pkgs.bufFetchDeps {
-              pname = "trevstack-proto-deps";
               src = ./.;
+              pname = "trevstack-proto-deps";
               hash = "sha256-GTNJ2FSF9ljf7zgp0B7mFDxebbanl3HqBVm07TTkCRo=";
             };
             packages = with pkgs; [
               bufHook
               buf
             ];
-
             script = ''
               buf lint
               buf format -d --exit-code
@@ -278,12 +272,10 @@
           actions = {
             root = ./.github/workflows;
             filter = file: file.hasExt "yaml";
-
             packages = with pkgs; [
               action-validator
               zizmor
             ];
-
             forEach = ''
               action-validator "$file"
               zizmor --offline "$file"
@@ -293,11 +285,9 @@
           renovate = {
             root = ./.github;
             files = ./.github/renovate.json;
-
             packages = with pkgs; [
               renovate
             ];
-
             script = ''
               renovate-config-validator renovate.json
             '';
