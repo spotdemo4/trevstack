@@ -82,6 +82,7 @@
             packages = with pkgs; [
               renovate
               go # go get
+              buf # buf dep update
               nodejs_24 # npm audit fix
               nix-fix-hash # vendorHash & bufDeps
             ];

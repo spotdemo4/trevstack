@@ -7,13 +7,17 @@
   "platform": "github",
   "repositories": ["spotdemo4/trevstack"],
   "allowedCommands": [
+    "buf dep update",
     "npm audit fix --prefix web",
-    "fix-hash .#packages.x86_64-linux.server",
-    "fix-hash .#checks.x86_64-linux.buf"
+    "fix-hash .#checks.x86_64-linux.buf",
+    "fix-hash .#packages.x86_64-linux.server"
   ],
 
   // repository
   "extends": ["config:recommended"],
+  "nix": {
+    "enabled": true
+  },
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
@@ -21,14 +25,12 @@
     "skipInstalls": false,
     "postUpgradeTasks": {
       "commands": [
+        "buf dep update",
         "npm audit fix --prefix web",
-        "fix-hash .#packages.x86_64-linux.server",
-        "fix-hash .#checks.x86_64-linux.buf"
+        "fix-hash .#checks.x86_64-linux.buf",
+        "fix-hash .#packages.x86_64-linux.server"
       ]
     }
-  },
-  "nix": {
-    "enabled": true
   },
   "packageRules": [
     {
@@ -61,13 +63,13 @@
     },
     {
       "matchManagers": ["npm"],
-      "matchDepTypes": ["engines"],
-      "enabled": false
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "node packages"
     },
     {
       "matchManagers": ["npm"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "node packages"
+      "matchDepTypes": ["engines"],
+      "enabled": false
     }
   ]
 }
