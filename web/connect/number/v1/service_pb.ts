@@ -4,18 +4,30 @@
 
 import type { GenFile, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+
 import type { AddRequestSchema, AddResponseSchema } from "./add_pb";
 import { file_number_v1_add } from "./add_pb";
 import type { ListRequestSchema, ListResponseSchema } from "./list_pb";
 import { file_number_v1_list } from "./list_pb";
-import type { DistributionRequestSchema, DistributionResponseSchema, SummaryRequestSchema, SummaryResponseSchema, TimeSeriesRequestSchema, TimeSeriesResponseSchema, TopNamesRequestSchema, TopNamesResponseSchema } from "./metrics_pb";
+import type {
+  DistributionRequestSchema,
+  DistributionResponseSchema,
+  SummaryRequestSchema,
+  SummaryResponseSchema,
+  TimeSeriesRequestSchema,
+  TimeSeriesResponseSchema,
+  TopNamesRequestSchema,
+  TopNamesResponseSchema,
+} from "./metrics_pb";
 import { file_number_v1_metrics } from "./metrics_pb";
 
 /**
  * Describes the file number/v1/service.proto.
  */
-export const file_number_v1_service: GenFile = /*@__PURE__*/
-  fileDesc("ChdudW1iZXIvdjEvc2VydmljZS5wcm90bxIJbnVtYmVyLnYxMq0DCg1OdW1iZXJTZXJ2aWNlEjYKA0FkZBIVLm51bWJlci52MS5BZGRSZXF1ZXN0GhYubnVtYmVyLnYxLkFkZFJlc3BvbnNlIgASOQoETGlzdBIWLm51bWJlci52MS5MaXN0UmVxdWVzdBoXLm51bWJlci52MS5MaXN0UmVzcG9uc2UiABJCCgdTdW1tYXJ5EhkubnVtYmVyLnYxLlN1bW1hcnlSZXF1ZXN0GhoubnVtYmVyLnYxLlN1bW1hcnlSZXNwb25zZSIAEksKClRpbWVTZXJpZXMSHC5udW1iZXIudjEuVGltZVNlcmllc1JlcXVlc3QaHS5udW1iZXIudjEuVGltZVNlcmllc1Jlc3BvbnNlIgASUQoMRGlzdHJpYnV0aW9uEh4ubnVtYmVyLnYxLkRpc3RyaWJ1dGlvblJlcXVlc3QaHy5udW1iZXIudjEuRGlzdHJpYnV0aW9uUmVzcG9uc2UiABJFCghUb3BOYW1lcxIaLm51bWJlci52MS5Ub3BOYW1lc1JlcXVlc3QaGy5udW1iZXIudjEuVG9wTmFtZXNSZXNwb25zZSIAQqQBCg1jb20ubnVtYmVyLnYxQgxTZXJ2aWNlUHJvdG9QAVpAZ2l0aHViLmNvbS9zcG90ZGVtbzQvdHJldnN0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw", [file_number_v1_add, file_number_v1_list, file_number_v1_metrics]);
+export const file_number_v1_service: GenFile /*@__PURE__*/ = fileDesc(
+  "ChdudW1iZXIvdjEvc2VydmljZS5wcm90bxIJbnVtYmVyLnYxMq0DCg1OdW1iZXJTZXJ2aWNlEjYKA0FkZBIVLm51bWJlci52MS5BZGRSZXF1ZXN0GhYubnVtYmVyLnYxLkFkZFJlc3BvbnNlIgASOQoETGlzdBIWLm51bWJlci52MS5MaXN0UmVxdWVzdBoXLm51bWJlci52MS5MaXN0UmVzcG9uc2UiABJCCgdTdW1tYXJ5EhkubnVtYmVyLnYxLlN1bW1hcnlSZXF1ZXN0GhoubnVtYmVyLnYxLlN1bW1hcnlSZXNwb25zZSIAEksKClRpbWVTZXJpZXMSHC5udW1iZXIudjEuVGltZVNlcmllc1JlcXVlc3QaHS5udW1iZXIudjEuVGltZVNlcmllc1Jlc3BvbnNlIgASUQoMRGlzdHJpYnV0aW9uEh4ubnVtYmVyLnYxLkRpc3RyaWJ1dGlvblJlcXVlc3QaHy5udW1iZXIudjEuRGlzdHJpYnV0aW9uUmVzcG9uc2UiABJFCghUb3BOYW1lcxIaLm51bWJlci52MS5Ub3BOYW1lc1JlcXVlc3QaGy5udW1iZXIudjEuVG9wTmFtZXNSZXNwb25zZSIAQqQBCg1jb20ubnVtYmVyLnYxQgxTZXJ2aWNlUHJvdG9QAVpAZ2l0aHViLmNvbS9zcG90ZGVtbzQvdHJldnN0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw",
+  [file_number_v1_add, file_number_v1_list, file_number_v1_metrics],
+);
 
 /**
  * @generated from service number.v1.NumberService
@@ -28,7 +40,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof AddRequestSchema;
     output: typeof AddResponseSchema;
-  },
+  };
   /**
    * @generated from rpc number.v1.NumberService.List
    */
@@ -36,7 +48,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof ListRequestSchema;
     output: typeof ListResponseSchema;
-  },
+  };
   /**
    * @generated from rpc number.v1.NumberService.Summary
    */
@@ -44,7 +56,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof SummaryRequestSchema;
     output: typeof SummaryResponseSchema;
-  },
+  };
   /**
    * @generated from rpc number.v1.NumberService.TimeSeries
    */
@@ -52,7 +64,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof TimeSeriesRequestSchema;
     output: typeof TimeSeriesResponseSchema;
-  },
+  };
   /**
    * @generated from rpc number.v1.NumberService.Distribution
    */
@@ -60,7 +72,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof DistributionRequestSchema;
     output: typeof DistributionResponseSchema;
-  },
+  };
   /**
    * @generated from rpc number.v1.NumberService.TopNames
    */
@@ -68,7 +80,5 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof TopNamesRequestSchema;
     output: typeof TopNamesResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_number_v1_service, 0);
-
+  };
+}> /*@__PURE__*/ = serviceDesc(file_number_v1_service, 0);

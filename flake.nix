@@ -121,6 +121,33 @@
         packages = rec {
           default = server;
 
+          web = pkgs.buildNpmPackage (
+            final: with pkgs.lib; {
+              pname = "trevstack-web";
+              version = "0.6.0";
+
+              src = ./web;
+              nodejs = pkgs.nodejs_24;
+              npmConfigHook = pkgs.importNpmLock.npmConfigHook;
+              npmDeps = pkgs.importNpmLock {
+                npmRoot = final.src;
+              };
+
+              nativeCheckInputs = with pkgs; [
+                oxfmt
+                oxlint
+              ];
+              checkPhase = ''
+                oxfmt --check
+                oxlint --deny-warnings
+              '';
+
+              installPhase = ''
+                cp -r dist "$out"
+              '';
+            }
+          );
+
           server = pkgs.buildGo125Module (
             final: with pkgs.lib; {
               pname = "trevstack-server";
@@ -128,10 +155,21 @@
 
               src = ./server;
               goSum = ./server/go.sum;
-              vendorHash = null;
+              proxyVendor = true;
+              vendorHash = "sha256-fSpN4gsxHBPt/ojWos8UR7quSt5cU9fO70k1+pmS7FQ=";
 
-              preBuild = ''
+              postConfigure = ''
                 cp -r ${self.packages.${system}.web} web
+              '';
+
+              nativeCheckInputs = with pkgs; [
+                go-tools
+              ];
+              checkPhase = ''
+                export HOME=$(mktemp -d)
+                go test ./...
+                go vet ./...
+                staticcheck ./...
               '';
 
               meta = {
@@ -145,32 +183,6 @@
               };
             }
           );
-
-          web = pkgs.buildNpmPackage (
-            final: with pkgs.lib; {
-              pname = "trevstack-web";
-              version = "0.6.0";
-
-              src = ./web;
-              nodejs = pkgs.nodejs_24;
-              npmConfigHook = pkgs.importNpmLock.npmConfigHook;
-              npmDeps = pkgs.importNpmLock {
-                npmRoot = final.src;
-              };
-
-              installPhase = ''
-                cp -r dist "$out"
-              '';
-
-              meta = {
-                description = "Template for TrevStack applications - web client";
-                license = licenses.mit;
-                platforms = platforms.all;
-                homepage = "https://github.com/spotdemo4/trevstack";
-                changelog = "https://github.com/spotdemo4/trevstack/releases/tag/v${final.version}";
-              };
-            }
-          );
         };
 
         images.default = pkgs.mkImage {
@@ -181,145 +193,116 @@
           };
         };
 
-        checks =
-          let
-            generated = [
-              ./server/vendor
-              ./server/connect
-              ./web/connect
-            ];
-          in
-          pkgs.mkChecks {
-            format = {
-              root = ./.;
-              filter =
-                file:
-                file.hasExt "ts"
-                || file.hasExt "tsx"
-                || file.hasExt "yaml"
-                || file.hasExt "json"
-                || file.hasExt "toml"
-                || file.hasExt "md";
-              ignore = generated;
-              packages = with pkgs; [
-                oxfmt
-              ];
-              script = ''
-                oxfmt --check
-              '';
-            };
-
-            sql = {
-              root = ./.;
-              filter = file: file.hasExt "sql";
-              ignore = generated;
-              packages = with pkgs; [
-                sqlfluff
-              ];
-              forEach = ''
-                sqlfluff lint --dialect sqlite "$file"
-              '';
-            };
-
-            nix = {
-              root = ./.;
-              filter = file: file.hasExt "nix";
-              ignore = generated;
-              packages = with pkgs; [
-                nixfmt
-              ];
-              forEach = ''
-                nixfmt --check "$file"
-              '';
-            };
-
-            go = {
-              root = ./server;
-              packages = with pkgs; [
-                gcc
-                go
-                go-tools
-              ];
-              script = ''
-                go test -tags dev ./...
-                go vet -tags dev ./...
-                staticcheck -tags dev ./...
-              '';
-            };
-
-            typescript = {
-              root = ./web;
-              filter = file: file.hasExt "ts" || file.hasExt "tsx";
-              include = [
-                ./web/.oxlintrc.json
-                ./web/package.json
-                ./web/package-lock.json
-                ./web/tsconfig.json
-              ];
-
-              npmDeps = pkgs.importNpmLock {
-                npmRoot = ./web;
-              };
-              packages = with pkgs; [
-                importNpmLock.npmConfigHook
-                nodejs_24
-                oxlint
-              ];
-
-              script = ''
-                oxlint --deny-warnings
-              '';
-            };
-
-            buf = {
-              root = ./.;
-              filter = file: file.hasExt "proto";
-              include = [
-                ./buf.lock
-                ./buf.yaml
-                ./buf.gen.yaml
-              ];
-
-              bufDeps = pkgs.bufFetchDeps {
-                pname = "trevstack-proto-deps";
-                src = ./.;
-                hash = "sha256-GTNJ2FSF9ljf7zgp0B7mFDxebbanl3HqBVm07TTkCRo=";
-              };
-              packages = with pkgs; [
-                bufHook
-                buf
-              ];
-
-              script = ''
-                buf lint
-                buf format -d --exit-code
-              '';
-            };
-
-            actions = {
-              root = ./.github/workflows;
-              filter = file: file.hasExt "yaml";
-              packages = with pkgs; [
-                action-validator
-                zizmor
-              ];
-              forEach = ''
-                action-validator "$file"
-                zizmor --offline "$file"
-              '';
-            };
-
-            renovate = {
-              root = ./.github;
-              files = ./.github/renovate.json;
-              packages = with pkgs; [
-                renovate
-              ];
-              script = ''
-                renovate-config-validator renovate.json
-              '';
-            };
+        checks = pkgs.mkChecks {
+          web = self.packages.${system}.web.overrideAttrs {
+            dontBuild = true;
+            installPhase = ''
+              touch $out
+            '';
           };
+
+          server = self.packages.${system}.server.overrideAttrs {
+            dontBuild = true;
+            installPhase = ''
+              touch $out
+            '';
+          };
+
+          oxfmt = {
+            root = ./.;
+            filter = file: file.hasExt "json" || file.hasExt "yaml" || file.hasExt "toml" || file.hasExt "md";
+
+            packages = with pkgs; [
+              oxfmt
+            ];
+
+            script = ''
+              oxfmt --check
+            '';
+          };
+
+          sqlfluff = {
+            root = ./.;
+            filter = file: file.hasExt "sql";
+            include = [
+              ./.sqlfluff
+            ];
+
+            packages = with pkgs; [
+              sqlfluff
+            ];
+
+            script = ''
+              sqlfluff lint
+            '';
+          };
+
+          nixfmt = {
+            root = ./.;
+            filter = file: file.hasExt "nix";
+
+            packages = with pkgs; [
+              nixfmt
+            ];
+
+            forEach = ''
+              nixfmt --check "$file"
+            '';
+          };
+
+          buf = {
+            root = ./.;
+            filter = file: file.hasExt "proto";
+            include = [
+              ./buf.lock
+              ./buf.yaml
+              ./buf.gen.yaml
+            ];
+
+            bufDeps = pkgs.bufFetchDeps {
+              pname = "trevstack-proto-deps";
+              src = ./.;
+              hash = "sha256-GTNJ2FSF9ljf7zgp0B7mFDxebbanl3HqBVm07TTkCRo=";
+            };
+            packages = with pkgs; [
+              bufHook
+              buf
+            ];
+
+            script = ''
+              buf lint
+              buf format -d --exit-code
+            '';
+          };
+
+          actions = {
+            root = ./.github/workflows;
+            filter = file: file.hasExt "yaml";
+
+            packages = with pkgs; [
+              action-validator
+              zizmor
+            ];
+
+            forEach = ''
+              action-validator "$file"
+              zizmor --offline "$file"
+            '';
+          };
+
+          renovate = {
+            root = ./.github;
+            files = ./.github/renovate.json;
+
+            packages = with pkgs; [
+              renovate
+            ];
+
+            script = ''
+              renovate-config-validator renovate.json
+            '';
+          };
+        };
       }
     );
 }

@@ -2,16 +2,19 @@
 // @generated from file number/v1/add.proto (package number.v1, syntax proto3)
 /* eslint-disable */
 
+import type { Message } from "@bufbuild/protobuf";
 import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
-import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file number/v1/add.proto.
  */
-export const file_number_v1_add: GenFile = /*@__PURE__*/
-  fileDesc("ChNudW1iZXIvdjEvYWRkLnByb3RvEgludW1iZXIudjEiQgoKQWRkUmVxdWVzdBIXCgRuYW1lGAEgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAIgASgNQgu6SAgqBhjAhD0oASIaCgtBZGRSZXNwb25zZRILCgNzdW0YASABKARCoAEKDWNvbS5udW1iZXIudjFCCEFkZFByb3RvUAFaQGdpdGh1Yi5jb20vc3BvdGRlbW80L3RyZXZzdGFjay9zZXJ2ZXIvY29ubmVjdC9udW1iZXIvdjE7bnVtYmVydjGiAgNOWFiqAglOdW1iZXIuVjHKAglOdW1iZXJcVjHiAhVOdW1iZXJcVjFcR1BCTWV0YWRhdGHqAgpOdW1iZXI6OlYxYgZwcm90bzM", [file_buf_validate_validate]);
+export const file_number_v1_add: GenFile /*@__PURE__*/ = fileDesc(
+  "ChNudW1iZXIvdjEvYWRkLnByb3RvEgludW1iZXIudjEiQgoKQWRkUmVxdWVzdBIXCgRuYW1lGAEgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAIgASgNQgu6SAgqBhjAhD0oASIaCgtBZGRSZXNwb25zZRILCgNzdW0YASABKARCoAEKDWNvbS5udW1iZXIudjFCCEFkZFByb3RvUAFaQGdpdGh1Yi5jb20vc3BvdGRlbW80L3RyZXZzdGFjay9zZXJ2ZXIvY29ubmVjdC9udW1iZXIvdjE7bnVtYmVydjGiAgNOWFiqAglOdW1iZXIuVjHKAglOdW1iZXJcVjHiAhVOdW1iZXJcVjFcR1BCTWV0YWRhdGHqAgpOdW1iZXI6OlYxYgZwcm90bzM",
+  [file_buf_validate_validate],
+);
 
 /**
  * @generated from message number.v1.AddRequest
@@ -32,8 +35,10 @@ export type AddRequest = Message<"number.v1.AddRequest"> & {
  * Describes the message number.v1.AddRequest.
  * Use `create(AddRequestSchema)` to create a new message.
  */
-export const AddRequestSchema: GenMessage<AddRequest> = /*@__PURE__*/
-  messageDesc(file_number_v1_add, 0);
+export const AddRequestSchema: GenMessage<AddRequest> /*@__PURE__*/ = messageDesc(
+  file_number_v1_add,
+  0,
+);
 
 /**
  * @generated from message number.v1.AddResponse
@@ -49,6 +54,7 @@ export type AddResponse = Message<"number.v1.AddResponse"> & {
  * Describes the message number.v1.AddResponse.
  * Use `create(AddResponseSchema)` to create a new message.
  */
-export const AddResponseSchema: GenMessage<AddResponse> = /*@__PURE__*/
-  messageDesc(file_number_v1_add, 1);
-
+export const AddResponseSchema: GenMessage<AddResponse> /*@__PURE__*/ = messageDesc(
+  file_number_v1_add,
+  1,
+);

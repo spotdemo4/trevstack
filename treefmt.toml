@@ -1,8 +1,5 @@
 #:schema https://www.schemastore.org/treefmt.json
 
-# exclude vendored dependencies and generated code
-excludes = ["server/vendor/*", "server/connect/*", "web/connect/*"]
-
 [formatter.oxfmt]
 command = "oxfmt"
 options = ["--write"]

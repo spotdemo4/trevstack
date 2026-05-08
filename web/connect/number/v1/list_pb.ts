@@ -2,18 +2,21 @@
 // @generated from file number/v1/list.proto (package number.v1, syntax proto3)
 /* eslint-disable */
 
+import type { Message } from "@bufbuild/protobuf";
 import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
-import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
-import type { Message } from "@bufbuild/protobuf";
+
+import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 
 /**
  * Describes the file number/v1/list.proto.
  */
-export const file_number_v1_list: GenFile = /*@__PURE__*/
-  fileDesc("ChRudW1iZXIvdjEvbGlzdC5wcm90bxIJbnVtYmVyLnYxImsKBEl0ZW0SLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCgRuYW1lGAIgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAMgASgNQgu6SAgqBhjAhD0oACLrAwoLTGlzdFJlcXVlc3QSEwoGY3Vyc29yGAEgASgDSACIAQESHAoEbmFtZRgCIAEoCUIJukgGcgQQABgySAGIAQESHQoDbWluGAMgASgNQgu6SAgqBhjAhD0oAEgCiAEBEh0KA21heBgEIAEoDUILukgIKgYYwIQ9KABIA4gBARIuCgVzdGFydBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIBIgBARIsCgNlbmQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAWIAQE61gG6SNIBGmcKD2VuZF9hZnRlcl9zdGFydBIXRW5kIG11c3QgYmUgYWZ0ZXIgc3RhcnQaOyFoYXModGhpcy5lbmQpIHx8ICFoYXModGhpcy5zdGFydCkgfHwgdGhpcy5lbmQgPiB0aGlzLnN0YXJ0GmcKEW1pbl9sZXNzX3RoYW5fbWF4EhlNaW4gbXVzdCBiZSBsZXNzIHRoYW4gbWF4GjchaGFzKHRoaXMubWluKSB8fCAhaGFzKHRoaXMubWF4KSB8fCB0aGlzLm1pbiA8IHRoaXMubWF4QgkKB19jdXJzb3JCBwoFX25hbWVCBgoEX21pbkIGCgRfbWF4QggKBl9zdGFydEIGCgRfZW5kIlgKDExpc3RSZXNwb25zZRIeCgVpdGVtcxgBIAMoCzIPLm51bWJlci52MS5JdGVtEhMKC3RvdGFsX2NvdW50GAIgASgDEhMKC25leHRfY3Vyc29yGAMgASgDQqEBCg1jb20ubnVtYmVyLnYxQglMaXN0UHJvdG9QAVpAZ2l0aHViLmNvbS9zcG90ZGVtbzQvdHJldnN0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw", [file_buf_validate_validate, file_google_protobuf_timestamp]);
+export const file_number_v1_list: GenFile /*@__PURE__*/ = fileDesc(
+  "ChRudW1iZXIvdjEvbGlzdC5wcm90bxIJbnVtYmVyLnYxImsKBEl0ZW0SLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCgRuYW1lGAIgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAMgASgNQgu6SAgqBhjAhD0oACLrAwoLTGlzdFJlcXVlc3QSEwoGY3Vyc29yGAEgASgDSACIAQESHAoEbmFtZRgCIAEoCUIJukgGcgQQABgySAGIAQESHQoDbWluGAMgASgNQgu6SAgqBhjAhD0oAEgCiAEBEh0KA21heBgEIAEoDUILukgIKgYYwIQ9KABIA4gBARIuCgVzdGFydBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIBIgBARIsCgNlbmQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAWIAQE61gG6SNIBGmcKD2VuZF9hZnRlcl9zdGFydBIXRW5kIG11c3QgYmUgYWZ0ZXIgc3RhcnQaOyFoYXModGhpcy5lbmQpIHx8ICFoYXModGhpcy5zdGFydCkgfHwgdGhpcy5lbmQgPiB0aGlzLnN0YXJ0GmcKEW1pbl9sZXNzX3RoYW5fbWF4EhlNaW4gbXVzdCBiZSBsZXNzIHRoYW4gbWF4GjchaGFzKHRoaXMubWluKSB8fCAhaGFzKHRoaXMubWF4KSB8fCB0aGlzLm1pbiA8IHRoaXMubWF4QgkKB19jdXJzb3JCBwoFX25hbWVCBgoEX21pbkIGCgRfbWF4QggKBl9zdGFydEIGCgRfZW5kIlgKDExpc3RSZXNwb25zZRIeCgVpdGVtcxgBIAMoCzIPLm51bWJlci52MS5JdGVtEhMKC3RvdGFsX2NvdW50GAIgASgDEhMKC25leHRfY3Vyc29yGAMgASgDQqEBCg1jb20ubnVtYmVyLnYxQglMaXN0UHJvdG9QAVpAZ2l0aHViLmNvbS9zcG90ZGVtbzQvdHJldnN0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw",
+  [file_buf_validate_validate, file_google_protobuf_timestamp],
+);
 
 /**
  * @generated from message number.v1.Item
@@ -39,8 +42,7 @@ export type Item = Message<"number.v1.Item"> & {
  * Describes the message number.v1.Item.
  * Use `create(ItemSchema)` to create a new message.
  */
-export const ItemSchema: GenMessage<Item> = /*@__PURE__*/
-  messageDesc(file_number_v1_list, 0);
+export const ItemSchema: GenMessage<Item> /*@__PURE__*/ = messageDesc(file_number_v1_list, 0);
 
 /**
  * @generated from message number.v1.ListRequest
@@ -81,8 +83,10 @@ export type ListRequest = Message<"number.v1.ListRequest"> & {
  * Describes the message number.v1.ListRequest.
  * Use `create(ListRequestSchema)` to create a new message.
  */
-export const ListRequestSchema: GenMessage<ListRequest> = /*@__PURE__*/
-  messageDesc(file_number_v1_list, 1);
+export const ListRequestSchema: GenMessage<ListRequest> /*@__PURE__*/ = messageDesc(
+  file_number_v1_list,
+  1,
+);
 
 /**
  * @generated from message number.v1.ListResponse
@@ -108,6 +112,7 @@ export type ListResponse = Message<"number.v1.ListResponse"> & {
  * Describes the message number.v1.ListResponse.
  * Use `create(ListResponseSchema)` to create a new message.
  */
-export const ListResponseSchema: GenMessage<ListResponse> = /*@__PURE__*/
-  messageDesc(file_number_v1_list, 2);
-
+export const ListResponseSchema: GenMessage<ListResponse> /*@__PURE__*/ = messageDesc(
+  file_number_v1_list,
+  2,
+);
