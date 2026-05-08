@@ -101,7 +101,7 @@
           web = "cd web && npm run dev";
           gen = ''
             buf generate
-            cd server && go mod tidy && go mod vendor && cd ..
+            cd server && go mod tidy && cd ..
             cd web && npm install && cd ..
             treefmt
           '';

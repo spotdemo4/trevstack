@@ -25,7 +25,6 @@
     // go
     "go run": true,
     "go mod tidy": true,
-    "go mod vendor": true,
 
     // npm
     "npm run dev": true,
