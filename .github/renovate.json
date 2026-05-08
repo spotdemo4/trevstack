@@ -45,6 +45,12 @@
     },
     {
       "matchManagers": ["gomod"],
+      "postUpgradeTasks": {
+        "commands": ["fix-hash .#packages.x86_64-linux.server"]
+      }
+    },
+    {
+      "matchManagers": ["gomod"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "go modules"
     },
