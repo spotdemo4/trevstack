@@ -1,13 +1,13 @@
 #:schema https://www.schemastore.org/treefmt.json
 
+[formatter.gofmt]
+command = "gofmt"
+includes = ["*.go"]
+
 [formatter.oxfmt]
 command = "oxfmt"
 options = ["--write"]
 includes = ["*.ts", "*.tsx", "*.html", "*.css", "*.json", "*.yaml", "*.toml", "*.md"]
-
-[formatter.go]
-command = "gofmt"
-includes = ["*.go"]
 
 [formatter.buf]
 command = "buf"
@@ -15,11 +15,11 @@ options = ["format", "--write"]
 includes = ["*.proto"]
 no-positional-arg-support = true
 
-[formatter.sql]
+[formatter.sqlfluff]
 command = "sqlfluff"
 options = ["format"]
 includes = ["*.sql"]
 
-[formatter.nix]
+[formatter.nixfmt]
 command = "nixfmt"
 includes = ["*.nix"]

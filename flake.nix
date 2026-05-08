@@ -112,8 +112,8 @@
         formatter = pkgs.treefmt.withConfig {
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
-            oxfmt
             go
+            oxfmt
             buf
             sqlfluff
             nixfmt
@@ -210,18 +210,7 @@
             '';
           };
 
-          oxfmt = {
-            root = ./.;
-            filter = file: file.hasExt "json" || file.hasExt "yaml" || file.hasExt "toml" || file.hasExt "md";
-            packages = with pkgs; [
-              oxfmt
-            ];
-            script = ''
-              oxfmt --check
-            '';
-          };
-
-          sqlfluff = {
+          sql = {
             root = ./.;
             filter = file: file.hasExt "sql";
             include = [
@@ -235,18 +224,18 @@
             '';
           };
 
-          nixfmt = {
+          nix = {
             root = ./.;
             filter = file: file.hasExt "nix";
             packages = with pkgs; [
               nixfmt
             ];
-            forEach = ''
+            script = ''
               nixfmt --check "$file"
             '';
           };
 
-          buf = {
+          protobuf = {
             root = ./.;
             filter = file: file.hasExt "proto";
             include = [
@@ -276,7 +265,7 @@
               action-validator
               zizmor
             ];
-            forEach = ''
+            script = ''
               action-validator "$file"
               zizmor --offline "$file"
             '';
@@ -290,6 +279,17 @@
             ];
             script = ''
               renovate-config-validator renovate.json
+            '';
+          };
+
+          config = {
+            root = ./.;
+            filter = file: file.hasExt "json" || file.hasExt "yaml" || file.hasExt "toml" || file.hasExt "md";
+            packages = with pkgs; [
+              oxfmt
+            ];
+            script = ''
+              oxfmt --check
             '';
           };
         };
