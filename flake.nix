@@ -209,16 +209,6 @@
               '';
             };
 
-            typescript = {
-              src = self.packages.${system}.web;
-              packages = with pkgs; [
-                oxlint
-              ];
-              script = ''
-                oxlint --deny-warnings
-              '';
-            };
-
             sql = {
               root = ./.;
               filter = file: file.hasExt "sql";
@@ -254,6 +244,55 @@
                 go test -tags dev ./...
                 go vet -tags dev ./...
                 staticcheck -tags dev ./...
+              '';
+            };
+
+            typescript = {
+              root = ./web;
+              filter = file: file.hasExt "ts" || file.hasExt "tsx";
+              include = [
+                ./web/.oxlintrc.json
+                ./web/package.json
+                ./web/package-lock.json
+                ./web/tsconfig.json
+              ];
+
+              npmDeps = pkgs.importNpmLock {
+                npmRoot = ./web;
+              };
+              packages = with pkgs; [
+                importNpmLock.npmConfigHook
+                nodejs_24
+                oxlint
+              ];
+
+              script = ''
+                oxlint --deny-warnings
+              '';
+            };
+
+            buf = {
+              root = ./.;
+              filter = file: file.hasExt "proto";
+              include = [
+                ./buf.lock
+                ./buf.yaml
+                ./buf.gen.yaml
+              ];
+
+              bufDeps = pkgs.bufFetchDeps {
+                pname = "trevstack-proto-deps";
+                src = ./.;
+                hash = "sha256-GTNJ2FSF9ljf7zgp0B7mFDxebbanl3HqBVm07TTkCRo=";
+              };
+              packages = with pkgs; [
+                bufHook
+                buf
+              ];
+
+              script = ''
+                buf lint
+                buf format -d --exit-code
               '';
             };
 
