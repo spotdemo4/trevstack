@@ -5,6 +5,7 @@ import { render } from "solid-js/web";
 
 import "./index.css";
 import Layout from "./layout/Layout";
+import NotFound from "./routes/404";
 import Home from "./routes/home";
 import Metrics from "./routes/metrics";
 import Numbers from "./routes/numbers";
@@ -21,6 +22,7 @@ render(
       <Route path="/" component={Home} />
       <Route path="/numbers" component={Numbers} />
       <Route path="/metrics" component={Metrics} />
+      <Route path="*404" component={NotFound} />
     </Router>
   ),
   wrapper,

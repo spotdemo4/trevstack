@@ -3,6 +3,7 @@ import { Navbar } from "$lib/navbar";
 import Theme from "$lib/theme";
 import { AppToaster } from "$lib/toast";
 import { A } from "@solidjs/router";
+import { ExternalLink } from "lucide-solid";
 import { type Component, children, type JSX } from "solid-js";
 
 import Github from "./Github";
@@ -44,6 +45,13 @@ const Layout: Component<LayoutProps> = (props) => {
             >
               Metrics
             </A>
+            <a
+              href="/docs"
+              target="_blank"
+              class="inline-flex items-center gap-1 px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
+            >
+              Docs <ExternalLink size={16} />
+            </a>
             <Navbar.Indicator />
           </Navbar>
           <div class="h-6 w-px bg-ctp-surface1" />

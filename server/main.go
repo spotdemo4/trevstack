@@ -15,6 +15,7 @@ import (
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
 	"github.com/spotdemo4/trevstack/server/database"
+	docshandler "github.com/spotdemo4/trevstack/server/handlers/docs"
 	numberv1handler "github.com/spotdemo4/trevstack/server/handlers/number/v1"
 	webhandler "github.com/spotdemo4/trevstack/server/handlers/web"
 	"github.com/spotdemo4/trevstack/server/interceptors"
@@ -51,6 +52,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", webhandler.New(ctx, WebFS))
+	mux.Handle("/docs/", docshandler.New(ctx))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
 	p := new(http.Protocols)

@@ -5,3 +5,15 @@ procs:
   web:
     cwd: web
     shell: "npm i && npm run dev"
+  generate:
+    shell: "git add -N . && nix run .#gen"
+    autostart: false
+  format:
+    shell: "git add -N . && nix fmt"
+    autostart: false
+  check:
+    shell: "git add -N . && nix flake check"
+    autostart: false
+  build:
+    shell: "git add -N . && nix build && result/bin/server"
+    autostart: false

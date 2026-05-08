@@ -1,7 +1,5 @@
 version: v2
 
-clean: true
-
 plugins:
   - local: protoc-gen-go
     out: server/connect
@@ -13,18 +11,18 @@ plugins:
       - paths=source_relative
       - simple
 
-  - local: protoc-gen-es
-    out: web/connect
-    opt: target=ts
-    include_imports: true
-
   - local: protoc-gen-connect-openapi
-    out: web/assets/openapi
+    out: server/handlers/docs
     strategy: all
     opt:
       - base=openapi.yaml
       - path=openapi.yaml
       - features=connectrpc;protovalidate
+
+  - local: protoc-gen-es
+    out: web/connect
+    opt: target=ts
+    include_imports: true
 
 managed:
   enabled: true
