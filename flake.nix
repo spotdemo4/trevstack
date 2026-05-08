@@ -44,8 +44,8 @@
               buf
               protoc-gen-go
               protoc-gen-connect-go
-              protoc-gen-es
               protoc-gen-connect-openapi
+              protoc-gen-es
 
               # lint
               go-tools
@@ -80,7 +80,7 @@
           update = pkgs.mkShell {
             packages = with pkgs; [
               renovate
-              go # go mod vendor
+              go # go get
               nodejs_24 # npm audit fix
             ];
           };
