@@ -9,7 +9,7 @@
   "allowedCommands": [
     "buf dep update",
     "npm audit fix --prefix web",
-    "fix-hash .#checks.x86_64-linux.buf",
+    "fix-hash .#checks.x86_64-linux.protobuf",
     "fix-hash .#packages.x86_64-linux.server"
   ],
 
@@ -27,7 +27,7 @@
       "commands": [
         "buf dep update",
         "npm audit fix --prefix web",
-        "fix-hash .#checks.x86_64-linux.buf",
+        "fix-hash .#checks.x86_64-linux.protobuf",
         "fix-hash .#packages.x86_64-linux.server"
       ]
     }

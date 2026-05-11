@@ -5,6 +5,11 @@
     "TOML": [".sqlfluff"]
   },
   "lsp": {
+    "gopls": {
+      "initialization_options": {
+        "buildFlags": ["-tags=dev"]
+      }
+    },
     "oxlint": {
       "initialization_options": {
         "settings": {
@@ -24,11 +29,6 @@
         }
       }
     },
-    "gopls": {
-      "initialization_options": {
-        "buildFlags": ["-tags=dev"]
-      }
-    },
     "nixd": {
       "settings": {
         "nixpkgs": {
@@ -40,10 +40,10 @@
   "languages": {
     "TypeScript": {
       "format_on_save": "on",
+      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
       "formatter": [
         {
           "language_server": {
@@ -57,10 +57,10 @@
     },
     "TSX": {
       "format_on_save": "on",
+      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
       "formatter": [
         {
           "language_server": {
@@ -74,10 +74,10 @@
     },
     "CSS": {
       "format_on_save": "on",
+      "language_servers": ["!vscode-css-language-server", "tailwindcss-intellisense-css", "..."],
       "prettier": {
         "allowed": false
       },
-      "language_servers": ["!vscode-css-language-server", "tailwindcss-intellisense-css", "..."],
       "formatter": [
         {
           "language_server": {
@@ -140,6 +140,20 @@
     },
     "YAML": {
       "format_on_save": "on",
+      "prettier": {
+        "allowed": false
+      },
+      "formatter": [
+        {
+          "language_server": {
+            "name": "oxfmt"
+          }
+        }
+      ]
+    },
+    "TOML": {
+      "format_on_save": "on",
+      "language_servers": ["tombi"],
       "prettier": {
         "allowed": false
       },

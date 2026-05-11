@@ -20,8 +20,6 @@
   },
 
   "chat.tools.terminal.autoApprove": {
-    "treefmt": true,
-
     // go
     "go run": true,
     "go mod tidy": true,
@@ -37,6 +35,13 @@
     "nix flake check": true
   },
 
+  // golang.go
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "go.buildTags": "dev",
+  "gopls": { "ui.semanticTokens": true },
+
   // oxc.oxc-vscode
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
@@ -45,12 +50,15 @@
     "source.fixAll.oxc": "always" // oxlint
   },
 
-  // golang.go
-  "[go]": {
-    "editor.defaultFormatter": "golang.go"
+  // bufbuild.vscode-buf
+  "[proto]": {
+    "editor.defaultFormatter": "bufbuild.vscode-buf"
   },
-  "go.buildTags": "dev",
-  "gopls": { "ui.semanticTokens": true },
+
+  // sqlfluff.vscode-sqlfluff
+  "[sql]": {
+    "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
+  },
 
   // jnoortheen.nix-ide
   "[nix]": {
@@ -64,15 +72,5 @@
         "expr": "(builtins.getFlake (builtins.toString ./.)).outputs.nixpkgs.${builtins.currentSystem}"
       }
     }
-  },
-
-  // bufbuild.vscode-buf
-  "[proto]": {
-    "editor.defaultFormatter": "bufbuild.vscode-buf"
-  },
-
-  // sqlfluff.vscode-sqlfluff
-  "[sql]": {
-    "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
   }
 }
