@@ -22,7 +22,7 @@ nix develop
 ### run
 
 ```elm
-nix run
+nix run #dev
 ```
 
 ### format

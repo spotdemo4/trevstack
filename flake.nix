@@ -99,7 +99,7 @@
         };
 
         apps = pkgs.mkApps {
-          default = "mprocs";
+          dev = "mprocs";
           server = "cd server && go run -tags dev .";
           web = "cd web && npm run dev";
           gen = ''
