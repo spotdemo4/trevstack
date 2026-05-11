@@ -40,7 +40,7 @@
   "languages": {
     "TypeScript": {
       "format_on_save": "on",
-      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
+      "language_servers": ["tsgo", "oxlint", "tailwindcss-language-server", "oxfmt"],
       "prettier": {
         "allowed": false
       },
@@ -57,7 +57,7 @@
     },
     "TSX": {
       "format_on_save": "on",
-      "language_servers": ["tsgo", "vtsls", "oxlint", "oxfmt", "tailwindcss-language-server"],
+      "language_servers": ["tsgo", "oxlint", "tailwindcss-language-server", "oxfmt"],
       "prettier": {
         "allowed": false
       },
@@ -74,7 +74,7 @@
     },
     "CSS": {
       "format_on_save": "on",
-      "language_servers": ["!vscode-css-language-server", "tailwindcss-intellisense-css", "..."],
+      "language_servers": ["tailwindcss-language-server", "tailwindcss-intellisense-css", "oxfmt"],
       "prettier": {
         "allowed": false
       },
@@ -153,7 +153,7 @@
     },
     "TOML": {
       "format_on_save": "on",
-      "language_servers": ["tombi"],
+      "language_servers": ["tombi", "oxfmt"],
       "prettier": {
         "allowed": false
       },
