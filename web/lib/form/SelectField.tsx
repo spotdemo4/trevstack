@@ -1,42 +1,50 @@
-import { NumberInput } from "$lib/input";
+import { SelectInput } from "$lib/input";
 import { Field } from "@ark-ui/solid/field";
 import { createMemo, For, type Component } from "solid-js";
 
 import { useFieldContext } from "./context";
 
-type NumberFieldProps = {
-  label?: string;
+type SelectOption = {
+  label: string;
+  value: string;
+  disabled?: boolean;
 };
 
-export const NumberField: Component<NumberFieldProps> = (props) => {
-  const field = useFieldContext<number>();
+type SelectFieldProps = {
+  class?: string;
+  label?: string;
+  options: SelectOption[];
+  placeholder?: string;
+};
+
+export const SelectField: Component<SelectFieldProps> = (props) => {
+  const field = useFieldContext<string>();
   const name = field().name;
   const errors = createMemo(() => [
     ...new Set(field().state.meta.errors.map((err) => err.message as string)),
   ]);
+
+  const value = createMemo(() => (field().state.value ? [field().state.value] : []));
 
   return (
     <Field.Root
       invalid={!(field().state.meta.isValid || !field().state.meta.isBlurred)}
       class="flex flex-col gap-1.5"
     >
-      <NumberInput
+      <SelectInput
         name={name}
         label={props.label}
-        value={field().state.value != undefined ? String(field().state.value) : ""}
+        class={props.class}
+        items={props.options}
+        placeholder={props.placeholder}
+        value={value()}
         onBlur={field().handleBlur}
-        onValueChange={(c) => {
-          // remove undefined numbers from form state
-          if (Number.isNaN(c.valueAsNumber) && field().state.value !== undefined) {
+        onValueChange={(details) => {
+          const first = details.value[0];
+          if (typeof first === "string") {
+            field().handleChange(first);
+          } else if (!first) {
             field().form.resetField(name);
-          }
-
-          // only handle change if the value is a valid number
-          if (!Number.isNaN(c.valueAsNumber)) {
-            field().handleChange(c.valueAsNumber);
-          } else {
-            // still validate
-            void field().form.validateField(name, "change");
           }
         }}
       />

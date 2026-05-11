@@ -5,6 +5,7 @@ import { DateField } from "./DateField";
 import { Form } from "./Form";
 import { NumberField } from "./NumberField";
 import { ResetButton } from "./ResetButton";
+import { SelectField } from "./SelectField";
 import { SubmitButton } from "./SubmitButton";
 import { TextField } from "./TextField";
 
@@ -13,6 +14,7 @@ const { useAppForm, withForm } = createFormHook({
     TextField,
     NumberField,
     DateField,
+    SelectField,
   },
   formComponents: {
     Form,

@@ -1,3 +1,4 @@
+import { TextInput } from "$lib/input";
 import { Field } from "@ark-ui/solid/field";
 import { createMemo, For, Show, type Component } from "solid-js";
 
@@ -24,10 +25,9 @@ export const TextField: Component<TextFieldProps> = (props) => {
           {props.label}
         </Field.Label>
       </Show>
-      <Field.Input
+      <TextInput
         name={name}
         value={field().state.value ?? ""}
-        class="rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
         onInput={(e) => field().handleChange(e.target.value)}
         onBlur={field().handleBlur}
       />

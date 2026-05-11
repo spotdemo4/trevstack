@@ -7,6 +7,7 @@ import {
 } from "$connect/number/v1/metrics_pb";
 import { Card } from "$lib/card";
 import { useForm } from "$lib/form/hook";
+import { NumberInput, SelectInput } from "$lib/input";
 import { NumberClient } from "$lib/transport";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
 import { type Component, createMemo, createResource, createSignal } from "solid-js";
@@ -27,9 +28,6 @@ type MetricsRange = {
   start?: Timestamp;
   end?: Timestamp;
 };
-
-const inputClass =
-  "rounded-md border border-ctp-surface1 bg-ctp-base px-2 py-1 text-sm text-ctp-text outline-none focus:border-ctp-blue";
 
 const Metrics: Component = () => {
   const [rangeFilter, setRangeFilter] = createSignal<MetricsRange>({});
@@ -115,18 +113,22 @@ const Metrics: Component = () => {
       <Card class="p-4">
         <div class="mb-3 flex items-center justify-between gap-2">
           <h2 class="font-semibold text-ctp-text">Activity over time</h2>
-          <label class="flex items-center gap-2 text-xs text-ctp-subtext0">
-            Interval
-            <select
-              class={inputClass}
-              value={interval()}
-              onChange={(e) => setInterval(Number(e.currentTarget.value) as TimeInterval)}
-            >
-              {intervalOptions.map((opt) => (
-                <option value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </label>
+          <div class="w-36">
+            <SelectInput
+              items={intervalOptions.map((opt) => ({
+                label: opt.label,
+                value: String(opt.value),
+              }))}
+              value={[String(interval())]}
+              placeholder="Select interval"
+              onValueChange={(details) => {
+                const first = details.value[0];
+                if (typeof first === "string") {
+                  setInterval(Number(first) as TimeInterval);
+                }
+              }}
+            />
+          </div>
         </div>
         <TimeSeriesChart points={timeSeries()?.points ?? []} />
       </Card>
@@ -135,20 +137,22 @@ const Metrics: Component = () => {
         <Card class="p-4">
           <div class="mb-3 flex items-center justify-between gap-2">
             <h2 class="font-semibold text-ctp-text">Number distribution</h2>
-            <label class="flex items-center gap-2 text-xs text-ctp-subtext0">
-              Buckets
-              <input
-                type="number"
-                min="1"
-                max="100"
-                class={`${inputClass} w-20`}
-                value={bucketCount()}
-                onInput={(e) => {
-                  const n = Number(e.currentTarget.value);
-                  if (n >= 1 && n <= 100) setBucketCount(n);
+            <div class="w-24">
+              <NumberInput
+                min={1}
+                max={100}
+                value={String(bucketCount())}
+                onValueChange={(c) => {
+                  if (
+                    !Number.isNaN(c.valueAsNumber) &&
+                    c.valueAsNumber >= 1 &&
+                    c.valueAsNumber <= 100
+                  ) {
+                    setBucketCount(c.valueAsNumber);
+                  }
                 }}
               />
-            </label>
+            </div>
           </div>
           <DistributionChart buckets={distribution()?.buckets ?? []} />
         </Card>
@@ -156,20 +160,22 @@ const Metrics: Component = () => {
         <Card class="p-4">
           <div class="mb-3 flex items-center justify-between gap-2">
             <h2 class="font-semibold text-ctp-text">Top names</h2>
-            <label class="flex items-center gap-2 text-xs text-ctp-subtext0">
-              Limit
-              <input
-                type="number"
-                min="1"
-                max="100"
-                class={`${inputClass} w-20`}
-                value={limit()}
-                onInput={(e) => {
-                  const n = Number(e.currentTarget.value);
-                  if (n >= 1 && n <= 100) setLimit(n);
+            <div class="w-24">
+              <NumberInput
+                min={1}
+                max={100}
+                value={String(limit())}
+                onValueChange={(c) => {
+                  if (
+                    !Number.isNaN(c.valueAsNumber) &&
+                    c.valueAsNumber >= 1 &&
+                    c.valueAsNumber <= 100
+                  ) {
+                    setLimit(c.valueAsNumber);
+                  }
                 }}
               />
-            </label>
+            </div>
           </div>
           <TopNamesChart names={topNames()?.names ?? []} />
         </Card>
