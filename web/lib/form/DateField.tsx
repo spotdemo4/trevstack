@@ -52,7 +52,7 @@ export const DateField: Component<DateFieldProps> = (props) => {
           if (first instanceof CalendarDate) {
             field().handleChange(calendarDateToTimestamp(first));
           } else if (!first) {
-            field().form.resetField(name);
+            field().handleChange(undefined);
           }
         }}
       />

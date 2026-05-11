@@ -9,7 +9,7 @@ type NumberFieldProps = {
 };
 
 export const NumberField: Component<NumberFieldProps> = (props) => {
-  const field = useFieldContext<number>();
+  const field = useFieldContext<number | undefined>();
   const name = field().name;
   const errors = createMemo(() => [
     ...new Set(field().state.meta.errors.map((err) => err.message as string)),
@@ -26,17 +26,10 @@ export const NumberField: Component<NumberFieldProps> = (props) => {
         value={field().state.value != undefined ? String(field().state.value) : ""}
         onBlur={field().handleBlur}
         onValueChange={(c) => {
-          // remove undefined numbers from form state
-          if (Number.isNaN(c.valueAsNumber) && field().state.value !== undefined) {
-            field().form.deleteField(name);
-          }
-
-          // only handle change if the value is a valid number
           if (!Number.isNaN(c.valueAsNumber)) {
             field().handleChange(c.valueAsNumber);
           } else {
-            // still validate
-            void field().form.validateField(name, "change");
+            field().handleChange(undefined);
           }
         }}
       />
