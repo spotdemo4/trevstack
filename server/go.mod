@@ -1,6 +1,6 @@
 module github.com/spotdemo4/trevstack/server
 
-go 1.25.9
+go 1.25.10
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260415201107-50325440f8f2.1
