@@ -28,7 +28,7 @@ export const NumberField: Component<NumberFieldProps> = (props) => {
         onValueChange={(c) => {
           // remove undefined numbers from form state
           if (Number.isNaN(c.valueAsNumber) && field().state.value !== undefined) {
-            field().form.resetField(name);
+            field().form.deleteField(name);
           }
 
           // only handle change if the value is a valid number
