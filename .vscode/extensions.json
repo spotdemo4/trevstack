@@ -2,10 +2,10 @@
   "recommendations": [
     "golang.go",
     "oxc.oxc-vscode",
+    "bradlc.vscode-tailwindcss",
     "tombi-toml.tombi",
     "bufbuild.vscode-buf",
     "sqlfluff.vscode-sqlfluff",
-    "jnoortheen.nix-ide",
-    "bradlc.vscode-tailwindcss"
+    "jnoortheen.nix-ide"
   ]
 }

@@ -62,7 +62,7 @@
               # util
               mprocs
               bumper
-              nix-fix-hash
+              fix-hash
             ];
           };
 
@@ -84,7 +84,7 @@
               go # go get
               buf # buf dep update
               nodejs_24 # npm audit fix
-              nix-fix-hash # vendorHash & bufDeps
+              fix-hash # vendorHash & bufDeps
             ];
           };
 
