@@ -16,6 +16,8 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
   let containerRef!: HTMLDivElement;
   // oxlint-disable-next-line no-unassigned-vars
   let svgRef!: SVGSVGElement;
+  // oxlint-disable-next-line no-unassigned-vars
+  let tooltipRef!: HTMLDivElement;
   const { width, height } = useChartSize(() => containerRef, 280);
 
   createEffect(() => {
@@ -29,11 +31,44 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
         date: timestampDate(p.bucket!),
         count: Number(p.count),
         sum: Number(p.sum),
+        average: p.average,
       }));
 
     const svg = d3.select(svgRef);
+    const tooltip = d3.select(tooltipRef);
     svg.selectAll("*").remove();
+    tooltip.style("opacity", "0");
     if (data.length === 0) return;
+
+    const formatInteger = d3.format(",");
+    const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
+      const [xPos, yPos] = d3.pointer(event, containerRef);
+      tooltip
+        .text(
+          `${d.date.toLocaleString()}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
+        )
+        .style("opacity", "1");
+
+      const tooltipNode = tooltipRef;
+      const containerRect = containerRef.getBoundingClientRect();
+      const tooltipRect = tooltipNode.getBoundingClientRect();
+      const offset = 12;
+      const left =
+        xPos + tooltipRect.width + offset > containerRect.width
+          ? xPos - tooltipRect.width - offset
+          : xPos + offset;
+      const top =
+        yPos + tooltipRect.height + offset > containerRect.height
+          ? yPos - tooltipRect.height - offset
+          : yPos + offset;
+
+      tooltip
+        .style("left", `${Math.max(offset, left)}px`)
+        .style("top", `${Math.max(offset, top)}px`);
+    };
+    const hideTooltip = () => {
+      tooltip.style("opacity", "0");
+    };
 
     const innerW = Math.max(0, w - margin.left - margin.right);
     const innerH = Math.max(0, h - margin.top - margin.bottom);
@@ -108,13 +143,26 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
       .attr("cx", (d) => x(d.date))
       .attr("cy", (d) => y(d.count))
       .attr("r", 3)
-      .append("title")
-      .text((d) => `${d.date.toLocaleString()}\ncount: ${d.count}\nsum: ${d.sum}`);
+      .on("pointerenter", (event: PointerEvent, d) => {
+        d3.select(event.currentTarget as SVGCircleElement).attr("r", 5);
+        showTooltip(event, d);
+      })
+      .on("pointermove", (event: PointerEvent, d) => {
+        showTooltip(event, d);
+      })
+      .on("pointerleave", (event: PointerEvent) => {
+        d3.select(event.currentTarget as SVGCircleElement).attr("r", 3);
+        hideTooltip();
+      });
   });
 
   return (
     <div ref={containerRef} class="relative w-full">
       <svg ref={svgRef} width={width()} height={height()} class="block" />
+      <div
+        ref={tooltipRef}
+        class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
+      />
       <Show when={props.points.length === 0}>
         <div class="absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0">
           No data in range

@@ -8,13 +8,15 @@ type DistributionChartProps = {
   buckets: DistributionBucket[];
 };
 
-const margin = { top: 12, right: 16, bottom: 36, left: 44 };
+const margin = { top: 12, right: 16, bottom: 64, left: 44 };
 
 const DistributionChart: Component<DistributionChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let containerRef!: HTMLDivElement;
   // oxlint-disable-next-line no-unassigned-vars
   let svgRef!: SVGSVGElement;
+  // oxlint-disable-next-line no-unassigned-vars
+  let tooltipRef!: HTMLDivElement;
   const { width, height } = useChartSize(() => containerRef, 260);
 
   createEffect(() => {
@@ -22,16 +24,55 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
     const h = height();
     if (w === 0) return;
 
-    const data = props.buckets.map((b) => ({
-      label: b.lower === b.upper ? `${b.lower}` : `${b.lower}–${b.upper}`,
+    const compactNumber = d3.format("~s");
+    const roundToNearestThousand = (value: number): number =>
+      Math.abs(value) < 1000 ? value : Math.round(value / 1000) * 1000;
+
+    const shortRangeLabel = (lower: number, upper: number): string => {
+      const shortLower = compactNumber(roundToNearestThousand(lower)).replace("G", "B");
+      const shortUpper = compactNumber(roundToNearestThousand(upper)).replace("G", "B");
+      return lower === upper ? shortLower : `${shortLower}-${shortUpper}`;
+    };
+
+    const data = props.buckets.map((b, i) => ({
+      key: `${i}`,
+      label: shortRangeLabel(b.lower, b.upper),
+      fullLabel: b.lower === b.upper ? `${b.lower}` : `${b.lower}-${b.upper}`,
       lower: b.lower,
       upper: b.upper,
       count: Number(b.count),
     }));
 
     const svg = d3.select(svgRef);
+    const tooltip = d3.select(tooltipRef);
     svg.selectAll("*").remove();
+    tooltip.style("opacity", "0");
     if (data.length === 0) return;
+
+    const showTooltip = (event: PointerEvent, text: string) => {
+      const [xPos, yPos] = d3.pointer(event, containerRef);
+      tooltip.text(text).style("opacity", "1");
+
+      const tooltipNode = tooltipRef;
+      const containerRect = containerRef.getBoundingClientRect();
+      const tooltipRect = tooltipNode.getBoundingClientRect();
+      const offset = 12;
+      const left =
+        xPos + tooltipRect.width + offset > containerRect.width
+          ? xPos - tooltipRect.width - offset
+          : xPos + offset;
+      const top =
+        yPos + tooltipRect.height + offset > containerRect.height
+          ? yPos - tooltipRect.height - offset
+          : yPos + offset;
+
+      tooltip
+        .style("left", `${Math.max(offset, left)}px`)
+        .style("top", `${Math.max(offset, top)}px`);
+    };
+    const hideTooltip = () => {
+      tooltip.style("opacity", "0");
+    };
 
     const innerW = Math.max(0, w - margin.left - margin.right);
     const innerH = Math.max(0, h - margin.top - margin.bottom);
@@ -40,9 +81,10 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
 
     const x = d3
       .scaleBand<string>()
-      .domain(data.map((d) => d.label))
+      .domain(data.map((d) => d.key))
       .range([0, innerW])
       .padding(0.15);
+    const labelByKey = new Map(data.map((d) => [d.key, d.label]));
 
     const y = d3
       .scaleLinear()
@@ -59,11 +101,13 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
       .call(
         d3
           .axisBottom(x)
-          .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.label))
+          .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
+          .tickFormat((key) => labelByKey.get(key) ?? key)
           .tickSizeOuter(0),
       )
       .selectAll("text")
-      .attr("transform", "rotate(-25)")
+      .attr("transform", "rotate(-35)")
+      .attr("dy", "0.35em")
       .style("text-anchor", "end");
 
     g.append("g").attr("class", "text-ctp-subtext0").call(d3.axisLeft(y).ticks(5).tickSizeOuter(0));
@@ -74,18 +118,31 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
       .enter()
       .append("rect")
       .attr("class", "fill-ctp-mauve")
-      .attr("x", (d) => x(d.label) ?? 0)
+      .attr("x", (d) => x(d.key) ?? 0)
       .attr("y", (d) => y(d.count))
       .attr("width", x.bandwidth())
       .attr("height", (d) => innerH - y(d.count))
       .attr("rx", 2)
-      .append("title")
-      .text((d) => `${d.label}: ${d.count}`);
+      .on("pointerenter", (event: PointerEvent, d) => {
+        d3.select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-pink");
+        showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
+      })
+      .on("pointermove", (event: PointerEvent, d) => {
+        showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
+      })
+      .on("pointerleave", (event: PointerEvent) => {
+        d3.select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-mauve");
+        hideTooltip();
+      });
   });
 
   return (
     <div ref={containerRef} class="relative w-full">
       <svg ref={svgRef} width={width()} height={height()} class="block" />
+      <div
+        ref={tooltipRef}
+        class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
+      />
       <Show when={props.buckets.length === 0}>
         <div class="absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0">
           No data in range
