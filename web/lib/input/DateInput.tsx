@@ -20,6 +20,9 @@ type DateInputProps = {
   onBlur?: JSX.FocusEventHandler<HTMLDivElement, FocusEvent>;
 };
 
+const iconTriggerClass =
+  "inline-flex h-7 w-7 items-center justify-center rounded-md border border-ctp-surface1 bg-ctp-surface0 text-ctp-subtext0 shadow-sm transition-colors hover:cursor-pointer hover:border-ctp-surface2 hover:bg-ctp-surface1 hover:text-ctp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40 active:bg-ctp-surface2";
+
 export const DateInput: Component<DateInputProps> = (props) => {
   const datePicker = useDatePicker(() => ({
     value: props.value,
@@ -40,7 +43,7 @@ export const DateInput: Component<DateInputProps> = (props) => {
       </Show>
       <ArkDateInput.Control
         class={twMerge(
-          "flex items-center gap-2 rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2 data-invalid:border-ctp-red data-invalid:focus-within:ring-ctp-red/40",
+          "flex items-center gap-2 rounded-md border border-ctp-surface1 bg-ctp-base p-1 pl-3 text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2 data-invalid:border-ctp-red data-invalid:focus-within:ring-ctp-red/40",
           props.class,
         )}
       >
@@ -63,7 +66,7 @@ export const DateInput: Component<DateInputProps> = (props) => {
             </ArkDateInput.SegmentGroup>
             <DatePicker.Trigger
               aria-label="Open calendar"
-              class="ml-auto cursor-pointer rounded p-0.5 transition-colors hover:bg-ctp-surface1"
+              class={twMerge(iconTriggerClass, "ml-auto")}
             >
               <CalendarIcon size={16} />
             </DatePicker.Trigger>

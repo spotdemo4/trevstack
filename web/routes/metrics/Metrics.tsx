@@ -33,7 +33,7 @@ const Metrics: Component = () => {
   const [rangeFilter, setRangeFilter] = createSignal<MetricsRange>({});
   const [interval, setInterval] = createSignal<TimeInterval>(TimeInterval.DAY);
   const [bucketCount, setBucketCount] = createSignal(10);
-  const [limit, setLimit] = createSignal(5);
+  const [limit, setLimit] = createSignal(8);
 
   const form = useForm(() => ({
     defaultValues: {} as MetricsRange,
@@ -137,7 +137,7 @@ const Metrics: Component = () => {
         <Card class="p-4">
           <div class="mb-3 flex items-center justify-between gap-2">
             <h2 class="font-semibold text-ctp-text">Number distribution</h2>
-            <div class="w-24">
+            <div class="w-32">
               <NumberInput
                 min={1}
                 max={100}
@@ -160,7 +160,7 @@ const Metrics: Component = () => {
         <Card class="p-4">
           <div class="mb-3 flex items-center justify-between gap-2">
             <h2 class="font-semibold text-ctp-text">Top names</h2>
-            <div class="w-24">
+            <div class="w-32">
               <NumberInput
                 min={1}
                 max={100}
