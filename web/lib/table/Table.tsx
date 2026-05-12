@@ -18,6 +18,8 @@ import {
 } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
+import styles from "./table.module.css";
+
 type HeaderProps = {
   class?: string;
   children?: JSX.Element;
@@ -211,13 +213,23 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
       fallback={
         <Switch>
           <Match when={count() === undefined && showLoadingState()}>
-            <div class="flex w-full animate-fade-in items-center justify-center gap-2 py-10 text-ctp-subtext0 motion-reduce:animate-none">
+            <div
+              class={twMerge(
+                styles.fadeIn,
+                "flex w-full items-center justify-center gap-2 py-10 text-ctp-subtext0",
+              )}
+            >
               <LoaderCircle class="animate-spin" size={20} />
               <span class="text-sm">Loading…</span>
             </div>
           </Match>
           <Match when={count() === BigInt(0)}>
-            <div class="flex w-full animate-fade-in flex-col items-center justify-center gap-2 py-10 text-ctp-overlay1 motion-reduce:animate-none">
+            <div
+              class={twMerge(
+                styles.fadeIn,
+                "flex w-full flex-col items-center justify-center gap-2 py-10 text-ctp-overlay1",
+              )}
+            >
               <CircleSlash2 size={24} />
               <span class="text-sm">No results</span>
             </div>
