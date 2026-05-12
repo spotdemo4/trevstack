@@ -51,11 +51,10 @@ func (h *Handler) List(
 	defer rows.Close()
 
 	for rows.Next() {
-		var rowid int64
 		var ts time.Time
 		var name string
 		var number uint32
-		if err := rows.Scan(&rowid, &ts, &name, &number); err != nil {
+		if err := rows.Scan(&ts, &name, &number); err != nil {
 			return err
 		}
 

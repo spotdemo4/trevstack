@@ -1,5 +1,4 @@
 SELECT
-    rowid,
     timestamp,
     name,
     number
