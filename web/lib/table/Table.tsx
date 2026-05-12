@@ -126,7 +126,8 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
     count: Number(props.count),
     overscan: 5,
     estimateSize: () => 35,
-    getScrollElement: () => table.ref() ?? null,
+    // https://github.com/TanStack/virtual/issues/1011#issuecomment-3677935028
+    getScrollElement: () => (table.ref()?.isConnected ? table.ref()! : null),
     onChange: (i) => {
       if (!i.range) return;
       if (i.range.startIndex === start && i.range.endIndex === end) return;
