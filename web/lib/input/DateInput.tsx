@@ -35,7 +35,7 @@ export const DateInput: Component<DateInputProps> = (props) => {
   }));
 
   return (
-    <ArkDateInput.RootProvider value={dateInput} class="flex flex-col gap-1.5">
+    <ArkDateInput.RootProvider value={dateInput} class="flex min-w-42 flex-col gap-1.5">
       <Show when={props.label}>
         <ArkDateInput.Label class="text-sm font-medium text-ctp-subtext1 data-invalid:text-ctp-red">
           {props.label}
