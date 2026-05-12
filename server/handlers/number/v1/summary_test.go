@@ -23,23 +23,23 @@ func TestSummary(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Summary: %v", err)
 		}
-		if resp.TotalCount != 4 {
-			t.Errorf("TotalCount = %d, want 4", resp.TotalCount)
+		if resp.GetTotalCount() != 4 {
+			t.Errorf("TotalCount = %d, want 4", resp.GetTotalCount())
 		}
-		if resp.TotalSum != 100 {
-			t.Errorf("TotalSum = %d, want 100", resp.TotalSum)
+		if resp.GetTotalSum() != 100 {
+			t.Errorf("TotalSum = %d, want 100", resp.GetTotalSum())
 		}
-		if resp.Average != 25.0 {
-			t.Errorf("Average = %v, want 25", resp.Average)
+		if resp.GetAverage() != 25.0 {
+			t.Errorf("Average = %v, want 25", resp.GetAverage())
 		}
-		if resp.Min != 10 {
-			t.Errorf("Min = %d, want 10", resp.Min)
+		if resp.GetMin() != 10 {
+			t.Errorf("Min = %d, want 10", resp.GetMin())
 		}
-		if resp.Max != 40 {
-			t.Errorf("Max = %d, want 40", resp.Max)
+		if resp.GetMax() != 40 {
+			t.Errorf("Max = %d, want 40", resp.GetMax())
 		}
-		if resp.DistinctNames != 3 {
-			t.Errorf("DistinctNames = %d, want 3", resp.DistinctNames)
+		if resp.GetDistinctNames() != 3 {
+			t.Errorf("DistinctNames = %d, want 3", resp.GetDistinctNames())
 		}
 	})
 
@@ -49,7 +49,7 @@ func TestSummary(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Summary: %v", err)
 		}
-		if resp.TotalCount != 0 || resp.TotalSum != 0 || resp.DistinctNames != 0 {
+		if resp.GetTotalCount() != 0 || resp.GetTotalSum() != 0 || resp.GetDistinctNames() != 0 {
 			t.Errorf("expected zeros, got %+v", resp)
 		}
 	})
@@ -58,7 +58,7 @@ func TestSummary(t *testing.T) {
 		client, _ := newTest(t)
 		earlier := timestamppb.New(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
 		later := timestamppb.New(time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC))
-		_, err := client.Summary(context.Background(), &numberv1.SummaryRequest{Start: later, End: earlier})
+		_, err := client.Summary(context.Background(), numberv1.SummaryRequest_builder{Start: later, End: earlier}.Build())
 		if err == nil {
 			t.Fatal("expected validation error, got nil")
 		}

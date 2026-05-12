@@ -57,3 +57,7 @@ func seed(t *testing.T, db *sql.DB, name string, number uint32, ts time.Time) {
 		t.Fatalf("seed: %v", err)
 	}
 }
+
+func ptr[T any](v T) *T {
+	return &v
+}

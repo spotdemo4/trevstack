@@ -18,28 +18,40 @@ func (h *Handler) Summary(
 	db := database.FromContext(ctx)
 
 	var startArg, endArg any
-	if req.Start != nil {
-		startArg = req.Start.AsTime()
+	if start := req.GetStart(); start != nil {
+		startArg = start.AsTime()
 	}
-	if req.End != nil {
-		endArg = req.End.AsTime()
+	if end := req.GetEnd(); end != nil {
+		endArg = end.AsTime()
 	}
 
-	resp := &numberv1.SummaryResponse{}
+	var totalCount int64
+	var totalSum uint64
+	var average float64
+	var min, max, distinctNames uint32
+
 	err := db.QueryRowContext(ctx, summarySQL,
 		startArg, startArg,
 		endArg, endArg,
 	).Scan(
-		&resp.TotalCount,
-		&resp.TotalSum,
-		&resp.Average,
-		&resp.Min,
-		&resp.Max,
-		&resp.DistinctNames,
+		&totalCount,
+		&totalSum,
+		&average,
+		&min,
+		&max,
+		&distinctNames,
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	resp := &numberv1.SummaryResponse{}
+	resp.SetTotalCount(totalCount)
+	resp.SetTotalSum(totalSum)
+	resp.SetAverage(average)
+	resp.SetMin(min)
+	resp.SetMax(max)
+	resp.SetDistinctNames(distinctNames)
 
 	return resp, nil
 }

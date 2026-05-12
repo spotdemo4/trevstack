@@ -48,17 +48,18 @@ func (h *Handler) TimeSeries(
 ) (*numberv1.TimeSeriesResponse, error) {
 	db := database.FromContext(ctx)
 
-	expr, ok := bucketExpr(req.Interval)
+	interval := req.GetInterval()
+	expr, ok := bucketExpr(interval)
 	if !ok {
-		return nil, fmt.Errorf("invalid interval: %v", req.Interval)
+		return nil, fmt.Errorf("invalid interval: %v", interval)
 	}
 
 	var startArg, endArg any
-	if req.Start != nil {
-		startArg = req.Start.AsTime()
+	if start := req.GetStart(); start != nil {
+		startArg = start.AsTime()
 	}
-	if req.End != nil {
-		endArg = req.End.AsTime()
+	if end := req.GetEnd(); end != nil {
+		endArg = end.AsTime()
 	}
 
 	rows, err := db.QueryContext(ctx, fmt.Sprintf(timeseriesSQL, expr),
@@ -85,16 +86,18 @@ func (h *Handler) TimeSeries(
 			return nil, err
 		}
 
-		points = append(points, &numberv1.TimeSeriesPoint{
-			Bucket:  timestamppb.New(bucket),
-			Count:   count,
-			Sum:     sum,
-			Average: avg,
-		})
+		point := &numberv1.TimeSeriesPoint{}
+		point.SetBucket(timestamppb.New(bucket))
+		point.SetCount(count)
+		point.SetSum(sum)
+		point.SetAverage(avg)
+		points = append(points, point)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return &numberv1.TimeSeriesResponse{Points: points}, nil
+	resp := &numberv1.TimeSeriesResponse{}
+	resp.SetPoints(points)
+	return resp, nil
 }

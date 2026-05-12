@@ -23,13 +23,14 @@ func TestList(t *testing.T) {
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
-		if resp.TotalCount != 3 {
-			t.Errorf("TotalCount = %d, want 3", resp.TotalCount)
+		if resp.GetTotalCount() != 3 {
+			t.Errorf("TotalCount = %d, want 3", resp.GetTotalCount())
 		}
-		if len(resp.Items) != 3 {
-			t.Fatalf("len(Items) = %d, want 3", len(resp.Items))
+		if len(resp.GetItems()) != 3 {
+			t.Fatalf("len(Items) = %d, want 3", len(resp.GetItems()))
 		}
-		gotNames := []string{resp.Items[0].Name, resp.Items[1].Name, resp.Items[2].Name}
+		items := resp.GetItems()
+		gotNames := []string{items[0].GetName(), items[1].GetName(), items[2].GetName()}
 		want := []string{"carol", "bob", "alice"}
 		for i, n := range want {
 			if gotNames[i] != n {
@@ -46,12 +47,12 @@ func TestList(t *testing.T) {
 		seed(t, db, "bob", 3, now)
 
 		needle := "al"
-		resp, err := client.List(context.Background(), &numberv1.ListRequest{Name: &needle})
+		resp, err := client.List(context.Background(), numberv1.ListRequest_builder{Name: &needle}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
-		if resp.TotalCount != 2 {
-			t.Errorf("TotalCount = %d, want 2", resp.TotalCount)
+		if resp.GetTotalCount() != 2 {
+			t.Errorf("TotalCount = %d, want 2", resp.GetTotalCount())
 		}
 	})
 
@@ -63,15 +64,15 @@ func TestList(t *testing.T) {
 		seed(t, db, "c", 500, now)
 
 		min, max := uint32(10), uint32(100)
-		resp, err := client.List(context.Background(), &numberv1.ListRequest{Min: &min, Max: &max})
+		resp, err := client.List(context.Background(), numberv1.ListRequest_builder{Min: &min, Max: &max}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
-		if resp.TotalCount != 1 {
-			t.Errorf("TotalCount = %d, want 1", resp.TotalCount)
+		if resp.GetTotalCount() != 1 {
+			t.Errorf("TotalCount = %d, want 1", resp.GetTotalCount())
 		}
-		if len(resp.Items) == 1 && resp.Items[0].Number != 50 {
-			t.Errorf("Items[0].Number = %d, want 50", resp.Items[0].Number)
+		if len(resp.GetItems()) == 1 && resp.GetItems()[0].GetNumber() != 50 {
+			t.Errorf("Items[0].Number = %d, want 50", resp.GetItems()[0].GetNumber())
 		}
 	})
 
@@ -85,11 +86,11 @@ func TestList(t *testing.T) {
 		name string
 		req  *numberv1.ListRequest
 	}{
-		{"name too long", &numberv1.ListRequest{Name: &tooLong}},
-		{"min above max value", &numberv1.ListRequest{Min: &huge}},
-		{"max above max value", &numberv1.ListRequest{Max: &huge}},
-		{"min greater than max (CEL)", &numberv1.ListRequest{Min: &lo, Max: &hi}},
-		{"end before start (CEL)", &numberv1.ListRequest{Start: later, End: earlier}},
+		{"name too long", numberv1.ListRequest_builder{Name: &tooLong}.Build()},
+		{"min above max value", numberv1.ListRequest_builder{Min: &huge}.Build()},
+		{"max above max value", numberv1.ListRequest_builder{Max: &huge}.Build()},
+		{"min greater than max (CEL)", numberv1.ListRequest_builder{Min: &lo, Max: &hi}.Build()},
+		{"end before start (CEL)", numberv1.ListRequest_builder{Start: later, End: earlier}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {

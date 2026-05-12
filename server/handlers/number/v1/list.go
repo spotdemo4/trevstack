@@ -25,23 +25,23 @@ func (h *Handler) List(
 	db := database.FromContext(ctx)
 
 	var nameArg, minArg, maxArg, startArg, endArg, cursorArg any
-	if req.Name != nil {
-		nameArg = *req.Name
+	if req.HasName() {
+		nameArg = req.GetName()
 	}
-	if req.Min != nil {
-		minArg = *req.Min
+	if req.HasMin() {
+		minArg = req.GetMin()
 	}
-	if req.Max != nil {
-		maxArg = *req.Max
+	if req.HasMax() {
+		maxArg = req.GetMax()
 	}
-	if req.Start != nil {
-		startArg = req.Start.AsTime()
+	if start := req.GetStart(); start != nil {
+		startArg = start.AsTime()
 	}
-	if req.End != nil {
-		endArg = req.End.AsTime()
+	if end := req.GetEnd(); end != nil {
+		endArg = end.AsTime()
 	}
-	if req.Cursor != nil {
-		cursorArg = *req.Cursor
+	if req.HasCursor() {
+		cursorArg = req.GetCursor()
 	}
 
 	rows, err := db.QueryContext(ctx, listSQL,
@@ -69,11 +69,11 @@ func (h *Handler) List(
 			return nil, err
 		}
 
-		items = append(items, &numberv1.Item{
-			Timestamp: timestamppb.New(ts),
-			Name:      name,
-			Number:    number,
-		})
+		item := &numberv1.Item{}
+		item.SetTimestamp(timestamppb.New(ts))
+		item.SetName(name)
+		item.SetNumber(number)
+		items = append(items, item)
 		rowIDs = append(rowIDs, rowid)
 	}
 	if err := rows.Err(); err != nil {
@@ -94,15 +94,14 @@ func (h *Handler) List(
 	nextCursor := int64(0)
 	if len(items) > 0 {
 		nextCursor = rowIDs[len(items)-1]
-	} else if req.Cursor != nil {
-		nextCursor = *req.Cursor
+	} else if req.HasCursor() {
+		nextCursor = req.GetCursor()
 	}
 
-	resp := &numberv1.ListResponse{
-		Items:      items,
-		TotalCount: totalCount,
-		NextCursor: nextCursor,
-	}
+	resp := &numberv1.ListResponse{}
+	resp.SetItems(items)
+	resp.SetTotalCount(totalCount)
+	resp.SetNextCursor(nextCursor)
 
 	return resp, nil
 }

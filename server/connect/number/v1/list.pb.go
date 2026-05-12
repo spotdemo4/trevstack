@@ -12,7 +12,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,12 +23,14 @@ const (
 )
 
 type Item struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Number        uint32                 `protobuf:"varint,3,opt,name=number,proto3" json:"number,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Timestamp   *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=timestamp"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,2,opt,name=name"`
+	xxx_hidden_Number      uint32                 `protobuf:"varint,3,opt,name=number"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *Item) Reset() {
@@ -57,42 +58,115 @@ func (x *Item) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Item.ProtoReflect.Descriptor instead.
-func (*Item) Descriptor() ([]byte, []int) {
-	return file_number_v1_list_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *Item) GetTimestamp() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Timestamp
+		return x.xxx_hidden_Timestamp
 	}
 	return nil
 }
 
 func (x *Item) GetName() string {
 	if x != nil {
-		return x.Name
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Item) GetNumber() uint32 {
 	if x != nil {
-		return x.Number
+		return x.xxx_hidden_Number
 	}
 	return 0
 }
 
+func (x *Item) SetTimestamp(v *timestamppb.Timestamp) {
+	x.xxx_hidden_Timestamp = v
+}
+
+func (x *Item) SetName(v string) {
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *Item) SetNumber(v uint32) {
+	x.xxx_hidden_Number = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *Item) HasTimestamp() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Timestamp != nil
+}
+
+func (x *Item) HasName() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *Item) HasNumber() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *Item) ClearTimestamp() {
+	x.xxx_hidden_Timestamp = nil
+}
+
+func (x *Item) ClearName() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Name = nil
+}
+
+func (x *Item) ClearNumber() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Number = 0
+}
+
+type Item_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Timestamp *timestamppb.Timestamp
+	Name      *string
+	Number    *uint32
+}
+
+func (b0 Item_builder) Build() *Item {
+	m0 := &Item{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Timestamp = b.Timestamp
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Name = b.Name
+	}
+	if b.Number != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Number = *b.Number
+	}
+	return m0
+}
+
 type ListRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Cursor        *int64                 `protobuf:"varint,1,opt,name=cursor,proto3,oneof" json:"cursor,omitempty"`
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	Min           *uint32                `protobuf:"varint,3,opt,name=min,proto3,oneof" json:"min,omitempty"`
-	Max           *uint32                `protobuf:"varint,4,opt,name=max,proto3,oneof" json:"max,omitempty"`
-	Start         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=start,proto3,oneof" json:"start,omitempty"`
-	End           *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=end,proto3,oneof" json:"end,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Cursor      int64                  `protobuf:"varint,1,opt,name=cursor"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,2,opt,name=name"`
+	xxx_hidden_Min         uint32                 `protobuf:"varint,3,opt,name=min"`
+	xxx_hidden_Max         uint32                 `protobuf:"varint,4,opt,name=max"`
+	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=start"`
+	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=end"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *ListRequest) Reset() {
@@ -120,60 +194,194 @@ func (x *ListRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListRequest.ProtoReflect.Descriptor instead.
-func (*ListRequest) Descriptor() ([]byte, []int) {
-	return file_number_v1_list_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *ListRequest) GetCursor() int64 {
-	if x != nil && x.Cursor != nil {
-		return *x.Cursor
+	if x != nil {
+		return x.xxx_hidden_Cursor
 	}
 	return 0
 }
 
 func (x *ListRequest) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ListRequest) GetMin() uint32 {
-	if x != nil && x.Min != nil {
-		return *x.Min
+	if x != nil {
+		return x.xxx_hidden_Min
 	}
 	return 0
 }
 
 func (x *ListRequest) GetMax() uint32 {
-	if x != nil && x.Max != nil {
-		return *x.Max
+	if x != nil {
+		return x.xxx_hidden_Max
 	}
 	return 0
 }
 
 func (x *ListRequest) GetStart() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Start
+		return x.xxx_hidden_Start
 	}
 	return nil
 }
 
 func (x *ListRequest) GetEnd() *timestamppb.Timestamp {
 	if x != nil {
-		return x.End
+		return x.xxx_hidden_End
 	}
 	return nil
 }
 
+func (x *ListRequest) SetCursor(v int64) {
+	x.xxx_hidden_Cursor = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 6)
+}
+
+func (x *ListRequest) SetName(v string) {
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 6)
+}
+
+func (x *ListRequest) SetMin(v uint32) {
+	x.xxx_hidden_Min = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
+}
+
+func (x *ListRequest) SetMax(v uint32) {
+	x.xxx_hidden_Max = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
+}
+
+func (x *ListRequest) SetStart(v *timestamppb.Timestamp) {
+	x.xxx_hidden_Start = v
+}
+
+func (x *ListRequest) SetEnd(v *timestamppb.Timestamp) {
+	x.xxx_hidden_End = v
+}
+
+func (x *ListRequest) HasCursor() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ListRequest) HasName() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ListRequest) HasMin() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *ListRequest) HasMax() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *ListRequest) HasStart() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Start != nil
+}
+
+func (x *ListRequest) HasEnd() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_End != nil
+}
+
+func (x *ListRequest) ClearCursor() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Cursor = 0
+}
+
+func (x *ListRequest) ClearName() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Name = nil
+}
+
+func (x *ListRequest) ClearMin() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Min = 0
+}
+
+func (x *ListRequest) ClearMax() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Max = 0
+}
+
+func (x *ListRequest) ClearStart() {
+	x.xxx_hidden_Start = nil
+}
+
+func (x *ListRequest) ClearEnd() {
+	x.xxx_hidden_End = nil
+}
+
+type ListRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Cursor *int64
+	Name   *string
+	Min    *uint32
+	Max    *uint32
+	Start  *timestamppb.Timestamp
+	End    *timestamppb.Timestamp
+}
+
+func (b0 ListRequest_builder) Build() *ListRequest {
+	m0 := &ListRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Cursor != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 6)
+		x.xxx_hidden_Cursor = *b.Cursor
+	}
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 6)
+		x.xxx_hidden_Name = b.Name
+	}
+	if b.Min != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
+		x.xxx_hidden_Min = *b.Min
+	}
+	if b.Max != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
+		x.xxx_hidden_Max = *b.Max
+	}
+	x.xxx_hidden_Start = b.Start
+	x.xxx_hidden_End = b.End
+	return m0
+}
+
 type ListResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	TotalCount    int64                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	NextCursor    int64                  `protobuf:"varint,3,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Items       *[]*Item               `protobuf:"bytes,1,rep,name=items"`
+	xxx_hidden_TotalCount  int64                  `protobuf:"varint,2,opt,name=total_count,json=totalCount"`
+	xxx_hidden_NextCursor  int64                  `protobuf:"varint,3,opt,name=next_cursor,json=nextCursor"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *ListResponse) Reset() {
@@ -201,30 +409,89 @@ func (x *ListResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListResponse.ProtoReflect.Descriptor instead.
-func (*ListResponse) Descriptor() ([]byte, []int) {
-	return file_number_v1_list_proto_rawDescGZIP(), []int{2}
-}
-
 func (x *ListResponse) GetItems() []*Item {
 	if x != nil {
-		return x.Items
+		if x.xxx_hidden_Items != nil {
+			return *x.xxx_hidden_Items
+		}
 	}
 	return nil
 }
 
 func (x *ListResponse) GetTotalCount() int64 {
 	if x != nil {
-		return x.TotalCount
+		return x.xxx_hidden_TotalCount
 	}
 	return 0
 }
 
 func (x *ListResponse) GetNextCursor() int64 {
 	if x != nil {
-		return x.NextCursor
+		return x.xxx_hidden_NextCursor
 	}
 	return 0
+}
+
+func (x *ListResponse) SetItems(v []*Item) {
+	x.xxx_hidden_Items = &v
+}
+
+func (x *ListResponse) SetTotalCount(v int64) {
+	x.xxx_hidden_TotalCount = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *ListResponse) SetNextCursor(v int64) {
+	x.xxx_hidden_NextCursor = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *ListResponse) HasTotalCount() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ListResponse) HasNextCursor() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *ListResponse) ClearTotalCount() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_TotalCount = 0
+}
+
+func (x *ListResponse) ClearNextCursor() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_NextCursor = 0
+}
+
+type ListResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Items      []*Item
+	TotalCount *int64
+	NextCursor *int64
+}
+
+func (b0 ListResponse_builder) Build() *ListResponse {
+	m0 := &ListResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Items = &b.Items
+	if b.TotalCount != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_TotalCount = *b.TotalCount
+	}
+	if b.NextCursor != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_NextCursor = *b.NextCursor
+	}
+	return m0
 }
 
 var File_number_v1_list_proto protoreflect.FileDescriptor
@@ -235,22 +502,16 @@ const file_number_v1_list_proto_rawDesc = "" +
 	"\x04Item\x128\n" +
 	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x04name\x12#\n" +
-	"\x06number\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x06number\"\x8f\x04\n" +
-	"\vListRequest\x12\x1b\n" +
-	"\x06cursor\x18\x01 \x01(\x03H\x00R\x06cursor\x88\x01\x01\x12\"\n" +
-	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x00\x182H\x01R\x04name\x88\x01\x01\x12\"\n" +
-	"\x03min\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00H\x02R\x03min\x88\x01\x01\x12\"\n" +
-	"\x03max\x18\x04 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00H\x03R\x03max\x88\x01\x01\x125\n" +
-	"\x05start\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x04R\x05start\x88\x01\x01\x121\n" +
-	"\x03end\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x05R\x03end\x88\x01\x01:\xd6\x01\xbaH\xd2\x01\x1ag\n" +
+	"\x06number\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x06number\"\xbb\x03\n" +
+	"\vListRequest\x12\x16\n" +
+	"\x06cursor\x18\x01 \x01(\x03R\x06cursor\x12\x1d\n" +
+	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x00\x182R\x04name\x12\x1d\n" +
+	"\x03min\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x03min\x12\x1d\n" +
+	"\x03max\x18\x04 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x03max\x120\n" +
+	"\x05start\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
+	"\x03end\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x03end:\xd6\x01\xbaH\xd2\x01\x1ag\n" +
 	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\x1ag\n" +
-	"\x11min_less_than_max\x12\x19Min must be less than max\x1a7!has(this.min) || !has(this.max) || this.min < this.maxB\t\n" +
-	"\a_cursorB\a\n" +
-	"\x05_nameB\x06\n" +
-	"\x04_minB\x06\n" +
-	"\x04_maxB\b\n" +
-	"\x06_startB\x06\n" +
-	"\x04_end\"w\n" +
+	"\x11min_less_than_max\x12\x19Min must be less than max\x1a7!has(this.min) || !has(this.max) || this.min < this.max\"w\n" +
 	"\fListResponse\x12%\n" +
 	"\x05items\x18\x01 \x03(\v2\x0f.number.v1.ItemR\x05items\x12\x1f\n" +
 	"\vtotal_count\x18\x02 \x01(\x03R\n" +
@@ -258,19 +519,7 @@ const file_number_v1_list_proto_rawDesc = "" +
 	"\vnext_cursor\x18\x03 \x01(\x03R\n" +
 	"nextCursorB\xa1\x01\n" +
 	"\rcom.number.v1B\tListProtoP\x01Z@github.com/spotdemo4/trevstack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
-	"Number::V1b\x06proto3"
-
-var (
-	file_number_v1_list_proto_rawDescOnce sync.Once
-	file_number_v1_list_proto_rawDescData []byte
-)
-
-func file_number_v1_list_proto_rawDescGZIP() []byte {
-	file_number_v1_list_proto_rawDescOnce.Do(func() {
-		file_number_v1_list_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_number_v1_list_proto_rawDesc), len(file_number_v1_list_proto_rawDesc)))
-	})
-	return file_number_v1_list_proto_rawDescData
-}
+	"Number::V1b\beditionsp\xe9\a"
 
 var file_number_v1_list_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_number_v1_list_proto_goTypes = []any{
@@ -296,7 +545,6 @@ func file_number_v1_list_proto_init() {
 	if File_number_v1_list_proto != nil {
 		return
 	}
-	file_number_v1_list_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

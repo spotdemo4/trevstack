@@ -1,4 +1,4 @@
-syntax = "proto3";
+edition = "2024";
 
 package number.v1;
 
@@ -7,8 +7,8 @@ import "google/protobuf/timestamp.proto";
 
 // Scalar summary metrics across all items, suitable for stat cards.
 message SummaryRequest {
-  optional google.protobuf.Timestamp start = 1;
-  optional google.protobuf.Timestamp end = 2;
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
 
   option (buf.validate.message).cel = {
     id: "end_after_start"
@@ -40,8 +40,8 @@ message TimeSeriesRequest {
     defined_only: true
     not_in: [0]
   }];
-  optional google.protobuf.Timestamp start = 2;
-  optional google.protobuf.Timestamp end = 3;
+  google.protobuf.Timestamp start = 2;
+  google.protobuf.Timestamp end = 3;
 
   option (buf.validate.message).cel = {
     id: "end_after_start"
@@ -67,8 +67,8 @@ message DistributionRequest {
     gte: 1
     lte: 100
   }];
-  optional google.protobuf.Timestamp start = 2;
-  optional google.protobuf.Timestamp end = 3;
+  google.protobuf.Timestamp start = 2;
+  google.protobuf.Timestamp end = 3;
 
   option (buf.validate.message).cel = {
     id: "end_after_start"
@@ -93,8 +93,8 @@ message TopNamesRequest {
     gte: 1
     lte: 100
   }];
-  optional google.protobuf.Timestamp start = 2;
-  optional google.protobuf.Timestamp end = 3;
+  google.protobuf.Timestamp start = 2;
+  google.protobuf.Timestamp end = 3;
 
   option (buf.validate.message).cel = {
     id: "end_after_start"

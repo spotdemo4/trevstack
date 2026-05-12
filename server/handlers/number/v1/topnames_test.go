@@ -21,18 +21,20 @@ func TestTopNames(t *testing.T) {
 		seed(t, db, "b", 5, now)
 		seed(t, db, "c", 100, now)
 
-		resp, err := client.TopNames(context.Background(), &numberv1.TopNamesRequest{Limit: 2})
+		resp, err := client.TopNames(context.Background(), numberv1.TopNamesRequest_builder{
+			Limit: ptr(uint32(2)),
+		}.Build())
 		if err != nil {
 			t.Fatalf("TopNames: %v", err)
 		}
-		if len(resp.Names) != 2 {
-			t.Fatalf("len(Names) = %d, want 2", len(resp.Names))
+		if len(resp.GetNames()) != 2 {
+			t.Fatalf("len(Names) = %d, want 2", len(resp.GetNames()))
 		}
-		if resp.Names[0].Name != "a" || resp.Names[0].Count != 3 || resp.Names[0].Sum != 3 {
-			t.Errorf("Names[0] = %+v, want {a 3 3}", resp.Names[0])
+		if resp.GetNames()[0].GetName() != "a" || resp.GetNames()[0].GetCount() != 3 || resp.GetNames()[0].GetSum() != 3 {
+			t.Errorf("Names[0] = %+v, want {a 3 3}", resp.GetNames()[0])
 		}
-		if resp.Names[1].Name != "b" || resp.Names[1].Count != 2 || resp.Names[1].Sum != 10 {
-			t.Errorf("Names[1] = %+v, want {b 2 10}", resp.Names[1])
+		if resp.GetNames()[1].GetName() != "b" || resp.GetNames()[1].GetCount() != 2 || resp.GetNames()[1].GetSum() != 10 {
+			t.Errorf("Names[1] = %+v, want {b 2 10}", resp.GetNames()[1])
 		}
 	})
 
@@ -43,9 +45,9 @@ func TestTopNames(t *testing.T) {
 		name string
 		req  *numberv1.TopNamesRequest
 	}{
-		{"limit zero", &numberv1.TopNamesRequest{Limit: 0}},
-		{"limit above max", &numberv1.TopNamesRequest{Limit: 101}},
-		{"end before start (CEL)", &numberv1.TopNamesRequest{Limit: 5, Start: later, End: earlier}},
+		{"limit zero", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(0))}.Build()},
+		{"limit above max", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(101))}.Build()},
+		{"end before start (CEL)", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(5)), Start: later, End: earlier}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {

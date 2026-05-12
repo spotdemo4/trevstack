@@ -3,7 +3,7 @@ servers:
   - url: /grpc
 info:
   title: TrevStack API
-  version: 0.6.0
+  version: 0.8.0
   description: API for TrevStack
   contact:
     name: Trev
@@ -232,15 +232,11 @@ components:
           maximum: 100
           minimum: 1
         start:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: start
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: end
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: DistributionRequest
       additionalProperties: false
       description: |
@@ -281,39 +277,28 @@ components:
           type:
             - integer
             - string
-            - "null"
           title: cursor
           format: int64
         name:
-          type:
-            - string
-            - "null"
+          type: string
           title: name
           maxLength: 50
         min:
-          type:
-            - integer
-            - "null"
+          type: integer
           title: min
           maximum: 1000000
           minimum: 0
         max:
-          type:
-            - integer
-            - "null"
+          type: integer
           title: max
           maximum: 1000000
           minimum: 0
         start:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: start
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: end
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: ListRequest
       additionalProperties: false
       description: |
@@ -345,15 +330,11 @@ components:
       type: object
       properties:
         start:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: start
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: end
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: SummaryRequest
       additionalProperties: false
       description: |
@@ -433,15 +414,11 @@ components:
           title: interval
           $ref: "#/components/schemas/number.v1.TimeInterval"
         start:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: start
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: end
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: TimeSeriesRequest
       additionalProperties: false
       description: |
@@ -489,15 +466,11 @@ components:
           maximum: 100
           minimum: 1
         start:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: start
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
-          oneOf:
-            - $ref: "#/components/schemas/google.protobuf.Timestamp"
-            - type: "null"
           title: end
+          $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: TopNamesRequest
       additionalProperties: false
       description: |

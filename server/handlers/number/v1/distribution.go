@@ -21,11 +21,11 @@ func (h *Handler) Distribution(
 	db := database.FromContext(ctx)
 
 	var startArg, endArg any
-	if req.Start != nil {
-		startArg = req.Start.AsTime()
+	if start := req.GetStart(); start != nil {
+		startArg = start.AsTime()
 	}
-	if req.End != nil {
-		endArg = req.End.AsTime()
+	if end := req.GetEnd(); end != nil {
+		endArg = end.AsTime()
 	}
 
 	var lo, hi uint32
@@ -43,16 +43,17 @@ func (h *Handler) Distribution(
 		return &numberv1.DistributionResponse{}, nil
 	}
 
-	n := req.BucketCount
+	n := req.GetBucketCount()
 	// All values identical — collapse to a single bucket.
 	if hi == lo {
-		return &numberv1.DistributionResponse{
-			Buckets: []*numberv1.DistributionBucket{{
-				Lower: lo,
-				Upper: hi,
-				Count: total,
-			}},
-		}, nil
+		bucket := &numberv1.DistributionBucket{}
+		bucket.SetLower(lo)
+		bucket.SetUpper(hi)
+		bucket.SetCount(total)
+
+		resp := &numberv1.DistributionResponse{}
+		resp.SetBuckets([]*numberv1.DistributionBucket{bucket})
+		return resp, nil
 	}
 
 	span := uint64(hi-lo) + 1
@@ -90,12 +91,14 @@ func (h *Handler) Distribution(
 		} else {
 			upper = lo + uint32(uint64(i+1)*span/uint64(n)) - 1
 		}
-		buckets = append(buckets, &numberv1.DistributionBucket{
-			Lower: lower,
-			Upper: upper,
-			Count: counts[i],
-		})
+		bucket := &numberv1.DistributionBucket{}
+		bucket.SetLower(lower)
+		bucket.SetUpper(upper)
+		bucket.SetCount(counts[i])
+		buckets = append(buckets, bucket)
 	}
 
-	return &numberv1.DistributionResponse{Buckets: buckets}, nil
+	resp := &numberv1.DistributionResponse{}
+	resp.SetBuckets(buckets)
+	return resp, nil
 }

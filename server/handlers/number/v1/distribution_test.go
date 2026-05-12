@@ -13,12 +13,14 @@ import (
 func TestDistribution(t *testing.T) {
 	t.Run("empty table returns no buckets", func(t *testing.T) {
 		client, _ := newTest(t)
-		resp, err := client.Distribution(context.Background(), &numberv1.DistributionRequest{BucketCount: 5})
+		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
+			BucketCount: ptr(uint32(5)),
+		}.Build())
 		if err != nil {
 			t.Fatalf("Distribution: %v", err)
 		}
-		if len(resp.Buckets) != 0 {
-			t.Errorf("len(Buckets) = %d, want 0", len(resp.Buckets))
+		if len(resp.GetBuckets()) != 0 {
+			t.Errorf("len(Buckets) = %d, want 0", len(resp.GetBuckets()))
 		}
 	})
 
@@ -29,15 +31,18 @@ func TestDistribution(t *testing.T) {
 		seed(t, db, "b", 7, now)
 		seed(t, db, "c", 7, now)
 
-		resp, err := client.Distribution(context.Background(), &numberv1.DistributionRequest{BucketCount: 5})
+		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
+			BucketCount: ptr(uint32(5)),
+		}.Build())
 		if err != nil {
 			t.Fatalf("Distribution: %v", err)
 		}
-		if len(resp.Buckets) != 1 {
-			t.Fatalf("len(Buckets) = %d, want 1", len(resp.Buckets))
+		if len(resp.GetBuckets()) != 1 {
+			t.Fatalf("len(Buckets) = %d, want 1", len(resp.GetBuckets()))
 		}
-		if resp.Buckets[0].Lower != 7 || resp.Buckets[0].Upper != 7 || resp.Buckets[0].Count != 3 {
-			t.Errorf("Buckets[0] = %+v, want {Lower:7 Upper:7 Count:3}", resp.Buckets[0])
+		bucket := resp.GetBuckets()[0]
+		if bucket.GetLower() != 7 || bucket.GetUpper() != 7 || bucket.GetCount() != 3 {
+			t.Errorf("Buckets[0] = %+v, want {Lower:7 Upper:7 Count:3}", bucket)
 		}
 	})
 
@@ -48,20 +53,22 @@ func TestDistribution(t *testing.T) {
 			seed(t, db, "x", n, now)
 		}
 
-		resp, err := client.Distribution(context.Background(), &numberv1.DistributionRequest{BucketCount: 2})
+		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
+			BucketCount: ptr(uint32(2)),
+		}.Build())
 		if err != nil {
 			t.Fatalf("Distribution: %v", err)
 		}
-		if len(resp.Buckets) != 2 {
-			t.Fatalf("len(Buckets) = %d, want 2", len(resp.Buckets))
+		if len(resp.GetBuckets()) != 2 {
+			t.Fatalf("len(Buckets) = %d, want 2", len(resp.GetBuckets()))
 		}
 		// Range is [1, 10], split into 2 buckets of equal span. Lower half holds 1/2/3, upper half holds 8/9/10.
-		total := resp.Buckets[0].Count + resp.Buckets[1].Count
+		total := resp.GetBuckets()[0].GetCount() + resp.GetBuckets()[1].GetCount()
 		if total != 6 {
 			t.Errorf("total count across buckets = %d, want 6", total)
 		}
-		if resp.Buckets[0].Count != 3 || resp.Buckets[1].Count != 3 {
-			t.Errorf("Buckets = %+v, want each bucket count = 3", resp.Buckets)
+		if resp.GetBuckets()[0].GetCount() != 3 || resp.GetBuckets()[1].GetCount() != 3 {
+			t.Errorf("Buckets = %+v, want each bucket count = 3", resp.GetBuckets())
 		}
 	})
 
@@ -72,9 +79,9 @@ func TestDistribution(t *testing.T) {
 		name string
 		req  *numberv1.DistributionRequest
 	}{
-		{"bucket count zero", &numberv1.DistributionRequest{BucketCount: 0}},
-		{"bucket count above max", &numberv1.DistributionRequest{BucketCount: 101}},
-		{"end before start (CEL)", &numberv1.DistributionRequest{BucketCount: 5, Start: later, End: earlier}},
+		{"bucket count zero", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(0))}.Build()},
+		{"bucket count above max", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(101))}.Build()},
+		{"end before start (CEL)", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(5)), Start: later, End: earlier}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {

@@ -1,4 +1,4 @@
-syntax = "proto3";
+edition = "2024";
 
 package number.v1;
 
@@ -18,21 +18,21 @@ message Item {
 }
 
 message ListRequest {
-  optional int64 cursor = 1;
-  optional string name = 2 [(buf.validate.field).string = {
+  int64 cursor = 1;
+  string name = 2 [(buf.validate.field).string = {
     min_len: 0
     max_len: 50
   }];
-  optional uint32 min = 3 [(buf.validate.field).uint32 = {
+  uint32 min = 3 [(buf.validate.field).uint32 = {
     gte: 0
     lte: 1000000
   }];
-  optional uint32 max = 4 [(buf.validate.field).uint32 = {
+  uint32 max = 4 [(buf.validate.field).uint32 = {
     gte: 0
     lte: 1000000
   }];
-  optional google.protobuf.Timestamp start = 5;
-  optional google.protobuf.Timestamp end = 6;
+  google.protobuf.Timestamp start = 5;
+  google.protobuf.Timestamp end = 6;
 
   option (buf.validate.message).cel = {
     id: "end_after_start"

@@ -26,8 +26,8 @@ const Numbers: Component = () => {
   const [response, { refetch }] = createResource<ListResponse | undefined, ListRequest, boolean>(
     request,
     async (req, info) => {
-      if (info.refetching) {
-        req = { ...req, cursor: info.value?.nextCursor };
+      if (info.refetching && info.value?.nextCursor) {
+        req = { ...req, cursor: info.value.nextCursor };
       }
 
       const [resp, err] = await NumberClient.list(req);
@@ -69,7 +69,9 @@ const Numbers: Component = () => {
     <Table.Table
       columns={["12rem", "2fr", "1fr"]}
       onScroll={async (_, end) => {
-        while (!response()?.items[end]) {
+        if (!response()) return;
+
+        while (response()!.items.length - 1 < end) {
           await refetch();
         }
       }}

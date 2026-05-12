@@ -14,20 +14,26 @@ func TestAdd(t *testing.T) {
 		client, db := newTest(t)
 		ctx := context.Background()
 
-		resp, err := client.Add(ctx, &numberv1.AddRequest{Name: "foo", Number: 10})
+		resp, err := client.Add(ctx, numberv1.AddRequest_builder{
+			Name:   ptr("foo"),
+			Number: ptr(uint32(10)),
+		}.Build())
 		if err != nil {
 			t.Fatalf("Add: %v", err)
 		}
-		if resp.Sum != 10 {
-			t.Errorf("Sum = %d, want 10", resp.Sum)
+		if resp.GetSum() != 10 {
+			t.Errorf("Sum = %d, want 10", resp.GetSum())
 		}
 
-		resp, err = client.Add(ctx, &numberv1.AddRequest{Name: "bar", Number: 5})
+		resp, err = client.Add(ctx, numberv1.AddRequest_builder{
+			Name:   ptr("bar"),
+			Number: ptr(uint32(5)),
+		}.Build())
 		if err != nil {
 			t.Fatalf("Add: %v", err)
 		}
-		if resp.Sum != 15 {
-			t.Errorf("Sum = %d, want 15", resp.Sum)
+		if resp.GetSum() != 15 {
+			t.Errorf("Sum = %d, want 15", resp.GetSum())
 		}
 
 		var count int
@@ -43,10 +49,10 @@ func TestAdd(t *testing.T) {
 		name string
 		req  *numberv1.AddRequest
 	}{
-		{"empty name", &numberv1.AddRequest{Name: "", Number: 10}},
-		{"name too long", &numberv1.AddRequest{Name: strings.Repeat("a", 51), Number: 10}},
-		{"number below min", &numberv1.AddRequest{Name: "foo", Number: 0}},
-		{"number above max", &numberv1.AddRequest{Name: "foo", Number: 1_000_001}},
+		{"empty name", numberv1.AddRequest_builder{Name: ptr(""), Number: ptr(uint32(10))}.Build()},
+		{"name too long", numberv1.AddRequest_builder{Name: ptr(strings.Repeat("a", 51)), Number: ptr(uint32(10))}.Build()},
+		{"number below min", numberv1.AddRequest_builder{Name: ptr("foo"), Number: ptr(uint32(0))}.Build()},
+		{"number above max", numberv1.AddRequest_builder{Name: ptr("foo"), Number: ptr(uint32(1_000_001))}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {

@@ -21,7 +21,7 @@ func (h *Handler) Add(
 	db := database.FromContext(ctx)
 
 	// Add the number to the database.
-	_, err := db.ExecContext(ctx, addSQL, req.Name, req.Number)
+	_, err := db.ExecContext(ctx, addSQL, req.GetName(), req.GetNumber())
 	if err != nil {
 		return nil, err
 	}
@@ -33,9 +33,8 @@ func (h *Handler) Add(
 		return nil, err
 	}
 
-	response := &numberv1.AddResponse{
-		Sum: sum,
-	}
+	response := &numberv1.AddResponse{}
+	response.SetSum(sum)
 
 	return response, nil
 }

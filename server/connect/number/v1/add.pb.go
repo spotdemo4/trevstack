@@ -11,7 +11,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,11 +22,13 @@ const (
 )
 
 type AddRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Number        uint32                 `protobuf:"varint,2,opt,name=number,proto3" json:"number,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name"`
+	xxx_hidden_Number      uint32                 `protobuf:"varint,2,opt,name=number"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *AddRequest) Reset() {
@@ -55,30 +56,86 @@ func (x *AddRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddRequest.ProtoReflect.Descriptor instead.
-func (*AddRequest) Descriptor() ([]byte, []int) {
-	return file_number_v1_add_proto_rawDescGZIP(), []int{0}
-}
-
 func (x *AddRequest) GetName() string {
 	if x != nil {
-		return x.Name
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *AddRequest) GetNumber() uint32 {
 	if x != nil {
-		return x.Number
+		return x.xxx_hidden_Number
 	}
 	return 0
 }
 
+func (x *AddRequest) SetName(v string) {
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
+func (x *AddRequest) SetNumber(v uint32) {
+	x.xxx_hidden_Number = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *AddRequest) HasName() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *AddRequest) HasNumber() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *AddRequest) ClearName() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Name = nil
+}
+
+func (x *AddRequest) ClearNumber() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Number = 0
+}
+
+type AddRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Name   *string
+	Number *uint32
+}
+
+func (b0 AddRequest_builder) Build() *AddRequest {
+	m0 := &AddRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Name = b.Name
+	}
+	if b.Number != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Number = *b.Number
+	}
+	return m0
+}
+
 type AddResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sum           uint64                 `protobuf:"varint,1,opt,name=sum,proto3" json:"sum,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Sum         uint64                 `protobuf:"varint,1,opt,name=sum"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *AddResponse) Reset() {
@@ -106,16 +163,45 @@ func (x *AddResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddResponse.ProtoReflect.Descriptor instead.
-func (*AddResponse) Descriptor() ([]byte, []int) {
-	return file_number_v1_add_proto_rawDescGZIP(), []int{1}
-}
-
 func (x *AddResponse) GetSum() uint64 {
 	if x != nil {
-		return x.Sum
+		return x.xxx_hidden_Sum
 	}
 	return 0
+}
+
+func (x *AddResponse) SetSum(v uint64) {
+	x.xxx_hidden_Sum = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *AddResponse) HasSum() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *AddResponse) ClearSum() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Sum = 0
+}
+
+type AddResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Sum *uint64
+}
+
+func (b0 AddResponse_builder) Build() *AddResponse {
+	m0 := &AddResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Sum != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Sum = *b.Sum
+	}
+	return m0
 }
 
 var File_number_v1_add_proto protoreflect.FileDescriptor
@@ -130,19 +216,7 @@ const file_number_v1_add_proto_rawDesc = "" +
 	"\vAddResponse\x12\x10\n" +
 	"\x03sum\x18\x01 \x01(\x04R\x03sumB\xa0\x01\n" +
 	"\rcom.number.v1B\bAddProtoP\x01Z@github.com/spotdemo4/trevstack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
-	"Number::V1b\x06proto3"
-
-var (
-	file_number_v1_add_proto_rawDescOnce sync.Once
-	file_number_v1_add_proto_rawDescData []byte
-)
-
-func file_number_v1_add_proto_rawDescGZIP() []byte {
-	file_number_v1_add_proto_rawDescOnce.Do(func() {
-		file_number_v1_add_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_number_v1_add_proto_rawDesc), len(file_number_v1_add_proto_rawDesc)))
-	})
-	return file_number_v1_add_proto_rawDescData
-}
+	"Number::V1b\beditionsp\xe9\a"
 
 var file_number_v1_add_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_number_v1_add_proto_goTypes = []any{

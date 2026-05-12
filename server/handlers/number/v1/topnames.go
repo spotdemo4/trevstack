@@ -18,17 +18,17 @@ func (h *Handler) TopNames(
 	db := database.FromContext(ctx)
 
 	var startArg, endArg any
-	if req.Start != nil {
-		startArg = req.Start.AsTime()
+	if start := req.GetStart(); start != nil {
+		startArg = start.AsTime()
 	}
-	if req.End != nil {
-		endArg = req.End.AsTime()
+	if end := req.GetEnd(); end != nil {
+		endArg = end.AsTime()
 	}
 
 	rows, err := db.QueryContext(ctx, topnamesSQL,
 		startArg, startArg,
 		endArg, endArg,
-		req.Limit,
+		req.GetLimit(),
 	)
 	if err != nil {
 		return nil, err
@@ -44,16 +44,18 @@ func (h *Handler) TopNames(
 		if err := rows.Scan(&name, &count, &sum, &avg); err != nil {
 			return nil, err
 		}
-		names = append(names, &numberv1.TopName{
-			Name:    name,
-			Count:   count,
-			Sum:     sum,
-			Average: avg,
-		})
+		topName := &numberv1.TopName{}
+		topName.SetName(name)
+		topName.SetCount(count)
+		topName.SetSum(sum)
+		topName.SetAverage(avg)
+		names = append(names, topName)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return &numberv1.TopNamesResponse{Names: names}, nil
+	resp := &numberv1.TopNamesResponse{}
+	resp.SetNames(names)
+	return resp, nil
 }
