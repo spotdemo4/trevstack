@@ -60,7 +60,7 @@ const Numbers: Component = () => {
         <form.AppField name="max">{(field) => <field.NumberField label="Maximum" />}</form.AppField>
         <form.AppField name="start">{(field) => <field.DateField label="Start" />}</form.AppField>
         <form.AppField name="end">{(field) => <field.DateField label="End" />}</form.AppField>
-        <form.SubmitButton />
+        <form.SubmitButton label="Filter" />
       </form.Form>
     </form.AppForm>
   );
