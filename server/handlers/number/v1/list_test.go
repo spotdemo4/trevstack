@@ -11,30 +11,47 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func collectListItems(
+	t *testing.T,
+	stream *connect.ServerStreamForClient[numberv1.ListResponse],
+) []*numberv1.Item {
+	t.Helper()
+
+	var items []*numberv1.Item
+	for stream.Receive() {
+		item := stream.Msg().GetItem()
+		if item == nil {
+			t.Fatal("List yielded response without item")
+		}
+		items = append(items, item)
+	}
+	if err := stream.Err(); err != nil {
+		t.Fatalf("List stream: %v", err)
+	}
+	return items
+}
+
 func TestList(t *testing.T) {
-	t.Run("returns rows newest first with total count", func(t *testing.T) {
+	t.Run("returns rows newest first", func(t *testing.T) {
 		client, db := newTest(t)
 		base := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "alice", 10, base)
 		seed(t, db, "bob", 20, base.Add(time.Hour))
 		seed(t, db, "carol", 30, base.Add(2*time.Hour))
 
-		resp, err := client.List(context.Background(), &numberv1.ListRequest{})
+		stream, err := client.List(context.Background(), &numberv1.ListRequest{})
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
-		if resp.GetTotalCount() != 3 {
-			t.Errorf("TotalCount = %d, want 3", resp.GetTotalCount())
+		items := collectListItems(t, stream)
+		if len(items) != 3 {
+			t.Fatalf("len(items) = %d, want 3", len(items))
 		}
-		if len(resp.GetItems()) != 3 {
-			t.Fatalf("len(Items) = %d, want 3", len(resp.GetItems()))
-		}
-		items := resp.GetItems()
 		gotNames := []string{items[0].GetName(), items[1].GetName(), items[2].GetName()}
 		want := []string{"carol", "bob", "alice"}
 		for i, n := range want {
 			if gotNames[i] != n {
-				t.Errorf("Items[%d].Name = %q, want %q", i, gotNames[i], n)
+				t.Errorf("items[%d].Name = %q, want %q", i, gotNames[i], n)
 			}
 		}
 	})
@@ -47,12 +64,13 @@ func TestList(t *testing.T) {
 		seed(t, db, "bob", 3, now)
 
 		needle := "al"
-		resp, err := client.List(context.Background(), numberv1.ListRequest_builder{Name: &needle}.Build())
+		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Name: &needle}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
-		if resp.GetTotalCount() != 2 {
-			t.Errorf("TotalCount = %d, want 2", resp.GetTotalCount())
+		items := collectListItems(t, stream)
+		if len(items) != 2 {
+			t.Fatalf("len(items) = %d, want 2", len(items))
 		}
 	})
 
@@ -64,15 +82,16 @@ func TestList(t *testing.T) {
 		seed(t, db, "c", 500, now)
 
 		min, max := uint32(10), uint32(100)
-		resp, err := client.List(context.Background(), numberv1.ListRequest_builder{Min: &min, Max: &max}.Build())
+		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Min: &min, Max: &max}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
-		if resp.GetTotalCount() != 1 {
-			t.Errorf("TotalCount = %d, want 1", resp.GetTotalCount())
+		items := collectListItems(t, stream)
+		if len(items) != 1 {
+			t.Fatalf("len(items) = %d, want 1", len(items))
 		}
-		if len(resp.GetItems()) == 1 && resp.GetItems()[0].GetNumber() != 50 {
-			t.Errorf("Items[0].Number = %d, want 50", resp.GetItems()[0].GetNumber())
+		if items[0].GetNumber() != 50 {
+			t.Errorf("items[0].Number = %d, want 50", items[0].GetNumber())
 		}
 	})
 
@@ -95,7 +114,17 @@ func TestList(t *testing.T) {
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
 			client, _ := newTest(t)
-			_, err := client.List(context.Background(), tc.req)
+			stream, err := client.List(context.Background(), tc.req)
+			if err != nil {
+				if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+					t.Errorf("code = %v, want InvalidArgument", got)
+				}
+				return
+			}
+			if stream.Receive() {
+				t.Fatal("expected validation error, got stream item")
+			}
+			err = stream.Err()
 			if err == nil {
 				t.Fatal("expected validation error, got nil")
 			}

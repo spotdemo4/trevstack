@@ -1,21 +1,8 @@
 import { Skeleton } from "$lib/skeleton";
 import { debounce } from "@solid-primitives/scheduled";
 import { createVirtualizer } from "@tanstack/solid-virtual";
-import { CircleSlash2, LoaderCircle } from "lucide-solid";
-import type { Accessor, JSX } from "solid-js";
-import {
-  type Component,
-  createContext,
-  createEffect,
-  createMemo,
-  createSignal,
-  Index,
-  Match,
-  onCleanup,
-  Show,
-  Switch,
-  useContext,
-} from "solid-js";
+import type { JSX } from "solid-js";
+import { type Component, createContext, Index, Show, useContext } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 import styles from "./table.module.css";
@@ -27,15 +14,7 @@ type HeaderProps = {
 
 type BodyProps<T> = {
   class?: string;
-  count: Accessor<bigint | undefined>;
-  items: Accessor<T[]>;
-  children: (item: T) => JSX.Element;
-};
-
-type RowsProps<T> = {
-  class?: string;
-  count: bigint;
-  items: Accessor<T[]>;
+  items: T[];
   children: (item: T) => JSX.Element;
 };
 
@@ -67,8 +46,6 @@ const useTableContext = (componentName: string) => {
 
   return context;
 };
-
-const LOADING_STATE_DELAY_MS = 150;
 
 const Table: Component<TableProps> = (props) => {
   let parentRef: HTMLDivElement | undefined;
@@ -115,7 +92,7 @@ const Header: Component<HeaderProps> = (props) => {
   );
 };
 
-const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
+const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
   const table = useTableContext("Table.Rows");
   const onScroll = table.onScroll ? debounce(table.onScroll, 100) : undefined;
 
@@ -123,11 +100,14 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
   let end = 0;
 
   const virtualizer = createVirtualizer({
-    count: Number(props.count),
-    overscan: 5,
-    estimateSize: () => 35,
+    // https://github.com/TanStack/virtual/issues/661#issuecomment-1937805648
+    get count() {
+      return props.items.length;
+    },
     // https://github.com/TanStack/virtual/issues/1011#issuecomment-3677935028
     getScrollElement: () => (table.ref()?.isConnected ? table.ref()! : null),
+    overscan: 5,
+    estimateSize: () => 35,
     onChange: (i) => {
       if (!i.range) return;
       if (i.range.startIndex === start && i.range.endIndex === end) return;
@@ -156,6 +136,7 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
                 "hover:bg-ctp-surface0/40",
                 "odd:bg-ctp-base even:bg-ctp-mantle/40",
                 "[&>td]:flex [&>td]:items-center",
+                styles.fadeIn,
                 props.class,
               )}
               style={{
@@ -168,7 +149,7 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
               }}
             >
               <Show
-                when={props.items()[virtualItem().index]}
+                when={props.items[virtualItem().index]}
                 fallback={
                   <Index each={table.columns()}>
                     {() => (
@@ -187,64 +168,6 @@ const Rows = <T extends unknown>(props: RowsProps<T>): JSX.Element => {
         </Index>
       </tbody>
     </>
-  );
-};
-
-const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
-  useTableContext("Table.Body");
-  const count = createMemo(() => props.count());
-  const [showLoadingState, setShowLoadingState] = createSignal(false);
-
-  createEffect(() => {
-    if (count() !== undefined) {
-      setShowLoadingState(false);
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      setShowLoadingState(true);
-    }, LOADING_STATE_DELAY_MS);
-
-    onCleanup(() => clearTimeout(timeoutId));
-  });
-
-  return (
-    <Show
-      when={count()}
-      fallback={
-        <Switch>
-          <Match when={count() === undefined && showLoadingState()}>
-            <div
-              class={twMerge(
-                styles.fadeIn,
-                "flex w-full items-center justify-center gap-2 py-10 text-ctp-subtext0",
-              )}
-            >
-              <LoaderCircle class="animate-spin" size={20} />
-              <span class="text-sm">Loading…</span>
-            </div>
-          </Match>
-          <Match when={count() === BigInt(0)}>
-            <div
-              class={twMerge(
-                styles.fadeIn,
-                "flex w-full flex-col items-center justify-center gap-2 py-10 text-ctp-overlay1",
-              )}
-            >
-              <CircleSlash2 size={24} />
-              <span class="text-sm">No results</span>
-            </div>
-          </Match>
-        </Switch>
-      }
-      keyed
-    >
-      {(count) => (
-        <Rows count={count} items={props.items} class={props.class}>
-          {props.children}
-        </Rows>
-      )}
-    </Show>
   );
 };
 

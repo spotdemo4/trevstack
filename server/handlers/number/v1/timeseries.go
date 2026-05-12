@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"time"
 
@@ -10,19 +11,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-const timeseriesSQL = `
-SELECT
-    %s AS bucket,
-    COUNT(*),
-    COALESCE(SUM(number), 0),
-    COALESCE(AVG(number), 0.0)
-FROM numbers
-WHERE
-    (? IS NULL OR timestamp >= ?)
-    AND (? IS NULL OR timestamp <= ?)
-GROUP BY bucket
-ORDER BY bucket ASC
-`
+//go:embed timeseries.sql
+var timeseriesSQL string
 
 // bucketExpr returns a SQL expression that floors `timestamp` to the start of
 // the chosen interval and renders it as an RFC3339 UTC string.

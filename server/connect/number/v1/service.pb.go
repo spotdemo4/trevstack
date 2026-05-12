@@ -24,10 +24,10 @@ var File_number_v1_service_proto protoreflect.FileDescriptor
 
 const file_number_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x17number/v1/service.proto\x12\tnumber.v1\x1a\x13number/v1/add.proto\x1a\x14number/v1/list.proto\x1a\x17number/v1/metrics.proto2\xad\x03\n" +
+	"\x17number/v1/service.proto\x12\tnumber.v1\x1a\x13number/v1/add.proto\x1a\x14number/v1/list.proto\x1a\x17number/v1/metrics.proto2\xaf\x03\n" +
 	"\rNumberService\x126\n" +
-	"\x03Add\x12\x15.number.v1.AddRequest\x1a\x16.number.v1.AddResponse\"\x00\x129\n" +
-	"\x04List\x12\x16.number.v1.ListRequest\x1a\x17.number.v1.ListResponse\"\x00\x12B\n" +
+	"\x03Add\x12\x15.number.v1.AddRequest\x1a\x16.number.v1.AddResponse\"\x00\x12;\n" +
+	"\x04List\x12\x16.number.v1.ListRequest\x1a\x17.number.v1.ListResponse\"\x000\x01\x12B\n" +
 	"\aSummary\x12\x19.number.v1.SummaryRequest\x1a\x1a.number.v1.SummaryResponse\"\x00\x12K\n" +
 	"\n" +
 	"TimeSeries\x12\x1c.number.v1.TimeSeriesRequest\x1a\x1d.number.v1.TimeSeriesResponse\"\x00\x12Q\n" +

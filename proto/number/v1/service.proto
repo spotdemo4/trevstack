@@ -8,7 +8,7 @@ import "number/v1/metrics.proto";
 
 service NumberService {
   rpc Add(AddRequest) returns (AddResponse) {}
-  rpc List(ListRequest) returns (ListResponse) {}
+  rpc List(ListRequest) returns (stream ListResponse) {}
   rpc Summary(SummaryRequest) returns (SummaryResponse) {}
   rpc TimeSeries(TimeSeriesRequest) returns (TimeSeriesResponse) {}
   rpc Distribution(DistributionRequest) returns (DistributionResponse) {}

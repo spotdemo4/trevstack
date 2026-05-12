@@ -273,12 +273,6 @@ components:
     number.v1.ListRequest:
       type: object
       properties:
-        cursor:
-          type:
-            - integer
-            - string
-          title: cursor
-          format: int64
         name:
           type: string
           title: name
@@ -307,23 +301,9 @@ components:
     number.v1.ListResponse:
       type: object
       properties:
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/number.v1.Item"
-          title: items
-        totalCount:
-          type:
-            - integer
-            - string
-          title: total_count
-          format: int64
-        nextCursor:
-          type:
-            - integer
-            - string
-          title: next_cursor
-          format: int64
+        item:
+          title: item
+          $ref: "#/components/schemas/number.v1.Item"
       title: ListResponse
       additionalProperties: false
     number.v1.SummaryRequest:
@@ -559,41 +539,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/number.v1.DistributionResponse"
-  /number.v1.NumberService/List:
-    post:
-      tags:
-        - number.v1.NumberService
-      summary: List
-      operationId: number.v1.NumberService.List
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: "#/components/schemas/connect-protocol-version"
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: "#/components/schemas/connect-timeout-header"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/number.v1.ListRequest"
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/connect.error"
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/number.v1.ListResponse"
+  /number.v1.NumberService/List: {}
   /number.v1.NumberService/Summary:
     post:
       tags:

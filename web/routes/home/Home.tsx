@@ -15,25 +15,24 @@ const Home: Component = () => {
       onChange: createStandardSchema(AddRequestSchema),
     },
     onSubmit: async ({ value }) => {
-      const [response, err] = await NumberClient.add({
-        name: value.name,
-        number: value.number,
-      });
-      if (err) {
-        toaster.error({
-          title: "Failed to add number",
-          description: err.message,
+      try {
+        const response = await NumberClient.add({
+          name: value.name,
+          number: value.number,
         });
 
-        return;
+        toaster.success({
+          title: "Number added",
+          description: `new sum: ${response.sum}`,
+        });
+
+        form.reset();
+      } catch (err) {
+        toaster.error({
+          title: "Failed to add number",
+          description: err instanceof Error ? err.message : String(err),
+        });
       }
-
-      toaster.success({
-        title: "Number added",
-        description: `new sum: ${response.sum}`,
-      });
-
-      form.reset();
     },
   }));
 

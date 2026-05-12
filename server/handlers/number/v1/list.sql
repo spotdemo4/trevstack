@@ -10,6 +10,4 @@ WHERE
     AND (? IS NULL OR number <= ?)
     AND (? IS NULL OR timestamp >= ?)
     AND (? IS NULL OR timestamp <= ?)
-    AND (? IS NULL OR rowid < ?)
 ORDER BY rowid DESC
-LIMIT ?

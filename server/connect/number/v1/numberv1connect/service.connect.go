@@ -52,7 +52,7 @@ const (
 // NumberServiceClient is a client for the number.v1.NumberService service.
 type NumberServiceClient interface {
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
-	List(context.Context, *v1.ListRequest) (*v1.ListResponse, error)
+	List(context.Context, *v1.ListRequest) (*connect.ServerStreamForClient[v1.ListResponse], error)
 	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
 	TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error)
 	Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error)
@@ -129,12 +129,8 @@ func (c *numberServiceClient) Add(ctx context.Context, req *v1.AddRequest) (*v1.
 }
 
 // List calls number.v1.NumberService.List.
-func (c *numberServiceClient) List(ctx context.Context, req *v1.ListRequest) (*v1.ListResponse, error) {
-	response, err := c.list.CallUnary(ctx, connect.NewRequest(req))
-	if response != nil {
-		return response.Msg, err
-	}
-	return nil, err
+func (c *numberServiceClient) List(ctx context.Context, req *v1.ListRequest) (*connect.ServerStreamForClient[v1.ListResponse], error) {
+	return c.list.CallServerStream(ctx, connect.NewRequest(req))
 }
 
 // Summary calls number.v1.NumberService.Summary.
@@ -176,7 +172,7 @@ func (c *numberServiceClient) TopNames(ctx context.Context, req *v1.TopNamesRequ
 // NumberServiceHandler is an implementation of the number.v1.NumberService service.
 type NumberServiceHandler interface {
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
-	List(context.Context, *v1.ListRequest) (*v1.ListResponse, error)
+	List(context.Context, *v1.ListRequest, *connect.ServerStream[v1.ListResponse]) error
 	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
 	TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error)
 	Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error)
@@ -196,7 +192,7 @@ func NewNumberServiceHandler(svc NumberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(numberServiceMethods.ByName("Add")),
 		connect.WithHandlerOptions(opts...),
 	)
-	numberServiceListHandler := connect.NewUnaryHandlerSimple(
+	numberServiceListHandler := connect.NewServerStreamHandlerSimple(
 		NumberServiceListProcedure,
 		svc.List,
 		connect.WithSchema(numberServiceMethods.ByName("List")),
@@ -253,8 +249,8 @@ func (UnimplementedNumberServiceHandler) Add(context.Context, *v1.AddRequest) (*
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.Add is not implemented"))
 }
 
-func (UnimplementedNumberServiceHandler) List(context.Context, *v1.ListRequest) (*v1.ListResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.List is not implemented"))
+func (UnimplementedNumberServiceHandler) List(context.Context, *v1.ListRequest, *connect.ServerStream[v1.ListResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.List is not implemented"))
 }
 
 func (UnimplementedNumberServiceHandler) Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error) {

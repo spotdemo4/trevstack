@@ -14,7 +14,7 @@ import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
  * Describes the file number/v1/list.proto.
  */
 export const file_number_v1_list: GenFile /*@__PURE__*/ = fileDesc(
-  "ChRudW1iZXIvdjEvbGlzdC5wcm90bxIJbnVtYmVyLnYxImsKBEl0ZW0SLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCgRuYW1lGAIgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAMgASgNQgu6SAgqBhjAhD0oACKXAwoLTGlzdFJlcXVlc3QSDgoGY3Vyc29yGAEgASgDEhcKBG5hbWUYAiABKAlCCbpIBnIEEAAYMhIYCgNtaW4YAyABKA1CC7pICCoGGMCEPSgAEhgKA21heBgEIAEoDUILukgIKgYYwIQ9KAASKQoFc3RhcnQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEicKA2VuZBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXA61gG6SNIBGmcKD2VuZF9hZnRlcl9zdGFydBIXRW5kIG11c3QgYmUgYWZ0ZXIgc3RhcnQaOyFoYXModGhpcy5lbmQpIHx8ICFoYXModGhpcy5zdGFydCkgfHwgdGhpcy5lbmQgPiB0aGlzLnN0YXJ0GmcKEW1pbl9sZXNzX3RoYW5fbWF4EhlNaW4gbXVzdCBiZSBsZXNzIHRoYW4gbWF4GjchaGFzKHRoaXMubWluKSB8fCAhaGFzKHRoaXMubWF4KSB8fCB0aGlzLm1pbiA8IHRoaXMubWF4IlgKDExpc3RSZXNwb25zZRIeCgVpdGVtcxgBIAMoCzIPLm51bWJlci52MS5JdGVtEhMKC3RvdGFsX2NvdW50GAIgASgDEhMKC25leHRfY3Vyc29yGAMgASgDQqEBCg1jb20ubnVtYmVyLnYxQglMaXN0UHJvdG9QAVpAZ2l0aHViLmNvbS9zcG90ZGVtbzQvdHJldnN0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiCGVkaXRpb25zcOkH",
+  "ChRudW1iZXIvdjEvbGlzdC5wcm90bxIJbnVtYmVyLnYxImsKBEl0ZW0SLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCgRuYW1lGAIgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAMgASgNQgu6SAgqBhjAhD0oACKHAwoLTGlzdFJlcXVlc3QSFwoEbmFtZRgBIAEoCUIJukgGcgQQABgyEhgKA21pbhgCIAEoDUILukgIKgYYwIQ9KAASGAoDbWF4GAMgASgNQgu6SAgqBhjAhD0oABIpCgVzdGFydBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDrWAbpI0gEaZwoPZW5kX2FmdGVyX3N0YXJ0EhdFbmQgbXVzdCBiZSBhZnRlciBzdGFydBo7IWhhcyh0aGlzLmVuZCkgfHwgIWhhcyh0aGlzLnN0YXJ0KSB8fCB0aGlzLmVuZCA+IHRoaXMuc3RhcnQaZwoRbWluX2xlc3NfdGhhbl9tYXgSGU1pbiBtdXN0IGJlIGxlc3MgdGhhbiBtYXgaNyFoYXModGhpcy5taW4pIHx8ICFoYXModGhpcy5tYXgpIHx8IHRoaXMubWluIDwgdGhpcy5tYXgiLQoMTGlzdFJlc3BvbnNlEh0KBGl0ZW0YASABKAsyDy5udW1iZXIudjEuSXRlbUKhAQoNY29tLm51bWJlci52MUIJTGlzdFByb3RvUAFaQGdpdGh1Yi5jb20vc3BvdGRlbW80L3RyZXZzdGFjay9zZXJ2ZXIvY29ubmVjdC9udW1iZXIvdjE7bnVtYmVydjGiAgNOWFiqAglOdW1iZXIuVjHKAglOdW1iZXJcVjHiAhVOdW1iZXJcVjFcR1BCTWV0YWRhdGHqAgpOdW1iZXI6OlYxYghlZGl0aW9uc3DpBw",
   [file_buf_validate_validate, file_google_protobuf_timestamp],
 );
 
@@ -49,32 +49,27 @@ export const ItemSchema: GenMessage<Item> /*@__PURE__*/ = messageDesc(file_numbe
  */
 export type ListRequest = Message<"number.v1.ListRequest"> & {
   /**
-   * @generated from field: int64 cursor = 1;
-   */
-  cursor: bigint;
-
-  /**
-   * @generated from field: string name = 2;
+   * @generated from field: string name = 1;
    */
   name: string;
 
   /**
-   * @generated from field: uint32 min = 3;
+   * @generated from field: uint32 min = 2;
    */
   min: number;
 
   /**
-   * @generated from field: uint32 max = 4;
+   * @generated from field: uint32 max = 3;
    */
   max: number;
 
   /**
-   * @generated from field: google.protobuf.Timestamp start = 5;
+   * @generated from field: google.protobuf.Timestamp start = 4;
    */
   start?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp end = 6;
+   * @generated from field: google.protobuf.Timestamp end = 5;
    */
   end?: Timestamp;
 };
@@ -93,19 +88,9 @@ export const ListRequestSchema: GenMessage<ListRequest> /*@__PURE__*/ = messageD
  */
 export type ListResponse = Message<"number.v1.ListResponse"> & {
   /**
-   * @generated from field: repeated number.v1.Item items = 1;
+   * @generated from field: number.v1.Item item = 1;
    */
-  items: Item[];
-
-  /**
-   * @generated from field: int64 total_count = 2;
-   */
-  totalCount: bigint;
-
-  /**
-   * @generated from field: int64 next_cursor = 3;
-   */
-  nextCursor: bigint;
+  item?: Item;
 };
 
 /**

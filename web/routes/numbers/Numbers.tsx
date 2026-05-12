@@ -1,4 +1,4 @@
-import { ListRequestSchema, type ListRequest, type ListResponse } from "$connect/number/v1/list_pb";
+import { Item, ListRequestSchema, type ListRequest } from "$connect/number/v1/list_pb";
 import { NumberClient } from "$lib/connect";
 import Drawer from "$lib/drawer";
 import { useForm } from "$lib/form/hook";
@@ -8,7 +8,9 @@ import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createStandardSchema } from "@bufbuild/protovalidate";
 import { SlidersHorizontal } from "lucide-solid";
-import { type Component, createResource, createSignal, onCleanup, Show } from "solid-js";
+import { type Component, createSignal, onCleanup, Show } from "solid-js";
+import { createEffect, on } from "solid-js";
+import { createStore } from "solid-js/store";
 
 function createMediaQuery(query: string) {
   const mql = window.matchMedia(query);
@@ -23,26 +25,25 @@ const Numbers: Component = () => {
   const isDesktop = createMediaQuery("(min-width: 768px)");
 
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
-  const [response, { refetch }] = createResource<ListResponse | undefined, ListRequest, boolean>(
-    request,
-    async (req, info) => {
-      if (info.refetching && info.value?.nextCursor) {
-        req = { ...req, cursor: info.value.nextCursor };
-      }
+  const [items, setItems] = createStore<Item[]>([]);
 
-      const [resp, err] = await NumberClient.list(req);
-      if (err) {
-        console.error("Failed to fetch numbers:", err);
-        return info.value;
-      }
+  let abort = new AbortController();
 
-      if (info.refetching) {
-        resp.items.unshift(...(info.value?.items ?? []));
-      }
+  createEffect(
+    on(request, async (request) => {
+      abort.abort();
+      abort = new AbortController();
 
-      return resp;
-    },
+      setItems([]);
+      for await (const resp of NumberClient.list(request, { signal: abort.signal })) {
+        setItems(items.length, resp.item!);
+      }
+    }),
   );
+
+  onCleanup(() => {
+    abort.abort();
+  });
 
   const form = useForm(() => ({
     defaultValues: create(ListRequestSchema),
@@ -66,22 +67,13 @@ const Numbers: Component = () => {
   );
 
   const TableContent: Component = () => (
-    <Table.Table
-      columns={["12rem", "2fr", "1fr"]}
-      onScroll={async (_, end) => {
-        if (!response()) return;
-
-        while (response()!.items.length - 1 < end) {
-          await refetch();
-        }
-      }}
-    >
+    <Table.Table columns={["12rem", "2fr", "1fr"]}>
       <Table.Header>
         <th>Timestamp</th>
         <th>Name</th>
         <th>Number</th>
       </Table.Header>
-      <Table.Body count={() => response()?.totalCount} items={() => response()?.items ?? []}>
+      <Table.Body items={items}>
         {(item) => (
           <>
             <td class="text-sm text-ctp-subtext0 tabular-nums">

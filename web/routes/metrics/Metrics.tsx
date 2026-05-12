@@ -45,12 +45,12 @@ const Metrics: Component = () => {
   const [summary] = createResource<SummaryResponse | undefined, ReturnType<typeof range>>(
     range,
     async (req) => {
-      const [resp, err] = await NumberClient.summary(req);
-      if (err) {
+      try {
+        return await NumberClient.summary(req);
+      } catch (err) {
         console.error("summary failed", err);
         return undefined;
       }
-      return resp;
     },
   );
 
@@ -59,12 +59,12 @@ const Metrics: Component = () => {
     TimeSeriesResponse | undefined,
     ReturnType<typeof timeSeriesArgs>
   >(timeSeriesArgs, async (req) => {
-    const [resp, err] = await NumberClient.timeSeries(req);
-    if (err) {
+    try {
+      return await NumberClient.timeSeries(req);
+    } catch (err) {
       console.error("timeSeries failed", err);
       return undefined;
     }
-    return resp;
   });
 
   const distributionArgs = createMemo(() => ({ ...range(), bucketCount: bucketCount() }));
@@ -72,24 +72,24 @@ const Metrics: Component = () => {
     DistributionResponse | undefined,
     ReturnType<typeof distributionArgs>
   >(distributionArgs, async (req) => {
-    const [resp, err] = await NumberClient.distribution(req);
-    if (err) {
+    try {
+      return await NumberClient.distribution(req);
+    } catch (err) {
       console.error("distribution failed", err);
       return undefined;
     }
-    return resp;
   });
 
   const topNamesArgs = createMemo(() => ({ ...range(), limit: limit() }));
   const [topNames] = createResource<TopNamesResponse | undefined, ReturnType<typeof topNamesArgs>>(
     topNamesArgs,
     async (req) => {
-      const [resp, err] = await NumberClient.topNames(req);
-      if (err) {
+      try {
+        return await NumberClient.topNames(req);
+      } catch (err) {
         console.error("topNames failed", err);
         return undefined;
       }
-      return resp;
     },
   );
 
