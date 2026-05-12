@@ -1,8 +1,8 @@
 import { AddRequestSchema } from "$connect/number/v1/add_pb";
 import { Card } from "$lib/card";
+import { NumberClient } from "$lib/connect";
 import { useForm } from "$lib/form/hook";
 import { toaster } from "$lib/toast";
-import { NumberClient } from "$lib/transport";
 import { create } from "@bufbuild/protobuf";
 import { createStandardSchema } from "@bufbuild/protovalidate";
 import type { Component } from "solid-js";

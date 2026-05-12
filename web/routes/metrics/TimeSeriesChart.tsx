@@ -1,6 +1,11 @@
 import type { TimeSeriesPoint } from "$connect/number/v1/metrics_pb";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
-import * as d3 from "d3";
+import { extent, max } from "d3-array";
+import { axisBottom, axisLeft } from "d3-axis";
+import { format } from "d3-format";
+import { scaleLinear, scaleTime } from "d3-scale";
+import { pointer, select } from "d3-selection";
+import { area, curveMonotoneX, line } from "d3-shape";
 import { type Component, createEffect, Show } from "solid-js";
 
 import { useChartSize } from "./useChartSize";
@@ -34,15 +39,15 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
         average: p.average,
       }));
 
-    const svg = d3.select(svgRef);
-    const tooltip = d3.select(tooltipRef);
+    const svg = select(svgRef);
+    const tooltip = select(tooltipRef);
     svg.selectAll("*").remove();
     tooltip.style("opacity", "0");
     if (data.length === 0) return;
 
-    const formatInteger = d3.format(",");
+    const formatInteger = format(",");
     const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
-      const [xPos, yPos] = d3.pointer(event, containerRef);
+      const [xPos, yPos] = pointer(event, containerRef);
       tooltip
         .text(
           `${d.date.toLocaleString()}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
@@ -75,14 +80,12 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3
-      .scaleTime()
-      .domain(d3.extent(data, (d) => d.date) as [Date, Date])
+    const x = scaleTime()
+      .domain(extent(data, (d) => d.date) as [Date, Date])
       .range([0, innerW]);
 
-    const y = d3
-      .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.count) ?? 1])
+    const y = scaleLinear()
+      .domain([0, max(data, (d) => d.count) ?? 1])
       .nice()
       .range([innerH, 0]);
 
@@ -90,13 +93,12 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
       .attr("transform", `translate(0,${innerH})`)
       .attr("class", "text-ctp-subtext0")
       .call(
-        d3
-          .axisBottom(x)
+        axisBottom(x)
           .ticks(Math.max(2, Math.floor(innerW / 90)))
           .tickSizeOuter(0),
       );
 
-    g.append("g").attr("class", "text-ctp-subtext0").call(d3.axisLeft(y).ticks(5).tickSizeOuter(0));
+    g.append("g").attr("class", "text-ctp-subtext0").call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
     // Subtle horizontal grid lines.
     g.append("g")
@@ -112,27 +114,25 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
       .attr("stroke", "currentColor")
       .attr("stroke-dasharray", "2,3");
 
-    const area = d3
-      .area<(typeof data)[number]>()
+    const areaGen = area<(typeof data)[number]>()
       .x((d) => x(d.date))
       .y0(innerH)
       .y1((d) => y(d.count))
-      .curve(d3.curveMonotoneX);
+      .curve(curveMonotoneX);
 
-    const line = d3
-      .line<(typeof data)[number]>()
+    const lineGen = line<(typeof data)[number]>()
       .x((d) => x(d.date))
       .y((d) => y(d.count))
-      .curve(d3.curveMonotoneX);
+      .curve(curveMonotoneX);
 
-    g.append("path").datum(data).attr("class", "fill-ctp-blue/20").attr("d", area);
+    g.append("path").datum(data).attr("class", "fill-ctp-blue/20").attr("d", areaGen);
 
     g.append("path")
       .datum(data)
       .attr("class", "stroke-ctp-blue")
       .attr("fill", "none")
       .attr("stroke-width", 2)
-      .attr("d", line);
+      .attr("d", lineGen);
 
     g.append("g")
       .selectAll("circle")
@@ -144,14 +144,14 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
       .attr("cy", (d) => y(d.count))
       .attr("r", 3)
       .on("pointerenter", (event: PointerEvent, d) => {
-        d3.select(event.currentTarget as SVGCircleElement).attr("r", 5);
+        select(event.currentTarget as SVGCircleElement).attr("r", 5);
         showTooltip(event, d);
       })
       .on("pointermove", (event: PointerEvent, d) => {
         showTooltip(event, d);
       })
       .on("pointerleave", (event: PointerEvent) => {
-        d3.select(event.currentTarget as SVGCircleElement).attr("r", 3);
+        select(event.currentTarget as SVGCircleElement).attr("r", 3);
         hideTooltip();
       });
   });

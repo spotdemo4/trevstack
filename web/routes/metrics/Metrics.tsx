@@ -6,9 +6,9 @@ import {
   type TopNamesResponse,
 } from "$connect/number/v1/metrics_pb";
 import { Card } from "$lib/card";
+import { NumberClient } from "$lib/connect";
 import { useForm } from "$lib/form/hook";
 import { NumberInput, SelectInput } from "$lib/input";
-import { NumberClient } from "$lib/transport";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
 import { type Component, createMemo, createResource, createSignal } from "solid-js";
 

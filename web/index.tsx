@@ -1,14 +1,16 @@
 /* @refresh reload */
 
 import { Route, Router } from "@solidjs/router";
+import { lazy } from "solid-js";
 import { render } from "solid-js/web";
 
 import "./index.css";
 import Layout from "./layout/Layout";
-import NotFound from "./routes/404";
-import Home from "./routes/home";
-import Metrics from "./routes/metrics";
-import Numbers from "./routes/numbers";
+
+const Home = lazy(() => import("./routes/home"));
+const Numbers = lazy(() => import("./routes/numbers"));
+const Metrics = lazy(() => import("./routes/metrics"));
+const NotFound = lazy(() => import("./routes/404"));
 
 const wrapper = document.getElementById("app");
 

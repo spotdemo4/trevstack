@@ -1,7 +1,11 @@
 /.env
 /.envrc
 /docker-compose*
+
+# agents
+/.agents/
 /.claude/
+/.codex/
 
 # mprocs
 /mprocs.log

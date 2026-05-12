@@ -1,5 +1,9 @@
 import type { DistributionBucket } from "$connect/number/v1/metrics_pb";
-import * as d3 from "d3";
+import { max } from "d3-array";
+import { axisBottom, axisLeft } from "d3-axis";
+import { format } from "d3-format";
+import { scaleBand, scaleLinear } from "d3-scale";
+import { pointer, select } from "d3-selection";
 import { type Component, createEffect, Show } from "solid-js";
 
 import { useChartSize } from "./useChartSize";
@@ -24,7 +28,7 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
     const h = height();
     if (w === 0) return;
 
-    const compactNumber = d3.format("~s");
+    const compactNumber = format("~s");
     const roundToNearestThousand = (value: number): number =>
       Math.abs(value) < 1000 ? value : Math.round(value / 1000) * 1000;
 
@@ -43,14 +47,14 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
       count: Number(b.count),
     }));
 
-    const svg = d3.select(svgRef);
-    const tooltip = d3.select(tooltipRef);
+    const svg = select(svgRef);
+    const tooltip = select(tooltipRef);
     svg.selectAll("*").remove();
     tooltip.style("opacity", "0");
     if (data.length === 0) return;
 
     const showTooltip = (event: PointerEvent, text: string) => {
-      const [xPos, yPos] = d3.pointer(event, containerRef);
+      const [xPos, yPos] = pointer(event, containerRef);
       tooltip.text(text).style("opacity", "1");
 
       const tooltipNode = tooltipRef;
@@ -79,16 +83,14 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3
-      .scaleBand<string>()
+    const x = scaleBand<string>()
       .domain(data.map((d) => d.key))
       .range([0, innerW])
       .padding(0.15);
     const labelByKey = new Map(data.map((d) => [d.key, d.label]));
 
-    const y = d3
-      .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.count) ?? 1])
+    const y = scaleLinear()
+      .domain([0, max(data, (d) => d.count) ?? 1])
       .nice()
       .range([innerH, 0]);
 
@@ -99,8 +101,7 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
       .attr("transform", `translate(0,${innerH})`)
       .attr("class", "text-ctp-subtext0")
       .call(
-        d3
-          .axisBottom(x)
+        axisBottom(x)
           .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
           .tickFormat((key) => labelByKey.get(key) ?? key)
           .tickSizeOuter(0),
@@ -110,7 +111,7 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
       .attr("dy", "0.35em")
       .style("text-anchor", "end");
 
-    g.append("g").attr("class", "text-ctp-subtext0").call(d3.axisLeft(y).ticks(5).tickSizeOuter(0));
+    g.append("g").attr("class", "text-ctp-subtext0").call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
     g.append("g")
       .selectAll("rect")
@@ -124,14 +125,14 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
       .attr("height", (d) => innerH - y(d.count))
       .attr("rx", 2)
       .on("pointerenter", (event: PointerEvent, d) => {
-        d3.select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-pink");
+        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-pink");
         showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
       })
       .on("pointermove", (event: PointerEvent, d) => {
         showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
       })
       .on("pointerleave", (event: PointerEvent) => {
-        d3.select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-mauve");
+        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-mauve");
         hideTooltip();
       });
   });

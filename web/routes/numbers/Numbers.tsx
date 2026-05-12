@@ -1,8 +1,8 @@
 import { ListRequestSchema, type ListRequest, type ListResponse } from "$connect/number/v1/list_pb";
+import { NumberClient } from "$lib/connect";
 import { useForm } from "$lib/form/hook";
 import Splitter from "$lib/splitter";
 import Table from "$lib/table";
-import { NumberClient } from "$lib/transport";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createStandardSchema } from "@bufbuild/protovalidate";

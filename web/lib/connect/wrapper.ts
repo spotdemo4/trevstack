@@ -1,12 +1,5 @@
-import { NumberService } from "$connect/number/v1/service_pb";
-import { ConnectError, createClient } from "@connectrpc/connect";
-import { createConnectTransport } from "@connectrpc/connect-web";
-import { createValidateInterceptor } from "@connectrpc/validate";
-
-const transport = createConnectTransport({
-  baseUrl: `${window.location.origin}/grpc`,
-  interceptors: [createValidateInterceptor()],
-});
+import type { DescService } from "@bufbuild/protobuf";
+import { type Client, ConnectError, createClient, type Transport } from "@connectrpc/connect";
 
 type Result<T> = [T, null] | [null, ConnectError];
 
@@ -16,10 +9,14 @@ type SafeClient<T> = {
     : T[K];
 };
 
-function createSafeClient<T extends object>(client: T): SafeClient<T> {
+export function createSafeClient<T extends DescService>(
+  service: T,
+  transport: Transport,
+): SafeClient<Client<T>> {
+  const client = createClient(service, transport);
   return new Proxy(client, {
     get(target, prop) {
-      const value = target[prop as keyof T];
+      const value = target[prop as keyof Client<T>];
       if (typeof value === "function") {
         return async (...args: unknown[]) => {
           try {
@@ -35,7 +32,5 @@ function createSafeClient<T extends object>(client: T): SafeClient<T> {
       }
       return value;
     },
-  }) as SafeClient<T>;
+  }) as SafeClient<Client<T>>;
 }
-
-export const NumberClient = createSafeClient(createClient(NumberService, transport));

@@ -1,5 +1,9 @@
 import type { TopName } from "$connect/number/v1/metrics_pb";
-import * as d3 from "d3";
+import { max } from "d3-array";
+import { axisBottom, axisLeft } from "d3-axis";
+import { format } from "d3-format";
+import { scaleBand, scaleLinear } from "d3-scale";
+import { pointer, select } from "d3-selection";
 import { type Component, createEffect, Show } from "solid-js";
 
 import { useChartSize } from "./useChartSize";
@@ -34,15 +38,15 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
       average: n.average,
     }));
 
-    const svg = d3.select(svgRef);
-    const tooltip = d3.select(tooltipRef);
+    const svg = select(svgRef);
+    const tooltip = select(tooltipRef);
     svg.selectAll("*").remove();
     tooltip.style("opacity", "0");
     if (data.length === 0) return;
 
-    const formatInteger = d3.format(",");
+    const formatInteger = format(",");
     const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
-      const [xPos, yPos] = d3.pointer(event, containerRef);
+      const [xPos, yPos] = pointer(event, containerRef);
       tooltip
         .text(
           `${d.name}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
@@ -75,21 +79,19 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const y = d3
-      .scaleBand<string>()
+    const y = scaleBand<string>()
       .domain(data.map((d) => d.name))
       .range([0, innerH])
       .padding(0.2);
 
-    const x = d3
-      .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.count) ?? 1])
+    const x = scaleLinear()
+      .domain([0, max(data, (d) => d.count) ?? 1])
       .nice()
       .range([0, innerW]);
 
     g.append("g")
       .attr("class", "text-ctp-subtext0")
-      .call(d3.axisLeft(y).tickSizeOuter(0))
+      .call(axisLeft(y).tickSizeOuter(0))
       .selectAll("text")
       .attr("class", "truncate");
 
@@ -97,8 +99,7 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
       .attr("transform", `translate(0,${innerH})`)
       .attr("class", "text-ctp-subtext0")
       .call(
-        d3
-          .axisBottom(x)
+        axisBottom(x)
           .ticks(Math.max(2, Math.floor(innerW / 80)))
           .tickSizeOuter(0),
       );
@@ -115,14 +116,14 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
       .attr("height", y.bandwidth())
       .attr("rx", 2)
       .on("pointerenter", (event: PointerEvent, d) => {
-        d3.select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-yellow");
+        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-yellow");
         showTooltip(event, d);
       })
       .on("pointermove", (event: PointerEvent, d) => {
         showTooltip(event, d);
       })
       .on("pointerleave", (event: PointerEvent) => {
-        d3.select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-peach");
+        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-peach");
         hideTooltip();
       });
 
