@@ -59,7 +59,7 @@ const Metrics: Component = () => {
   return (
     <div class="mx-auto flex max-w-7xl flex-col gap-4 p-4">
       <form.AppForm>
-        <form.Form class="flex flex-row items-center gap-2">
+        <form.Form class="flex flex-row flex-wrap items-center justify-center gap-2 md:justify-start">
           <form.AppField name="start">
             {(field) => <field.DateField class="bg-ctp-mantle" />}
           </form.AppField>
