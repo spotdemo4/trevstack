@@ -210,7 +210,7 @@
               touch $out
             '';
 
-            # skip checking web
+            # skip bundling web
             postConfigure = "";
             env.GOFLAGS = "-tags=dev";
           };
