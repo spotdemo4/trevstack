@@ -2,11 +2,11 @@ import logo from "$assets/logo.svg";
 import { Navbar } from "$lib/navbar";
 import Theme from "$lib/theme";
 import { AppToaster } from "$lib/toast";
-import { A } from "@solidjs/router";
 import { ExternalLink } from "lucide-solid";
 import { type Component, children, type JSX } from "solid-js";
 
 import Github from "./Github";
+import LayoutNavLink from "./LayoutNavLink";
 
 type LayoutProps = {
   children?: JSX.Element;
@@ -23,35 +23,14 @@ const Layout: Component<LayoutProps> = (props) => {
         </h1>
         <div class="flex h-full items-center gap-4 overflow-x-auto px-4">
           <Navbar>
-            <A
-              end
-              href="/"
-              class="inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
-              activeClass="text-ctp-text"
-            >
+            <LayoutNavLink end href="/">
               Home
-            </A>
-            <A
-              href="/numbers"
-              class="inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
-              activeClass="text-ctp-text"
-            >
-              Numbers
-            </A>
-            <A
-              href="/metrics"
-              class="inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
-              activeClass="text-ctp-text"
-            >
-              Metrics
-            </A>
-            <a
-              href="/docs"
-              target="_blank"
-              class="inline-flex items-center gap-1 px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text"
-            >
+            </LayoutNavLink>
+            <LayoutNavLink href="/numbers">Numbers</LayoutNavLink>
+            <LayoutNavLink href="/metrics">Metrics</LayoutNavLink>
+            <LayoutNavLink as="a" href="/docs" target="_blank" class="items-center gap-1">
               Docs <ExternalLink size={16} />
-            </a>
+            </LayoutNavLink>
             <Navbar.Indicator />
           </Navbar>
           <div class="h-6 w-px bg-ctp-surface1" />
