@@ -26,7 +26,7 @@ const Numbers: Component = () => {
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
   const items = createStreamingStore(
     request,
-    (req, opts) => NumberClient.list(req, opts),
+    (req) => NumberClient.list(req),
     (resp) => resp.item!,
   );
 

@@ -1,19 +1,18 @@
+import { Effect, Fiber, Stream } from "effect";
 import { type Accessor, createEffect, on, onCleanup } from "solid-js";
 import { createStore } from "solid-js/store";
 
-export function createStreamingStore<Req, Resp, Item>(
+export function createStreamingStore<Req, Resp, Item, E>(
   request: Accessor<Req>,
-  stream: (req: Req, opts: { signal: AbortSignal }) => AsyncIterable<Resp>,
+  stream: (req: Req) => Stream.Stream<Resp, E>,
   map: (resp: Resp) => Item,
 ): Item[] {
   const [items, setItems] = createStore<Item[]>([]);
-  let abort = new AbortController();
+  let fiber: Fiber.RuntimeFiber<void, E> | null = null;
 
   createEffect(
-    on(request, async (req) => {
-      abort.abort();
-      abort = new AbortController();
-      const signal = abort.signal;
+    on(request, (req) => {
+      if (fiber) Effect.runFork(Fiber.interrupt(fiber));
 
       setItems([]);
 
@@ -31,20 +30,24 @@ export function createStreamingStore<Req, Resp, Item>(
         if (rafId) cancelAnimationFrame(rafId);
       });
 
-      try {
-        for await (const resp of stream(req, { signal })) {
-          pending.push(map(resp));
-          if (!rafId) rafId = requestAnimationFrame(flush);
-        }
-        flush();
-      } catch (e) {
-        if (signal.aborted) return;
-        throw e;
-      }
+      const program = stream(req).pipe(
+        Stream.runForEach((resp) =>
+          Effect.sync(() => {
+            pending.push(map(resp));
+            if (!rafId) rafId = requestAnimationFrame(flush);
+          }),
+        ),
+        Effect.tap(() => Effect.sync(flush)),
+        Effect.tapErrorCause((cause) => Effect.sync(() => console.error(cause))),
+      );
+
+      fiber = Effect.runFork(program);
     }),
   );
 
-  onCleanup(() => abort.abort());
+  onCleanup(() => {
+    if (fiber) Effect.runFork(Fiber.interrupt(fiber));
+  });
 
   return items;
 }

@@ -1,30 +1,16 @@
-import {
-  type DistributionResponse,
-  type SummaryResponse,
-  TimeInterval,
-  type TimeSeriesResponse,
-  type TopNamesResponse,
-} from "$connect/number/v1/metrics_pb";
+import { TimeInterval } from "$connect/number/v1/metrics_pb";
 import { Card } from "$lib/card";
 import { NumberClient } from "$lib/connect";
+import { createEffectResource, logFailure } from "$lib/effect";
 import { useForm } from "$lib/form/hook";
 import { NumberInput, SelectInput } from "$lib/input";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
-import { ConnectError } from "@connectrpc/connect";
-import { Effect } from "effect";
-import { type Component, createMemo, createResource, createSignal } from "solid-js";
+import { type Component, createMemo, createSignal } from "solid-js";
 
 import DistributionChart from "./DistributionChart";
 import SummaryCards from "./SummaryCards";
 import TimeSeriesChart from "./TimeSeriesChart";
 import TopNamesChart from "./TopNamesChart";
-
-const fetchOr = <A,>(label: string, effect: Effect.Effect<A, ConnectError>) =>
-  effect.pipe(
-    Effect.tapError((err) => Effect.sync(() => console.error(`${label} failed`, err))),
-    Effect.orElseSucceed(() => undefined),
-    Effect.runPromise,
-  );
 
 const intervalOptions: { value: TimeInterval; label: string }[] = [
   { value: TimeInterval.HOUR, label: "Hour" },
@@ -51,27 +37,23 @@ const Metrics: Component = () => {
 
   const range = createMemo(() => rangeFilter());
 
-  const [summary] = createResource<SummaryResponse | undefined, ReturnType<typeof range>>(
-    range,
-    (req) => fetchOr("summary", NumberClient.summary(req)),
+  const [summary] = createEffectResource(range, (req) =>
+    logFailure("summary")(NumberClient.summary(req)),
   );
 
   const timeSeriesArgs = createMemo(() => ({ ...range(), interval: interval() }));
-  const [timeSeries] = createResource<
-    TimeSeriesResponse | undefined,
-    ReturnType<typeof timeSeriesArgs>
-  >(timeSeriesArgs, (req) => fetchOr("timeSeries", NumberClient.timeSeries(req)));
+  const [timeSeries] = createEffectResource(timeSeriesArgs, (req) =>
+    logFailure("timeSeries")(NumberClient.timeSeries(req)),
+  );
 
   const distributionArgs = createMemo(() => ({ ...range(), bucketCount: bucketCount() }));
-  const [distribution] = createResource<
-    DistributionResponse | undefined,
-    ReturnType<typeof distributionArgs>
-  >(distributionArgs, (req) => fetchOr("distribution", NumberClient.distribution(req)));
+  const [distribution] = createEffectResource(distributionArgs, (req) =>
+    logFailure("distribution")(NumberClient.distribution(req)),
+  );
 
   const topNamesArgs = createMemo(() => ({ ...range(), limit: limit() }));
-  const [topNames] = createResource<TopNamesResponse | undefined, ReturnType<typeof topNamesArgs>>(
-    topNamesArgs,
-    (req) => fetchOr("topNames", NumberClient.topNames(req)),
+  const [topNames] = createEffectResource(topNamesArgs, (req) =>
+    logFailure("topNames")(NumberClient.topNames(req)),
   );
 
   return (
