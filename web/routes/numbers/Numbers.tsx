@@ -1,16 +1,15 @@
-import { Item, ListRequestSchema, type ListRequest } from "$connect/number/v1/list_pb";
+import { ListRequestSchema, type ListRequest } from "$connect/number/v1/list_pb";
 import { NumberClient } from "$lib/connect";
 import Drawer from "$lib/drawer";
 import { useForm } from "$lib/form/hook";
 import Splitter from "$lib/splitter";
+import { createStreamingStore } from "$lib/stream";
 import Table from "$lib/table";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createStandardSchema } from "@bufbuild/protovalidate";
 import { SlidersHorizontal } from "lucide-solid";
 import { type Component, createSignal, onCleanup, Show } from "solid-js";
-import { createEffect, on } from "solid-js";
-import { createStore } from "solid-js/store";
 
 function createMediaQuery(query: string) {
   const mql = window.matchMedia(query);
@@ -25,25 +24,11 @@ const Numbers: Component = () => {
   const isDesktop = createMediaQuery("(min-width: 768px)");
 
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
-  const [items, setItems] = createStore<Item[]>([]);
-
-  let abort = new AbortController();
-
-  createEffect(
-    on(request, async (request) => {
-      abort.abort();
-      abort = new AbortController();
-
-      setItems([]);
-      for await (const resp of NumberClient.list(request, { signal: abort.signal })) {
-        setItems(items.length, resp.item!);
-      }
-    }),
+  const items = createStreamingStore(
+    request,
+    (req, opts) => NumberClient.list(req, opts),
+    (resp) => resp.item!,
   );
-
-  onCleanup(() => {
-    abort.abort();
-  });
 
   const form = useForm(() => ({
     defaultValues: create(ListRequestSchema),
