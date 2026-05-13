@@ -36,9 +36,13 @@
               go
               gopls
               gotools
+              go-tools
+              govulncheck
 
               # solid
               nodejs_24
+              oxlint
+              oxfmt
 
               # proto
               buf
@@ -47,19 +51,20 @@
               protoc-gen-connect-openapi
               protoc-gen-es
 
-              # lint
-              go-tools
-              oxlint
+              # sql
               sqlfluff
+
+              # actions
+              zizmor
+              action-validator
+
+              # nix
               nixd
               nil
-
-              # format
-              oxfmt
               nixfmt
-              treefmt
 
               # util
+              treefmt
               mprocs
               bumper
               fix-hash
@@ -90,7 +95,10 @@
 
           vulnerable = pkgs.mkShell {
             packages = with pkgs; [
-              govulncheck # go
+              # go
+              go
+              govulncheck
+
               nodejs_24 # npm audit
               flake-checker # nix flake
               zizmor # actions
