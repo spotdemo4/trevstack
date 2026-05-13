@@ -43,7 +43,7 @@ export const DateInput: Component<DateInputProps> = (props) => {
       </Show>
       <ArkDateInput.Control
         class={twMerge(
-          "flex items-center gap-2 rounded-md border border-ctp-surface1 bg-ctp-base p-1 pl-3 text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2 data-invalid:border-ctp-red data-invalid:focus-within:ring-ctp-red/40",
+          "flex h-9.5 items-center gap-2 rounded-md border border-ctp-surface1 bg-ctp-base p-1 pl-3 text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2 data-invalid:border-ctp-red data-invalid:focus-within:ring-ctp-red/40",
           props.class,
         )}
       >

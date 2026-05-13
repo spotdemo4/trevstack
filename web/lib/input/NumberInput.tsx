@@ -27,7 +27,7 @@ export const NumberInput: Component<NumberInputProps> = (props) => {
       <ArkNumberInput.Control class="relative isolate">
         <ArkNumberInput.Input
           onBlur={local.onBlur}
-          class="w-full rounded-md border border-ctp-surface1 bg-ctp-base p-2 pr-20 pl-3 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
+          class="h-9.5 w-full rounded-md border border-ctp-surface1 bg-ctp-base p-2 pr-20 pl-3 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
         />
         <div class="absolute top-1/2 right-1 flex -translate-y-1/2 items-center gap-1">
           <ArkNumberInput.DecrementTrigger aria-label="Decrement" class={iconTriggerClass}>
