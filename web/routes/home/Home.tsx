@@ -10,7 +10,7 @@ import type { Component } from "solid-js";
 
 const Home: Component = () => {
   const form = useForm(() => ({
-    defaultValues: create(AddRequestSchema),
+    defaultValues: { ...create(AddRequestSchema) },
     validators: {
       onMount: createStandardSchema(AddRequestSchema),
       onChange: createStandardSchema(AddRequestSchema),

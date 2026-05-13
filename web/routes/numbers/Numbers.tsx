@@ -31,7 +31,7 @@ const Numbers: Component = () => {
   );
 
   const form = useForm(() => ({
-    defaultValues: create(ListRequestSchema),
+    defaultValues: { ...create(ListRequestSchema) },
     validators: {
       onChange: createStandardSchema(ListRequestSchema),
     },

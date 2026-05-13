@@ -3,7 +3,7 @@ servers:
   - url: /grpc
 info:
   title: TrevStack API
-  version: 0.8.0
+  version: 0.9.0
   description: API for TrevStack
   contact:
     name: Trev
@@ -194,6 +194,9 @@ components:
           maximum: 1000000
           minimum: 1
       title: AddRequest
+      required:
+        - name
+        - number
       additionalProperties: false
     number.v1.AddResponse:
       type: object

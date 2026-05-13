@@ -208,11 +208,11 @@ var File_number_v1_add_proto protoreflect.FileDescriptor
 
 const file_number_v1_add_proto_rawDesc = "" +
 	"\n" +
-	"\x13number/v1/add.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\"P\n" +
+	"\x13number/v1/add.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\"V\n" +
 	"\n" +
-	"AddRequest\x12\x1d\n" +
-	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x04name\x12#\n" +
-	"\x06number\x18\x02 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x01R\x06number\"\x1f\n" +
+	"AddRequest\x12 \n" +
+	"\x04name\x18\x01 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x01\x182R\x04name\x12&\n" +
+	"\x06number\x18\x02 \x01(\rB\x0e\xbaH\v\xc8\x01\x01*\x06\x18\xc0\x84=(\x01R\x06number\"\x1f\n" +
 	"\vAddResponse\x12\x10\n" +
 	"\x03sum\x18\x01 \x01(\x04R\x03sumB\xa0\x01\n" +
 	"\rcom.number.v1B\bAddProtoP\x01Z@github.com/spotdemo4/trevstack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
