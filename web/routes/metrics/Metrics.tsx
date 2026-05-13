@@ -61,13 +61,13 @@ const Metrics: Component = () => {
       <form.AppForm>
         <form.Form class="flex flex-row items-center gap-2">
           <form.AppField name="start">
-            {(field) => <field.DateField class="h-9 bg-ctp-mantle" />}
+            {(field) => <field.DateField class="bg-ctp-mantle" />}
           </form.AppField>
           <form.AppField name="end">
-            {(field) => <field.DateField class="h-9 bg-ctp-mantle" />}
+            {(field) => <field.DateField class="bg-ctp-mantle" />}
           </form.AppField>
-          <form.SubmitButton class="h-9" />
-          <form.ResetButton class="h-9" />
+          <form.SubmitButton />
+          <form.ResetButton />
         </form.Form>
       </form.AppForm>
 

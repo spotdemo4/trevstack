@@ -209,6 +209,10 @@
             installPhase = ''
               touch $out
             '';
+
+            # skip checking web
+            postConfigure = "";
+            env.GOFLAGS = "-tags=dev";
           };
 
           sql = {

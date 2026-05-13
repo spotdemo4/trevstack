@@ -10,6 +10,8 @@ import { type Component, createEffect, Show } from "solid-js";
 
 import { useChartSize } from "./useChartSize";
 
+import styles from "./ChartMotion.module.css";
+
 type TimeSeriesChartProps = {
   points: TimeSeriesPoint[];
 };
@@ -91,18 +93,20 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
 
     g.append("g")
       .attr("transform", `translate(0,${innerH})`)
-      .attr("class", "text-ctp-subtext0")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
       .call(
         axisBottom(x)
           .ticks(Math.max(2, Math.floor(innerW / 90)))
           .tickSizeOuter(0),
       );
 
-    g.append("g").attr("class", "text-ctp-subtext0").call(axisLeft(y).ticks(5).tickSizeOuter(0));
+    g.append("g")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
+      .call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
     // Subtle horizontal grid lines.
     g.append("g")
-      .attr("class", "text-ctp-surface1")
+      .attr("class", `${styles.Grid} text-ctp-surface1`)
       .selectAll("line")
       .data(y.ticks(5))
       .enter()
@@ -125,12 +129,16 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
       .y((d) => y(d.count))
       .curve(curveMonotoneX);
 
-    g.append("path").datum(data).attr("class", "fill-ctp-blue/20").attr("d", areaGen);
+    g.append("path")
+      .datum(data)
+      .attr("class", `${styles.Area} fill-ctp-blue/20`)
+      .attr("d", areaGen);
 
     g.append("path")
       .datum(data)
-      .attr("class", "stroke-ctp-blue")
+      .attr("class", `${styles.Line} stroke-ctp-blue`)
       .attr("fill", "none")
+      .attr("pathLength", 1)
       .attr("stroke-width", 2)
       .attr("d", lineGen);
 
@@ -139,7 +147,7 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
       .data(data)
       .enter()
       .append("circle")
-      .attr("class", "fill-ctp-blue")
+      .attr("class", `${styles.Point} fill-ctp-blue`)
       .attr("cx", (d) => x(d.date))
       .attr("cy", (d) => y(d.count))
       .attr("r", 3)
@@ -158,13 +166,15 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
 
   return (
     <div ref={containerRef} class="relative w-full">
-      <svg ref={svgRef} width={width()} height={height()} class="block" />
+      <svg ref={svgRef} width={width()} height={height()} class={`${styles.ChartCanvas} block`} />
       <div
         ref={tooltipRef}
         class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
       />
       <Show when={props.points.length === 0}>
-        <div class="absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0">
+        <div
+          class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0`}
+        >
           No data in range
         </div>
       </Show>

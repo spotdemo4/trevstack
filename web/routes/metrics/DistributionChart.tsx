@@ -8,6 +8,8 @@ import { type Component, createEffect, Show } from "solid-js";
 
 import { useChartSize } from "./useChartSize";
 
+import styles from "./ChartMotion.module.css";
+
 type DistributionChartProps = {
   buckets: DistributionBucket[];
 };
@@ -99,7 +101,7 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
 
     g.append("g")
       .attr("transform", `translate(0,${innerH})`)
-      .attr("class", "text-ctp-subtext0")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
       .call(
         axisBottom(x)
           .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
@@ -111,41 +113,49 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
       .attr("dy", "0.35em")
       .style("text-anchor", "end");
 
-    g.append("g").attr("class", "text-ctp-subtext0").call(axisLeft(y).ticks(5).tickSizeOuter(0));
+    g.append("g")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
+      .call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
     g.append("g")
       .selectAll("rect")
       .data(data)
       .enter()
       .append("rect")
-      .attr("class", "fill-ctp-mauve")
+      .attr("class", `${styles.VerticalBar} fill-ctp-mauve`)
       .attr("x", (d) => x(d.key) ?? 0)
       .attr("y", (d) => y(d.count))
       .attr("width", x.bandwidth())
       .attr("height", (d) => innerH - y(d.count))
       .attr("rx", 2)
       .on("pointerenter", (event: PointerEvent, d) => {
-        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-pink");
+        select(event.currentTarget as SVGRectElement)
+          .classed("fill-ctp-mauve", false)
+          .classed("fill-ctp-pink", true);
         showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
       })
       .on("pointermove", (event: PointerEvent, d) => {
         showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
       })
       .on("pointerleave", (event: PointerEvent) => {
-        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-mauve");
+        select(event.currentTarget as SVGRectElement)
+          .classed("fill-ctp-pink", false)
+          .classed("fill-ctp-mauve", true);
         hideTooltip();
       });
   });
 
   return (
     <div ref={containerRef} class="relative w-full">
-      <svg ref={svgRef} width={width()} height={height()} class="block" />
+      <svg ref={svgRef} width={width()} height={height()} class={`${styles.ChartCanvas} block`} />
       <div
         ref={tooltipRef}
         class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
       />
       <Show when={props.buckets.length === 0}>
-        <div class="absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0">
+        <div
+          class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0`}
+        >
           No data in range
         </div>
       </Show>

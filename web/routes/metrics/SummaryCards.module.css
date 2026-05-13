@@ -1,0 +1,100 @@
+.Card {
+  animation: summary-card-in 260ms ease-out both;
+}
+
+.Card:nth-child(2) {
+  animation-delay: 35ms;
+}
+
+.Card:nth-child(3) {
+  animation-delay: 70ms;
+}
+
+.Card:nth-child(4) {
+  animation-delay: 105ms;
+}
+
+.Card:nth-child(5) {
+  animation-delay: 140ms;
+}
+
+.Card:nth-child(6) {
+  animation-delay: 175ms;
+}
+
+.ContentFrame {
+  display: grid;
+  min-height: 3.5rem;
+}
+
+.SkeletonLayer,
+.ValueLayer {
+  grid-area: 1 / 1;
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease,
+    filter 220ms ease;
+}
+
+.SkeletonLayer {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.ValueLayer {
+  opacity: 0;
+  transform: translate3d(0, 0.35rem, 0);
+  filter: blur(3px);
+}
+
+.Card[data-state="ready"] .SkeletonLayer {
+  opacity: 0;
+  transform: translate3d(0, -0.25rem, 0);
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.Card[data-state="ready"] .ValueLayer {
+  animation: summary-value-in 260ms ease-out both;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+}
+
+@keyframes summary-card-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.5rem, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes summary-value-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.35rem, 0);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Card,
+  .Card[data-state="ready"] .ValueLayer {
+    animation: none;
+  }
+
+  .SkeletonLayer,
+  .ValueLayer {
+    transition: none;
+  }
+}

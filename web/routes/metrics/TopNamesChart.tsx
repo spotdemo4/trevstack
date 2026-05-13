@@ -8,6 +8,8 @@ import { type Component, createEffect, Show } from "solid-js";
 
 import { useChartSize } from "./useChartSize";
 
+import styles from "./ChartMotion.module.css";
+
 type TopNamesChartProps = {
   names: TopName[];
 };
@@ -90,14 +92,14 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
       .range([0, innerW]);
 
     g.append("g")
-      .attr("class", "text-ctp-subtext0")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
       .call(axisLeft(y).tickSizeOuter(0))
       .selectAll("text")
       .attr("class", "truncate");
 
     g.append("g")
       .attr("transform", `translate(0,${innerH})`)
-      .attr("class", "text-ctp-subtext0")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
       .call(
         axisBottom(x)
           .ticks(Math.max(2, Math.floor(innerW / 80)))
@@ -109,21 +111,25 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
       .data(data)
       .enter()
       .append("rect")
-      .attr("class", "fill-ctp-peach")
+      .attr("class", `${styles.HorizontalBar} fill-ctp-peach`)
       .attr("x", 0)
       .attr("y", (d) => y(d.name) ?? 0)
       .attr("width", (d) => x(d.count))
       .attr("height", y.bandwidth())
       .attr("rx", 2)
       .on("pointerenter", (event: PointerEvent, d) => {
-        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-yellow");
+        select(event.currentTarget as SVGRectElement)
+          .classed("fill-ctp-peach", false)
+          .classed("fill-ctp-yellow", true);
         showTooltip(event, d);
       })
       .on("pointermove", (event: PointerEvent, d) => {
         showTooltip(event, d);
       })
       .on("pointerleave", (event: PointerEvent) => {
-        select(event.currentTarget as SVGRectElement).attr("class", "fill-ctp-peach");
+        select(event.currentTarget as SVGRectElement)
+          .classed("fill-ctp-yellow", false)
+          .classed("fill-ctp-peach", true);
         hideTooltip();
       });
 
@@ -132,7 +138,10 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
       .data(data)
       .enter()
       .append("text")
-      .attr("class", "pointer-events-none fill-ctp-text font-mono text-xs tabular-nums")
+      .attr(
+        "class",
+        `${styles.ValueLabel} pointer-events-none fill-ctp-text font-mono text-xs tabular-nums`,
+      )
       .attr("x", (d) => x(d.count) + 6)
       .attr("y", (d) => (y(d.name) ?? 0) + y.bandwidth() / 2)
       .attr("dy", "0.35em")
@@ -141,13 +150,20 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
 
   return (
     <div ref={containerRef} class="relative w-full">
-      <svg ref={svgRef} width={width()} height={dynamicHeight()} class="block" />
+      <svg
+        ref={svgRef}
+        width={width()}
+        height={dynamicHeight()}
+        class={`${styles.ChartCanvas} block`}
+      />
       <div
         ref={tooltipRef}
         class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
       />
       <Show when={props.names.length === 0}>
-        <div class="absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0">
+        <div
+          class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0`}
+        >
           No data in range
         </div>
       </Show>
