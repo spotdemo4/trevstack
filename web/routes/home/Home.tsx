@@ -5,6 +5,7 @@ import { useForm } from "$lib/form/hook";
 import { toaster } from "$lib/toast";
 import { create } from "@bufbuild/protobuf";
 import { createStandardSchema } from "@bufbuild/protovalidate";
+import { Effect } from "effect";
 import type { Component } from "solid-js";
 
 const Home: Component = () => {
@@ -14,26 +15,25 @@ const Home: Component = () => {
       onMount: createStandardSchema(AddRequestSchema),
       onChange: createStandardSchema(AddRequestSchema),
     },
-    onSubmit: async ({ value }) => {
-      try {
-        const response = await NumberClient.add({
-          name: value.name,
-          number: value.number,
-        });
-
-        toaster.success({
-          title: "Number added",
-          description: `new sum: ${response.sum}`,
-        });
-
-        form.reset();
-      } catch (err) {
-        toaster.error({
-          title: "Failed to add number",
-          description: err instanceof Error ? err.message : String(err),
-        });
-      }
-    },
+    onSubmit: ({ value }) =>
+      NumberClient.add({ name: value.name, number: value.number }).pipe(
+        Effect.match({
+          onSuccess: (response) => {
+            toaster.success({
+              title: "Number added",
+              description: `new sum: ${response.sum}`,
+            });
+            form.reset();
+          },
+          onFailure: (err) => {
+            toaster.error({
+              title: "Failed to add number",
+              description: err.message,
+            });
+          },
+        }),
+        Effect.runPromise,
+      ),
   }));
 
   return (
