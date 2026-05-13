@@ -7,7 +7,7 @@ includes = ["*.go"]
 [formatter.oxfmt]
 command = "oxfmt"
 options = ["--write"]
-includes = ["*.ts", "*.tsx", "*.html", "*.css", "*.json", "*.yaml", "*.toml", "*.md"]
+includes = ["*.ts", "*.tsx", "*.html", "*.json", "*.yaml", "*.toml", "*.md"]
 
 [formatter.buf]
 command = "buf"
