@@ -29,8 +29,7 @@ jobs:
       - name: Release to Forgejo
         run: flake-release
         env:
-          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
-          REGISTRY: git.quantadev.cc
+          REGISTRY: trev.zip
           REGISTRY_USERNAME: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           PACKAGES: |
