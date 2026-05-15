@@ -16,6 +16,7 @@
 
   // repository
   "extends": ["config:recommended"],
+  "addLabels": ["dependency"],
   "nix": {
     "enabled": true
   },
@@ -40,32 +41,24 @@
     },
     {
       "matchManagers": ["nix"],
-      "groupName": "nix inputs"
+      "addLabels": ["nix"]
     },
     {
       "matchManagers": ["github-actions"],
-      "groupName": "github actions"
+      "addLabels": ["actions"]
     },
     {
       "matchManagers": ["gomod"],
+      "addLabels": ["go"],
       "postUpgradeTasks": {
         "commands": ["fix-hash .#packages.x86_64-linux.server"]
       }
     },
     {
-      "matchManagers": ["gomod"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "go modules"
-    },
-    {
       "matchManagers": ["npm"],
+      "addLabels": ["node"],
       "rangeStrategy": "bump",
       "postUpdateOptions": ["npmInstallTwice"]
-    },
-    {
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "node packages"
     },
     {
       "matchManagers": ["npm"],
