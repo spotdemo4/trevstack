@@ -56,7 +56,6 @@
 
               # actions
               zizmor
-              action-validator
 
               # nix
               nixd
@@ -272,14 +271,16 @@
           };
 
           actions = {
-            root = ./.github/workflows;
+            root = ./.;
+            files = [
+              ./.forgejo/workflows
+              ./.github/workflows
+            ];
             filter = file: file.hasExt "yaml";
             packages = with pkgs; [
-              action-validator
               zizmor
             ];
             script = ''
-              action-validator "$file"
               zizmor --offline "$file"
             '';
           };

@@ -10,6 +10,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
 
+# yaml-language-server-disable is not allowed
 enable-openid-connect: true
 
 jobs:
@@ -22,7 +23,6 @@ jobs:
         uses: spotdemo4/nix-init@8cfbe9e5d4eef03c557a70763c90af7ff4aafe67 # v1.46.0
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          niks3_token: ${{ secrets.NIKS3_TOKEN }}
 
       - name: Check
         run: nix flake check

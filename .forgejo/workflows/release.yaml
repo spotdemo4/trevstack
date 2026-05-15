@@ -8,6 +8,7 @@ on:
 concurrency:
   group: release
 
+# yaml-language-server-disable is not allowed
 enable-openid-connect: true
 
 jobs:
@@ -22,7 +23,6 @@ jobs:
         uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          niks3_token: ${{ secrets.NIKS3_TOKEN }}
           fetch_depth: 0
           shell: release
 
