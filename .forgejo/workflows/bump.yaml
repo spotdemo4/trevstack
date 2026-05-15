@@ -1,0 +1,45 @@
+name: bump
+
+on:
+  schedule:
+    - cron: "0 22 * * 1-5" # every weekday at 22:00 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "force"
+        required: false
+        type: choice
+        default: "true"
+        options:
+          - "true"
+          - "false"
+
+concurrency:
+  group: release
+
+enable-openid-connect: true
+
+jobs:
+  bump:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    steps:
+      - id: init
+        name: Initialize
+        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_token: ${{ secrets.NIKS3_TOKEN }}
+          fetch_depth: 0
+          shell: bump
+
+      - name: Bump
+        run: bumper
+        env:
+          GITHUB_TOKEN: ${{ steps.init.outputs.token }}
+          FORCE: ${{ inputs.force }}
+          PATHS: |
+            openapi.yaml
+            README.md
+            web

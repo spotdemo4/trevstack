@@ -1,0 +1,43 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: release
+
+enable-openid-connect: true
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_token: ${{ secrets.NIKS3_TOKEN }}
+          fetch_depth: 0
+          shell: release
+
+      - name: Release to Forgejo
+        run: flake-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          REGISTRY: git.quantadev.cc
+          REGISTRY_USERNAME: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          PACKAGES: |
+            images.x86_64-linux.default.aarch64-unknown-linux-musl
+            images.x86_64-linux.default.armv7l-unknown-linux-musleabihf
+            images.x86_64-linux.default.x86_64-unknown-linux-musl
+            packages.x86_64-linux.default.aarch64-unknown-linux-musl
+            packages.x86_64-linux.default.armv7l-unknown-linux-musleabihf
+            packages.x86_64-linux.default.x86_64-unknown-linux-musl
+            packages.x86_64-linux.default.x86_64-w64-mingw32

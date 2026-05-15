@@ -1,0 +1,69 @@
+name: vulnerable
+
+on:
+  schedule:
+    - cron: "0 9 * * 0" # every Sunday at 09:00 UTC
+  workflow_dispatch:
+
+enable-openid-connect: true
+
+jobs:
+  go:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_token: ${{ secrets.NIKS3_TOKEN }}
+          shell: vulnerable
+
+      - name: Run govulncheck
+        run: cd server && govulncheck ./...
+
+  npm:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_token: ${{ secrets.NIKS3_TOKEN }}
+          shell: vulnerable
+
+      - name: Run npm audit
+        run: cd web && npm audit --audit-level moderate
+
+  nix:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_token: ${{ secrets.NIKS3_TOKEN }}
+          shell: vulnerable
+
+      - name: Run flake-checker
+        run: flake-checker -f
+
+  actions:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_token: ${{ secrets.NIKS3_TOKEN }}
+          shell: vulnerable
+
+      - name: Run zizmor
+        run: zizmor .github
