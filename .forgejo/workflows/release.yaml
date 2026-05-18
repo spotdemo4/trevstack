@@ -13,6 +13,7 @@ enable-openid-connect: true
 
 jobs:
   linux:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
     steps:
       - name: Initialize

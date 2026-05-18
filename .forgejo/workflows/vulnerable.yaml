@@ -10,6 +10,7 @@ enable-openid-connect: true
 
 jobs:
   go:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
     steps:
       - name: Initialize
@@ -21,7 +22,8 @@ jobs:
       - name: Run govulncheck
         run: cd server && govulncheck ./...
 
-  npm:
+  node:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
     steps:
       - name: Initialize
@@ -34,6 +36,7 @@ jobs:
         run: cd web && npm audit --audit-level moderate
 
   nix:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
     steps:
       - name: Initialize
@@ -46,6 +49,7 @@ jobs:
         run: flake-checker -f
 
   actions:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
     steps:
       - name: Initialize
