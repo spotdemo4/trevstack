@@ -158,7 +158,7 @@
             }
           );
 
-          server = pkgs.buildGo125Module (
+          server = pkgs.buildGoModule (
             final: with pkgs.lib; {
               pname = "trevstack-server";
               version = "0.10.1";
