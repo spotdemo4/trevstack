@@ -19,37 +19,37 @@ part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
 ## getting started
 
-```elm
+```sh
 nix develop
 ```
 
 ### run
 
-```elm
+```sh
 nix run #dev
 ```
 
 ### format
 
-```elm
+```sh
 nix fmt
 ```
 
 ### check
 
-```elm
+```sh
 nix flake check
 ```
 
 ### build
 
-```elm
+```sh
 nix build
 ```
 
 ### release
 
-```elm
+```sh
 bumper "openapi.yaml" "README.md" "web"
 ```
 
@@ -59,13 +59,13 @@ releases are automatically created for [significant](https://www.conventionalcom
 
 ### docker
 
-```elm
+```sh
 docker run -P ghcr.io/spotdemo4/trevstack:0.10.1
 ```
 
 ### nix
 
-```elm
+```sh
 nix run github:spotdemo4/trevstack
 ```
 
