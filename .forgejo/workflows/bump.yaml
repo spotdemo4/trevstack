@@ -23,8 +23,6 @@ enable-openid-connect: true
 jobs:
   bump:
     runs-on: ubuntu-24.04
-    permissions:
-      id-token: write
     steps:
       - id: init
         name: Initialize
