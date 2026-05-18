@@ -1,5 +1,5 @@
 > [!NOTE]
-> This repository is mirrored to GitHub for better visibility, but development happens on [trev.zip](https://trev.zip/trev/stack)
+> This repository is mirrored to GitHub, development happens on [trev.zip](https://trev.zip/trev/stack)
 
 # TrevStack
 
