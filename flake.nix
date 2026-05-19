@@ -184,12 +184,12 @@
 
               meta = {
                 mainProgram = "server";
-                description = "Template for TrevStack applications";
+                description = "full-stack application template";
                 license = licenses.mit;
                 platforms = platforms.all;
-                homepage = "https://github.com/spotdemo4/trevstack";
-                changelog = "https://github.com/spotdemo4/trevstack/releases/tag/v${final.version}";
-                downloadPage = "https://github.com/spotdemo4/trevstack/releases/tag/v${final.version}";
+                homepage = "https://trev.zip/trev/stack";
+                changelog = "https://trev.zip/trev/stack/releases";
+                downloadPage = "https://trev.zip/trev/stack/releases/tag/v${final.version}";
               };
             }
           );
