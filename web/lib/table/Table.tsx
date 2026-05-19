@@ -65,7 +65,7 @@ const Table: Component<TableProps> = (props) => {
           props.class,
         )}
       >
-        <table class="w-full border-separate border-spacing-0 text-ctp-text [&_td]:truncate [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
+        <table class="block w-full border-separate border-spacing-0 text-ctp-text [&_td]:truncate [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
           {props.children}
         </table>
       </div>
@@ -77,7 +77,7 @@ const Header: Component<HeaderProps> = (props) => {
   const table = useTableContext("Table.Header");
 
   return (
-    <thead class="sticky top-0 z-10 bg-ctp-mantle/95 backdrop-blur supports-backdrop-filter:bg-ctp-mantle/75">
+    <thead class="sticky top-0 z-10 block bg-ctp-mantle/95 backdrop-blur supports-backdrop-filter:bg-ctp-mantle/75">
       <tr
         class={twMerge(
           "text-left text-xs font-semibold tracking-wider text-ctp-subtext1 uppercase",
@@ -122,6 +122,7 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
       {/* The large inner element to hold all of the items */}
       <tbody
         style={{
+          display: "block",
           height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
           position: "relative", //needed for absolute positioning of rows
         }}
