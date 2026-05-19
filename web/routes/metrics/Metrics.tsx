@@ -1,7 +1,7 @@
 import { TimeInterval } from "$connect/number/v1/metrics_pb";
 import { Card } from "$lib/card";
 import { NumberClient } from "$lib/connect";
-import { createEffectResource, logFailure } from "$lib/effect";
+import { createEffectResource, toastFailure } from "$lib/effect";
 import { useForm } from "$lib/form/hook";
 import { NumberInput, SelectInput } from "$lib/input";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
@@ -38,22 +38,22 @@ const Metrics: Component = () => {
   const range = createMemo(() => rangeFilter());
 
   const [summary] = createEffectResource(range, (req) =>
-    logFailure("summary")(NumberClient.summary(req)),
+    toastFailure("Failed to load summary")(NumberClient.summary(req)),
   );
 
   const timeSeriesArgs = createMemo(() => ({ ...range(), interval: interval() }));
   const [timeSeries] = createEffectResource(timeSeriesArgs, (req) =>
-    logFailure("timeSeries")(NumberClient.timeSeries(req)),
+    toastFailure("Failed to load activity over time")(NumberClient.timeSeries(req)),
   );
 
   const distributionArgs = createMemo(() => ({ ...range(), bucketCount: bucketCount() }));
   const [distribution] = createEffectResource(distributionArgs, (req) =>
-    logFailure("distribution")(NumberClient.distribution(req)),
+    toastFailure("Failed to load number distribution")(NumberClient.distribution(req)),
   );
 
   const topNamesArgs = createMemo(() => ({ ...range(), limit: limit() }));
   const [topNames] = createEffectResource(topNamesArgs, (req) =>
-    logFailure("topNames")(NumberClient.topNames(req)),
+    toastFailure("Failed to load top names")(NumberClient.topNames(req)),
   );
 
   return (

@@ -1,3 +1,5 @@
+import { toaster } from "$lib/toast/toaster";
+import { ConnectError } from "@connectrpc/connect";
 import { Effect } from "effect";
 import { createResource, type ResourceReturn, type ResourceSource } from "solid-js";
 
@@ -8,10 +10,33 @@ export function createEffectResource<R, A, E>(
   return createResource<A, R>(source, (req) => Effect.runPromise(fetcher(req)));
 }
 
-export const logFailure =
-  (label: string) =>
+const errorDescription = (err: unknown) => {
+  if (err instanceof ConnectError) {
+    return err.rawMessage || err.message;
+  }
+
+  if (err instanceof Error) {
+    return err.message;
+  }
+
+  if (typeof err === "string") {
+    return err;
+  }
+
+  return "An unexpected error occurred.";
+};
+
+export const toastFailure =
+  (title: string) =>
   <A, E>(effect: Effect.Effect<A, E>): Effect.Effect<A | undefined> =>
     effect.pipe(
-      Effect.tapError((err) => Effect.sync(() => console.error(`${label} failed`, err))),
+      Effect.tapError((err) =>
+        Effect.sync(() => {
+          toaster.error({
+            title,
+            description: errorDescription(err),
+          });
+        }),
+      ),
       Effect.orElseSucceed(() => undefined),
     );
