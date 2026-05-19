@@ -13,8 +13,7 @@ jobs:
     # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
     steps:
-      - id: init
-        name: Initialize
+      - name: Initialize
         uses: spotdemo4/nix-init@8cfbe9e5d4eef03c557a70763c90af7ff4aafe67 # v1.46.0
         with:
           github_token: ${{ secrets.GH_TOKEN }}
