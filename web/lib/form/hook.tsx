@@ -6,11 +6,11 @@ import { twMerge } from "tailwind-merge";
 import { fieldContext, formContext } from "./context";
 import type { DateField as DateFieldImpl } from "./DateField";
 import { Form } from "./Form";
-import { NumberField } from "./NumberField";
+import type { NumberField as NumberFieldImpl } from "./NumberField";
 import { ResetButton } from "./ResetButton";
 import type { SelectField as SelectFieldImpl } from "./SelectField";
 import { SubmitButton } from "./SubmitButton";
-import { TextField } from "./TextField";
+import type { TextField as TextFieldImpl } from "./TextField";
 
 import styles from "./hook.module.css";
 
@@ -23,6 +23,28 @@ const FieldFallback: Component<{ label?: string; class?: string }> = (props) => 
       class={twMerge("h-9.5 min-w-42 border border-ctp-surface1 bg-ctp-base", props.class)}
     />
   </div>
+);
+
+const LazyTextField = lazy(() => import("./TextField").then((m) => ({ default: m.TextField })));
+
+const TextField: Component<ComponentProps<typeof TextFieldImpl>> = (props) => (
+  <Suspense fallback={<FieldFallback label={props.label} />}>
+    <div class={styles.fieldContent}>
+      <LazyTextField {...props} />
+    </div>
+  </Suspense>
+);
+
+const LazyNumberField = lazy(() =>
+  import("./NumberField").then((m) => ({ default: m.NumberField })),
+);
+
+const NumberField: Component<ComponentProps<typeof NumberFieldImpl>> = (props) => (
+  <Suspense fallback={<FieldFallback label={props.label} />}>
+    <div class={styles.fieldContent}>
+      <LazyNumberField {...props} />
+    </div>
+  </Suspense>
 );
 
 const LazyDateField = lazy(() => import("./DateField").then((m) => ({ default: m.DateField })));
