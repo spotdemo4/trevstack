@@ -2,7 +2,7 @@ import { Skeleton } from "$lib/skeleton";
 import { debounce } from "@solid-primitives/scheduled";
 import { createVirtualizer } from "@tanstack/solid-virtual";
 import type { JSX } from "solid-js";
-import { type Component, createContext, Index, Show, useContext } from "solid-js";
+import { type Component, createContext, For, Index, Show, useContext } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 import styles from "./table.module.css";
@@ -125,14 +125,14 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
         }}
       >
         {/* Only the visible items in the virtualizer, manually positioned to be in view */}
-        <Index each={virtualizer.getVirtualItems()}>
+        <For each={virtualizer.getVirtualItems()}>
           {(virtualItem) => (
             <tr
-              data-index={virtualItem().index}
+              data-index={virtualItem.index}
               class={twMerge(
                 "border-b border-ctp-surface0/60 text-sm transition-colors",
                 "hover:bg-ctp-surface0/40",
-                "odd:bg-ctp-base even:bg-ctp-mantle/40",
+                virtualItem.index % 2 === 0 ? "bg-ctp-base" : "bg-ctp-mantle/40",
                 "[&>td]:flex [&>td]:items-center",
                 styles.fadeIn,
                 props.class,
@@ -141,13 +141,13 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
                 display: "grid",
                 "grid-template-columns": table.columns().join(" "),
                 position: "absolute",
-                height: `${virtualItem().size}px`,
-                transform: `translateY(${virtualItem().start}px)`, //this should always be a `style` as it changes on scroll
+                height: `${virtualItem.size}px`,
+                transform: `translateY(${virtualItem.start}px)`, //this should always be a `style` as it changes on scroll
                 width: "100%",
               }}
             >
               <Show
-                when={props.items[virtualItem().index]}
+                when={props.items[virtualItem.index]}
                 fallback={
                   <Index each={table.columns()}>
                     {() => (
@@ -163,7 +163,7 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
               </Show>
             </tr>
           )}
-        </Index>
+        </For>
       </tbody>
     </>
   );
