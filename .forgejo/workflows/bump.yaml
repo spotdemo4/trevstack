@@ -35,6 +35,7 @@ jobs:
       - name: Bump
         run: bumper
         env:
+          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           FORCE: ${{ inputs.force }}
           PATHS: |
             README.md
