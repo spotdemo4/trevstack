@@ -21,7 +21,7 @@ type DateInputProps = {
 };
 
 const iconTriggerClass =
-  "inline-flex h-7 w-7 items-center justify-center rounded-md border border-ctp-surface1 bg-ctp-surface0 text-ctp-subtext0 shadow-sm transition-colors hover:cursor-pointer hover:border-ctp-surface2 hover:bg-ctp-surface1 hover:text-ctp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40 active:bg-ctp-surface2";
+  "inline-flex h-7 w-7 touch-manipulation items-center justify-center rounded-md border border-ctp-surface1 bg-ctp-surface0 text-ctp-subtext0 shadow-sm transition-colors hover:cursor-pointer hover:border-ctp-surface2 hover:bg-ctp-surface1 hover:text-ctp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40 active:bg-ctp-surface2";
 
 export const DateInput: Component<DateInputProps> = (props) => {
   const datePicker = useDatePicker(() => ({
@@ -81,16 +81,16 @@ export const DateInput: Component<DateInputProps> = (props) => {
                         <DatePicker.ViewControl class="mb-2 flex items-center justify-between">
                           <DatePicker.PrevTrigger
                             aria-label="Previous"
-                            class="cursor-pointer rounded p-1 transition-colors hover:bg-ctp-surface1"
+                            class="cursor-pointer touch-manipulation rounded p-1 transition-colors hover:bg-ctp-surface1"
                           >
                             <ChevronLeftIcon size={16} />
                           </DatePicker.PrevTrigger>
-                          <DatePicker.ViewTrigger class="cursor-pointer rounded px-2 py-1 text-sm font-medium transition-colors hover:bg-ctp-surface1">
+                          <DatePicker.ViewTrigger class="cursor-pointer touch-manipulation rounded px-2 py-1 text-sm font-medium transition-colors hover:bg-ctp-surface1">
                             <DatePicker.RangeText />
                           </DatePicker.ViewTrigger>
                           <DatePicker.NextTrigger
                             aria-label="Next"
-                            class="cursor-pointer rounded p-1 transition-colors hover:bg-ctp-surface1"
+                            class="cursor-pointer touch-manipulation rounded p-1 transition-colors hover:bg-ctp-surface1"
                           >
                             <ChevronRightIcon size={16} />
                           </DatePicker.NextTrigger>
@@ -114,7 +114,7 @@ export const DateInput: Component<DateInputProps> = (props) => {
                                   <Index each={week()}>
                                     {(day) => (
                                       <DatePicker.TableCell value={day()} class="p-0.5 text-center">
-                                        <DatePicker.TableCellTrigger class="inline-flex aspect-square w-full items-center justify-center rounded text-sm tabular-nums transition-colors hover:cursor-pointer hover:bg-ctp-surface1 data-outside-range:text-ctp-overlay0 data-selected:bg-ctp-sky data-selected:text-ctp-base">
+                                        <DatePicker.TableCellTrigger class="inline-flex aspect-square w-full touch-manipulation items-center justify-center rounded text-sm tabular-nums transition-colors hover:cursor-pointer hover:bg-ctp-surface1 data-outside-range:text-ctp-overlay0 data-selected:bg-ctp-sky data-selected:text-ctp-base">
                                           {day().day}
                                         </DatePicker.TableCellTrigger>
                                       </DatePicker.TableCell>
@@ -136,16 +136,16 @@ export const DateInput: Component<DateInputProps> = (props) => {
                         <DatePicker.ViewControl class="mb-2 flex items-center justify-between">
                           <DatePicker.PrevTrigger
                             aria-label="Previous"
-                            class="cursor-pointer rounded p-1 transition-colors hover:bg-ctp-surface1"
+                            class="cursor-pointer touch-manipulation rounded p-1 transition-colors hover:bg-ctp-surface1"
                           >
                             <ChevronLeftIcon size={16} />
                           </DatePicker.PrevTrigger>
-                          <DatePicker.ViewTrigger class="cursor-pointer rounded px-2 py-1 text-sm font-medium transition-colors hover:bg-ctp-surface1">
+                          <DatePicker.ViewTrigger class="cursor-pointer touch-manipulation rounded px-2 py-1 text-sm font-medium transition-colors hover:bg-ctp-surface1">
                             <DatePicker.RangeText />
                           </DatePicker.ViewTrigger>
                           <DatePicker.NextTrigger
                             aria-label="Next"
-                            class="cursor-pointer rounded p-1 transition-colors hover:bg-ctp-surface1"
+                            class="cursor-pointer touch-manipulation rounded p-1 transition-colors hover:bg-ctp-surface1"
                           >
                             <ChevronRightIcon size={16} />
                           </DatePicker.NextTrigger>
@@ -163,7 +163,7 @@ export const DateInput: Component<DateInputProps> = (props) => {
                                         value={month().value}
                                         class="p-0.5 text-center"
                                       >
-                                        <DatePicker.TableCellTrigger class="inline-flex w-full items-center justify-center rounded px-2 py-2 text-sm transition-colors hover:cursor-pointer hover:bg-ctp-surface1 data-selected:bg-ctp-sky data-selected:text-ctp-base">
+                                        <DatePicker.TableCellTrigger class="inline-flex w-full touch-manipulation items-center justify-center rounded px-2 py-2 text-sm transition-colors hover:cursor-pointer hover:bg-ctp-surface1 data-selected:bg-ctp-sky data-selected:text-ctp-base">
                                           {month().label}
                                         </DatePicker.TableCellTrigger>
                                       </DatePicker.TableCell>
@@ -185,16 +185,16 @@ export const DateInput: Component<DateInputProps> = (props) => {
                         <DatePicker.ViewControl class="mb-2 flex items-center justify-between">
                           <DatePicker.PrevTrigger
                             aria-label="Previous"
-                            class="cursor-pointer rounded p-1 transition-colors hover:bg-ctp-surface1"
+                            class="cursor-pointer touch-manipulation rounded p-1 transition-colors hover:bg-ctp-surface1"
                           >
                             <ChevronLeftIcon size={16} />
                           </DatePicker.PrevTrigger>
-                          <DatePicker.ViewTrigger class="cursor-pointer rounded px-2 py-1 text-sm font-medium transition-colors hover:bg-ctp-surface1">
+                          <DatePicker.ViewTrigger class="cursor-pointer touch-manipulation rounded px-2 py-1 text-sm font-medium transition-colors hover:bg-ctp-surface1">
                             <DatePicker.RangeText />
                           </DatePicker.ViewTrigger>
                           <DatePicker.NextTrigger
                             aria-label="Next"
-                            class="cursor-pointer rounded p-1 transition-colors hover:bg-ctp-surface1"
+                            class="cursor-pointer touch-manipulation rounded p-1 transition-colors hover:bg-ctp-surface1"
                           >
                             <ChevronRightIcon size={16} />
                           </DatePicker.NextTrigger>
@@ -210,7 +210,7 @@ export const DateInput: Component<DateInputProps> = (props) => {
                                         value={year().value}
                                         class="p-0.5 text-center"
                                       >
-                                        <DatePicker.TableCellTrigger class="inline-flex w-full items-center justify-center rounded px-2 py-2 text-sm tabular-nums transition-colors hover:cursor-pointer hover:bg-ctp-surface1 data-selected:bg-ctp-sky data-selected:text-ctp-base">
+                                        <DatePicker.TableCellTrigger class="inline-flex w-full touch-manipulation items-center justify-center rounded px-2 py-2 text-sm tabular-nums transition-colors hover:cursor-pointer hover:bg-ctp-surface1 data-selected:bg-ctp-sky data-selected:text-ctp-base">
                                           {year().label}
                                         </DatePicker.TableCellTrigger>
                                       </DatePicker.TableCell>

@@ -12,7 +12,7 @@ type NumberInputProps = NumberInputRootProps & {
 };
 
 const iconTriggerClass =
-  "inline-flex h-7 w-7 items-center justify-center rounded-md border border-ctp-surface1 bg-ctp-surface0 text-ctp-subtext0 shadow-sm transition-colors hover:cursor-pointer hover:border-ctp-surface2 hover:bg-ctp-surface1 hover:text-ctp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40 active:bg-ctp-surface2";
+  "inline-flex h-7 w-7 touch-manipulation items-center justify-center rounded-md border border-ctp-surface1 bg-ctp-surface0 text-ctp-subtext0 shadow-sm transition-colors hover:cursor-pointer hover:border-ctp-surface2 hover:bg-ctp-surface1 hover:text-ctp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40 active:bg-ctp-surface2";
 
 export const NumberInput: Component<NumberInputProps> = (props) => {
   const [local, rest] = splitProps(props, ["label", "onBlur", "class"]);
@@ -26,6 +26,7 @@ export const NumberInput: Component<NumberInputProps> = (props) => {
       </Show>
       <ArkNumberInput.Control class="relative isolate">
         <ArkNumberInput.Input
+          inputmode="numeric"
           onBlur={local.onBlur}
           class="h-9.5 w-full rounded-md border border-ctp-surface1 bg-ctp-base p-2 pr-20 pl-3 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40"
         />
