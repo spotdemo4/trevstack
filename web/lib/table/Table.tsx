@@ -60,7 +60,7 @@ const Table: Component<TableProps> = (props) => {
     >
       <div
         ref={(node) => (parentRef = node)}
-        class={twMerge("h-full overflow-auto border border-ctp-surface0 bg-ctp-base", props.class)}
+        class={twMerge("h-full overflow-auto bg-ctp-base", props.class)}
       >
         <table class="block w-full border-separate border-spacing-0 text-ctp-text [&_td]:truncate [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
           {props.children}

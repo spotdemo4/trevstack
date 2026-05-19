@@ -4,10 +4,10 @@ import {
   useDateInput,
 } from "@ark-ui/solid/date-input";
 import { DatePicker, useDatePicker } from "@ark-ui/solid/date-picker";
-import type { DateValue } from "@internationalized/date";
+import { type DateValue, parseDate } from "@internationalized/date";
 import { mergeProps } from "@zag-js/solid";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-solid";
-import { type Component, type JSX, Index, Show } from "solid-js";
+import { type Component, createSignal, Index, type JSX, onCleanup, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { twMerge } from "tailwind-merge";
 
@@ -23,7 +23,68 @@ type DateInputProps = {
 const iconTriggerClass =
   "inline-flex h-7 w-7 touch-manipulation items-center justify-center rounded-md border border-ctp-surface1 bg-ctp-surface0 text-ctp-subtext0 shadow-sm transition-colors hover:cursor-pointer hover:border-ctp-surface2 hover:bg-ctp-surface1 hover:text-ctp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40 active:bg-ctp-surface2";
 
+function createMediaQuery(query: string) {
+  const mql = window.matchMedia(query);
+  const [matches, setMatches] = createSignal(mql.matches);
+  const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+  mql.addEventListener("change", handler);
+  onCleanup(() => mql.removeEventListener("change", handler));
+  return matches;
+}
+
 export const DateInput: Component<DateInputProps> = (props) => {
+  const isCoarsePointer = createMediaQuery("(pointer: coarse)");
+
+  return (
+    <Show when={isCoarsePointer()} fallback={<DesktopDateInput {...props} />}>
+      <NativeDateInput {...props} />
+    </Show>
+  );
+};
+
+const NativeDateInput: Component<DateInputProps> = (props) => {
+  const dateString = () => {
+    const first = props.value?.[0];
+    return first ? first.toString() : "";
+  };
+
+  return (
+    <div class="flex min-w-42 flex-col gap-1.5">
+      <Show when={props.label}>
+        <label class="text-sm font-medium text-ctp-subtext1">{props.label}</label>
+      </Show>
+      <div
+        onFocusOut={props.onBlur}
+        class={twMerge(
+          "flex h-9.5 items-center rounded-md border border-ctp-surface1 bg-ctp-base text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2",
+          props.class,
+        )}
+      >
+        <input
+          type="date"
+          name={props.name}
+          value={dateString()}
+          class="h-full w-full bg-transparent px-3 text-sm text-ctp-text focus:outline-none"
+          onInput={(e) => {
+            const v = e.currentTarget.value;
+            if (!v) {
+              props.onValueChange?.({ value: [], valueAsString: [] });
+              return;
+            }
+            try {
+              const date = parseDate(v);
+              props.onValueChange?.({ value: [date], valueAsString: [v] });
+            } catch {
+              props.onValueChange?.({ value: [], valueAsString: [] });
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const DesktopDateInput: Component<DateInputProps> = (props) => {
   const datePicker = useDatePicker(() => ({
     value: props.value,
     onValueChange: (details) => props.onValueChange?.(details),
