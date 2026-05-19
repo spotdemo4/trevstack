@@ -33,8 +33,8 @@ const Layout: Component<LayoutProps> = (props) => {
             </LayoutNavLink>
             <Navbar.Indicator />
           </Navbar>
-          <div class="h-6 w-px bg-ctp-surface1" />
-          <div class="flex items-center gap-2">
+          <div class="hidden h-6 w-px bg-ctp-surface1 md:block" />
+          <div class="hidden items-center gap-2 md:flex">
             <Theme.Swap />
             <Github />
           </div>
