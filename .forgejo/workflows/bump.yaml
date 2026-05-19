@@ -28,6 +28,7 @@ jobs:
       - name: Initialize
         uses: spotdemo4/nix-init@8cfbe9e5d4eef03c557a70763c90af7ff4aafe67 # v1.46.0
         with:
+          token: ${{ secrets.DOCTOR_TOKEN }}
           github_token: ${{ secrets.GH_TOKEN }}
           fetch_depth: 0
           shell: bump
@@ -35,7 +36,7 @@ jobs:
       - name: Bump
         run: bumper
         env:
-          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DOCTOR_TOKEN }}
           FORCE: ${{ inputs.force }}
           PATHS: |
             README.md

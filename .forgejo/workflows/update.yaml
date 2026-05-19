@@ -23,6 +23,6 @@ jobs:
         run: renovate
         env:
           RENOVATE_CONFIG_FILE: .forgejo/renovate.json
-          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_TOKEN: ${{ secrets.DOCTOR_TOKEN }}
           RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GH_TOKEN }}
           LOG_LEVEL: ${{ runner.debug == '1' && 'debug' || 'info' }}
