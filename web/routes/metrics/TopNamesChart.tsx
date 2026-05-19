@@ -16,6 +16,7 @@ type TopNamesChartProps = {
 
 const margin = { top: 8, right: 24, bottom: 28, left: 96 };
 const rowHeight = 28;
+const minChartHeight = 260;
 
 const TopNamesChart: Component<TopNamesChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
@@ -25,7 +26,7 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let tooltipRef!: HTMLDivElement;
   const dynamicHeight = () =>
-    Math.max(120, props.names.length * rowHeight + margin.top + margin.bottom);
+    Math.max(minChartHeight, props.names.length * rowHeight + margin.top + margin.bottom);
   const { width } = useChartSize(() => containerRef, 0);
 
   createEffect(() => {
