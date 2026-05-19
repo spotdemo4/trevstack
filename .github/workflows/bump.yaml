@@ -41,6 +41,5 @@ jobs:
           GITHUB_TOKEN: ${{ steps.init.outputs.token }}
           FORCE: ${{ inputs.force }}
           PATHS: |
-            README.md
             openapi.yaml
             server/handlers/docs/openapi.yaml

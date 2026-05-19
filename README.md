@@ -50,7 +50,7 @@ nix build
 ### release
 
 ```sh
-bumper "openapi.yaml" "README.md" "web"
+bumper "openapi.yaml" "server/handlers/docs/openapi.yaml"
 ```
 
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes
@@ -60,13 +60,13 @@ releases are automatically created for [significant](https://www.conventionalcom
 ### docker
 
 ```sh
-docker run -P ghcr.io/spotdemo4/trevstack:0.11.2
+docker run -P trev.zip/trev/stack:latest
 ```
 
 ### nix
 
 ```sh
-nix run github:spotdemo4/trevstack
+nix run git+https://trev.zip/trev/stack.git
 ```
 
 ### download
