@@ -15,6 +15,7 @@ type HeaderProps = {
 type BodyProps<T> = {
   class?: string;
   items: T[];
+  emptyMessage?: JSX.Element;
   children: (item: T) => JSX.Element;
 };
 
@@ -115,14 +116,22 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
   });
 
   return (
-    <>
-      {/* The large inner element to hold all of the items */}
-      <tbody
-        style={{
-          display: "block",
-          height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-          position: "relative", //needed for absolute positioning of rows
-        }}
+    <tbody
+      style={{
+        display: "block",
+        height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+        position: "relative", //needed for absolute positioning of rows
+      }}
+    >
+      <Show
+        when={props.items.length > 0}
+        fallback={
+          <tr class={twMerge("text-sm", styles.emptyState, props.class)}>
+            <td colspan={table.columns().length} class="px-3 text-center text-ctp-subtext0">
+              {props.emptyMessage ?? "No items found."}
+            </td>
+          </tr>
+        }
       >
         {/* Only the visible items in the virtualizer, manually positioned to be in view */}
         <For each={virtualizer.getVirtualItems()}>
@@ -164,8 +173,8 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
             </tr>
           )}
         </For>
-      </tbody>
-    </>
+      </Show>
+    </tbody>
   );
 };
 
