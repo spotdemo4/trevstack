@@ -21,7 +21,7 @@ function createMediaQuery(query: string) {
 }
 
 const Numbers: Component = () => {
-  const isDesktop = createMediaQuery("(min-width: 768px)");
+  const isDesktop = createMediaQuery("(min-width: 900px)");
 
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
   const items = createStreamingStore(
