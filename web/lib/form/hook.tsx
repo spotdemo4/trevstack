@@ -17,7 +17,7 @@ import styles from "./hook.module.css";
 const FieldFallback: Component<{ label?: string; class?: string }> = (props) => (
   <div class={`${styles.fieldFallback} flex flex-col gap-1.5`}>
     <Show when={props.label}>
-      <Skeleton class="h-5 w-20" />
+      <label class="text-sm font-medium text-ctp-subtext1">{props.label}</label>
     </Show>
     <Skeleton
       class={twMerge("h-9.5 min-w-42 border border-ctp-surface1 bg-ctp-base", props.class)}
