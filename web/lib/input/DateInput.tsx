@@ -56,7 +56,7 @@ const NativeDateInput: Component<DateInputProps> = (props) => {
       <div
         onFocusOut={props.onBlur}
         class={twMerge(
-          "flex h-9.5 items-center rounded-md border border-ctp-surface1 bg-ctp-base text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2",
+          "flex h-9.5 items-center rounded-md border border-ctp-surface1 bg-ctp-base pr-1.5 text-sm text-ctp-text transition-colors focus-within:border-ctp-sky focus-within:ring-2 focus-within:ring-ctp-sky/40 hover:border-ctp-surface2",
           props.class,
         )}
       >
@@ -64,7 +64,7 @@ const NativeDateInput: Component<DateInputProps> = (props) => {
           type="date"
           name={props.name}
           value={dateString()}
-          class="h-full w-full bg-transparent px-3 text-sm text-ctp-text focus:outline-none"
+          class="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-ctp-text focus:outline-none"
           onInput={(e) => {
             const v = e.currentTarget.value;
             if (!v) {
