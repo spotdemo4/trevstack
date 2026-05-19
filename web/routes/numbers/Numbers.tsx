@@ -77,9 +77,12 @@ const Numbers: Component = () => {
       <Show
         when={isDesktop()}
         fallback={
-          <div class="flex h-full flex-col">
+          <div class="relative h-full">
+            <div class="h-full min-h-0">
+              <TableContent />
+            </div>
             <Drawer.Root>
-              <Drawer.Trigger>
+              <Drawer.Trigger class="absolute right-4 bottom-4 z-10 m-0 shadow-lg">
                 <SlidersHorizontal size={16} /> Filters
               </Drawer.Trigger>
               <Drawer.Content>
@@ -90,9 +93,6 @@ const Numbers: Component = () => {
                 <FormContent />
               </Drawer.Content>
             </Drawer.Root>
-            <div class="min-h-0 grow">
-              <TableContent />
-            </div>
           </div>
         }
       >
