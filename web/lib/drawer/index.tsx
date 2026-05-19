@@ -12,7 +12,7 @@ type ContentProps = ArkDrawer.ContentProps & {
 };
 
 export const Root: Component<ArkDrawer.RootProps> = (props) => {
-  return <ArkDrawer.Root {...props} />;
+  return <ArkDrawer.Root swipeDirection="start" {...props} />;
 };
 
 export const Trigger: Component<ArkDrawer.TriggerProps> = (props) => {
