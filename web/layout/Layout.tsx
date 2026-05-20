@@ -1,8 +1,9 @@
+import Button from "$lib/button";
 import { AppToaster } from "$lib/toast";
 import { ExternalLink } from "lucide-solid";
+import { GitBranch } from "lucide-solid";
 import { type Component, children, type JSX } from "solid-js";
 
-import Github from "./Github";
 import Navbar from "./Navbar";
 import NavLink from "./NavLink";
 import ThemeSwitch from "./theme-switch";
@@ -35,7 +36,15 @@ const Layout: Component<LayoutProps> = (props) => {
           <div class="hidden h-6 w-px bg-ctp-surface1 md:block" />
           <div class="hidden items-center gap-2 md:flex">
             <ThemeSwitch />
-            <Github />
+            <Button.Icon
+              as="a"
+              href="https://trev.zip/trev/stack"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open TrevStack on GitHub"
+            >
+              <GitBranch />
+            </Button.Icon>
           </div>
         </div>
       </header>
