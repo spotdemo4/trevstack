@@ -17,7 +17,7 @@ type IconProps = (IconAsButtonProps | IconAsAnchorProps) & {
   class?: string;
 };
 
-const Icon: Component<IconProps> = (props) => {
+export const Icon: Component<IconProps> = (props) => {
   const [local, rest] = splitProps(props, ["as", "class", "children"]);
   const component = local.as ?? "button";
 
@@ -27,5 +27,3 @@ const Icon: Component<IconProps> = (props) => {
     </Dynamic>
   );
 };
-
-export default Icon;

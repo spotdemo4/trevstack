@@ -20,7 +20,7 @@ const baseClass =
   "inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text";
 const activeClass = "text-ctp-text";
 
-const NavLink = (props: NavLinkProps) => {
+export const NavLink = (props: NavLinkProps) => {
   if (props.as === "a") {
     const [local, rest] = splitProps(props, ["as", "class"]);
     return <Dynamic component="a" {...rest} class={twMerge(baseClass, local.class)} />;
@@ -36,5 +36,3 @@ const NavLink = (props: NavLinkProps) => {
     />
   );
 };
-
-export default NavLink;

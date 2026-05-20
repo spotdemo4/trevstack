@@ -7,10 +7,10 @@ import { NumberInput, SelectInput } from "$lib/input";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
 import { type Component, createMemo, createSignal } from "solid-js";
 
-import DistributionChart from "./distribution-chart";
-import SummaryCards from "./summary-cards";
-import TimeSeriesChart from "./time-series-chart";
-import TopNamesChart from "./top-names-chart";
+import { DistributionChart } from "./distribution-chart";
+import { SummaryCards } from "./summary-cards";
+import { TimeSeriesChart } from "./time-series-chart";
+import { TopNamesChart } from "./top-names-chart";
 
 const intervalOptions: { value: TimeInterval; label: string }[] = [
   { value: TimeInterval.HOUR, label: "Hour" },
@@ -24,7 +24,7 @@ type MetricsRange = {
   end?: Timestamp;
 };
 
-const Metrics: Component = () => {
+export const Metrics: Component = () => {
   const [rangeFilter, setRangeFilter] = createSignal<MetricsRange>({});
   const [interval, setInterval] = createSignal<TimeInterval>(TimeInterval.DAY);
   const [bucketCount, setBucketCount] = createSignal(10);
@@ -146,5 +146,3 @@ const Metrics: Component = () => {
     </div>
   );
 };
-
-export default Metrics;

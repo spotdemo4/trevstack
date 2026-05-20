@@ -118,6 +118,6 @@ type NavbarComponent = Component<NavbarProps> & {
   Indicator: Component;
 };
 
-export default Object.assign(NavbarRoot, {
+export const Navbar = Object.assign(NavbarRoot, {
   Indicator,
 }) as NavbarComponent;

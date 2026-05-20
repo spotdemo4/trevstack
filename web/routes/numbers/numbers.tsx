@@ -1,18 +1,18 @@
 import { ListRequestSchema, type ListRequest } from "$connect/number/v1/list_pb";
 import { NumberClient } from "$lib/connect";
-import Drawer from "$lib/drawer";
+import { Drawer } from "$lib/drawer";
 import { useForm } from "$lib/form/hook";
 import { createMediaQuery } from "$lib/media-query";
-import Splitter from "$lib/splitter";
+import { Splitter } from "$lib/splitter";
 import { createStreamingStore } from "$lib/stream";
-import Table from "$lib/table";
+import { Table } from "$lib/table";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createStandardSchema } from "@bufbuild/protovalidate";
 import { SlidersHorizontal } from "lucide-solid";
 import { type Component, createSignal, Show } from "solid-js";
 
-const Numbers: Component = () => {
+export const Numbers: Component = () => {
   const isDesktop = createMediaQuery("(min-width: 900px)");
 
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
@@ -109,5 +109,3 @@ const Numbers: Component = () => {
     </div>
   );
 };
-
-export default Numbers;

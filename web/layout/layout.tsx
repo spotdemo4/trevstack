@@ -1,18 +1,18 @@
-import Button from "$lib/button";
+import { Button } from "$lib/button";
 import { AppToaster } from "$lib/toast";
 import { ExternalLink } from "lucide-solid";
 import { GitBranch } from "lucide-solid";
 import { type Component, children, type JSX } from "solid-js";
 
-import NavLink from "./nav-link";
-import Navbar from "./navbar";
-import ThemeSwitch from "./theme-switch";
+import { NavLink } from "./nav-link";
+import { Navbar } from "./navbar";
+import { ThemeSwitch } from "./theme-switch";
 
 type LayoutProps = {
   children?: JSX.Element;
 };
 
-const Layout: Component<LayoutProps> = (props) => {
+export const Layout: Component<LayoutProps> = (props) => {
   const resolved = children(() => props.children);
 
   return (
@@ -53,5 +53,3 @@ const Layout: Component<LayoutProps> = (props) => {
     </div>
   );
 };
-
-export default Layout;

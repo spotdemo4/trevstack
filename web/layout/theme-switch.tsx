@@ -1,4 +1,4 @@
-import Button from "$lib/button";
+import { Button } from "$lib/button";
 import { Swap } from "@ark-ui/solid";
 import { Moon, Sun } from "lucide-solid";
 import { createSignal } from "solid-js";
@@ -21,7 +21,7 @@ function toggleTheme(dark: boolean) {
   }
 }
 
-const Switch = () => {
+export const ThemeSwitch = () => {
   const [dark, setDark] = createSignal(
     localStorage.theme === "dark" ||
       (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches),
@@ -47,5 +47,3 @@ const Switch = () => {
     </Button.Icon>
   );
 };
-
-export default Switch;

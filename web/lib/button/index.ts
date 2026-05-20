@@ -1,3 +1,5 @@
-import Icon from "./icon";
+import { Icon } from "./icon";
 
-export default { Icon };
+export { Icon };
+
+export const Button = { Icon };

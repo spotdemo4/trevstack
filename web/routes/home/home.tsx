@@ -8,7 +8,7 @@ import { createStandardSchema } from "@bufbuild/protovalidate";
 import { Effect } from "effect";
 import type { Component } from "solid-js";
 
-const Home: Component = () => {
+export const Home: Component = () => {
   const form = useForm(() => ({
     defaultValues: { ...create(AddRequestSchema) },
     validators: {
@@ -53,5 +53,3 @@ const Home: Component = () => {
     </div>
   );
 };
-
-export default Home;

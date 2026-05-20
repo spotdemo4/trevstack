@@ -71,7 +71,7 @@ export const CloseTrigger: Component<ArkDrawer.CloseTriggerProps> = (props) => {
   );
 };
 
-export default {
+export const Drawer = {
   Root,
   Trigger,
   Content,

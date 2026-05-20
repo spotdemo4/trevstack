@@ -18,7 +18,7 @@ const margin = { top: 8, right: 24, bottom: 28, left: 96 };
 const rowHeight = 28;
 const minChartHeight = 260;
 
-const TopNamesChart: Component<TopNamesChartProps> = (props) => {
+export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let containerRef!: HTMLDivElement;
   // oxlint-disable-next-line no-unassigned-vars
@@ -171,5 +171,3 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
     </div>
   );
 };
-
-export default TopNamesChart;

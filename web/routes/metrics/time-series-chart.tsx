@@ -18,7 +18,7 @@ type TimeSeriesChartProps = {
 
 const margin = { top: 12, right: 16, bottom: 28, left: 44 };
 
-const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
+export const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let containerRef!: HTMLDivElement;
   // oxlint-disable-next-line no-unassigned-vars
@@ -181,5 +181,3 @@ const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
     </div>
   );
 };
-
-export default TimeSeriesChart;

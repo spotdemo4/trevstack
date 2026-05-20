@@ -16,7 +16,7 @@ const formatBig = (n: bigint | number): string => Number(n).toLocaleString();
 const formatFloat = (n: number): string =>
   n.toLocaleString(undefined, { maximumFractionDigits: 2 });
 
-const SummaryCards: Component<SummaryCardsProps> = (props) => {
+export const SummaryCards: Component<SummaryCardsProps> = (props) => {
   const stats = () => {
     const d = props.data;
     if (!d) return [];
@@ -67,5 +67,3 @@ const SummaryCards: Component<SummaryCardsProps> = (props) => {
     </div>
   );
 };
-
-export default SummaryCards;

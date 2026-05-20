@@ -16,7 +16,7 @@ type DistributionChartProps = {
 
 const margin = { top: 12, right: 16, bottom: 64, left: 44 };
 
-const DistributionChart: Component<DistributionChartProps> = (props) => {
+export const DistributionChart: Component<DistributionChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let containerRef!: HTMLDivElement;
   // oxlint-disable-next-line no-unassigned-vars
@@ -162,5 +162,3 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
     </div>
   );
 };
-
-export default DistributionChart;
