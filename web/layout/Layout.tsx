@@ -1,11 +1,11 @@
-import { Navbar } from "$lib/navbar";
 import Theme from "$lib/theme";
 import { AppToaster } from "$lib/toast";
 import { ExternalLink } from "lucide-solid";
 import { type Component, children, type JSX } from "solid-js";
 
 import Github from "./Github";
-import LayoutNavLink from "./LayoutNavLink";
+import Navbar from "./Navbar";
+import NavLink from "./NavLink";
 
 type LayoutProps = {
   children?: JSX.Element;
@@ -22,14 +22,14 @@ const Layout: Component<LayoutProps> = (props) => {
         </h1>
         <div class="flex h-full items-center gap-4 overflow-x-auto px-4">
           <Navbar>
-            <LayoutNavLink end href="/">
+            <NavLink end href="/">
               Home
-            </LayoutNavLink>
-            <LayoutNavLink href="/numbers">Numbers</LayoutNavLink>
-            <LayoutNavLink href="/metrics">Metrics</LayoutNavLink>
-            <LayoutNavLink as="a" href="/docs" target="_blank" class="items-center gap-1">
+            </NavLink>
+            <NavLink href="/numbers">Numbers</NavLink>
+            <NavLink href="/metrics">Metrics</NavLink>
+            <NavLink as="a" href="/docs" target="_blank" class="items-center gap-1">
               Docs <ExternalLink size={16} />
-            </LayoutNavLink>
+            </NavLink>
             <Navbar.Indicator />
           </Navbar>
           <div class="hidden h-6 w-px bg-ctp-surface1 md:block" />
