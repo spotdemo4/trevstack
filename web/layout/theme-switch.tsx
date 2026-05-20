@@ -3,7 +3,7 @@ import { Swap } from "@ark-ui/solid";
 import { Moon, Sun } from "lucide-solid";
 import { createSignal } from "solid-js";
 
-import styles from "./swap.module.css";
+import styles from "./theme-switch.module.css";
 
 function toggleTheme(dark: boolean) {
   if (dark) {

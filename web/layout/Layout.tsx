@@ -1,4 +1,3 @@
-import Theme from "$lib/theme";
 import { AppToaster } from "$lib/toast";
 import { ExternalLink } from "lucide-solid";
 import { type Component, children, type JSX } from "solid-js";
@@ -6,6 +5,7 @@ import { type Component, children, type JSX } from "solid-js";
 import Github from "./Github";
 import Navbar from "./Navbar";
 import NavLink from "./NavLink";
+import ThemeSwitch from "./theme-switch";
 
 type LayoutProps = {
   children?: JSX.Element;
@@ -34,7 +34,7 @@ const Layout: Component<LayoutProps> = (props) => {
           </Navbar>
           <div class="hidden h-6 w-px bg-ctp-surface1 md:block" />
           <div class="hidden items-center gap-2 md:flex">
-            <Theme.Swap />
+            <ThemeSwitch />
             <Github />
           </div>
         </div>
