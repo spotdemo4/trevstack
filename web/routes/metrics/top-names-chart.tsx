@@ -1,14 +1,18 @@
 import type { TopName } from "$connect/number/v1/metrics_pb";
+import {
+  ChartFrame,
+  getChartInnerSize,
+  hideChartTooltip,
+  showChartTooltip,
+  styles,
+  useChartSize,
+} from "$lib/chart";
 import { max } from "d3-array";
 import { axisBottom, axisLeft } from "d3-axis";
 import { format } from "d3-format";
 import { scaleBand, scaleLinear } from "d3-scale";
-import { pointer, select } from "d3-selection";
-import { type Component, createEffect, Show } from "solid-js";
-
-import { useChartSize } from "./use-chart-size";
-
-import styles from "./chart-motion.module.css";
+import { select } from "d3-selection";
+import { type Component, createEffect } from "solid-js";
 
 type TopNamesChartProps = {
   names: TopName[];
@@ -19,15 +23,22 @@ const rowHeight = 28;
 const minChartHeight = 260;
 
 export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
-  // oxlint-disable-next-line no-unassigned-vars
   let containerRef!: HTMLDivElement;
-  // oxlint-disable-next-line no-unassigned-vars
   let svgRef!: SVGSVGElement;
-  // oxlint-disable-next-line no-unassigned-vars
   let tooltipRef!: HTMLDivElement;
+
   const dynamicHeight = () =>
     Math.max(minChartHeight, props.names.length * rowHeight + margin.top + margin.bottom);
   const { width } = useChartSize(() => containerRef, 0);
+  const setContainerRef = (element: HTMLDivElement) => {
+    containerRef = element;
+  };
+  const setSvgRef = (element: SVGSVGElement) => {
+    svgRef = element;
+  };
+  const setTooltipRef = (element: HTMLDivElement) => {
+    tooltipRef = element;
+  };
 
   createEffect(() => {
     const w = width();
@@ -42,43 +53,24 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
     }));
 
     const svg = select(svgRef);
-    const tooltip = select(tooltipRef);
     svg.selectAll("*").remove();
-    tooltip.style("opacity", "0");
+    hideChartTooltip(tooltipRef);
     if (data.length === 0) return;
 
     const formatInteger = format(",");
     const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
-      const [xPos, yPos] = pointer(event, containerRef);
-      tooltip
-        .text(
-          `${d.name}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
-        )
-        .style("opacity", "1");
-
-      const tooltipNode = tooltipRef;
-      const containerRect = containerRef.getBoundingClientRect();
-      const tooltipRect = tooltipNode.getBoundingClientRect();
-      const offset = 12;
-      const left =
-        xPos + tooltipRect.width + offset > containerRect.width
-          ? xPos - tooltipRect.width - offset
-          : xPos + offset;
-      const top =
-        yPos + tooltipRect.height + offset > containerRect.height
-          ? yPos - tooltipRect.height - offset
-          : yPos + offset;
-
-      tooltip
-        .style("left", `${Math.max(offset, left)}px`)
-        .style("top", `${Math.max(offset, top)}px`);
+      showChartTooltip({
+        event,
+        container: containerRef,
+        tooltip: tooltipRef,
+        text: `${d.name}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
+      });
     };
     const hideTooltip = () => {
-      tooltip.style("opacity", "0");
+      hideChartTooltip(tooltipRef);
     };
 
-    const innerW = Math.max(0, w - margin.left - margin.right);
-    const innerH = Math.max(0, h - margin.top - margin.bottom);
+    const { innerW, innerH } = getChartInnerSize(w, h, margin);
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -150,24 +142,14 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
   });
 
   return (
-    <div ref={containerRef} class="relative w-full">
-      <svg
-        ref={svgRef}
-        width={width()}
-        height={dynamicHeight()}
-        class={`${styles.ChartCanvas} block`}
-      />
-      <div
-        ref={tooltipRef}
-        class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
-      />
-      <Show when={props.names.length === 0}>
-        <div
-          class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0`}
-        >
-          No data in range
-        </div>
-      </Show>
-    </div>
+    <ChartFrame
+      width={width()}
+      height={dynamicHeight()}
+      isEmpty={props.names.length === 0}
+      emptyLabel="No data in range"
+      containerRef={setContainerRef}
+      svgRef={setSvgRef}
+      tooltipRef={setTooltipRef}
+    />
   );
 };

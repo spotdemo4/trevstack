@@ -1,5 +1,12 @@
 import { type Accessor, createSignal, onCleanup, onMount } from "solid-js";
 
+export type ChartMargin = {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+};
+
 export function useChartSize(
   ref: () => HTMLElement | undefined,
   fallbackHeight: number,
@@ -19,4 +26,15 @@ export function useChartSize(
   });
 
   return { width, height };
+}
+
+export function getChartInnerSize(
+  width: number,
+  height: number,
+  margin: ChartMargin,
+): { innerW: number; innerH: number } {
+  return {
+    innerW: Math.max(0, width - margin.left - margin.right),
+    innerH: Math.max(0, height - margin.top - margin.bottom),
+  };
 }
