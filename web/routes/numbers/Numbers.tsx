@@ -16,7 +16,7 @@ const Numbers: Component = () => {
   const isDesktop = createMediaQuery("(min-width: 900px)");
 
   const [request, setRequest] = createSignal<ListRequest>(create(ListRequestSchema));
-  const items = createStreamingStore(
+  const stream = createStreamingStore(
     request,
     (req) => NumberClient.list(req),
     (resp) => resp.item!,
@@ -50,7 +50,7 @@ const Numbers: Component = () => {
         <th>Name</th>
         <th>Number</th>
       </Table.Header>
-      <Table.Body items={items}>
+      <Table.Body items={stream.items} loading={stream.loading()}>
         {(item) => (
           <>
             <td class="text-sm text-ctp-subtext0 tabular-nums">

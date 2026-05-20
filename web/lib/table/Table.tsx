@@ -15,6 +15,7 @@ type HeaderProps = {
 type BodyProps<T> = {
   class?: string;
   items: T[];
+  loading?: boolean;
   emptyMessage?: JSX.Element;
   children: (item: T) => JSX.Element;
 };
@@ -124,7 +125,7 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
       }}
     >
       <Show
-        when={props.items.length > 0}
+        when={props.loading || props.items.length > 0}
         fallback={
           <tr class={twMerge("text-sm", styles.emptyState, props.class)}>
             <td colspan={table.columns().length} class="px-3 text-center text-ctp-subtext0">
