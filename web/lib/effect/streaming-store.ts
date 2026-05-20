@@ -1,8 +1,8 @@
 import { Effect, Fiber, Stream } from "effect";
-import { type Accessor, createEffect, createSignal, on, onCleanup } from "solid-js";
+import { createEffect, createSignal, on, onCleanup, type Accessor } from "solid-js";
 import { createStore } from "solid-js/store";
 
-type StreamingStore<Item> = {
+export type StreamingStore<Item> = {
   items: Item[];
   loading: Accessor<boolean>;
 };

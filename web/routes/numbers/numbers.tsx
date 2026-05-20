@@ -1,10 +1,10 @@
 import { ListRequestSchema, type ListRequest } from "$connect/number/v1/list_pb";
 import { NumberClient } from "$lib/connect";
 import { Drawer } from "$lib/drawer";
+import { createStreamingStore } from "$lib/effect";
 import { useForm } from "$lib/form/hook";
 import { createMediaQuery } from "$lib/media-query";
 import { Splitter } from "$lib/splitter";
-import { createStreamingStore } from "$lib/stream";
 import { Table } from "$lib/table";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
