@@ -1,4 +1,3 @@
-import logo from "$assets/logo.svg";
 import { Navbar } from "$lib/navbar";
 import Theme from "$lib/theme";
 import { AppToaster } from "$lib/toast";
@@ -19,7 +18,7 @@ const Layout: Component<LayoutProps> = (props) => {
     <div class="flex min-h-dvh flex-col">
       <header class="sticky top-0 z-30 flex h-header justify-center border-b border-ctp-surface1 bg-ctp-crust md:justify-between">
         <h1 class="hidden cursor-default items-center gap-2 px-4 font-mono text-lg font-semibold md:flex">
-          TrevStack <img src={logo} class="h-6" alt="logo" />
+          TrevStack <img src="/icons/icon.svg" class="h-6" alt="logo" />
         </h1>
         <div class="flex h-full items-center gap-4 overflow-x-auto px-4">
           <Navbar>
