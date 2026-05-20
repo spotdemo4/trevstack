@@ -1,5 +1,2 @@
-import { Icon } from "./icon";
-
-export { Icon };
-
-export const Button = { Icon };
+export { Button } from "./button";
+export { Icon } from "./icon";

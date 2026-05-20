@@ -1,3 +1,1 @@
-import { NumberClient } from "./clients";
-
-export { NumberClient };
+export { NumberClient } from "./clients";

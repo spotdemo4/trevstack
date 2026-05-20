@@ -1,6 +1,6 @@
-import { Table as TableRoot, Header, Body } from "./table";
+import { Body, Header, Table as TableRoot } from "./table";
 
-export { TableRoot, Header, Body };
+export { Body, Header, TableRoot };
 
 export const Table = {
   Table: TableRoot,
