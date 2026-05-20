@@ -82,7 +82,7 @@ func TestList(t *testing.T) {
 		seed(t, db, "c", 500, now)
 
 		min, max := uint32(10), uint32(100)
-		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Min: &min, Max: &max}.Build())
+		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Minimum: &min, Maximum: &max}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
@@ -106,9 +106,9 @@ func TestList(t *testing.T) {
 		req  *numberv1.ListRequest
 	}{
 		{"name too long", numberv1.ListRequest_builder{Name: &tooLong}.Build()},
-		{"min above max value", numberv1.ListRequest_builder{Min: &huge}.Build()},
-		{"max above max value", numberv1.ListRequest_builder{Max: &huge}.Build()},
-		{"min greater than max (CEL)", numberv1.ListRequest_builder{Min: &lo, Max: &hi}.Build()},
+		{"minimum above max value", numberv1.ListRequest_builder{Minimum: &huge}.Build()},
+		{"maximum above max value", numberv1.ListRequest_builder{Maximum: &huge}.Build()},
+		{"minimum greater than maximum (CEL)", numberv1.ListRequest_builder{Minimum: &lo, Maximum: &hi}.Build()},
 		{"end before start (CEL)", numberv1.ListRequest_builder{Start: later, End: earlier}.Build()},
 	}
 	for _, tc := range validationCases {

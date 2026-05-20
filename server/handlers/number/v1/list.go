@@ -25,11 +25,11 @@ func (h *Handler) List(
 	if req.HasName() {
 		nameArg = req.GetName()
 	}
-	if req.HasMin() {
-		minArg = req.GetMin()
+	if req.HasMinimum() {
+		minArg = req.GetMinimum()
 	}
-	if req.HasMax() {
-		maxArg = req.GetMax()
+	if req.HasMaximum() {
+		maxArg = req.GetMaximum()
 	}
 	if start := req.GetStart(); start != nil {
 		startArg = start.AsTime()

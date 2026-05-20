@@ -158,8 +158,8 @@ func (b0 Item_builder) Build() *Item {
 type ListRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name"`
-	xxx_hidden_Min         uint32                 `protobuf:"varint,2,opt,name=min"`
-	xxx_hidden_Max         uint32                 `protobuf:"varint,3,opt,name=max"`
+	xxx_hidden_Minimum     uint32                 `protobuf:"varint,2,opt,name=minimum"`
+	xxx_hidden_Maximum     uint32                 `protobuf:"varint,3,opt,name=maximum"`
 	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start"`
 	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=end"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
@@ -203,16 +203,16 @@ func (x *ListRequest) GetName() string {
 	return ""
 }
 
-func (x *ListRequest) GetMin() uint32 {
+func (x *ListRequest) GetMinimum() uint32 {
 	if x != nil {
-		return x.xxx_hidden_Min
+		return x.xxx_hidden_Minimum
 	}
 	return 0
 }
 
-func (x *ListRequest) GetMax() uint32 {
+func (x *ListRequest) GetMaximum() uint32 {
 	if x != nil {
-		return x.xxx_hidden_Max
+		return x.xxx_hidden_Maximum
 	}
 	return 0
 }
@@ -236,13 +236,13 @@ func (x *ListRequest) SetName(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
 }
 
-func (x *ListRequest) SetMin(v uint32) {
-	x.xxx_hidden_Min = v
+func (x *ListRequest) SetMinimum(v uint32) {
+	x.xxx_hidden_Minimum = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
-func (x *ListRequest) SetMax(v uint32) {
-	x.xxx_hidden_Max = v
+func (x *ListRequest) SetMaximum(v uint32) {
+	x.xxx_hidden_Maximum = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
@@ -261,14 +261,14 @@ func (x *ListRequest) HasName() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
-func (x *ListRequest) HasMin() bool {
+func (x *ListRequest) HasMinimum() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
-func (x *ListRequest) HasMax() bool {
+func (x *ListRequest) HasMaximum() bool {
 	if x == nil {
 		return false
 	}
@@ -294,14 +294,14 @@ func (x *ListRequest) ClearName() {
 	x.xxx_hidden_Name = nil
 }
 
-func (x *ListRequest) ClearMin() {
+func (x *ListRequest) ClearMinimum() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Min = 0
+	x.xxx_hidden_Minimum = 0
 }
 
-func (x *ListRequest) ClearMax() {
+func (x *ListRequest) ClearMaximum() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Max = 0
+	x.xxx_hidden_Maximum = 0
 }
 
 func (x *ListRequest) ClearStart() {
@@ -315,11 +315,11 @@ func (x *ListRequest) ClearEnd() {
 type ListRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Name  *string
-	Min   *uint32
-	Max   *uint32
-	Start *timestamppb.Timestamp
-	End   *timestamppb.Timestamp
+	Name    *string
+	Minimum *uint32
+	Maximum *uint32
+	Start   *timestamppb.Timestamp
+	End     *timestamppb.Timestamp
 }
 
 func (b0 ListRequest_builder) Build() *ListRequest {
@@ -330,13 +330,13 @@ func (b0 ListRequest_builder) Build() *ListRequest {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
 		x.xxx_hidden_Name = b.Name
 	}
-	if b.Min != nil {
+	if b.Minimum != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
-		x.xxx_hidden_Min = *b.Min
+		x.xxx_hidden_Minimum = *b.Minimum
 	}
-	if b.Max != nil {
+	if b.Maximum != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
-		x.xxx_hidden_Max = *b.Max
+		x.xxx_hidden_Maximum = *b.Maximum
 	}
 	x.xxx_hidden_Start = b.Start
 	x.xxx_hidden_End = b.End
@@ -419,15 +419,15 @@ const file_number_v1_list_proto_rawDesc = "" +
 	"\x04Item\x128\n" +
 	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x04name\x12#\n" +
-	"\x06number\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x06number\"\xa3\x03\n" +
+	"\x06number\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x06number\"\xd4\x03\n" +
 	"\vListRequest\x12\x1d\n" +
-	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x00\x182R\x04name\x12\x1d\n" +
-	"\x03min\x18\x02 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x03min\x12\x1d\n" +
-	"\x03max\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x03max\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x00\x182R\x04name\x12%\n" +
+	"\aminimum\x18\x02 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\aminimum\x12%\n" +
+	"\amaximum\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\amaximum\x120\n" +
 	"\x05start\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
-	"\x03end\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x03end:\xd6\x01\xbaH\xd2\x01\x1ag\n" +
-	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\x1ag\n" +
-	"\x11min_less_than_max\x12\x19Min must be less than max\x1a7!has(this.min) || !has(this.max) || this.min < this.max\"3\n" +
+	"\x03end\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x03end:\xf7\x01\xbaH\xf3\x01\x1ag\n" +
+	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\x1a\x87\x01\n" +
+	"\x19minimum_less_than_maximum\x12!Minimum must be less than maximum\x1aG!has(this.minimum) || !has(this.maximum) || this.minimum < this.maximum\"3\n" +
 	"\fListResponse\x12#\n" +
 	"\x04item\x18\x01 \x01(\v2\x0f.number.v1.ItemR\x04itemB\xa1\x01\n" +
 	"\rcom.number.v1B\tListProtoP\x01Z@github.com/spotdemo4/trevstack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +

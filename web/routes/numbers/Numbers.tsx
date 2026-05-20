@@ -34,8 +34,12 @@ const Numbers: Component = () => {
     <form.AppForm>
       <form.Form class="justify-center">
         <form.AppField name="name">{(field) => <field.TextField label="Name" />}</form.AppField>
-        <form.AppField name="min">{(field) => <field.NumberField label="Minimum" />}</form.AppField>
-        <form.AppField name="max">{(field) => <field.NumberField label="Maximum" />}</form.AppField>
+        <form.AppField name="minimum">
+          {(field) => <field.NumberField label="Minimum" />}
+        </form.AppField>
+        <form.AppField name="maximum">
+          {(field) => <field.NumberField label="Maximum" />}
+        </form.AppField>
         <form.AppField name="start">{(field) => <field.DateField label="Start" />}</form.AppField>
         <form.AppField name="end">{(field) => <field.DateField label="End" />}</form.AppField>
         <form.SubmitButton label="Filter" />

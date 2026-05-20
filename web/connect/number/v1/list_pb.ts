@@ -14,7 +14,7 @@ import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
  * Describes the file number/v1/list.proto.
  */
 export const file_number_v1_list: GenFile /*@__PURE__*/ = fileDesc(
-  "ChRudW1iZXIvdjEvbGlzdC5wcm90bxIJbnVtYmVyLnYxImsKBEl0ZW0SLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCgRuYW1lGAIgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAMgASgNQgu6SAgqBhjAhD0oACKHAwoLTGlzdFJlcXVlc3QSFwoEbmFtZRgBIAEoCUIJukgGcgQQABgyEhgKA21pbhgCIAEoDUILukgIKgYYwIQ9KAASGAoDbWF4GAMgASgNQgu6SAgqBhjAhD0oABIpCgVzdGFydBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDrWAbpI0gEaZwoPZW5kX2FmdGVyX3N0YXJ0EhdFbmQgbXVzdCBiZSBhZnRlciBzdGFydBo7IWhhcyh0aGlzLmVuZCkgfHwgIWhhcyh0aGlzLnN0YXJ0KSB8fCB0aGlzLmVuZCA+IHRoaXMuc3RhcnQaZwoRbWluX2xlc3NfdGhhbl9tYXgSGU1pbiBtdXN0IGJlIGxlc3MgdGhhbiBtYXgaNyFoYXModGhpcy5taW4pIHx8ICFoYXModGhpcy5tYXgpIHx8IHRoaXMubWluIDwgdGhpcy5tYXgiLQoMTGlzdFJlc3BvbnNlEh0KBGl0ZW0YASABKAsyDy5udW1iZXIudjEuSXRlbUKhAQoNY29tLm51bWJlci52MUIJTGlzdFByb3RvUAFaQGdpdGh1Yi5jb20vc3BvdGRlbW80L3RyZXZzdGFjay9zZXJ2ZXIvY29ubmVjdC9udW1iZXIvdjE7bnVtYmVydjGiAgNOWFiqAglOdW1iZXIuVjHKAglOdW1iZXJcVjHiAhVOdW1iZXJcVjFcR1BCTWV0YWRhdGHqAgpOdW1iZXI6OlYxYghlZGl0aW9uc3DpBw",
+  "ChRudW1iZXIvdjEvbGlzdC5wcm90bxIJbnVtYmVyLnYxImsKBEl0ZW0SLQoJdGltZXN0YW1wGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIXCgRuYW1lGAIgASgJQgm6SAZyBBABGDISGwoGbnVtYmVyGAMgASgNQgu6SAgqBhjAhD0oACKwAwoLTGlzdFJlcXVlc3QSFwoEbmFtZRgBIAEoCUIJukgGcgQQABgyEhwKB21pbmltdW0YAiABKA1CC7pICCoGGMCEPSgAEhwKB21heGltdW0YAyABKA1CC7pICCoGGMCEPSgAEikKBXN0YXJ0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgNlbmQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wOvcBukjzARpnCg9lbmRfYWZ0ZXJfc3RhcnQSF0VuZCBtdXN0IGJlIGFmdGVyIHN0YXJ0GjshaGFzKHRoaXMuZW5kKSB8fCAhaGFzKHRoaXMuc3RhcnQpIHx8IHRoaXMuZW5kID4gdGhpcy5zdGFydBqHAQoZbWluaW11bV9sZXNzX3RoYW5fbWF4aW11bRIhTWluaW11bSBtdXN0IGJlIGxlc3MgdGhhbiBtYXhpbXVtGkchaGFzKHRoaXMubWluaW11bSkgfHwgIWhhcyh0aGlzLm1heGltdW0pIHx8IHRoaXMubWluaW11bSA8IHRoaXMubWF4aW11bSItCgxMaXN0UmVzcG9uc2USHQoEaXRlbRgBIAEoCzIPLm51bWJlci52MS5JdGVtQqEBCg1jb20ubnVtYmVyLnYxQglMaXN0UHJvdG9QAVpAZ2l0aHViLmNvbS9zcG90ZGVtbzQvdHJldnN0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiCGVkaXRpb25zcOkH",
   [file_buf_validate_validate, file_google_protobuf_timestamp],
 );
 
@@ -54,14 +54,14 @@ export type ListRequest = Message<"number.v1.ListRequest"> & {
   name: string;
 
   /**
-   * @generated from field: uint32 min = 2;
+   * @generated from field: uint32 minimum = 2;
    */
-  min: number;
+  minimum: number;
 
   /**
-   * @generated from field: uint32 max = 3;
+   * @generated from field: uint32 maximum = 3;
    */
-  max: number;
+  maximum: number;
 
   /**
    * @generated from field: google.protobuf.Timestamp start = 4;

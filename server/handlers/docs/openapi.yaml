@@ -280,14 +280,14 @@ components:
           type: string
           title: name
           maxLength: 50
-        min:
+        minimum:
           type: integer
-          title: min
+          title: minimum
           maximum: 1000000
           minimum: 0
-        max:
+        maximum:
           type: integer
-          title: max
+          title: maximum
           maximum: 1000000
           minimum: 0
         start:
@@ -300,7 +300,7 @@ components:
       additionalProperties: false
       description: |
         end_after_start // End must be after start
-        min_less_than_max // Min must be less than max
+        minimum_less_than_maximum // Minimum must be less than maximum
     number.v1.ListResponse:
       type: object
       properties:
