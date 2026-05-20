@@ -1,3 +1,4 @@
+import { createMediaQuery } from "$lib/media-query";
 import {
   DateInput as ArkDateInput,
   type DateInputValueChangeDetails,
@@ -7,7 +8,7 @@ import { DatePicker, useDatePicker } from "@ark-ui/solid/date-picker";
 import { type DateValue, parseDate } from "@internationalized/date";
 import { mergeProps } from "@zag-js/solid";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-solid";
-import { type Component, createSignal, Index, type JSX, onCleanup, Show } from "solid-js";
+import { type Component, Index, type JSX, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { twMerge } from "tailwind-merge";
 
@@ -22,15 +23,6 @@ type DateInputProps = {
 
 const iconTriggerClass =
   "inline-flex h-7 w-7 touch-manipulation items-center justify-center rounded-md border border-ctp-surface1 bg-ctp-surface0 text-ctp-subtext0 shadow-sm transition-colors hover:cursor-pointer hover:border-ctp-surface2 hover:bg-ctp-surface1 hover:text-ctp-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ctp-sky/40 active:bg-ctp-surface2";
-
-function createMediaQuery(query: string) {
-  const mql = window.matchMedia(query);
-  const [matches, setMatches] = createSignal(mql.matches);
-  const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
-  mql.addEventListener("change", handler);
-  onCleanup(() => mql.removeEventListener("change", handler));
-  return matches;
-}
 
 export const DateInput: Component<DateInputProps> = (props) => {
   const isCoarsePointer = createMediaQuery("(pointer: coarse)");

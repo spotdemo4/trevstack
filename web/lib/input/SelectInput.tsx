@@ -1,15 +1,8 @@
+import { createMediaQuery } from "$lib/media-query";
 import { createListCollection } from "@ark-ui/solid/collection";
 import { Select as ArkSelect, type SelectRootProps } from "@ark-ui/solid/select";
 import { ChevronDownIcon } from "lucide-solid";
-import {
-  type Component,
-  createMemo,
-  createSignal,
-  For,
-  onCleanup,
-  Show,
-  splitProps,
-} from "solid-js";
+import { type Component, createMemo, For, Show, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 import { twMerge } from "tailwind-merge";
 
@@ -25,15 +18,6 @@ type SelectInputProps = Omit<SelectRootProps<SelectItem>, "collection"> & {
   items: SelectItem[];
   placeholder?: string;
 };
-
-function createMediaQuery(query: string) {
-  const mql = window.matchMedia(query);
-  const [matches, setMatches] = createSignal(mql.matches);
-  const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
-  mql.addEventListener("change", handler);
-  onCleanup(() => mql.removeEventListener("change", handler));
-  return matches;
-}
 
 export const SelectInput: Component<SelectInputProps> = (props) => {
   const isCoarsePointer = createMediaQuery("(pointer: coarse)");
