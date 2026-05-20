@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
-	numberv1 "github.com/spotdemo4/trevstack/server/connect/number/v1"
+	numberv1 "trev.zip/trev/stack/server/connect/number/v1"
 )
 
 func TestAdd(t *testing.T) {

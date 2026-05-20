@@ -4,8 +4,8 @@ import (
 	"context"
 	_ "embed"
 
-	numberv1 "github.com/spotdemo4/trevstack/server/connect/number/v1"
-	"github.com/spotdemo4/trevstack/server/database"
+	numberv1 "trev.zip/trev/stack/server/connect/number/v1"
+	"trev.zip/trev/stack/server/database"
 )
 
 //go:embed add.sql

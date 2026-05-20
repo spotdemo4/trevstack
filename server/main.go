@@ -14,12 +14,12 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
-	"github.com/spotdemo4/trevstack/server/database"
-	docshandler "github.com/spotdemo4/trevstack/server/handlers/docs"
-	numberv1handler "github.com/spotdemo4/trevstack/server/handlers/number/v1"
-	webhandler "github.com/spotdemo4/trevstack/server/handlers/web"
-	"github.com/spotdemo4/trevstack/server/interceptors"
-	"github.com/spotdemo4/trevstack/server/logger"
+	"trev.zip/trev/stack/server/database"
+	docshandler "trev.zip/trev/stack/server/handlers/docs"
+	numberv1handler "trev.zip/trev/stack/server/handlers/number/v1"
+	webhandler "trev.zip/trev/stack/server/handlers/web"
+	"trev.zip/trev/stack/server/interceptors"
+	"trev.zip/trev/stack/server/logger"
 )
 
 var WebFS embed.FS

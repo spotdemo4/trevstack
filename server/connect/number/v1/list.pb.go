@@ -429,8 +429,8 @@ const file_number_v1_list_proto_rawDesc = "" +
 	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\x1a\x87\x01\n" +
 	"\x19minimum_less_than_maximum\x12!Minimum must be less than maximum\x1aG!has(this.minimum) || !has(this.maximum) || this.minimum < this.maximum\"3\n" +
 	"\fListResponse\x12#\n" +
-	"\x04item\x18\x01 \x01(\v2\x0f.number.v1.ItemR\x04itemB\xa1\x01\n" +
-	"\rcom.number.v1B\tListProtoP\x01Z@github.com/spotdemo4/trevstack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
+	"\x04item\x18\x01 \x01(\v2\x0f.number.v1.ItemR\x04itemB\x96\x01\n" +
+	"\rcom.number.v1B\tListProtoP\x01Z5trev.zip/trev/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\beditionsp\xe9\a"
 
 var file_number_v1_list_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

@@ -12,9 +12,9 @@ import (
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/spotdemo4/trevstack/server/connect/number/v1/numberv1connect"
-	"github.com/spotdemo4/trevstack/server/database"
-	numberv1handler "github.com/spotdemo4/trevstack/server/handlers/number/v1"
+	"trev.zip/trev/stack/server/connect/number/v1/numberv1connect"
+	"trev.zip/trev/stack/server/database"
+	numberv1handler "trev.zip/trev/stack/server/handlers/number/v1"
 )
 
 // newTest spins up an in-memory SQLite DB, runs migrations, and starts an

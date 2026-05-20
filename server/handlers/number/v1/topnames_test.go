@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	numberv1 "github.com/spotdemo4/trevstack/server/connect/number/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	numberv1 "trev.zip/trev/stack/server/connect/number/v1"
 )
 
 func TestTopNames(t *testing.T) {

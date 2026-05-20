@@ -8,9 +8,9 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	v1 "github.com/spotdemo4/trevstack/server/connect/number/v1"
 	http "net/http"
 	strings "strings"
+	v1 "trev.zip/trev/stack/server/connect/number/v1"
 )
 
 // This is a compile-time assertion to ensure that this generated file and the connect package are

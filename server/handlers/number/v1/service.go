@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"connectrpc.com/connect"
-	"github.com/spotdemo4/trevstack/server/connect/number/v1/numberv1connect"
+	"trev.zip/trev/stack/server/connect/number/v1/numberv1connect"
 )
 
 type Handler struct{}

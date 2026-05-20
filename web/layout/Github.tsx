@@ -4,7 +4,7 @@ const Github = () => {
   return (
     <Button.Icon
       as="a"
-      href="https://github.com/spotdemo4/trevstack"
+      href="https://trev.zip/trev/stack"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Open TrevStack on GitHub"

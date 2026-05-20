@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	numberv1 "github.com/spotdemo4/trevstack/server/connect/number/v1"
-	"github.com/spotdemo4/trevstack/server/database"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	numberv1 "trev.zip/trev/stack/server/connect/number/v1"
+	"trev.zip/trev/stack/server/database"
 )
 
 //go:embed timeseries.sql
