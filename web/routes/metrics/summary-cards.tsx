@@ -3,7 +3,7 @@ import { Card } from "$lib/card";
 import { Skeleton } from "$lib/skeleton";
 import { type Component, For, Show } from "solid-js";
 
-import styles from "./SummaryCards.module.css";
+import styles from "./summary-cards.module.css";
 
 type SummaryCardsProps = {
   data: SummaryResponse | undefined;

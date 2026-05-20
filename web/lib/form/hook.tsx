@@ -4,13 +4,13 @@ import { type Component, type ComponentProps, lazy, Show, Suspense } from "solid
 import { twMerge } from "tailwind-merge";
 
 import { fieldContext, formContext } from "./context";
-import type { DateField as DateFieldImpl } from "./DateField";
-import { Form } from "./Form";
-import type { NumberField as NumberFieldImpl } from "./NumberField";
-import { ResetButton } from "./ResetButton";
-import type { SelectField as SelectFieldImpl } from "./SelectField";
-import { SubmitButton } from "./SubmitButton";
-import type { TextField as TextFieldImpl } from "./TextField";
+import type { DateField as DateFieldImpl } from "./date-field";
+import { Form } from "./form";
+import type { NumberField as NumberFieldImpl } from "./number-field";
+import { ResetButton } from "./reset-button";
+import type { SelectField as SelectFieldImpl } from "./select-field";
+import { SubmitButton } from "./submit-button";
+import type { TextField as TextFieldImpl } from "./text-field";
 
 import styles from "./hook.module.css";
 
@@ -25,7 +25,7 @@ const FieldFallback: Component<{ label?: string; class?: string }> = (props) => 
   </div>
 );
 
-const LazyTextField = lazy(() => import("./TextField").then((m) => ({ default: m.TextField })));
+const LazyTextField = lazy(() => import("./text-field").then((m) => ({ default: m.TextField })));
 
 const TextField: Component<ComponentProps<typeof TextFieldImpl>> = (props) => (
   <Suspense fallback={<FieldFallback label={props.label} />}>
@@ -36,7 +36,7 @@ const TextField: Component<ComponentProps<typeof TextFieldImpl>> = (props) => (
 );
 
 const LazyNumberField = lazy(() =>
-  import("./NumberField").then((m) => ({ default: m.NumberField })),
+  import("./number-field").then((m) => ({ default: m.NumberField })),
 );
 
 const NumberField: Component<ComponentProps<typeof NumberFieldImpl>> = (props) => (
@@ -47,7 +47,7 @@ const NumberField: Component<ComponentProps<typeof NumberFieldImpl>> = (props) =
   </Suspense>
 );
 
-const LazyDateField = lazy(() => import("./DateField").then((m) => ({ default: m.DateField })));
+const LazyDateField = lazy(() => import("./date-field").then((m) => ({ default: m.DateField })));
 
 const DateField: Component<ComponentProps<typeof DateFieldImpl>> = (props) => (
   <Suspense fallback={<FieldFallback label={props.label} class={props.class} />}>
@@ -58,7 +58,7 @@ const DateField: Component<ComponentProps<typeof DateFieldImpl>> = (props) => (
 );
 
 const LazySelectField = lazy(() =>
-  import("./SelectField").then((m) => ({ default: m.SelectField })),
+  import("./select-field").then((m) => ({ default: m.SelectField })),
 );
 
 const SelectField: Component<ComponentProps<typeof SelectFieldImpl>> = (props) => (

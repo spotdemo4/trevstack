@@ -1,4 +1,4 @@
-export { DateInput } from "./DateInput";
-export { NumberInput } from "./NumberInput";
-export { SelectInput } from "./SelectInput";
-export { TextInput } from "./TextInput";
+export { DateInput } from "./date-input";
+export { NumberInput } from "./number-input";
+export { SelectInput } from "./select-input";
+export { TextInput } from "./text-input";

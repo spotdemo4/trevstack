@@ -4,8 +4,8 @@ import { ExternalLink } from "lucide-solid";
 import { GitBranch } from "lucide-solid";
 import { type Component, children, type JSX } from "solid-js";
 
-import Navbar from "./Navbar";
-import NavLink from "./NavLink";
+import NavLink from "./nav-link";
+import Navbar from "./navbar";
 import ThemeSwitch from "./theme-switch";
 
 type LayoutProps = {

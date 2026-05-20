@@ -7,10 +7,10 @@ import { NumberInput, SelectInput } from "$lib/input";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
 import { type Component, createMemo, createSignal } from "solid-js";
 
-import DistributionChart from "./DistributionChart";
-import SummaryCards from "./SummaryCards";
-import TimeSeriesChart from "./TimeSeriesChart";
-import TopNamesChart from "./TopNamesChart";
+import DistributionChart from "./distribution-chart";
+import SummaryCards from "./summary-cards";
+import TimeSeriesChart from "./time-series-chart";
+import TopNamesChart from "./top-names-chart";
 
 const intervalOptions: { value: TimeInterval; label: string }[] = [
   { value: TimeInterval.HOUR, label: "Hour" },

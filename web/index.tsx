@@ -5,7 +5,7 @@ import { lazy } from "solid-js";
 import { render } from "solid-js/web";
 
 import "./index.css";
-import Layout from "./layout/Layout";
+import Layout from "./layout/layout";
 
 const Home = lazy(() => import("./routes/home"));
 const Numbers = lazy(() => import("./routes/numbers"));

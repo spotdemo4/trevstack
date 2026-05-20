@@ -1,4 +1,4 @@
-import type { DistributionBucket } from "$connect/number/v1/metrics_pb";
+import type { TopName } from "$connect/number/v1/metrics_pb";
 import { max } from "d3-array";
 import { axisBottom, axisLeft } from "d3-axis";
 import { format } from "d3-format";
@@ -6,47 +6,39 @@ import { scaleBand, scaleLinear } from "d3-scale";
 import { pointer, select } from "d3-selection";
 import { type Component, createEffect, Show } from "solid-js";
 
-import { useChartSize } from "./useChartSize";
+import { useChartSize } from "./use-chart-size";
 
-import styles from "./ChartMotion.module.css";
+import styles from "./chart-motion.module.css";
 
-type DistributionChartProps = {
-  buckets: DistributionBucket[];
+type TopNamesChartProps = {
+  names: TopName[];
 };
 
-const margin = { top: 12, right: 16, bottom: 64, left: 44 };
+const margin = { top: 8, right: 24, bottom: 28, left: 96 };
+const rowHeight = 28;
+const minChartHeight = 260;
 
-const DistributionChart: Component<DistributionChartProps> = (props) => {
+const TopNamesChart: Component<TopNamesChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let containerRef!: HTMLDivElement;
   // oxlint-disable-next-line no-unassigned-vars
   let svgRef!: SVGSVGElement;
   // oxlint-disable-next-line no-unassigned-vars
   let tooltipRef!: HTMLDivElement;
-  const { width, height } = useChartSize(() => containerRef, 260);
+  const dynamicHeight = () =>
+    Math.max(minChartHeight, props.names.length * rowHeight + margin.top + margin.bottom);
+  const { width } = useChartSize(() => containerRef, 0);
 
   createEffect(() => {
     const w = width();
-    const h = height();
+    const h = dynamicHeight();
     if (w === 0) return;
 
-    const compactNumber = format("~s");
-    const roundToNearestThousand = (value: number): number =>
-      Math.abs(value) < 1000 ? value : Math.round(value / 1000) * 1000;
-
-    const shortRangeLabel = (lower: number, upper: number): string => {
-      const shortLower = compactNumber(roundToNearestThousand(lower)).replace("G", "B");
-      const shortUpper = compactNumber(roundToNearestThousand(upper)).replace("G", "B");
-      return lower === upper ? shortLower : `${shortLower}-${shortUpper}`;
-    };
-
-    const data = props.buckets.map((b, i) => ({
-      key: `${i}`,
-      label: shortRangeLabel(b.lower, b.upper),
-      fullLabel: b.lower === b.upper ? `${b.lower}` : `${b.lower}-${b.upper}`,
-      lower: b.lower,
-      upper: b.upper,
-      count: Number(b.count),
+    const data = props.names.map((n) => ({
+      name: n.name,
+      count: Number(n.count),
+      sum: Number(n.sum),
+      average: n.average,
     }));
 
     const svg = select(svgRef);
@@ -55,9 +47,14 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
     tooltip.style("opacity", "0");
     if (data.length === 0) return;
 
-    const showTooltip = (event: PointerEvent, text: string) => {
+    const formatInteger = format(",");
+    const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
       const [xPos, yPos] = pointer(event, containerRef);
-      tooltip.text(text).style("opacity", "1");
+      tooltip
+        .text(
+          `${d.name}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
+        )
+        .style("opacity", "1");
 
       const tooltipNode = tooltipRef;
       const containerRect = containerRef.getBoundingClientRect();
@@ -85,74 +82,86 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = scaleBand<string>()
-      .domain(data.map((d) => d.key))
-      .range([0, innerW])
-      .padding(0.15);
-    const labelByKey = new Map(data.map((d) => [d.key, d.label]));
+    const y = scaleBand<string>()
+      .domain(data.map((d) => d.name))
+      .range([0, innerH])
+      .padding(0.2);
 
-    const y = scaleLinear()
+    const x = scaleLinear()
       .domain([0, max(data, (d) => d.count) ?? 1])
       .nice()
-      .range([innerH, 0]);
+      .range([0, innerW]);
 
-    // Show every Nth label so they don't collide on narrow widths.
-    const skip = Math.max(1, Math.ceil(data.length / Math.max(1, Math.floor(innerW / 60))));
+    g.append("g")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
+      .call(axisLeft(y).tickSizeOuter(0))
+      .selectAll("text")
+      .attr("class", "truncate");
 
     g.append("g")
       .attr("transform", `translate(0,${innerH})`)
       .attr("class", `${styles.Axis} text-ctp-subtext0`)
       .call(
         axisBottom(x)
-          .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
-          .tickFormat((key) => labelByKey.get(key) ?? key)
+          .ticks(Math.max(2, Math.floor(innerW / 80)))
           .tickSizeOuter(0),
-      )
-      .selectAll("text")
-      .attr("transform", "rotate(-35)")
-      .attr("dy", "0.35em")
-      .style("text-anchor", "end");
-
-    g.append("g")
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(axisLeft(y).ticks(5).tickSizeOuter(0));
+      );
 
     g.append("g")
       .selectAll("rect")
       .data(data)
       .enter()
       .append("rect")
-      .attr("class", `${styles.VerticalBar} fill-ctp-mauve`)
-      .attr("x", (d) => x(d.key) ?? 0)
-      .attr("y", (d) => y(d.count))
-      .attr("width", x.bandwidth())
-      .attr("height", (d) => innerH - y(d.count))
+      .attr("class", `${styles.HorizontalBar} fill-ctp-peach`)
+      .attr("x", 0)
+      .attr("y", (d) => y(d.name) ?? 0)
+      .attr("width", (d) => x(d.count))
+      .attr("height", y.bandwidth())
       .attr("rx", 2)
       .on("pointerenter", (event: PointerEvent, d) => {
         select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-mauve", false)
-          .classed("fill-ctp-pink", true);
-        showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
+          .classed("fill-ctp-peach", false)
+          .classed("fill-ctp-yellow", true);
+        showTooltip(event, d);
       })
       .on("pointermove", (event: PointerEvent, d) => {
-        showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
+        showTooltip(event, d);
       })
       .on("pointerleave", (event: PointerEvent) => {
         select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-pink", false)
-          .classed("fill-ctp-mauve", true);
+          .classed("fill-ctp-yellow", false)
+          .classed("fill-ctp-peach", true);
         hideTooltip();
       });
+
+    g.append("g")
+      .selectAll("text")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr(
+        "class",
+        `${styles.ValueLabel} pointer-events-none fill-ctp-text font-mono text-xs tabular-nums`,
+      )
+      .attr("x", (d) => x(d.count) + 6)
+      .attr("y", (d) => (y(d.name) ?? 0) + y.bandwidth() / 2)
+      .attr("dy", "0.35em")
+      .text((d) => d.count);
   });
 
   return (
     <div ref={containerRef} class="relative w-full">
-      <svg ref={svgRef} width={width()} height={height()} class={`${styles.ChartCanvas} block`} />
+      <svg
+        ref={svgRef}
+        width={width()}
+        height={dynamicHeight()}
+        class={`${styles.ChartCanvas} block`}
+      />
       <div
         ref={tooltipRef}
         class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
       />
-      <Show when={props.buckets.length === 0}>
+      <Show when={props.names.length === 0}>
         <div
           class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0`}
         >
@@ -163,4 +172,4 @@ const DistributionChart: Component<DistributionChartProps> = (props) => {
   );
 };
 
-export default DistributionChart;
+export default TopNamesChart;

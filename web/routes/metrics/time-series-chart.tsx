@@ -1,45 +1,45 @@
-import type { TopName } from "$connect/number/v1/metrics_pb";
-import { max } from "d3-array";
+import type { TimeSeriesPoint } from "$connect/number/v1/metrics_pb";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
+import { extent, max } from "d3-array";
 import { axisBottom, axisLeft } from "d3-axis";
 import { format } from "d3-format";
-import { scaleBand, scaleLinear } from "d3-scale";
+import { scaleLinear, scaleTime } from "d3-scale";
 import { pointer, select } from "d3-selection";
+import { area, curveMonotoneX, line } from "d3-shape";
 import { type Component, createEffect, Show } from "solid-js";
 
-import { useChartSize } from "./useChartSize";
+import { useChartSize } from "./use-chart-size";
 
-import styles from "./ChartMotion.module.css";
+import styles from "./chart-motion.module.css";
 
-type TopNamesChartProps = {
-  names: TopName[];
+type TimeSeriesChartProps = {
+  points: TimeSeriesPoint[];
 };
 
-const margin = { top: 8, right: 24, bottom: 28, left: 96 };
-const rowHeight = 28;
-const minChartHeight = 260;
+const margin = { top: 12, right: 16, bottom: 28, left: 44 };
 
-const TopNamesChart: Component<TopNamesChartProps> = (props) => {
+const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
   // oxlint-disable-next-line no-unassigned-vars
   let containerRef!: HTMLDivElement;
   // oxlint-disable-next-line no-unassigned-vars
   let svgRef!: SVGSVGElement;
   // oxlint-disable-next-line no-unassigned-vars
   let tooltipRef!: HTMLDivElement;
-  const dynamicHeight = () =>
-    Math.max(minChartHeight, props.names.length * rowHeight + margin.top + margin.bottom);
-  const { width } = useChartSize(() => containerRef, 0);
+  const { width, height } = useChartSize(() => containerRef, 280);
 
   createEffect(() => {
     const w = width();
-    const h = dynamicHeight();
+    const h = height();
     if (w === 0) return;
 
-    const data = props.names.map((n) => ({
-      name: n.name,
-      count: Number(n.count),
-      sum: Number(n.sum),
-      average: n.average,
-    }));
+    const data = props.points
+      .filter((p) => p.bucket)
+      .map((p) => ({
+        date: timestampDate(p.bucket!),
+        count: Number(p.count),
+        sum: Number(p.sum),
+        average: p.average,
+      }));
 
     const svg = select(svgRef);
     const tooltip = select(tooltipRef);
@@ -52,7 +52,7 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
       const [xPos, yPos] = pointer(event, containerRef);
       tooltip
         .text(
-          `${d.name}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
+          `${d.date.toLocaleString()}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
         )
         .style("opacity", "1");
 
@@ -82,86 +82,96 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const y = scaleBand<string>()
-      .domain(data.map((d) => d.name))
-      .range([0, innerH])
-      .padding(0.2);
-
-    const x = scaleLinear()
-      .domain([0, max(data, (d) => d.count) ?? 1])
-      .nice()
+    const x = scaleTime()
+      .domain(extent(data, (d) => d.date) as [Date, Date])
       .range([0, innerW]);
 
-    g.append("g")
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(axisLeft(y).tickSizeOuter(0))
-      .selectAll("text")
-      .attr("class", "truncate");
+    const y = scaleLinear()
+      .domain([0, max(data, (d) => d.count) ?? 1])
+      .nice()
+      .range([innerH, 0]);
 
     g.append("g")
       .attr("transform", `translate(0,${innerH})`)
       .attr("class", `${styles.Axis} text-ctp-subtext0`)
       .call(
         axisBottom(x)
-          .ticks(Math.max(2, Math.floor(innerW / 80)))
+          .ticks(Math.max(2, Math.floor(innerW / 90)))
           .tickSizeOuter(0),
       );
 
     g.append("g")
-      .selectAll("rect")
+      .attr("class", `${styles.Axis} text-ctp-subtext0`)
+      .call(axisLeft(y).ticks(5).tickSizeOuter(0));
+
+    // Subtle horizontal grid lines.
+    g.append("g")
+      .attr("class", `${styles.Grid} text-ctp-surface1`)
+      .selectAll("line")
+      .data(y.ticks(5))
+      .enter()
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", innerW)
+      .attr("y1", (d) => y(d))
+      .attr("y2", (d) => y(d))
+      .attr("stroke", "currentColor")
+      .attr("stroke-dasharray", "2,3");
+
+    const areaGen = area<(typeof data)[number]>()
+      .x((d) => x(d.date))
+      .y0(innerH)
+      .y1((d) => y(d.count))
+      .curve(curveMonotoneX);
+
+    const lineGen = line<(typeof data)[number]>()
+      .x((d) => x(d.date))
+      .y((d) => y(d.count))
+      .curve(curveMonotoneX);
+
+    g.append("path")
+      .datum(data)
+      .attr("class", `${styles.Area} fill-ctp-blue/20`)
+      .attr("d", areaGen);
+
+    g.append("path")
+      .datum(data)
+      .attr("class", `${styles.Line} stroke-ctp-blue`)
+      .attr("fill", "none")
+      .attr("pathLength", 1)
+      .attr("stroke-width", 2)
+      .attr("d", lineGen);
+
+    g.append("g")
+      .selectAll("circle")
       .data(data)
       .enter()
-      .append("rect")
-      .attr("class", `${styles.HorizontalBar} fill-ctp-peach`)
-      .attr("x", 0)
-      .attr("y", (d) => y(d.name) ?? 0)
-      .attr("width", (d) => x(d.count))
-      .attr("height", y.bandwidth())
-      .attr("rx", 2)
+      .append("circle")
+      .attr("class", `${styles.Point} fill-ctp-blue`)
+      .attr("cx", (d) => x(d.date))
+      .attr("cy", (d) => y(d.count))
+      .attr("r", 3)
       .on("pointerenter", (event: PointerEvent, d) => {
-        select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-peach", false)
-          .classed("fill-ctp-yellow", true);
+        select(event.currentTarget as SVGCircleElement).attr("r", 5);
         showTooltip(event, d);
       })
       .on("pointermove", (event: PointerEvent, d) => {
         showTooltip(event, d);
       })
       .on("pointerleave", (event: PointerEvent) => {
-        select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-yellow", false)
-          .classed("fill-ctp-peach", true);
+        select(event.currentTarget as SVGCircleElement).attr("r", 3);
         hideTooltip();
       });
-
-    g.append("g")
-      .selectAll("text")
-      .data(data)
-      .enter()
-      .append("text")
-      .attr(
-        "class",
-        `${styles.ValueLabel} pointer-events-none fill-ctp-text font-mono text-xs tabular-nums`,
-      )
-      .attr("x", (d) => x(d.count) + 6)
-      .attr("y", (d) => (y(d.name) ?? 0) + y.bandwidth() / 2)
-      .attr("dy", "0.35em")
-      .text((d) => d.count);
   });
 
   return (
     <div ref={containerRef} class="relative w-full">
-      <svg
-        ref={svgRef}
-        width={width()}
-        height={dynamicHeight()}
-        class={`${styles.ChartCanvas} block`}
-      />
+      <svg ref={svgRef} width={width()} height={height()} class={`${styles.ChartCanvas} block`} />
       <div
         ref={tooltipRef}
         class="pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity"
       />
-      <Show when={props.names.length === 0}>
+      <Show when={props.points.length === 0}>
         <div
           class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0`}
         >
@@ -172,4 +182,4 @@ const TopNamesChart: Component<TopNamesChartProps> = (props) => {
   );
 };
 
-export default TopNamesChart;
+export default TimeSeriesChart;

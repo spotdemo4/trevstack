@@ -1,1 +1,1 @@
-export { Virtualizer } from "./Virtualizer";
+export { Virtualizer } from "./virtualizer";

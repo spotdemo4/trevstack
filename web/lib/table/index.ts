@@ -1,4 +1,4 @@
-import { Table, Header, Body } from "./Table";
+import { Table, Header, Body } from "./table";
 
 export default {
   Table,
