@@ -14,10 +14,10 @@
 /result*
 /.direnv/
 
-# go
+# server
 /server/build/
 /server/tmp/
 
-# solid
+# web
 /web/node_modules/
 /web/dist/
