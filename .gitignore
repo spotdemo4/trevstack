@@ -3,9 +3,9 @@
 /docker-compose*
 
 # agents
-/.agents/
-/.claude/
-/.codex/
+.agents/
+.claude/
+.codex/
 
 # mprocs
 /mprocs.log
