@@ -30,6 +30,7 @@ jobs:
         with:
           token: ${{ secrets.DOCTOR_TOKEN }}
           github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
           fetch_depth: 0
           shell: bump
 
