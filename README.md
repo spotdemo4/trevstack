@@ -73,4 +73,4 @@ https://trev.zip/llc/stack/releases
 ---
 
 > [!NOTE]
-> This repository is mirrored to GitHub, development happens on [trev.zip](https://trev.zip/llc/stack)
+> This repository is mirrored to GitHub from [trev.zip](https://trev.zip/llc/stack)
