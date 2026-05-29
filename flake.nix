@@ -1,5 +1,5 @@
 {
-  description = "TrevStack is a template for full-stack applications built with Go, SolidJS, and ConnectRPC.";
+  description = "full-stack template";
 
   nixConfig = {
     extra-substituters = [
@@ -184,12 +184,12 @@
 
               meta = {
                 mainProgram = "server";
-                description = "full-stack application template";
+                description = "full-stack template";
                 license = licenses.mit;
                 platforms = platforms.all;
-                homepage = "https://trev.zip/trev/stack";
-                changelog = "https://trev.zip/trev/stack/releases";
-                downloadPage = "https://trev.zip/trev/stack/releases/tag/v${final.version}";
+                homepage = "https://trev.zip/llc/stack";
+                changelog = "https://trev.zip/llc/stack/releases";
+                downloadPage = "https://trev.zip/llc/stack/releases/tag/v${final.version}";
               };
             }
           );
