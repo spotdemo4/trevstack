@@ -70,5 +70,7 @@ nix run git+https://trev.zip/llc/stack.git
 
 https://trev.zip/llc/stack/releases
 
+---
+
 > [!NOTE]
 > This repository is mirrored to GitHub, development happens on [trev.zip](https://trev.zip/llc/stack)
