@@ -63,6 +63,6 @@ jobs:
           shell: vulnerable
 
       - name: Run zizmor
-        run: zizmor .github
+        run: zizmor $(find .forgejo/workflows -name "*.yaml")
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
