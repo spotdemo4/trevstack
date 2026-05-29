@@ -30,6 +30,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.DOCTOR_TOKEN }}
           REGISTRY: trev.zip
           REGISTRY_PASSWORD: ${{ secrets.PACKAGE_TOKEN }}
+          DELETE_OLD_RELEASE_ARTIFACTS: true
           PACKAGES: |
             packages.x86_64-linux.default.aarch64-unknown-linux-musl
             packages.x86_64-linux.default.armv7l-unknown-linux-musleabihf
