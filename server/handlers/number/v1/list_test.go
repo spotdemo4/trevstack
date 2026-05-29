@@ -8,7 +8,7 @@ import (
 
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	numberv1 "trev.zip/trev/stack/server/connect/number/v1"
+	numberv1 "trev.zip/llc/stack/server/connect/number/v1"
 )
 
 func collectListItems(

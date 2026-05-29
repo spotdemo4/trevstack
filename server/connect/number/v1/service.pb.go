@@ -33,7 +33,7 @@ const file_number_v1_service_proto_rawDesc = "" +
 	"TimeSeries\x12\x1c.number.v1.TimeSeriesRequest\x1a\x1d.number.v1.TimeSeriesResponse\"\x00\x12Q\n" +
 	"\fDistribution\x12\x1e.number.v1.DistributionRequest\x1a\x1f.number.v1.DistributionResponse\"\x00\x12E\n" +
 	"\bTopNames\x12\x1a.number.v1.TopNamesRequest\x1a\x1b.number.v1.TopNamesResponse\"\x00B\x99\x01\n" +
-	"\rcom.number.v1B\fServiceProtoP\x01Z5trev.zip/trev/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
+	"\rcom.number.v1B\fServiceProtoP\x01Z5trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\beditionsp\xe9\a"
 
 var file_number_v1_service_proto_goTypes = []any{

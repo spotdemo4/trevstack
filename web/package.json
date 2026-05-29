@@ -4,7 +4,7 @@
   "description": "TrevStack web client",
   "license": "MIT",
   "repository": {
-    "url": "https://trev.zip/trev/stack"
+    "url": "https://trev.zip/llc/stack"
   },
   "type": "module",
   "scripts": {

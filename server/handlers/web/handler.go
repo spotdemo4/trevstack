@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"trev.zip/trev/stack/server/logger"
+	"trev.zip/llc/stack/server/logger"
 )
 
 func New(ctx context.Context, webfs embed.FS) http.Handler {
