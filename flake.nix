@@ -47,9 +47,9 @@
               # proto
               buf
               protoc-gen-go
+              protoc-gen-es
               protoc-gen-connect-go
               protoc-gen-connect-openapi
-              protoc-gen-es
 
               # sql
               sqlfluff
@@ -58,8 +58,8 @@
               zizmor
 
               # nix
-              nixd
               nil
+              nixd
               nixfmt
 
               # util
