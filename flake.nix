@@ -109,7 +109,7 @@
           dev = "mprocs";
           server = "cd server && go run -tags dev .";
           web = "cd web && npm run dev";
-          gen = ''
+          configure = ''
             buf generate
             cd server && go mod tidy && cd ..
             cd web && npm install && cd ..

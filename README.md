@@ -17,7 +17,7 @@ part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 ## getting started
 
 ```sh
-nix develop
+nix develop && nix run .#configure
 ```
 
 ### run
