@@ -17,7 +17,7 @@
     "@ark-ui/solid": "^5.37.1",
     "@bufbuild/protovalidate": "^1.2.0",
     "@connectrpc/connect": "^2.1.2",
-    "@connectrpc/connect-web": "^2.1.1",
+    "@connectrpc/connect-web": "^2.1.2",
     "@solid-primitives/scheduled": "^1.5.3",
     "@solidjs/router": "^0.16.1",
     "@tanstack/solid-form": "^1.33.0",
