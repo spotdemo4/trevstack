@@ -29,7 +29,7 @@
     "d3-selection": "^3.0.0",
     "d3-shape": "^3.2.0",
     "effect": "^3.21.3",
-    "lucide-solid": "^1.18.0",
+    "lucide-solid": "^1.20.0",
     "solid-js": "^1.9.13",
     "tailwind-merge": "^3.6.0"
   },
