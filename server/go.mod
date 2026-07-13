@@ -10,7 +10,7 @@ require (
 	connectrpc.com/cors v0.1.0
 	connectrpc.com/validate v0.6.0
 	github.com/bdpiprava/scalar-go v0.13.0
-	github.com/mattn/go-sqlite3 v1.14.47
+	github.com/mattn/go-sqlite3 v1.14.48
 	github.com/rs/cors v1.11.1
 	google.golang.org/protobuf v1.36.11
 )
