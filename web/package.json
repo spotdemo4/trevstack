@@ -19,7 +19,7 @@
     "@connectrpc/connect": "^2.1.2",
     "@connectrpc/connect-web": "^2.1.2",
     "@solid-primitives/scheduled": "^1.5.3",
-    "@solidjs/router": "^0.16.1",
+    "@solidjs/router": "^0.16.2",
     "@tanstack/solid-form": "^1.33.2",
     "@tanstack/solid-virtual": "^3.13.33",
     "d3-array": "^3.2.4",
