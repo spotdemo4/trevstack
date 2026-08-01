@@ -166,7 +166,7 @@
               src = ./server;
               goSum = ./server/go.sum;
               proxyVendor = true;
-              vendorHash = "sha256-wQ84YowpyhCNtzprKpPIbV0SNyIGkuehAw6vWkhpiJ8=";
+              vendorHash = "sha256-yGTJllcxMHl/o1fP9DlR2Hhx1iSX5ChPbcMQjOPtX68=";
 
               postConfigure = ''
                 cp -r ${self.packages.${system}.web} web
