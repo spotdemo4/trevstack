@@ -21,7 +21,7 @@
     "@solid-primitives/scheduled": "^1.5.3",
     "@solidjs/router": "^0.16.3",
     "@tanstack/solid-form": "^1.33.3",
-    "@tanstack/solid-virtual": "^3.13.35",
+    "@tanstack/solid-virtual": "^3.13.36",
     "d3-array": "^3.2.4",
     "d3-axis": "^3.0.0",
     "d3-format": "^3.1.2",
