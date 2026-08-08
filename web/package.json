@@ -14,7 +14,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@ark-ui/solid": "^5.38.0",
+    "@ark-ui/solid": "^5.38.1",
     "@bufbuild/protovalidate": "^1.2.0",
     "@connectrpc/connect": "^2.1.2",
     "@connectrpc/connect-web": "^2.1.2",
