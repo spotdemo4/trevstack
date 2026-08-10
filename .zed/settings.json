@@ -1,5 +1,8 @@
 {
   "semantic_tokens": "combined",
+  "prettier": {
+    "allowed": false
+  },
   "file_types": {
     "Shell Script": [".envrc*"],
     "TOML": [".sqlfluff"]
@@ -33,6 +36,9 @@
       "settings": {
         "nixpkgs": {
           "expr": "(builtins.getFlake (builtins.toString ./.)).outputs.nixpkgs.${builtins.currentSystem}"
+        },
+        "formatting": {
+          "command": ["nixfmt"]
         }
       }
     }
@@ -40,10 +46,7 @@
   "languages": {
     "TypeScript": {
       "format_on_save": "on",
-      "language_servers": ["tsgo", "oxlint", "tailwindcss-language-server", "oxfmt"],
-      "prettier": {
-        "allowed": false
-      },
+      "language_servers": ["typescript-ls", "oxlint", "tailwindcss-language-server", "oxfmt"],
       "formatter": [
         {
           "language_server": {
@@ -57,10 +60,7 @@
     },
     "TSX": {
       "format_on_save": "on",
-      "language_servers": ["tsgo", "oxlint", "tailwindcss-language-server", "oxfmt"],
-      "prettier": {
-        "allowed": false
-      },
+      "language_servers": ["typescript-ls", "oxlint", "tailwindcss-language-server", "oxfmt"],
       "formatter": [
         {
           "language_server": {
@@ -72,12 +72,20 @@
         }
       ]
     },
+    "Nix": {
+      "format_on_save": "on",
+      "language_servers": ["nixd"],
+      "formatter": [
+        {
+          "language_server": {
+            "name": "nixd"
+          }
+        }
+      ]
+    },
     "CSS": {
       "format_on_save": "on",
       "language_servers": ["tailwindcss-language-server", "tailwindcss-intellisense-css", "oxfmt"],
-      "prettier": {
-        "allowed": false
-      },
       "formatter": [
         {
           "language_server": {
@@ -88,9 +96,7 @@
     },
     "HTML": {
       "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
+      "language_servers": ["oxfmt", "..."],
       "formatter": [
         {
           "language_server": {
@@ -101,9 +107,7 @@
     },
     "JSON": {
       "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
+      "language_servers": ["json-language-server", "oxfmt"],
       "formatter": [
         {
           "language_server": {
@@ -114,22 +118,7 @@
     },
     "JSONC": {
       "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "Markdown": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
+      "language_servers": ["json-language-server", "oxfmt"],
       "formatter": [
         {
           "language_server": {
@@ -140,9 +129,7 @@
     },
     "YAML": {
       "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
+      "language_servers": ["yaml-language-server", "oxfmt"],
       "formatter": [
         {
           "language_server": {
@@ -154,9 +141,17 @@
     "TOML": {
       "format_on_save": "on",
       "language_servers": ["tombi", "oxfmt"],
-      "prettier": {
-        "allowed": false
-      },
+      "formatter": [
+        {
+          "language_server": {
+            "name": "oxfmt"
+          }
+        }
+      ]
+    },
+    "Markdown": {
+      "format_on_save": "on",
+      "language_servers": ["oxfmt"],
       "formatter": [
         {
           "language_server": {
