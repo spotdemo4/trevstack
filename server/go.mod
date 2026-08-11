@@ -12,7 +12,7 @@ require (
 	github.com/bdpiprava/scalar-go v0.13.0
 	github.com/mattn/go-sqlite3 v1.14.49
 	github.com/rs/cors v1.11.1
-	google.golang.org/protobuf v1.36.11
+	google.golang.org/protobuf v1.36.12
 )
 
 require (
