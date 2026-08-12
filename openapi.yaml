@@ -4,7 +4,7 @@ servers:
 
 info:
   title: TrevStack API
-  version: 0.13.25
+  version: 0.13.26
   description: API for TrevStack
   contact:
     name: Trev
