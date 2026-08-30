@@ -258,7 +258,7 @@
             bufDeps = pkgs.bufFetchDeps {
               src = ./.;
               pname = "trevstack-proto-deps";
-              hash = "sha256-2u6IUcaTrIApQkvHI3X7kkmw1ya+7stMfFImDtaxAGI=";
+              hash = "sha256-FHWO4jScAnsb5BjWZbbEXGlfWMh3MKR4f9xPwzfJc0I=";
             };
             packages = with pkgs; [
               bufHook
