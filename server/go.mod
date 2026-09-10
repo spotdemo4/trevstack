@@ -6,7 +6,7 @@ toolchain go1.26.5
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2
-	connectrpc.com/connect v1.20.0
+	connectrpc.com/connect v1.21.0
 	connectrpc.com/cors v0.1.0
 	connectrpc.com/validate v0.6.0
 	github.com/bdpiprava/scalar-go v0.13.0
