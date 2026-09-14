@@ -42,7 +42,6 @@
               # solid
               nodejs_24
               oxlint
-              typescript-go
 
               vscode-json-languageserver # json
               yaml-language-server # yaml
