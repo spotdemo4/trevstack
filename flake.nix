@@ -111,8 +111,6 @@
 
         apps = pkgs.mkApps {
           dev = "mprocs";
-          server = "cd server && go run -tags dev .";
-          web = "cd web && npm run dev";
           configure = ''
             buf generate
             cd server && go mod tidy && cd ..
