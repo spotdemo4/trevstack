@@ -1,11 +1,13 @@
 {
   "recommendations": [
     "golang.go",
+    "TypeScriptTeam.native-preview",
     "oxc.oxc-vscode",
     "bradlc.vscode-tailwindcss",
     "tombi-toml.tombi",
     "bufbuild.vscode-buf",
     "sqlfluff.vscode-sqlfluff",
+    "redhat.vscode-yaml",
     "jnoortheen.nix-ide"
   ]
 }

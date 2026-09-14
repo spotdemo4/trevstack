@@ -42,7 +42,12 @@
               # solid
               nodejs_24
               oxlint
-              oxfmt
+              typescript-go
+
+              vscode-json-languageserver # json
+              yaml-language-server # yaml
+              tombi # toml
+              oxfmt # format
 
               # proto
               buf
@@ -53,12 +58,12 @@
 
               # sql
               sqlfluff
+              sqls
 
               # actions
               zizmor
 
               # nix
-              nil
               nixd
               nixfmt
 
@@ -136,7 +141,26 @@
               pname = "trevstack-web";
               version = "0.13.1";
 
-              src = ./web;
+              src = fileset.toSource {
+                root = ./web;
+                fileset = fileset.unions [
+                  ./web/.npmrc
+                  ./web/.oxfmtrc.json
+                  ./web/.oxlintrc.json
+                  ./web/package-lock.json
+                  ./web/package.json
+                  ./web/tsconfig.json
+                  ./web/vite.config.ts
+                  ./web/index.css
+                  ./web/index.html
+                  ./web/index.tsx
+                  ./web/connect
+                  ./web/layout
+                  ./web/lib
+                  ./web/public
+                  ./web/routes
+                ];
+              };
               nodejs = pkgs.nodejs_24;
               npmConfigHook = pkgs.importNpmLock.npmConfigHook;
               npmDeps = pkgs.importNpmLock {
@@ -148,12 +172,16 @@
                 oxlint
               ];
               checkPhase = ''
+                runHook preCheck
                 oxfmt --check
                 oxlint --deny-warnings
+                runHook postCheck
               '';
 
               installPhase = ''
+                runHook preInstall
                 cp -r dist "$out"
+                runHook postInstall
               '';
             }
           );
@@ -163,7 +191,14 @@
               pname = "trevstack-server";
               version = "0.13.1";
 
-              src = ./server;
+              src = fileset.toSource {
+                root = ./server;
+                fileset = fileset.unions [
+                  ./server/go.mod
+                  ./server/go.sum
+                  (fileset.fileFilter (file: file.hasExt "go" || file.hasExt "sql" || file.hasExt "yaml") ./server)
+                ];
+              };
               goSum = ./server/go.sum;
               proxyVendor = true;
               vendorHash = "sha256-tO89XUOF+MclDs01ynXNJaErHquEVeNeqTVdtasAj7k=";
@@ -176,10 +211,13 @@
                 go-tools
               ];
               checkPhase = ''
+                runHook preCheck
                 export HOME=$(mktemp -d)
                 go test ./...
                 go vet ./...
                 staticcheck ./...
+                go fix -diff ./...
+                runHook postCheck
               '';
 
               meta = {
@@ -270,24 +308,46 @@
             '';
           };
 
-          actions = {
-            root = ./.;
-            files = [
-              ./.forgejo/workflows
-              ./.github/workflows
-            ];
+          actions-gh = {
+            root = ./.github/workflows;
             filter = file: file.hasExt "yaml";
             packages = with pkgs; [
+              action-validator
               zizmor
             ];
             script = ''
+              action-validator "$file"
               zizmor --offline "$file"
             '';
           };
 
-          renovate = {
+          actions-fj = {
+            root = ./.forgejo/workflows;
+            filter = file: file.hasExt "yaml";
+            packages = with pkgs; [
+              forgejo-runner
+              zizmor
+            ];
+            script = ''
+              forgejo-runner validate --workflow --path "$file"
+              zizmor --offline "$file"
+            '';
+          };
+
+          renovate-gh = {
             root = ./.github;
             files = ./.github/renovate.json;
+            packages = with pkgs; [
+              renovate
+            ];
+            script = ''
+              renovate-config-validator renovate.json
+            '';
+          };
+
+          renovate-fj = {
+            root = ./.forgejo;
+            files = ./.forgejo/renovate.json;
             packages = with pkgs; [
               renovate
             ];

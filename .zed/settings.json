@@ -44,6 +44,17 @@
     }
   },
   "languages": {
+    "Go": {
+      "format_on_save": "on",
+      "language_servers": ["gopls"],
+      "formatter": [
+        {
+          "language_server": {
+            "name": "gopls"
+          }
+        }
+      ]
+    },
     "TypeScript": {
       "format_on_save": "on",
       "language_servers": ["typescript-ls", "oxlint", "tailwindcss-language-server", "oxfmt"],
@@ -69,39 +80,6 @@
         },
         {
           "code_action": "source.fixAll.oxc"
-        }
-      ]
-    },
-    "Nix": {
-      "format_on_save": "on",
-      "language_servers": ["nixd"],
-      "formatter": [
-        {
-          "language_server": {
-            "name": "nixd"
-          }
-        }
-      ]
-    },
-    "CSS": {
-      "format_on_save": "on",
-      "language_servers": ["tailwindcss-language-server", "tailwindcss-intellisense-css", "oxfmt"],
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "HTML": {
-      "format_on_save": "on",
-      "language_servers": ["oxfmt", "..."],
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
         }
       ]
     },
@@ -141,6 +119,39 @@
     "TOML": {
       "format_on_save": "on",
       "language_servers": ["tombi", "oxfmt"],
+      "formatter": [
+        {
+          "language_server": {
+            "name": "oxfmt"
+          }
+        }
+      ]
+    },
+    "Nix": {
+      "format_on_save": "on",
+      "language_servers": ["nixd"],
+      "formatter": [
+        {
+          "language_server": {
+            "name": "nixd"
+          }
+        }
+      ]
+    },
+    "HTML": {
+      "format_on_save": "on",
+      "language_servers": ["oxfmt", "..."],
+      "formatter": [
+        {
+          "language_server": {
+            "name": "oxfmt"
+          }
+        }
+      ]
+    },
+    "CSS": {
+      "format_on_save": "on",
+      "language_servers": ["tailwindcss-language-server", "tailwindcss-intellisense-css", "oxfmt"],
       "formatter": [
         {
           "language_server": {

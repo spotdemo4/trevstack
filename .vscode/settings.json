@@ -1,11 +1,12 @@
 {
   "files.associations": {
     "renovate.json": "jsonc",
-    ".envrc.project": "dotenv",
-    ".envrc": "dotenv",
+    ".envrc*": "shellscript",
     ".sqlfluff": "toml",
     "*.css": "tailwindcss"
   },
+
+  "editor.semanticHighlighting.enabled": true,
 
   "explorer.fileNesting.patterns": {
     ".envrc.project": ".envrc",
@@ -16,7 +17,10 @@
   },
 
   "json.schemaDownload.trustedDomains": {
-    "https://docs.renovatebot.com/": true
+    "https://raw.githubusercontent.com/": true,
+    "https://docs.renovatebot.com/": true,
+    "https://opencode.ai/": true,
+    "https://models.dev/": true
   },
 
   "chat.tools.terminal.autoApprove": {
@@ -36,18 +40,50 @@
   },
 
   // golang.go
-  "[go]": {
-    "editor.defaultFormatter": "golang.go"
+  "go.alternateTools": {
+    "gopls": "gopls"
   },
   "go.buildTags": "dev",
   "gopls": { "ui.semanticTokens": true },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+
+  // TypeScriptTeam.native-preview
+  "js/ts.experimental.useTsgo": true,
+
+  // esbenp.prettier-vscode
+  "prettier.enable": false,
 
   // oxc.oxc-vscode
+  "oxc.enable.oxlint": true,
+  "oxc.enable.oxfmt": true,
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "always" // oxlint
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   },
 
   // bufbuild.vscode-buf
@@ -60,17 +96,23 @@
     "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
   },
 
+  // redhat.vscode-yaml
+  "yaml.format.enable": false,
+
   // jnoortheen.nix-ide
-  "[nix]": {
-    "editor.defaultFormatter": "jnoortheen.nix-ide"
-  },
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nixd",
   "nix.serverSettings": {
     "nixd": {
       "nixpkgs": {
         "expr": "(builtins.getFlake (builtins.toString ./.)).outputs.nixpkgs.${builtins.currentSystem}"
+      },
+      "formatting": {
+        "command": ["nixfmt"]
       }
     }
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
   }
 }

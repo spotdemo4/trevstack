@@ -16,14 +16,42 @@ part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
 ## getting started
 
+Initialize a new project from this template:
+
 ```sh
-nix develop && nix run .#configure
+./init.sh "Project Title" "Description"
+```
+
+Enter the Nix development environment and regenerate the project outputs:
+
+```sh
+nix develop
+nix run .#configure
+```
+
+`init.sh` is a one-shot template initializer. The configure app regenerates committed clients, refreshes the committed OpenAPI document, and tidies project outputs; rerun it after changing the protobuf or OpenAPI sources.
+
+For direnv, create a `.envrc` symlink from the committed project configuration and allow it:
+
+```sh
+ln -s .envrc.project .envrc
+direnv allow
+nix run .#configure
 ```
 
 ### run
 
+Use the stable Nix apps directly when running one service:
+
 ```sh
-nix run #dev
+nix run .#server
+nix run .#web
+```
+
+Use the development multiplexer to run both services:
+
+```sh
+nix run .#dev
 ```
 
 ### format

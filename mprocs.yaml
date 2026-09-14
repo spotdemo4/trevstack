@@ -5,8 +5,8 @@ procs:
   web:
     cwd: web
     shell: "npm i && npm run dev"
-  generate:
-    shell: "git add -N . && nix run .#gen"
+  configure:
+    shell: "git add -N . && nix run .#configure"
     autostart: false
   format:
     shell: "git add -N . && nix fmt"

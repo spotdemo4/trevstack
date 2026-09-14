@@ -8,10 +8,10 @@
   "endpoint": "https://trev.zip/api/v1",
   "repositories": ["llc/stack"],
   "allowedCommands": [
-    "buf dep update",
-    "npm audit fix --prefix web",
-    "fix-hash .#checks.x86_64-linux.protobuf",
-    "fix-hash .#packages.x86_64-linux.server"
+    "^buf dep update$",
+    "^npm audit fix --prefix web$",
+    "^fix-hash \\.#checks\\.x86_64-linux\\.protobuf$",
+    "^fix-hash \\.#packages\\.x86_64-linux\\.server$"
   ],
 
   // repository
@@ -31,7 +31,8 @@
         "npm audit fix --prefix web",
         "fix-hash .#checks.x86_64-linux.protobuf",
         "fix-hash .#packages.x86_64-linux.server"
-      ]
+      ],
+      "executionMode": "branch"
     }
   },
   "packageRules": [
@@ -51,14 +52,19 @@
       "matchManagers": ["gomod"],
       "addLabels": ["go"],
       "postUpgradeTasks": {
-        "commands": ["fix-hash .#packages.x86_64-linux.server"]
+        "commands": ["fix-hash .#packages.x86_64-linux.server"],
+        "executionMode": "branch"
       }
     },
     {
       "matchManagers": ["npm"],
       "addLabels": ["node"],
       "rangeStrategy": "bump",
-      "postUpdateOptions": ["npmInstallTwice"]
+      "postUpdateOptions": ["npmInstallTwice"],
+      "postUpgradeTasks": {
+        "commands": ["npm audit fix --prefix web"],
+        "executionMode": "branch"
+      }
     },
     {
       "matchManagers": ["npm"],

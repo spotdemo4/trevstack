@@ -7,10 +7,10 @@
   "platform": "github",
   "repositories": ["spotdemo4/trevstack"],
   "allowedCommands": [
-    "buf dep update",
-    "npm audit fix --prefix web",
-    "fix-hash .#checks.x86_64-linux.protobuf",
-    "fix-hash .#packages.x86_64-linux.server"
+    "^buf dep update$",
+    "^npm audit fix --prefix web$",
+    "^fix-hash \\.#checks\\.x86_64-linux\\.protobuf$",
+    "^fix-hash \\.#packages\\.x86_64-linux\\.server$"
   ],
 
   // repository
@@ -29,7 +29,8 @@
         "npm audit fix --prefix web",
         "fix-hash .#checks.x86_64-linux.protobuf",
         "fix-hash .#packages.x86_64-linux.server"
-      ]
+      ],
+      "executionMode": "branch"
     }
   },
   "packageRules": [
@@ -48,7 +49,8 @@
     {
       "matchManagers": ["gomod"],
       "postUpgradeTasks": {
-        "commands": ["fix-hash .#packages.x86_64-linux.server"]
+        "commands": ["fix-hash .#packages.x86_64-linux.server"],
+        "executionMode": "branch"
       }
     },
     {
@@ -59,7 +61,11 @@
     {
       "matchManagers": ["npm"],
       "rangeStrategy": "bump",
-      "postUpdateOptions": ["npmInstallTwice"]
+      "postUpdateOptions": ["npmInstallTwice"],
+      "postUpgradeTasks": {
+        "commands": ["npm audit fix --prefix web"],
+        "executionMode": "branch"
+      }
     },
     {
       "matchManagers": ["npm"],

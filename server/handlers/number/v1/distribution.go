@@ -83,7 +83,7 @@ func (h *Handler) Distribution(
 
 	// Emit every bucket so the chart has a continuous x-axis.
 	buckets := make([]*numberv1.DistributionBucket, 0, n)
-	for i := uint32(0); i < n; i++ {
+	for i := range n {
 		lower := lo + uint32(uint64(i)*span/uint64(n))
 		var upper uint32
 		if i == n-1 {
