@@ -8,14 +8,7 @@ buildGoModule (final: {
   pname = "trevstack-server";
   version = "0.13.1";
 
-  src = lib.fileset.toSource {
-    root = ./.;
-    fileset = lib.fileset.unions [
-      ./go.mod
-      ./go.sum
-      (lib.fileset.fileFilter (file: file.hasExt "go" || file.hasExt "sql" || file.hasExt "yaml") ./.)
-    ];
-  };
+  src = ./.;
   goSum = ./go.sum;
   proxyVendor = true;
   vendorHash = "sha256-tO89XUOF+MclDs01ynXNJaErHquEVeNeqTVdtasAj7k=";
