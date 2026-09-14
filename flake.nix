@@ -134,7 +134,7 @@
 
         packages = rec {
           default = server;
-          web = pkgs.callPackage ./web { };
+          web = pkgs.buildPackages.callPackage ./web { };
           server = pkgs.callPackage ./server { inherit web; };
         };
 
