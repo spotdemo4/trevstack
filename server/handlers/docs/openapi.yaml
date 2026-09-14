@@ -3,7 +3,7 @@ servers:
   - url: /grpc
 info:
   title: TrevStack API
-  version: 0.13.26
+  version: 0.13.27
   description: API for TrevStack
   contact:
     name: Trev
@@ -280,6 +280,7 @@ components:
           type: string
           title: name
           maxLength: 50
+          minLength: 0
         minimum:
           type: integer
           title: minimum
