@@ -15,7 +15,7 @@ plugins:
     out: docs
     strategy: all
     opt:
-      - base=openapi.yaml
+      - base=docs/openapi.base.yaml
       - path=openapi.yaml
       - features=connectrpc;protovalidate
 
