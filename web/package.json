@@ -31,7 +31,7 @@
     "effect": "^3.22.2",
     "lucide-solid": "^1.45.0",
     "solid-js": "^1.9.15",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@catppuccin/tailwindcss": "^1.0.0",
