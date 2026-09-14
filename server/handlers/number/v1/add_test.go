@@ -49,6 +49,8 @@ func TestAdd(t *testing.T) {
 		name string
 		req  *numberv1.AddRequest
 	}{
+		{"missing name", numberv1.AddRequest_builder{Number: ptr(uint32(10))}.Build()},
+		{"missing number", numberv1.AddRequest_builder{Name: ptr("foo")}.Build()},
 		{"empty name", numberv1.AddRequest_builder{Name: ptr(""), Number: ptr(uint32(10))}.Build()},
 		{"name too long", numberv1.AddRequest_builder{Name: ptr(strings.Repeat("a", 51)), Number: ptr(uint32(10))}.Build()},
 		{"number below min", numberv1.AddRequest_builder{Name: ptr("foo"), Number: ptr(uint32(0))}.Build()},

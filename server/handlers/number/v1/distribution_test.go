@@ -79,6 +79,7 @@ func TestDistribution(t *testing.T) {
 		name string
 		req  *numberv1.DistributionRequest
 	}{
+		{"missing bucket count", &numberv1.DistributionRequest{}},
 		{"bucket count zero", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(0))}.Build()},
 		{"bucket count above max", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(101))}.Build()},
 		{"end before start (CEL)", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(5)), Start: later, End: earlier}.Build()},

@@ -45,6 +45,7 @@ func TestTopNames(t *testing.T) {
 		name string
 		req  *numberv1.TopNamesRequest
 	}{
+		{"missing limit", &numberv1.TopNamesRequest{}},
 		{"limit zero", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(0))}.Build()},
 		{"limit above max", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(101))}.Build()},
 		{"end before start (CEL)", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(5)), Start: later, End: earlier}.Build()},

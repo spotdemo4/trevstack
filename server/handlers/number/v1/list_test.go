@@ -95,6 +95,21 @@ func TestList(t *testing.T) {
 		}
 	})
 
+	t.Run("preserves an explicitly present zero maximum", func(t *testing.T) {
+		client, db := newTest(t)
+		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+		seed(t, db, "a", 5, now)
+
+		maximum := uint32(0)
+		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Maximum: &maximum}.Build())
+		if err != nil {
+			t.Fatalf("List: %v", err)
+		}
+		if items := collectListItems(t, stream); len(items) != 0 {
+			t.Fatalf("len(items) = %d, want 0", len(items))
+		}
+	})
+
 	tooLong := strings.Repeat("a", 51)
 	lo, hi := uint32(50), uint32(10)
 	huge := uint32(1_000_001)

@@ -226,7 +226,7 @@ source_slug=$(sed -n 's/^  "name":[[:space:]]*"\([^"]*\)-web".*/\1/p' web/packag
 source_description=$(sed -n 's/^  description = "\(.*\)";/\1/p' flake.nix 2>/dev/null | head -n 1 || true)
 source_license_year=$(sed -n 's/^Copyright (c) \([0-9][0-9][0-9][0-9]\) .*/\1/p' LICENSE 2>/dev/null | head -n 1 || true)
 [[ -n $source_license_year ]] || source_license_year=$year
-[[ -f README.md && -f flake.nix && -f LICENSE && -f docs/default.nix && -f docs/package.json && -f docs/package-lock.json && -f server/default.nix && -f server/go.mod && -f web/default.nix && -f web/package.json ]] || fail 'Required project metadata files are missing.'
+[[ -f README.md && -f flake.nix && -f LICENSE && -f client/Cargo.toml && -f client/Cargo.lock && -f client/default.nix && -f docs/default.nix && -f docs/package.json && -f docs/package-lock.json && -f server/default.nix && -f server/go.mod && -f web/default.nix && -f web/package.json ]] || fail 'Required project metadata files are missing.'
 [[ -n $source_module && $source_module == */server ]] || fail 'Unable to find the server module metadata.'
 [[ -n $source_base ]] || fail 'Unable to find the source repository identity.'
 [[ -n $source_display ]] || fail 'Unable to find the project display name.'
@@ -368,7 +368,8 @@ fi
 
 # Rewrite project metadata structurally, deriving old values from the checked-out template.
 if [[ -n $source_description && $source_description != "$description" ]]; then
-  replace_literal "$source_description" "$nix_description" flake.nix server/default.nix
+  replace_literal "$source_description" "$nix_description" flake.nix client/default.nix server/default.nix
+  replace_literal "$source_description" "$json_description" client/Cargo.toml
 fi
 for package_dir in docs web; do
   if [[ -f $package_dir/package.json ]]; then
@@ -396,7 +397,14 @@ for package_dir in docs web; do
     sed_inplace -E "${package_lock_root_version_line}s|^      \"version\":[[:space:]]*\"[^\"]+\",$|      \"version\": \"$version\",|" "$package_dir/package-lock.json"
   fi
 done
-for nix_package_file in docs/default.nix web/default.nix server/default.nix; do
+client_version_line=$(grep -n -m 1 -E '^version[[:space:]]*=[[:space:]]*"[^"]+"$' client/Cargo.toml | cut -d: -f1 || true)
+[[ -n $client_version_line ]] || fail 'Unable to find the client package version metadata.'
+sed_inplace -E "${client_version_line}s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" client/Cargo.toml
+client_lock_name_line=$(grep -n -m 1 -F "name = \"${slug}-client\"" client/Cargo.lock | cut -d: -f1 || true)
+[[ -n $client_lock_name_line ]] || fail 'Unable to find the client lockfile package metadata.'
+client_lock_version_line=$((client_lock_name_line + 1))
+sed_inplace -E "${client_lock_version_line}s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" client/Cargo.lock
+for nix_package_file in client/default.nix docs/default.nix web/default.nix server/default.nix; do
   sed_inplace -E 's/(^[[:space:]]+version = ")[^"]+(";)/\1'"$version"'\2/' "$nix_package_file"
 done
 reset_openapi_metadata() {
@@ -566,6 +574,13 @@ assert_contains() {
 assert_contains README.md "# $title"
 assert_contains README.md "$description"
 assert_contains flake.nix "description = \"$nix_description\";"
+assert_contains client/Cargo.toml "name = \"${slug}-client\""
+assert_contains client/Cargo.toml "version = \"$version\""
+assert_contains client/Cargo.toml "description = \"$json_description\""
+assert_contains client/Cargo.lock "name = \"${slug}-client\""
+assert_contains client/Cargo.lock "version = \"$version\""
+assert_contains client/default.nix "version = \"$version\";"
+assert_contains client/default.nix "description = \"$nix_description\";"
 assert_contains docs/default.nix "version = \"$version\";"
 assert_contains web/default.nix "version = \"$version\";"
 assert_contains server/default.nix "version = \"$version\";"

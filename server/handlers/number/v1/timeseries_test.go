@@ -36,6 +36,17 @@ func TestTimeSeries(t *testing.T) {
 		}
 	})
 
+	t.Run("rejects missing interval", func(t *testing.T) {
+		client, _ := newTest(t)
+		_, err := client.TimeSeries(context.Background(), &numberv1.TimeSeriesRequest{})
+		if err == nil {
+			t.Fatal("expected validation error, got nil")
+		}
+		if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+			t.Errorf("code = %v, want InvalidArgument", got)
+		}
+	})
+
 	t.Run("rejects unspecified interval", func(t *testing.T) {
 		client, _ := newTest(t)
 		_, err := client.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{

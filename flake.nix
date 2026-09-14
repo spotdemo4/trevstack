@@ -31,6 +31,7 @@
         devShells = {
           default = pkgs.mkShell {
             shellHook = pkgs.shellhook.ref;
+            RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
             packages = with pkgs; [
               # go
               go
@@ -38,6 +39,13 @@
               gotools
               go-tools
               govulncheck
+
+              # rust
+              rustc
+              cargo
+              rust-analyzer
+              rustfmt
+              clippy
 
               # solid
               nodejs_24
@@ -54,6 +62,8 @@
               protoc-gen-es
               protoc-gen-connect-go
               protoc-gen-connect-openapi
+              protoc-gen-prost
+              protoc-gen-tonic
 
               # sql
               sqlfluff
@@ -90,6 +100,7 @@
             packages = with pkgs; [
               renovate
               go # go get
+              cargo # cargo update
               buf # buf dep update
               nodejs_24 # npm audit fix
               fix-hash # vendorHash & bufDeps
@@ -111,13 +122,31 @@
 
         apps = pkgs.mkApps {
           dev = "mprocs";
-          configure = ''
-            buf generate
-            cd server && go mod tidy && cd ..
-            cd docs && npm install && cd ..
-            cd web && npm install && cd ..
-            treefmt
-          '';
+          configure = {
+            packages = with pkgs; [
+              go
+              nodejs_24
+              buf
+              protoc-gen-go
+              protoc-gen-es
+              protoc-gen-connect-go
+              protoc-gen-connect-openapi
+              protoc-gen-prost
+              protoc-gen-tonic
+              treefmt
+              oxfmt
+              sqlfluff
+              nixfmt
+              rustfmt
+            ];
+            script = ''
+              buf generate
+              cd server && go mod tidy && cd ..
+              cd docs && npm install && cd ..
+              cd web && npm install && cd ..
+              treefmt
+            '';
+          };
         };
 
         formatter = pkgs.treefmt.withConfig {
@@ -128,11 +157,13 @@
             buf
             sqlfluff
             nixfmt
+            rustfmt
           ];
         };
 
         packages = rec {
           default = server;
+          client = pkgs.callPackage ./client { };
           docs = pkgs.buildPackages.callPackage ./docs { };
           web = pkgs.buildPackages.callPackage ./web { };
           server = pkgs.callPackage ./server { inherit docs web; };
@@ -147,7 +178,12 @@
         };
 
         checks = pkgs.mkChecks {
-          inherit (self.packages.${system}) docs web server;
+          inherit (self.packages.${system})
+            client
+            docs
+            web
+            server
+            ;
 
           sql = {
             root = ./.;
@@ -171,6 +207,22 @@
             ];
             script = ''
               nixfmt --check "$file"
+            '';
+          };
+
+          rust = {
+            root = ./client;
+            filter = file: file.hasExt "rs";
+            include = [
+              ./client/Cargo.lock
+              ./client/Cargo.toml
+            ];
+            packages = with pkgs; [
+              cargo
+              rustfmt
+            ];
+            script = ''
+              cargo fmt --check
             '';
           };
 

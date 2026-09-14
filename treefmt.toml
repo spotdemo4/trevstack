@@ -12,6 +12,11 @@ command = "oxfmt"
 options = ["--write"]
 includes = ["*.ts", "*.tsx", "*.html", "*.json", "*.yaml", "*.toml", "*.md"]
 
+[formatter.rustfmt]
+command = "rustfmt"
+options = ["--edition", "2024"]
+includes = ["*.rs"]
+
 [formatter.buf]
 command = "buf"
 options = ["format", "--write"]

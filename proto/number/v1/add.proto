@@ -1,18 +1,18 @@
-edition = "2024";
+syntax = "proto3";
 
 package number.v1;
 
 import "buf/validate/validate.proto";
 
 message AddRequest {
-  string name = 1 [
+  optional string name = 1 [
     (buf.validate.field).required = true,
     (buf.validate.field).string = {
       min_len: 1
       max_len: 50
     }
   ];
-  uint32 number = 2 [
+  optional uint32 number = 2 [
     (buf.validate.field).required = true,
     (buf.validate.field).uint32 = {
       gte: 1

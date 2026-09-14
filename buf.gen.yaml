@@ -3,7 +3,9 @@ version: v2
 plugins:
   - local: protoc-gen-go
     out: server/connect
-    opt: paths=source_relative
+    opt:
+      - paths=source_relative
+      - default_api_level=API_OPAQUE
 
   - local: protoc-gen-connect-go
     out: server/connect
@@ -23,6 +25,19 @@ plugins:
     out: web/connect
     opt: target=ts
     include_imports: true
+
+  - local: protoc-gen-prost
+    out: client/src/gen
+    strategy: all
+    opt:
+      - flat_output_dir
+
+  - local: protoc-gen-tonic
+    out: client/src/gen
+    strategy: all
+    opt:
+      - flat_output_dir
+      - no_server
 
 managed:
   enabled: true

@@ -1,4 +1,4 @@
-edition = "2024";
+syntax = "proto3";
 
 package number.v1;
 
@@ -36,10 +36,13 @@ enum TimeInterval {
 }
 
 message TimeSeriesRequest {
-  TimeInterval interval = 1 [(buf.validate.field).enum = {
-    defined_only: true
-    not_in: [0]
-  }];
+  optional TimeInterval interval = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).enum = {
+      defined_only: true
+      not_in: [0]
+    }
+  ];
   google.protobuf.Timestamp start = 2;
   google.protobuf.Timestamp end = 3;
 
@@ -63,10 +66,13 @@ message TimeSeriesResponse {
 
 // Histogram of `number` values across equal-width buckets, suitable for bar charts.
 message DistributionRequest {
-  uint32 bucket_count = 1 [(buf.validate.field).uint32 = {
-    gte: 1
-    lte: 100
-  }];
+  optional uint32 bucket_count = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).uint32 = {
+      gte: 1
+      lte: 100
+    }
+  ];
   google.protobuf.Timestamp start = 2;
   google.protobuf.Timestamp end = 3;
 
@@ -89,10 +95,13 @@ message DistributionResponse {
 
 // Top N names by frequency and total value, suitable for bar/pie charts.
 message TopNamesRequest {
-  uint32 limit = 1 [(buf.validate.field).uint32 = {
-    gte: 1
-    lte: 100
-  }];
+  optional uint32 limit = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).uint32 = {
+      gte: 1
+      lte: 100
+    }
+  ];
   google.protobuf.Timestamp start = 2;
   google.protobuf.Timestamp end = 3;
 

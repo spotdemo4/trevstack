@@ -23,8 +23,8 @@ const (
 
 type AddRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name"`
-	xxx_hidden_Number      uint32                 `protobuf:"varint,2,opt,name=number"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof"`
+	xxx_hidden_Number      uint32                 `protobuf:"varint,2,opt,name=number,proto3,oneof"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -130,12 +130,10 @@ func (b0 AddRequest_builder) Build() *AddRequest {
 }
 
 type AddResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Sum         uint64                 `protobuf:"varint,1,opt,name=sum"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Sum uint64                 `protobuf:"varint,1,opt,name=sum,proto3"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *AddResponse) Reset() {
@@ -172,35 +170,19 @@ func (x *AddResponse) GetSum() uint64 {
 
 func (x *AddResponse) SetSum(v uint64) {
 	x.xxx_hidden_Sum = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *AddResponse) HasSum() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *AddResponse) ClearSum() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Sum = 0
 }
 
 type AddResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Sum *uint64
+	Sum uint64
 }
 
 func (b0 AddResponse_builder) Build() *AddResponse {
 	m0 := &AddResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Sum != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Sum = *b.Sum
-	}
+	x.xxx_hidden_Sum = b.Sum
 	return m0
 }
 
@@ -208,15 +190,17 @@ var File_number_v1_add_proto protoreflect.FileDescriptor
 
 const file_number_v1_add_proto_rawDesc = "" +
 	"\n" +
-	"\x13number/v1/add.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\"V\n" +
+	"\x13number/v1/add.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\"t\n" +
 	"\n" +
-	"AddRequest\x12 \n" +
-	"\x04name\x18\x01 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x01\x182R\x04name\x12&\n" +
-	"\x06number\x18\x02 \x01(\rB\x0e\xbaH\v\xc8\x01\x01*\x06\x18\xc0\x84=(\x01R\x06number\"\x1f\n" +
+	"AddRequest\x12%\n" +
+	"\x04name\x18\x01 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x01\x182H\x00R\x04name\x88\x01\x01\x12+\n" +
+	"\x06number\x18\x02 \x01(\rB\x0e\xbaH\v\xc8\x01\x01*\x06\x18\xc0\x84=(\x01H\x01R\x06number\x88\x01\x01B\a\n" +
+	"\x05_nameB\t\n" +
+	"\a_number\"\x1f\n" +
 	"\vAddResponse\x12\x10\n" +
 	"\x03sum\x18\x01 \x01(\x04R\x03sumB\x94\x01\n" +
 	"\rcom.number.v1B\bAddProtoP\x01Z4trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
-	"Number::V1b\beditionsp\xe9\a"
+	"Number::V1b\x06proto3"
 
 var file_number_v1_add_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_number_v1_add_proto_goTypes = []any{
@@ -236,6 +220,7 @@ func file_number_v1_add_proto_init() {
 	if File_number_v1_add_proto != nil {
 		return
 	}
+	file_number_v1_add_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

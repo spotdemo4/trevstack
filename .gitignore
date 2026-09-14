@@ -18,6 +18,9 @@
 /server/build/
 /server/tmp/
 
+# client
+/client/target/
+
 # docs
 /docs/node_modules/
 /docs/dist/

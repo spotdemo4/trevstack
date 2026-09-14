@@ -23,14 +23,12 @@ const (
 )
 
 type Item struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Timestamp   *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=timestamp"`
-	xxx_hidden_Name        *string                `protobuf:"bytes,2,opt,name=name"`
-	xxx_hidden_Number      uint32                 `protobuf:"varint,3,opt,name=number"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Timestamp *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3"`
+	xxx_hidden_Name      string                 `protobuf:"bytes,2,opt,name=name,proto3"`
+	xxx_hidden_Number    uint32                 `protobuf:"varint,3,opt,name=number,proto3"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Item) Reset() {
@@ -67,10 +65,7 @@ func (x *Item) GetTimestamp() *timestamppb.Timestamp {
 
 func (x *Item) GetName() string {
 	if x != nil {
-		if x.xxx_hidden_Name != nil {
-			return *x.xxx_hidden_Name
-		}
-		return ""
+		return x.xxx_hidden_Name
 	}
 	return ""
 }
@@ -87,13 +82,11 @@ func (x *Item) SetTimestamp(v *timestamppb.Timestamp) {
 }
 
 func (x *Item) SetName(v string) {
-	x.xxx_hidden_Name = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	x.xxx_hidden_Name = v
 }
 
 func (x *Item) SetNumber(v uint32) {
 	x.xxx_hidden_Number = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *Item) HasTimestamp() bool {
@@ -103,40 +96,16 @@ func (x *Item) HasTimestamp() bool {
 	return x.xxx_hidden_Timestamp != nil
 }
 
-func (x *Item) HasName() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *Item) HasNumber() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
 func (x *Item) ClearTimestamp() {
 	x.xxx_hidden_Timestamp = nil
-}
-
-func (x *Item) ClearName() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Name = nil
-}
-
-func (x *Item) ClearNumber() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Number = 0
 }
 
 type Item_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Timestamp *timestamppb.Timestamp
-	Name      *string
-	Number    *uint32
+	Name      string
+	Number    uint32
 }
 
 func (b0 Item_builder) Build() *Item {
@@ -144,24 +113,18 @@ func (b0 Item_builder) Build() *Item {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Timestamp = b.Timestamp
-	if b.Name != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_Name = b.Name
-	}
-	if b.Number != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Number = *b.Number
-	}
+	x.xxx_hidden_Name = b.Name
+	x.xxx_hidden_Number = b.Number
 	return m0
 }
 
 type ListRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name"`
-	xxx_hidden_Minimum     uint32                 `protobuf:"varint,2,opt,name=minimum"`
-	xxx_hidden_Maximum     uint32                 `protobuf:"varint,3,opt,name=maximum"`
-	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start"`
-	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=end"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof"`
+	xxx_hidden_Minimum     uint32                 `protobuf:"varint,2,opt,name=minimum,proto3,oneof"`
+	xxx_hidden_Maximum     uint32                 `protobuf:"varint,3,opt,name=maximum,proto3,oneof"`
+	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start,proto3"`
+	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=end,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -345,7 +308,7 @@ func (b0 ListRequest_builder) Build() *ListRequest {
 
 type ListResponse struct {
 	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Item *Item                  `protobuf:"bytes,1,opt,name=item"`
+	xxx_hidden_Item *Item                  `protobuf:"bytes,1,opt,name=item,proto3"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -419,19 +382,24 @@ const file_number_v1_list_proto_rawDesc = "" +
 	"\x04Item\x128\n" +
 	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x1d\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x04name\x12#\n" +
-	"\x06number\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x06number\"\xd4\x03\n" +
-	"\vListRequest\x12\x1d\n" +
-	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x00\x182R\x04name\x12%\n" +
-	"\aminimum\x18\x02 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\aminimum\x12%\n" +
-	"\amaximum\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\amaximum\x120\n" +
+	"\x06number\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00R\x06number\"\x84\x04\n" +
+	"\vListRequest\x12\"\n" +
+	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x00\x182H\x00R\x04name\x88\x01\x01\x12*\n" +
+	"\aminimum\x18\x02 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00H\x01R\aminimum\x88\x01\x01\x12*\n" +
+	"\amaximum\x18\x03 \x01(\rB\v\xbaH\b*\x06\x18\xc0\x84=(\x00H\x02R\amaximum\x88\x01\x01\x120\n" +
 	"\x05start\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
 	"\x03end\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x03end:\xf7\x01\xbaH\xf3\x01\x1ag\n" +
 	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\x1a\x87\x01\n" +
-	"\x19minimum_less_than_maximum\x12!Minimum must be less than maximum\x1aG!has(this.minimum) || !has(this.maximum) || this.minimum < this.maximum\"3\n" +
+	"\x19minimum_less_than_maximum\x12!Minimum must be less than maximum\x1aG!has(this.minimum) || !has(this.maximum) || this.minimum < this.maximumB\a\n" +
+	"\x05_nameB\n" +
+	"\n" +
+	"\b_minimumB\n" +
+	"\n" +
+	"\b_maximum\"3\n" +
 	"\fListResponse\x12#\n" +
 	"\x04item\x18\x01 \x01(\v2\x0f.number.v1.ItemR\x04itemB\x95\x01\n" +
 	"\rcom.number.v1B\tListProtoP\x01Z4trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
-	"Number::V1b\beditionsp\xe9\a"
+	"Number::V1b\x06proto3"
 
 var file_number_v1_list_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_number_v1_list_proto_goTypes = []any{
@@ -457,6 +425,7 @@ func file_number_v1_list_proto_init() {
 	if File_number_v1_list_proto != nil {
 		return
 	}
+	file_number_v1_list_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

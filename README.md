@@ -6,7 +6,7 @@
 [![node](https://img.shields.io/badge/dynamic/json?url=https://trev.zip/llc/stack/raw/branch/main/web/package.json&query=%24.engines.node&logo=nodedotjs&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23339933)](https://nodejs.org/en/about/previous-releases)
 [![solidjs](https://img.shields.io/badge/dynamic/json?url=https://trev.zip/llc/stack/raw/branch/main/web/package.json&query=%24.dependencies.solid-js&logo=solid&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%232C4F7C)](https://www.solidjs.com/)
 
-TrevStack is a template for full-stack applications built with Go, SolidJS, and ConnectRPC
+TrevStack is a template for full-stack applications built with Go, Rust, SolidJS, and ConnectRPC
 
 part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
@@ -44,6 +44,7 @@ nix flake check
 
 ```sh
 nix build
+nix build .#client
 ```
 
 ### release
@@ -55,6 +56,21 @@ bumper "openapi.yaml" "docs/openapi.yaml"
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes
 
 ## use
+
+### client
+
+Send one name and number to the bundled server:
+
+```sh
+nix run .#client -- alice 10
+```
+
+The client connects to `http://127.0.0.1:8080/grpc` by default. Override the RPC base URL with `--url` or `NUMBER_SERVICE_URL`; the command-line option takes precedence.
+
+```sh
+NUMBER_SERVICE_URL=https://example.com/grpc nix run .#client -- alice 10
+nix run .#client -- --url http://127.0.0.1:9000/grpc alice 10
+```
 
 ### docker
 

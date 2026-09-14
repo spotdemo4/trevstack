@@ -184,12 +184,16 @@ components:
       type: object
       properties:
         name:
-          type: string
+          type:
+            - string
+            - "null"
           title: name
           maxLength: 50
           minLength: 1
         number:
-          type: integer
+          type:
+            - integer
+            - "null"
           title: number
           maximum: 1000000
           minimum: 1
@@ -230,7 +234,9 @@ components:
       type: object
       properties:
         bucketCount:
-          type: integer
+          type:
+            - integer
+            - "null"
           title: bucket_count
           maximum: 100
           minimum: 1
@@ -241,6 +247,8 @@ components:
           title: end
           $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: DistributionRequest
+      required:
+        - bucketCount
       additionalProperties: false
       description: |
         Histogram of `number` values across equal-width buckets, suitable for bar charts.
@@ -277,17 +285,23 @@ components:
       type: object
       properties:
         name:
-          type: string
+          type:
+            - string
+            - "null"
           title: name
           maxLength: 50
           minLength: 0
         minimum:
-          type: integer
+          type:
+            - integer
+            - "null"
           title: minimum
           maximum: 1000000
           minimum: 0
         maximum:
-          type: integer
+          type:
+            - integer
+            - "null"
           title: maximum
           maximum: 1000000
           minimum: 0
@@ -392,11 +406,13 @@ components:
       type: object
       properties:
         interval:
+          oneOf:
+            - $ref: "#/components/schemas/number.v1.TimeInterval"
+            - type: "null"
           not:
             enum:
               - TIME_INTERVAL_UNSPECIFIED
           title: interval
-          $ref: "#/components/schemas/number.v1.TimeInterval"
         start:
           title: start
           $ref: "#/components/schemas/google.protobuf.Timestamp"
@@ -404,6 +420,8 @@ components:
           title: end
           $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: TimeSeriesRequest
+      required:
+        - interval
       additionalProperties: false
       description: |
         end_after_start // End must be after start
@@ -445,7 +463,9 @@ components:
       type: object
       properties:
         limit:
-          type: integer
+          type:
+            - integer
+            - "null"
           title: limit
           maximum: 100
           minimum: 1
@@ -456,6 +476,8 @@ components:
           title: end
           $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: TopNamesRequest
+      required:
+        - limit
       additionalProperties: false
       description: |
         Top N names by frequency and total value, suitable for bar/pie charts.

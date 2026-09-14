@@ -76,8 +76,8 @@ func (x TimeInterval) Number() protoreflect.EnumNumber {
 // Scalar summary metrics across all items, suitable for stat cards.
 type SummaryRequest struct {
 	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Start *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=start"`
-	xxx_hidden_End   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=end"`
+	xxx_hidden_Start *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=start,proto3"`
+	xxx_hidden_End   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=end,proto3"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -169,14 +169,12 @@ func (b0 SummaryRequest_builder) Build() *SummaryRequest {
 
 type SummaryResponse struct {
 	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_TotalCount    int64                  `protobuf:"varint,1,opt,name=total_count,json=totalCount"`
-	xxx_hidden_TotalSum      uint64                 `protobuf:"varint,2,opt,name=total_sum,json=totalSum"`
-	xxx_hidden_Average       float64                `protobuf:"fixed64,3,opt,name=average"`
-	xxx_hidden_Min           uint32                 `protobuf:"varint,4,opt,name=min"`
-	xxx_hidden_Max           uint32                 `protobuf:"varint,5,opt,name=max"`
-	xxx_hidden_DistinctNames uint32                 `protobuf:"varint,6,opt,name=distinct_names,json=distinctNames"`
-	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
-	XXX_presence             [1]uint32
+	xxx_hidden_TotalCount    int64                  `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3"`
+	xxx_hidden_TotalSum      uint64                 `protobuf:"varint,2,opt,name=total_sum,json=totalSum,proto3"`
+	xxx_hidden_Average       float64                `protobuf:"fixed64,3,opt,name=average,proto3"`
+	xxx_hidden_Min           uint32                 `protobuf:"varint,4,opt,name=min,proto3"`
+	xxx_hidden_Max           uint32                 `protobuf:"varint,5,opt,name=max,proto3"`
+	xxx_hidden_DistinctNames uint32                 `protobuf:"varint,6,opt,name=distinct_names,json=distinctNames,proto3"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -250,153 +248,57 @@ func (x *SummaryResponse) GetDistinctNames() uint32 {
 
 func (x *SummaryResponse) SetTotalCount(v int64) {
 	x.xxx_hidden_TotalCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 6)
 }
 
 func (x *SummaryResponse) SetTotalSum(v uint64) {
 	x.xxx_hidden_TotalSum = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 6)
 }
 
 func (x *SummaryResponse) SetAverage(v float64) {
 	x.xxx_hidden_Average = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
 }
 
 func (x *SummaryResponse) SetMin(v uint32) {
 	x.xxx_hidden_Min = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
 }
 
 func (x *SummaryResponse) SetMax(v uint32) {
 	x.xxx_hidden_Max = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
 }
 
 func (x *SummaryResponse) SetDistinctNames(v uint32) {
 	x.xxx_hidden_DistinctNames = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
-}
-
-func (x *SummaryResponse) HasTotalCount() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *SummaryResponse) HasTotalSum() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *SummaryResponse) HasAverage() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *SummaryResponse) HasMin() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
-func (x *SummaryResponse) HasMax() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
-}
-
-func (x *SummaryResponse) HasDistinctNames() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
-}
-
-func (x *SummaryResponse) ClearTotalCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_TotalCount = 0
-}
-
-func (x *SummaryResponse) ClearTotalSum() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_TotalSum = 0
-}
-
-func (x *SummaryResponse) ClearAverage() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Average = 0
-}
-
-func (x *SummaryResponse) ClearMin() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Min = 0
-}
-
-func (x *SummaryResponse) ClearMax() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_Max = 0
-}
-
-func (x *SummaryResponse) ClearDistinctNames() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
-	x.xxx_hidden_DistinctNames = 0
 }
 
 type SummaryResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	TotalCount    *int64
-	TotalSum      *uint64
-	Average       *float64
-	Min           *uint32
-	Max           *uint32
-	DistinctNames *uint32
+	TotalCount    int64
+	TotalSum      uint64
+	Average       float64
+	Min           uint32
+	Max           uint32
+	DistinctNames uint32
 }
 
 func (b0 SummaryResponse_builder) Build() *SummaryResponse {
 	m0 := &SummaryResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.TotalCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 6)
-		x.xxx_hidden_TotalCount = *b.TotalCount
-	}
-	if b.TotalSum != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 6)
-		x.xxx_hidden_TotalSum = *b.TotalSum
-	}
-	if b.Average != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
-		x.xxx_hidden_Average = *b.Average
-	}
-	if b.Min != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
-		x.xxx_hidden_Min = *b.Min
-	}
-	if b.Max != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
-		x.xxx_hidden_Max = *b.Max
-	}
-	if b.DistinctNames != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
-		x.xxx_hidden_DistinctNames = *b.DistinctNames
-	}
+	x.xxx_hidden_TotalCount = b.TotalCount
+	x.xxx_hidden_TotalSum = b.TotalSum
+	x.xxx_hidden_Average = b.Average
+	x.xxx_hidden_Min = b.Min
+	x.xxx_hidden_Max = b.Max
+	x.xxx_hidden_DistinctNames = b.DistinctNames
 	return m0
 }
 
 type TimeSeriesRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Interval    TimeInterval           `protobuf:"varint,1,opt,name=interval,enum=number.v1.TimeInterval"`
-	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start"`
-	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end"`
+	xxx_hidden_Interval    TimeInterval           `protobuf:"varint,1,opt,name=interval,proto3,enum=number.v1.TimeInterval,oneof"`
+	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start,proto3"`
+	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -520,15 +422,13 @@ func (b0 TimeSeriesRequest_builder) Build() *TimeSeriesRequest {
 }
 
 type TimeSeriesPoint struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Bucket      *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=bucket"`
-	xxx_hidden_Count       int64                  `protobuf:"varint,2,opt,name=count"`
-	xxx_hidden_Sum         uint64                 `protobuf:"varint,3,opt,name=sum"`
-	xxx_hidden_Average     float64                `protobuf:"fixed64,4,opt,name=average"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Bucket  *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=bucket,proto3"`
+	xxx_hidden_Count   int64                  `protobuf:"varint,2,opt,name=count,proto3"`
+	xxx_hidden_Sum     uint64                 `protobuf:"varint,3,opt,name=sum,proto3"`
+	xxx_hidden_Average float64                `protobuf:"fixed64,4,opt,name=average,proto3"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *TimeSeriesPoint) Reset() {
@@ -590,17 +490,14 @@ func (x *TimeSeriesPoint) SetBucket(v *timestamppb.Timestamp) {
 
 func (x *TimeSeriesPoint) SetCount(v int64) {
 	x.xxx_hidden_Count = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *TimeSeriesPoint) SetSum(v uint64) {
 	x.xxx_hidden_Sum = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
 func (x *TimeSeriesPoint) SetAverage(v float64) {
 	x.xxx_hidden_Average = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
 }
 
 func (x *TimeSeriesPoint) HasBucket() bool {
@@ -610,53 +507,17 @@ func (x *TimeSeriesPoint) HasBucket() bool {
 	return x.xxx_hidden_Bucket != nil
 }
 
-func (x *TimeSeriesPoint) HasCount() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *TimeSeriesPoint) HasSum() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *TimeSeriesPoint) HasAverage() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
 func (x *TimeSeriesPoint) ClearBucket() {
 	x.xxx_hidden_Bucket = nil
-}
-
-func (x *TimeSeriesPoint) ClearCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Count = 0
-}
-
-func (x *TimeSeriesPoint) ClearSum() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Sum = 0
-}
-
-func (x *TimeSeriesPoint) ClearAverage() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Average = 0
 }
 
 type TimeSeriesPoint_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Bucket  *timestamppb.Timestamp
-	Count   *int64
-	Sum     *uint64
-	Average *float64
+	Count   int64
+	Sum     uint64
+	Average float64
 }
 
 func (b0 TimeSeriesPoint_builder) Build() *TimeSeriesPoint {
@@ -664,24 +525,15 @@ func (b0 TimeSeriesPoint_builder) Build() *TimeSeriesPoint {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Bucket = b.Bucket
-	if b.Count != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
-		x.xxx_hidden_Count = *b.Count
-	}
-	if b.Sum != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
-		x.xxx_hidden_Sum = *b.Sum
-	}
-	if b.Average != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
-		x.xxx_hidden_Average = *b.Average
-	}
+	x.xxx_hidden_Count = b.Count
+	x.xxx_hidden_Sum = b.Sum
+	x.xxx_hidden_Average = b.Average
 	return m0
 }
 
 type TimeSeriesResponse struct {
 	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Points *[]*TimeSeriesPoint    `protobuf:"bytes,1,rep,name=points"`
+	xxx_hidden_Points *[]*TimeSeriesPoint    `protobuf:"bytes,1,rep,name=points,proto3"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -741,9 +593,9 @@ func (b0 TimeSeriesResponse_builder) Build() *TimeSeriesResponse {
 // Histogram of `number` values across equal-width buckets, suitable for bar charts.
 type DistributionRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_BucketCount uint32                 `protobuf:"varint,1,opt,name=bucket_count,json=bucketCount"`
-	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start"`
-	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end"`
+	xxx_hidden_BucketCount uint32                 `protobuf:"varint,1,opt,name=bucket_count,json=bucketCount,proto3,oneof"`
+	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start,proto3"`
+	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -865,14 +717,12 @@ func (b0 DistributionRequest_builder) Build() *DistributionRequest {
 }
 
 type DistributionBucket struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Lower       uint32                 `protobuf:"varint,1,opt,name=lower"`
-	xxx_hidden_Upper       uint32                 `protobuf:"varint,2,opt,name=upper"`
-	xxx_hidden_Count       int64                  `protobuf:"varint,3,opt,name=count"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Lower uint32                 `protobuf:"varint,1,opt,name=lower,proto3"`
+	xxx_hidden_Upper uint32                 `protobuf:"varint,2,opt,name=upper,proto3"`
+	xxx_hidden_Count int64                  `protobuf:"varint,3,opt,name=count,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *DistributionBucket) Reset() {
@@ -923,85 +773,37 @@ func (x *DistributionBucket) GetCount() int64 {
 
 func (x *DistributionBucket) SetLower(v uint32) {
 	x.xxx_hidden_Lower = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *DistributionBucket) SetUpper(v uint32) {
 	x.xxx_hidden_Upper = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *DistributionBucket) SetCount(v int64) {
 	x.xxx_hidden_Count = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *DistributionBucket) HasLower() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *DistributionBucket) HasUpper() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *DistributionBucket) HasCount() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *DistributionBucket) ClearLower() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Lower = 0
-}
-
-func (x *DistributionBucket) ClearUpper() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Upper = 0
-}
-
-func (x *DistributionBucket) ClearCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Count = 0
 }
 
 type DistributionBucket_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Lower *uint32
-	Upper *uint32
-	Count *int64
+	Lower uint32
+	Upper uint32
+	Count int64
 }
 
 func (b0 DistributionBucket_builder) Build() *DistributionBucket {
 	m0 := &DistributionBucket{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Lower != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_Lower = *b.Lower
-	}
-	if b.Upper != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_Upper = *b.Upper
-	}
-	if b.Count != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Count = *b.Count
-	}
+	x.xxx_hidden_Lower = b.Lower
+	x.xxx_hidden_Upper = b.Upper
+	x.xxx_hidden_Count = b.Count
 	return m0
 }
 
 type DistributionResponse struct {
 	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Buckets *[]*DistributionBucket `protobuf:"bytes,1,rep,name=buckets"`
+	xxx_hidden_Buckets *[]*DistributionBucket `protobuf:"bytes,1,rep,name=buckets,proto3"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -1061,9 +863,9 @@ func (b0 DistributionResponse_builder) Build() *DistributionResponse {
 // Top N names by frequency and total value, suitable for bar/pie charts.
 type TopNamesRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Limit       uint32                 `protobuf:"varint,1,opt,name=limit"`
-	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start"`
-	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end"`
+	xxx_hidden_Limit       uint32                 `protobuf:"varint,1,opt,name=limit,proto3,oneof"`
+	xxx_hidden_Start       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start,proto3"`
+	xxx_hidden_End         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -1185,15 +987,13 @@ func (b0 TopNamesRequest_builder) Build() *TopNamesRequest {
 }
 
 type TopName struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name"`
-	xxx_hidden_Count       int64                  `protobuf:"varint,2,opt,name=count"`
-	xxx_hidden_Sum         uint64                 `protobuf:"varint,3,opt,name=sum"`
-	xxx_hidden_Average     float64                `protobuf:"fixed64,4,opt,name=average"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Name    string                 `protobuf:"bytes,1,opt,name=name,proto3"`
+	xxx_hidden_Count   int64                  `protobuf:"varint,2,opt,name=count,proto3"`
+	xxx_hidden_Sum     uint64                 `protobuf:"varint,3,opt,name=sum,proto3"`
+	xxx_hidden_Average float64                `protobuf:"fixed64,4,opt,name=average,proto3"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *TopName) Reset() {
@@ -1223,10 +1023,7 @@ func (x *TopName) ProtoReflect() protoreflect.Message {
 
 func (x *TopName) GetName() string {
 	if x != nil {
-		if x.xxx_hidden_Name != nil {
-			return *x.xxx_hidden_Name
-		}
-		return ""
+		return x.xxx_hidden_Name
 	}
 	return ""
 }
@@ -1253,108 +1050,44 @@ func (x *TopName) GetAverage() float64 {
 }
 
 func (x *TopName) SetName(v string) {
-	x.xxx_hidden_Name = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
+	x.xxx_hidden_Name = v
 }
 
 func (x *TopName) SetCount(v int64) {
 	x.xxx_hidden_Count = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *TopName) SetSum(v uint64) {
 	x.xxx_hidden_Sum = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
 func (x *TopName) SetAverage(v float64) {
 	x.xxx_hidden_Average = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
-}
-
-func (x *TopName) HasName() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *TopName) HasCount() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *TopName) HasSum() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *TopName) HasAverage() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
-}
-
-func (x *TopName) ClearName() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Name = nil
-}
-
-func (x *TopName) ClearCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Count = 0
-}
-
-func (x *TopName) ClearSum() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Sum = 0
-}
-
-func (x *TopName) ClearAverage() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Average = 0
 }
 
 type TopName_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Name    *string
-	Count   *int64
-	Sum     *uint64
-	Average *float64
+	Name    string
+	Count   int64
+	Sum     uint64
+	Average float64
 }
 
 func (b0 TopName_builder) Build() *TopName {
 	m0 := &TopName{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Name != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
-		x.xxx_hidden_Name = b.Name
-	}
-	if b.Count != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
-		x.xxx_hidden_Count = *b.Count
-	}
-	if b.Sum != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
-		x.xxx_hidden_Sum = *b.Sum
-	}
-	if b.Average != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
-		x.xxx_hidden_Average = *b.Average
-	}
+	x.xxx_hidden_Name = b.Name
+	x.xxx_hidden_Count = b.Count
+	x.xxx_hidden_Sum = b.Sum
+	x.xxx_hidden_Average = b.Average
 	return m0
 }
 
 type TopNamesResponse struct {
 	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Names *[]*TopName            `protobuf:"bytes,1,rep,name=names"`
+	xxx_hidden_Names *[]*TopName            `protobuf:"bytes,1,rep,name=names,proto3"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1427,36 +1160,39 @@ const file_number_v1_metrics_proto_rawDesc = "" +
 	"\aaverage\x18\x03 \x01(\x01R\aaverage\x12\x10\n" +
 	"\x03min\x18\x04 \x01(\rR\x03min\x12\x10\n" +
 	"\x03max\x18\x05 \x01(\rR\x03max\x12%\n" +
-	"\x0edistinct_names\x18\x06 \x01(\rR\rdistinctNames\"\xa2\x02\n" +
-	"\x11TimeSeriesRequest\x12?\n" +
-	"\binterval\x18\x01 \x01(\x0e2\x17.number.v1.TimeIntervalB\n" +
-	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\binterval\x120\n" +
+	"\x0edistinct_names\x18\x06 \x01(\rR\rdistinctNames\"\xb7\x02\n" +
+	"\x11TimeSeriesRequest\x12G\n" +
+	"\binterval\x18\x01 \x01(\x0e2\x17.number.v1.TimeIntervalB\r\xbaH\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00H\x00R\binterval\x88\x01\x01\x120\n" +
 	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
 	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x03end:l\xbaHi\x1ag\n" +
-	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\"\x87\x01\n" +
+	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.startB\v\n" +
+	"\t_interval\"\x87\x01\n" +
 	"\x0fTimeSeriesPoint\x122\n" +
 	"\x06bucket\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x06bucket\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x10\n" +
 	"\x03sum\x18\x03 \x01(\x04R\x03sum\x12\x18\n" +
 	"\aaverage\x18\x04 \x01(\x01R\aaverage\"H\n" +
 	"\x12TimeSeriesResponse\x122\n" +
-	"\x06points\x18\x01 \x03(\v2\x1a.number.v1.TimeSeriesPointR\x06points\"\x91\x02\n" +
-	"\x13DistributionRequest\x12,\n" +
-	"\fbucket_count\x18\x01 \x01(\rB\t\xbaH\x06*\x04\x18d(\x01R\vbucketCount\x120\n" +
+	"\x06points\x18\x01 \x03(\v2\x1a.number.v1.TimeSeriesPointR\x06points\"\xaa\x02\n" +
+	"\x13DistributionRequest\x124\n" +
+	"\fbucket_count\x18\x01 \x01(\rB\f\xbaH\t\xc8\x01\x01*\x04\x18d(\x01H\x00R\vbucketCount\x88\x01\x01\x120\n" +
 	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
 	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x03end:l\xbaHi\x1ag\n" +
-	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\"V\n" +
+	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.startB\x0f\n" +
+	"\r_bucket_count\"V\n" +
 	"\x12DistributionBucket\x12\x14\n" +
 	"\x05lower\x18\x01 \x01(\rR\x05lower\x12\x14\n" +
 	"\x05upper\x18\x02 \x01(\rR\x05upper\x12\x14\n" +
 	"\x05count\x18\x03 \x01(\x03R\x05count\"O\n" +
 	"\x14DistributionResponse\x127\n" +
-	"\abuckets\x18\x01 \x03(\v2\x1d.number.v1.DistributionBucketR\abuckets\"\x80\x02\n" +
-	"\x0fTopNamesRequest\x12\x1f\n" +
-	"\x05limit\x18\x01 \x01(\rB\t\xbaH\x06*\x04\x18d(\x01R\x05limit\x120\n" +
+	"\abuckets\x18\x01 \x03(\v2\x1d.number.v1.DistributionBucketR\abuckets\"\x92\x02\n" +
+	"\x0fTopNamesRequest\x12'\n" +
+	"\x05limit\x18\x01 \x01(\rB\f\xbaH\t\xc8\x01\x01*\x04\x18d(\x01H\x00R\x05limit\x88\x01\x01\x120\n" +
 	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
 	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x03end:l\xbaHi\x1ag\n" +
-	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.start\"_\n" +
+	"\x0fend_after_start\x12\x17End must be after start\x1a;!has(this.end) || !has(this.start) || this.end > this.startB\b\n" +
+	"\x06_limit\"_\n" +
 	"\aTopName\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x10\n" +
@@ -1471,7 +1207,7 @@ const file_number_v1_metrics_proto_rawDesc = "" +
 	"\x12TIME_INTERVAL_WEEK\x10\x03\x12\x17\n" +
 	"\x13TIME_INTERVAL_MONTH\x10\x04B\x98\x01\n" +
 	"\rcom.number.v1B\fMetricsProtoP\x01Z4trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
-	"Number::V1b\beditionsp\xe9\a"
+	"Number::V1b\x06proto3"
 
 var file_number_v1_metrics_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_number_v1_metrics_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
@@ -1516,6 +1252,9 @@ func file_number_v1_metrics_proto_init() {
 	if File_number_v1_metrics_proto != nil {
 		return
 	}
+	file_number_v1_metrics_proto_msgTypes[2].OneofWrappers = []any{}
+	file_number_v1_metrics_proto_msgTypes[5].OneofWrappers = []any{}
+	file_number_v1_metrics_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
