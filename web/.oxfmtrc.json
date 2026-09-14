@@ -1,7 +1,7 @@
 {
   "sortImports": true,
   "sortTailwindcss": {
-    "stylesheet": "web/index.css",
+    "stylesheet": "index.css",
     "functions": ["twMerge"]
   }
 }
