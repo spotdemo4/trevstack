@@ -12,7 +12,7 @@ plugins:
       - simple
 
   - local: protoc-gen-connect-openapi
-    out: server/handlers/docs
+    out: docs
     strategy: all
     opt:
       - base=openapi.yaml

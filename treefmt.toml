@@ -1,5 +1,8 @@
 #:schema https://www.schemastore.org/treefmt.json
 
+[global]
+excludes = ["**/dist/**", "**/node_modules/**"]
+
 [formatter.gofmt]
 command = "gofmt"
 includes = ["*.go"]

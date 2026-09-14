@@ -41,4 +41,4 @@ jobs:
           FORCE: ${{ inputs.force }}
           PATHS: |
             openapi.yaml
-            server/handlers/docs/openapi.yaml
+            docs/openapi.yaml

@@ -1,30 +1,36 @@
 package docs
 
 import (
-	"context"
-	_ "embed"
-	"fmt"
+	"io/fs"
 	"net/http"
-
-	scalargo "github.com/bdpiprava/scalar-go"
-	"trev.zip/llc/stack/server/logger"
+	"strings"
 )
 
-//go:embed openapi.yaml
-var apiSpec []byte
-
-func New(ctx context.Context) http.Handler {
-	log := logger.FromContext(ctx)
-
-	html, err := scalargo.NewV2(
-		scalargo.WithSpecBytes(apiSpec),
-	)
-	if err != nil {
-		log.ErrorContext(ctx, "failed to generate API documentation", "error", err)
+func New(docs fs.FS) http.Handler {
+	if docs == nil {
 		return http.NotFoundHandler()
 	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, html)
+		path := strings.TrimPrefix(r.URL.Path, "/docs/")
+		if path == r.URL.Path {
+			http.NotFound(w, r)
+			return
+		}
+		if path == "" {
+			path = "index.html"
+		}
+		if !fs.ValidPath(path) {
+			http.NotFound(w, r)
+			return
+		}
+
+		info, err := fs.Stat(docs, path)
+		if err != nil || info.IsDir() {
+			http.NotFound(w, r)
+			return
+		}
+
+		http.ServeFileFS(w, r, docs, path)
 	})
 }

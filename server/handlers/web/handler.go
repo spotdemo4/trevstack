@@ -1,29 +1,13 @@
 package web
 
 import (
-	"context"
-	"embed"
-	"errors"
 	"io/fs"
 	"net/http"
-	"os"
 	"strings"
-
-	"trev.zip/llc/stack/server/logger"
 )
 
-func New(ctx context.Context, webfs embed.FS) http.Handler {
-	log := logger.FromContext(ctx)
-
-	entries, err := webfs.ReadDir(".")
-	if err != nil || len(entries) == 0 {
-		log.WarnContext(ctx, "web build not found")
-		return http.NotFoundHandler()
-	}
-
-	web, err := fs.Sub(webfs, "web")
-	if err != nil {
-		log.ErrorContext(ctx, "could not access web build", "error", err)
+func New(web fs.FS) http.Handler {
+	if web == nil {
 		return http.NotFoundHandler()
 	}
 
@@ -43,5 +27,5 @@ func New(ctx context.Context, webfs embed.FS) http.Handler {
 
 func exists(fsys fs.FS, path string) bool {
 	_, err := fs.Stat(fsys, path)
-	return !errors.Is(err, os.ErrNotExist)
+	return err == nil
 }

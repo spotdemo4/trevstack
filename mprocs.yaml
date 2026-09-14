@@ -2,6 +2,9 @@ procs:
   server:
     cwd: server
     shell: "go run -tags dev ."
+  docs:
+    cwd: docs
+    shell: "npm i && npm run dev"
   web:
     cwd: web
     shell: "npm i && npm run dev"

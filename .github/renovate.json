@@ -8,6 +8,7 @@
   "repositories": ["spotdemo4/trevstack"],
   "allowedCommands": [
     "^buf dep update$",
+    "^npm audit fix --prefix docs$",
     "^npm audit fix --prefix web$",
     "^fix-hash \\.#checks\\.x86_64-linux\\.protobuf$",
     "^fix-hash \\.#packages\\.x86_64-linux\\.server$"
@@ -26,6 +27,7 @@
     "postUpgradeTasks": {
       "commands": [
         "buf dep update",
+        "npm audit fix --prefix docs",
         "npm audit fix --prefix web",
         "fix-hash .#checks.x86_64-linux.protobuf",
         "fix-hash .#packages.x86_64-linux.server"
@@ -63,7 +65,7 @@
       "rangeStrategy": "bump",
       "postUpdateOptions": ["npmInstallTwice"],
       "postUpgradeTasks": {
-        "commands": ["npm audit fix --prefix web"],
+        "commands": ["npm audit fix --prefix docs", "npm audit fix --prefix web"],
         "executionMode": "branch"
       }
     },

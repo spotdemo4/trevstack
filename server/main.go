@@ -3,8 +3,8 @@ package main
 
 import (
 	"context"
-	"embed"
 	"fmt"
+	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -22,7 +22,10 @@ import (
 	"trev.zip/llc/stack/server/logger"
 )
 
-var WebFS embed.FS
+var (
+	DocsFS fs.FS
+	WebFS  fs.FS
+)
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -51,8 +54,8 @@ func main() {
 	api.Handle(numberv1handler.New(connect.WithInterceptors(li, vi)))
 
 	mux := http.NewServeMux()
-	mux.Handle("/", webhandler.New(ctx, WebFS))
-	mux.Handle("/docs/", docshandler.New(ctx))
+	mux.Handle("/", webhandler.New(WebFS))
+	mux.Handle("/docs/", docshandler.New(DocsFS))
 	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
 
 	p := new(http.Protocols)

@@ -33,7 +33,9 @@ jobs:
           shell: vulnerable
 
       - name: Run npm audit
-        run: cd web && npm audit --audit-level moderate
+        run: |
+          npm audit --prefix docs --audit-level moderate
+          npm audit --prefix web --audit-level moderate
 
   nix:
     runs-on: ubuntu-24.04

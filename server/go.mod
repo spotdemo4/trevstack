@@ -9,7 +9,6 @@ require (
 	connectrpc.com/connect v1.21.0
 	connectrpc.com/cors v0.1.0
 	connectrpc.com/validate v0.6.0
-	github.com/bdpiprava/scalar-go v0.13.0
 	github.com/mattn/go-sqlite3 v1.14.52
 	github.com/rs/cors v1.11.1
 	google.golang.org/protobuf v1.36.12
@@ -25,5 +24,4 @@ require (
 	golang.org/x/text v0.29.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250922171735-9219d122eba9 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250922171735-9219d122eba9 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

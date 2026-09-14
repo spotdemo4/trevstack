@@ -1,5 +1,6 @@
 {
   buildGoModule,
+  docs,
   go-tools,
   lib,
   web,
@@ -11,9 +12,10 @@ buildGoModule (final: {
   src = ./.;
   goSum = ./go.sum;
   proxyVendor = true;
-  vendorHash = "sha256-tO89XUOF+MclDs01ynXNJaErHquEVeNeqTVdtasAj7k=";
+  vendorHash = "sha256-ywh8KpD5fE0oaSge7zwa0xvRaE3BShRWXhoS8hPtCcU=";
 
   postConfigure = ''
+    cp -r ${docs} docs
     cp -r ${web} web
   '';
 

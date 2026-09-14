@@ -114,6 +114,7 @@
           configure = ''
             buf generate
             cd server && go mod tidy && cd ..
+            cd docs && npm install && cd ..
             cd web && npm install && cd ..
             treefmt
           '';
@@ -132,8 +133,9 @@
 
         packages = rec {
           default = server;
+          docs = pkgs.buildPackages.callPackage ./docs { };
           web = pkgs.buildPackages.callPackage ./web { };
-          server = pkgs.callPackage ./server { inherit web; };
+          server = pkgs.callPackage ./server { inherit docs web; };
         };
 
         images.default = pkgs.mkImage {
@@ -145,7 +147,7 @@
         };
 
         checks = pkgs.mkChecks {
-          inherit (self.packages.${system}) web server;
+          inherit (self.packages.${system}) docs web server;
 
           sql = {
             root = ./.;

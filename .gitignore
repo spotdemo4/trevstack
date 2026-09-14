@@ -18,6 +18,10 @@
 /server/build/
 /server/tmp/
 
+# docs
+/docs/node_modules/
+/docs/dist/
+
 # web
 /web/node_modules/
 /web/dist/

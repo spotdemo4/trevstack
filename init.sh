@@ -226,7 +226,7 @@ source_slug=$(sed -n 's/^  "name":[[:space:]]*"\([^"]*\)-web".*/\1/p' web/packag
 source_description=$(sed -n 's/^  description = "\(.*\)";/\1/p' flake.nix 2>/dev/null | head -n 1 || true)
 source_license_year=$(sed -n 's/^Copyright (c) \([0-9][0-9][0-9][0-9]\) .*/\1/p' LICENSE 2>/dev/null | head -n 1 || true)
 [[ -n $source_license_year ]] || source_license_year=$year
-[[ -f README.md && -f flake.nix && -f LICENSE && -f server/default.nix && -f server/go.mod && -f web/default.nix && -f web/package.json ]] || fail 'Required project metadata files are missing.'
+[[ -f README.md && -f flake.nix && -f LICENSE && -f docs/default.nix && -f docs/package.json && -f docs/package-lock.json && -f server/default.nix && -f server/go.mod && -f web/default.nix && -f web/package.json ]] || fail 'Required project metadata files are missing.'
 [[ -n $source_module && $source_module == */server ]] || fail 'Unable to find the server module metadata.'
 [[ -n $source_base ]] || fail 'Unable to find the source repository identity.'
 [[ -n $source_display ]] || fail 'Unable to find the project display name.'
@@ -370,29 +370,33 @@ fi
 if [[ -n $source_description && $source_description != "$description" ]]; then
   replace_literal "$source_description" "$nix_description" flake.nix server/default.nix
 fi
-if [[ -f web/package.json ]]; then
-  package_old_description=$(sed -n 's/^  "description":[[:space:]]*"\(.*\)",/\1/p' web/package.json | head -n 1 || true)
-  [[ -z $package_old_description ]] || replace_literal "$package_old_description" "$json_description" web/package.json
-fi
-if [[ -f web/package-lock.json ]]; then
-  package_lock_old_description=$(sed -n 's/^      "description":[[:space:]]*"\(.*\)",/\1/p' web/package-lock.json | head -n 1 || true)
-  [[ -z $package_lock_old_description ]] || replace_literal "$package_lock_old_description" "$json_description" web/package-lock.json
-fi
+for package_dir in docs web; do
+  if [[ -f $package_dir/package.json ]]; then
+    package_old_description=$(sed -n 's/^  "description":[[:space:]]*"\(.*\)",/\1/p' "$package_dir/package.json" | head -n 1 || true)
+    [[ -z $package_old_description ]] || replace_literal "$package_old_description" "$json_description" "$package_dir/package.json"
+  fi
+  if [[ -f $package_dir/package-lock.json ]]; then
+    package_lock_old_description=$(sed -n 's/^      "description":[[:space:]]*"\(.*\)",/\1/p' "$package_dir/package-lock.json" | head -n 1 || true)
+    [[ -z $package_lock_old_description ]] || replace_literal "$package_lock_old_description" "$json_description" "$package_dir/package-lock.json"
+  fi
+done
 
 # Project versions are reset by matching their structural fields, not by relying on a stale template version.
-if [[ -f web/package.json ]]; then
-  package_version_line=$(grep -n -m 1 -E '^  "version":[[:space:]]*"[^"]+",' web/package.json | cut -d: -f1 || true)
-  [[ -n $package_version_line ]] || fail 'Unable to find the web package version metadata.'
-  sed_inplace -E "${package_version_line}s|^  \"version\":[[:space:]]*\"[^\"]+\",$|  \"version\": \"$version\",|" web/package.json
-fi
-if [[ -f web/package-lock.json ]]; then
-  package_lock_version_line=$(grep -n -m 1 -E '^  "version":[[:space:]]*"[^"]+",' web/package-lock.json | cut -d: -f1 || true)
-  package_lock_root_version_line=$(grep -n -m 1 -E '^      "version":[[:space:]]*"[^"]+",' web/package-lock.json | cut -d: -f1 || true)
-  [[ -n $package_lock_version_line && -n $package_lock_root_version_line ]] || fail 'Unable to find the web lockfile version metadata.'
-  sed_inplace -E "${package_lock_version_line}s|^  \"version\":[[:space:]]*\"[^\"]+\",$|  \"version\": \"$version\",|" web/package-lock.json
-  sed_inplace -E "${package_lock_root_version_line}s|^      \"version\":[[:space:]]*\"[^\"]+\",$|      \"version\": \"$version\",|" web/package-lock.json
-fi
-for nix_package_file in web/default.nix server/default.nix; do
+for package_dir in docs web; do
+  if [[ -f $package_dir/package.json ]]; then
+    package_version_line=$(grep -n -m 1 -E '^  "version":[[:space:]]*"[^"]+",' "$package_dir/package.json" | cut -d: -f1 || true)
+    [[ -n $package_version_line ]] || fail "Unable to find the $package_dir package version metadata."
+    sed_inplace -E "${package_version_line}s|^  \"version\":[[:space:]]*\"[^\"]+\",$|  \"version\": \"$version\",|" "$package_dir/package.json"
+  fi
+  if [[ -f $package_dir/package-lock.json ]]; then
+    package_lock_version_line=$(grep -n -m 1 -E '^  "version":[[:space:]]*"[^"]+",' "$package_dir/package-lock.json" | cut -d: -f1 || true)
+    package_lock_root_version_line=$(grep -n -m 1 -E '^      "version":[[:space:]]*"[^"]+",' "$package_dir/package-lock.json" | cut -d: -f1 || true)
+    [[ -n $package_lock_version_line && -n $package_lock_root_version_line ]] || fail "Unable to find the $package_dir lockfile version metadata."
+    sed_inplace -E "${package_lock_version_line}s|^  \"version\":[[:space:]]*\"[^\"]+\",$|  \"version\": \"$version\",|" "$package_dir/package-lock.json"
+    sed_inplace -E "${package_lock_root_version_line}s|^      \"version\":[[:space:]]*\"[^\"]+\",$|      \"version\": \"$version\",|" "$package_dir/package-lock.json"
+  fi
+done
+for nix_package_file in docs/default.nix web/default.nix server/default.nix; do
   sed_inplace -E 's/(^[[:space:]]+version = ")[^"]+(";)/\1'"$version"'\2/' "$nix_package_file"
 done
 reset_openapi_metadata() {
@@ -404,7 +408,7 @@ reset_openapi_metadata() {
   replacement=$(escape_replacement "  description: \"$json_description\"")
   sed_inplace -E "${description_line}s|^[[:space:]]*description:.*$|$replacement|" "$file"
 }
-for openapi_file in openapi.yaml server/handlers/docs/openapi.yaml; do
+for openapi_file in openapi.yaml docs/openapi.yaml; do
   [[ -f $openapi_file ]] && reset_openapi_metadata "$openapi_file"
 done
 
@@ -542,7 +546,7 @@ mv "$new_git_dir" "$root/.git" || fail 'Unable to activate the new Git repositor
 
 # Include generated and formatted files in the same fresh root commit.
 # buf generation may recreate the generated OpenAPI document, so reset both surfaces afterward.
-for openapi_file in openapi.yaml server/handlers/docs/openapi.yaml; do
+for openapi_file in openapi.yaml docs/openapi.yaml; do
   [[ -f "$root/$openapi_file" ]] && reset_openapi_metadata "$root/$openapi_file"
 done
 git -C "$root" add -A
@@ -562,6 +566,7 @@ assert_contains() {
 assert_contains README.md "# $title"
 assert_contains README.md "$description"
 assert_contains flake.nix "description = \"$nix_description\";"
+assert_contains docs/default.nix "version = \"$version\";"
 assert_contains web/default.nix "version = \"$version\";"
 assert_contains server/default.nix "version = \"$version\";"
 assert_contains server/default.nix "description = \"$nix_description\";"
@@ -570,6 +575,9 @@ assert_contains LICENSE "Copyright (c) $year $git_name"
 [[ -z $(git -C "$root" ls-files --error-unmatch init.sh 2>/dev/null || true) ]] || fail 'Replacement validation failed: init.sh is still tracked.'
 if [[ -f server/go.mod ]]; then
   assert_contains server/go.mod "module $target_module"
+fi
+if [[ -f docs/package.json ]]; then
+  assert_contains docs/package.json "\"name\": \"${slug}-docs\""
 fi
 if [[ -f web/package.json ]]; then
   assert_contains web/package.json "\"name\": \"${slug}-web\""
