@@ -3,6 +3,8 @@ package main
 
 import (
 	"context"
+	"errors"
+	"flag"
 	"fmt"
 	"io/fs"
 	"net"
@@ -28,6 +30,14 @@ var (
 )
 
 func main() {
+	cfg, err := parseConfig(os.Args[1:], os.Getenv, os.Stderr)
+	if errors.Is(err, flag.ErrHelp) {
+		return
+	}
+	if err != nil {
+		os.Exit(2)
+	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
@@ -62,13 +72,8 @@ func main() {
 	p.SetHTTP1(true)
 	p.SetUnencryptedHTTP2(true) // Use h2c so we can serve HTTP/2 without TLS.
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
 	server := &http.Server{
-		Addr:      fmt.Sprintf(":%s", port),
+		Addr:      fmt.Sprintf(":%s", cfg.port),
 		Handler:   interceptors.WithCORS(mux),
 		Protocols: p,
 		BaseContext: func(_ net.Listener) context.Context {
@@ -79,7 +84,7 @@ func main() {
 
 	wg := sync.WaitGroup{}
 	wg.Go((func() {
-		log.InfoContext(ctx, "starting", "port", port)
+		log.InfoContext(ctx, "starting", "port", cfg.port)
 		err := server.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
 			log.ErrorContext(ctx, "could not listen and serve", "error", err)
