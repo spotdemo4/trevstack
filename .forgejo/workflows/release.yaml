@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["server/v*"]
   workflow_dispatch:
 
 concurrency:
@@ -14,6 +14,7 @@ enable-openid-connect: true
 jobs:
   release:
     # zizmor: ignore[excessive-permissions]
+    if: startsWith(github.ref, 'refs/tags/server/v')
     runs-on: ubuntu-24.04
     steps:
       - name: Initialize

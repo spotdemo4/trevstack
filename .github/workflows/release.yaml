@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["server/v*"]
   workflow_dispatch:
 
 concurrency:
@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   release:
+    if: startsWith(github.ref, 'refs/tags/server/v')
     runs-on: ubuntu-24.04
     permissions:
       id-token: write
