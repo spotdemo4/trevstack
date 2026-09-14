@@ -148,23 +148,7 @@
         };
 
         checks = pkgs.mkChecks {
-          web = self.packages.${system}.web.overrideAttrs {
-            dontBuild = true;
-            installPhase = ''
-              touch $out
-            '';
-          };
-
-          server = self.packages.${system}.server.overrideAttrs {
-            dontBuild = true;
-            installPhase = ''
-              touch $out
-            '';
-
-            # skip bundling web
-            postConfigure = "";
-            env.GOFLAGS = "-tags=dev";
-          };
+          inherit (self.packages.${system}) web server;
 
           sql = {
             root = ./.;
