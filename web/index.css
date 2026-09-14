@@ -8,6 +8,14 @@
   --spacing-body: calc(100dvh - var(--spacing-header));
 }
 
+:root {
+  color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
 body {
   color: var(--catppuccin-color-text);
   touch-action: pan-x pan-y; /* Allows scrolling but prevents pinch-zoom and double-tap zoom */

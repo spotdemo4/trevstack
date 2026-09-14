@@ -1,14 +1,19 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta charset="utf-8" />
+    <meta id="theme-color" name="theme-color" content="#04a5e5" />
     <script>
-      if (
+      const dark =
         localStorage.theme === "dark" ||
-        (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
+        (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+      if (dark) {
+        document.querySelector("#theme-color")?.setAttribute("content", "#89dceb");
         document.documentElement.classList.add("dark");
         document.documentElement.classList.add("mocha");
       } else {
+        document.querySelector("#theme-color")?.setAttribute("content", "#04a5e5");
         document.documentElement.classList.add("light");
         document.documentElement.classList.add("latte");
       }
@@ -21,10 +26,7 @@
         background-color: #1e1e2e;
       }
     </style>
-    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#04a5e5" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#89dceb" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
     <link rel="apple-touch-icon" href="/icons/icon-180.png" />
     <title>TrevStack</title>

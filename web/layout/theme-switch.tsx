@@ -7,12 +7,14 @@ import styles from "./theme-switch.module.css";
 
 function toggleTheme(dark: boolean) {
   if (dark) {
+    document.querySelector("#theme-color")?.setAttribute("content", "#89dceb");
     document.documentElement.classList.add("dark");
     document.documentElement.classList.add("mocha");
     document.documentElement.classList.remove("light");
     document.documentElement.classList.remove("latte");
     localStorage.theme = "dark";
   } else {
+    document.querySelector("#theme-color")?.setAttribute("content", "#04a5e5");
     document.documentElement.classList.add("light");
     document.documentElement.classList.add("latte");
     document.documentElement.classList.remove("dark");
