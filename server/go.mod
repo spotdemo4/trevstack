@@ -2,7 +2,7 @@ module trev.zip/llc/stack/server
 
 go 1.25.9
 
-toolchain go1.26.5
+toolchain go1.27.1
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2
