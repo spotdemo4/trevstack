@@ -78,7 +78,6 @@
 
               # util
               treefmt
-              mprocs
               bumper
               fix-hash
             ];
@@ -121,7 +120,6 @@
         };
 
         apps = pkgs.mkApps {
-          dev = "mprocs";
           configure = {
             packages = with pkgs; [
               go

@@ -26,7 +26,7 @@ nix run .#configure
 ### run
 
 ```sh
-nix run .#dev
+nix run [.#client | .#server]
 ```
 
 ### format

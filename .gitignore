@@ -7,9 +7,6 @@
 .claude/
 .codex/
 
-# mprocs
-/mprocs.log
-
 # nix
 /result*
 /.direnv/
