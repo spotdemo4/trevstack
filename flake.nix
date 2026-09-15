@@ -66,7 +66,8 @@
               protoc-gen-tonic
 
               # sql
-              sqruff
+              sqlfluff
+              sqls
 
               # actions
               zizmor
@@ -132,7 +133,7 @@
               protoc-gen-tonic
               treefmt
               oxfmt
-              sqruff
+              sqlfluff
               nixfmt
               rustfmt
             ];
@@ -152,7 +153,7 @@
             go
             oxfmt
             buf
-            sqruff
+            sqlfluff
             nixfmt
             rustfmt
           ];
@@ -186,13 +187,13 @@
             root = ./.;
             filter = file: file.hasExt "sql";
             include = [
-              ./.sqruff
+              ./.sqlfluff
             ];
             packages = with pkgs; [
-              sqruff
+              sqlfluff
             ];
             script = ''
-              sqruff lint
+              sqlfluff lint
             '';
           };
 

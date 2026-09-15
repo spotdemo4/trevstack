@@ -5,7 +5,7 @@
   },
   "file_types": {
     "Shell Script": [".envrc*"],
-    "TOML": [".sqruff"]
+    "TOML": [".sqlfluff"]
   },
   "lsp": {
     "gopls": {
@@ -172,9 +172,12 @@
       ]
     },
     "SQL": {
-      "format_on_save": "on",
-      "language_servers": ["sqruff"],
-      "formatter": [{ "language_server": { "name": "sqruff" } }]
+      "formatter": {
+        "external": {
+          "command": "sqlfluff",
+          "arguments": ["format", "-"]
+        }
+      }
     },
     "Proto": {
       "language_servers": ["buf"]

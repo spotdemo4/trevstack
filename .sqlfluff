@@ -1,6 +1,6 @@
-[sqruff]
+[sqlfluff]
 dialect = sqlite
 templater = placeholder
 
-[sqruff:templater:placeholder]
+[sqlfluff:templater:placeholder]
 param_style = percent
