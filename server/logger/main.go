@@ -22,9 +22,7 @@ func New() *slog.Logger {
 		loglevel = slog.LevelInfo
 	}
 
-	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: loglevel,
-	}))
+	return slog.New(newHandler(os.Stdout, loglevel))
 }
 
 type key struct{}

@@ -9,6 +9,7 @@ require (
 	connectrpc.com/connect v1.21.0
 	connectrpc.com/cors v0.1.0
 	connectrpc.com/validate v0.7.0
+	github.com/Marlliton/slogpretty v0.1.3
 	github.com/mattn/go-sqlite3 v1.14.52
 	github.com/rs/cors v1.11.1
 	google.golang.org/protobuf v1.36.12
