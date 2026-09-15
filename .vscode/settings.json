@@ -2,7 +2,7 @@
   "files.associations": {
     "renovate.json": "jsonc",
     ".envrc*": "shellscript",
-    ".sqlfluff": "toml",
+    ".sqruff": "toml",
     "*.css": "tailwindcss"
   },
 
@@ -91,9 +91,9 @@
     "editor.defaultFormatter": "bufbuild.vscode-buf"
   },
 
-  // sqlfluff.vscode-sqlfluff
+  // Quary.sqruff
   "[sql]": {
-    "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
+    "editor.defaultFormatter": "Quary.sqruff"
   },
 
   // redhat.vscode-yaml
