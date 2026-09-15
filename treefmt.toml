@@ -23,9 +23,9 @@ options = ["format", "--write"]
 includes = ["*.proto"]
 no-positional-arg-support = true
 
-[formatter.sqlfluff]
-command = "sqlfluff"
-options = ["format"]
+[formatter.sqruff]
+command = "sqruff"
+options = ["fix"]
 includes = ["*.sql"]
 
 [formatter.nixfmt]
