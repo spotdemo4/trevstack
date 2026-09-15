@@ -9,8 +9,8 @@
   "repositories": ["llc/stack"],
   "allowedCommands": [
     "^buf dep update$",
-    "^npm audit fix --prefix docs$",
-    "^npm audit fix --prefix web$",
+    "^npm audit fix --audit-level=none --prefix docs$",
+    "^npm audit fix --audit-level=none --prefix web$",
     "^fix-hash \\.#checks\\.x86_64-linux\\.protobuf$",
     "^fix-hash \\.#packages\\.x86_64-linux\\.server$"
   ],
@@ -29,8 +29,8 @@
     "postUpgradeTasks": {
       "commands": [
         "buf dep update",
-        "npm audit fix --prefix docs",
-        "npm audit fix --prefix web",
+        "npm audit fix --audit-level=none --prefix docs",
+        "npm audit fix --audit-level=none --prefix web",
         "fix-hash .#checks.x86_64-linux.protobuf",
         "fix-hash .#packages.x86_64-linux.server"
       ],
@@ -62,11 +62,7 @@
       "matchManagers": ["npm"],
       "addLabels": ["node"],
       "rangeStrategy": "bump",
-      "postUpdateOptions": ["npmInstallTwice"],
-      "postUpgradeTasks": {
-        "commands": ["npm audit fix --prefix docs", "npm audit fix --prefix web"],
-        "executionMode": "branch"
-      }
+      "postUpdateOptions": ["npmInstallTwice"]
     },
     {
       "matchManagers": ["npm"],
