@@ -60,7 +60,7 @@ releases are automatically created for [significant](https://www.conventionalcom
 ### docker
 
 ```sh
-docker run -P trev.zip/llc/stack:latest
+docker run -P trev.zip/llc/stack/server:latest
 ```
 
 ### nix
