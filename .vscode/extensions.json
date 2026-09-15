@@ -6,7 +6,7 @@
     "bradlc.vscode-tailwindcss",
     "tombi-toml.tombi",
     "bufbuild.vscode-buf",
-    "Quary.sqruff",
+    "sqlfluff.vscode-sqlfluff",
     "redhat.vscode-yaml",
     "jnoortheen.nix-ide"
   ]
