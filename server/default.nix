@@ -12,7 +12,7 @@ buildGoModule (final: {
   src = ./.;
   goSum = ./go.sum;
   proxyVendor = true;
-  vendorHash = "sha256-pvhQR7UF8CgwoxN5fV6pXuWC+qwDQz369t0gGSguAbY=";
+  vendorHash = "sha256-R6AiIRxQ+wdz/IKDB+ipKGf8sQ4QbQDlO3ii7WlXEws=";
 
   postConfigure = ''
     cp -r ${docs} docs
