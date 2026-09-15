@@ -43,14 +43,13 @@ nix flake check
 ### build
 
 ```sh
-nix build
-nix build .#client
+nix build [.#client | .#server]
 ```
 
 ### release
 
 ```sh
-bumper "openapi.yaml" "docs/openapi.yaml"
+bumper "docs/openapi.base.yaml" "docs/openapi.yaml"
 ```
 
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes

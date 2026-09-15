@@ -42,5 +42,5 @@ jobs:
           GITHUB_TOKEN: ${{ steps.init.outputs.token }}
           FORCE: ${{ inputs.force }}
           PATHS: |
-            openapi.yaml
+            docs/openapi.base.yaml
             docs/openapi.yaml
