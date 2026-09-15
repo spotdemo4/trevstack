@@ -119,22 +119,7 @@
 
         apps = pkgs.mkApps {
           configure = {
-            packages = with pkgs; [
-              go
-              nodejs_24
-              buf
-              protoc-gen-go
-              protoc-gen-es
-              protoc-gen-connect-go
-              protoc-gen-connect-openapi
-              protoc-gen-prost
-              protoc-gen-tonic
-              treefmt
-              oxfmt
-              sqlfluff
-              nixfmt
-              rustfmt
-            ];
+            inputsFrom = [ self.devShells.${system}.default ];
             script = ''
               buf generate
               cd server && go mod tidy && cd ..
