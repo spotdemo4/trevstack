@@ -14,7 +14,7 @@ func TestDistribution(t *testing.T) {
 	t.Run("empty table returns no buckets", func(t *testing.T) {
 		client, _ := newTest(t)
 		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
-			BucketCount: ptr(uint32(5)),
+			BucketCount: new(uint32(5)),
 		}.Build())
 		if err != nil {
 			t.Fatalf("Distribution: %v", err)
@@ -32,7 +32,7 @@ func TestDistribution(t *testing.T) {
 		seed(t, db, "c", 7, now)
 
 		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
-			BucketCount: ptr(uint32(5)),
+			BucketCount: new(uint32(5)),
 		}.Build())
 		if err != nil {
 			t.Fatalf("Distribution: %v", err)
@@ -54,7 +54,7 @@ func TestDistribution(t *testing.T) {
 		}
 
 		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
-			BucketCount: ptr(uint32(2)),
+			BucketCount: new(uint32(2)),
 		}.Build())
 		if err != nil {
 			t.Fatalf("Distribution: %v", err)
@@ -80,9 +80,9 @@ func TestDistribution(t *testing.T) {
 		req  *numberv1.DistributionRequest
 	}{
 		{"missing bucket count", &numberv1.DistributionRequest{}},
-		{"bucket count zero", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(0))}.Build()},
-		{"bucket count above max", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(101))}.Build()},
-		{"end before start (CEL)", numberv1.DistributionRequest_builder{BucketCount: ptr(uint32(5)), Start: later, End: earlier}.Build()},
+		{"bucket count zero", numberv1.DistributionRequest_builder{BucketCount: new(uint32(0))}.Build()},
+		{"bucket count above max", numberv1.DistributionRequest_builder{BucketCount: new(uint32(101))}.Build()},
+		{"end before start (CEL)", numberv1.DistributionRequest_builder{BucketCount: new(uint32(5)), Start: later, End: earlier}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {

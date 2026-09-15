@@ -20,7 +20,7 @@ func TestTimeSeries(t *testing.T) {
 		seed(t, db, "c", 5, day2)
 
 		resp, err := client.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
-			Interval: ptr(numberv1.TimeInterval_TIME_INTERVAL_DAY),
+			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_DAY),
 		}.Build())
 		if err != nil {
 			t.Fatalf("TimeSeries: %v", err)
@@ -50,7 +50,7 @@ func TestTimeSeries(t *testing.T) {
 	t.Run("rejects unspecified interval", func(t *testing.T) {
 		client, _ := newTest(t)
 		_, err := client.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
-			Interval: ptr(numberv1.TimeInterval_TIME_INTERVAL_UNSPECIFIED),
+			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_UNSPECIFIED),
 		}.Build())
 		if err == nil {
 			t.Fatal("expected validation error, got nil")
@@ -65,7 +65,7 @@ func TestTimeSeries(t *testing.T) {
 		earlier := timestamppb.New(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
 		later := timestamppb.New(time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC))
 		_, err := client.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
-			Interval: ptr(numberv1.TimeInterval_TIME_INTERVAL_DAY),
+			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_DAY),
 			Start:    later,
 			End:      earlier,
 		}.Build())

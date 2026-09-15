@@ -22,7 +22,7 @@ func TestTopNames(t *testing.T) {
 		seed(t, db, "c", 100, now)
 
 		resp, err := client.TopNames(context.Background(), numberv1.TopNamesRequest_builder{
-			Limit: ptr(uint32(2)),
+			Limit: new(uint32(2)),
 		}.Build())
 		if err != nil {
 			t.Fatalf("TopNames: %v", err)
@@ -46,9 +46,9 @@ func TestTopNames(t *testing.T) {
 		req  *numberv1.TopNamesRequest
 	}{
 		{"missing limit", &numberv1.TopNamesRequest{}},
-		{"limit zero", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(0))}.Build()},
-		{"limit above max", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(101))}.Build()},
-		{"end before start (CEL)", numberv1.TopNamesRequest_builder{Limit: ptr(uint32(5)), Start: later, End: earlier}.Build()},
+		{"limit zero", numberv1.TopNamesRequest_builder{Limit: new(uint32(0))}.Build()},
+		{"limit above max", numberv1.TopNamesRequest_builder{Limit: new(uint32(101))}.Build()},
+		{"end before start (CEL)", numberv1.TopNamesRequest_builder{Limit: new(uint32(5)), Start: later, End: earlier}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {

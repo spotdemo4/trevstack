@@ -15,8 +15,8 @@ func TestAdd(t *testing.T) {
 		ctx := context.Background()
 
 		resp, err := client.Add(ctx, numberv1.AddRequest_builder{
-			Name:   ptr("foo"),
-			Number: ptr(uint32(10)),
+			Name:   new("foo"),
+			Number: new(uint32(10)),
 		}.Build())
 		if err != nil {
 			t.Fatalf("Add: %v", err)
@@ -26,8 +26,8 @@ func TestAdd(t *testing.T) {
 		}
 
 		resp, err = client.Add(ctx, numberv1.AddRequest_builder{
-			Name:   ptr("bar"),
-			Number: ptr(uint32(5)),
+			Name:   new("bar"),
+			Number: new(uint32(5)),
 		}.Build())
 		if err != nil {
 			t.Fatalf("Add: %v", err)
@@ -49,12 +49,12 @@ func TestAdd(t *testing.T) {
 		name string
 		req  *numberv1.AddRequest
 	}{
-		{"missing name", numberv1.AddRequest_builder{Number: ptr(uint32(10))}.Build()},
-		{"missing number", numberv1.AddRequest_builder{Name: ptr("foo")}.Build()},
-		{"empty name", numberv1.AddRequest_builder{Name: ptr(""), Number: ptr(uint32(10))}.Build()},
-		{"name too long", numberv1.AddRequest_builder{Name: ptr(strings.Repeat("a", 51)), Number: ptr(uint32(10))}.Build()},
-		{"number below min", numberv1.AddRequest_builder{Name: ptr("foo"), Number: ptr(uint32(0))}.Build()},
-		{"number above max", numberv1.AddRequest_builder{Name: ptr("foo"), Number: ptr(uint32(1_000_001))}.Build()},
+		{"missing name", numberv1.AddRequest_builder{Number: new(uint32(10))}.Build()},
+		{"missing number", numberv1.AddRequest_builder{Name: new("foo")}.Build()},
+		{"empty name", numberv1.AddRequest_builder{Name: new(""), Number: new(uint32(10))}.Build()},
+		{"name too long", numberv1.AddRequest_builder{Name: new(strings.Repeat("a", 51)), Number: new(uint32(10))}.Build()},
+		{"number below min", numberv1.AddRequest_builder{Name: new("foo"), Number: new(uint32(0))}.Build()},
+		{"number above max", numberv1.AddRequest_builder{Name: new("foo"), Number: new(uint32(1_000_001))}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
