@@ -2,7 +2,7 @@ name: release
 
 on:
   push:
-    tags: ["server/v*"]
+    tags: ["server/v*", "client/v*"]
   workflow_dispatch:
 
 concurrency:
@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  release:
+  server:
     if: startsWith(github.ref, 'refs/tags/server/v')
     runs-on: ubuntu-24.04
     permissions:
@@ -32,11 +32,36 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGES: |
-            packages.x86_64-linux.default.x86_64-unknown-linux-musl
-            packages.x86_64-linux.default.aarch64-unknown-linux-musl
-            packages.x86_64-linux.default.armv7l-unknown-linux-musleabihf
-            packages.x86_64-linux.default.x86_64-w64-mingw32
-            packages.x86_64-linux.default.arm64-apple-darwin
-            images.x86_64-linux.default.x86_64-unknown-linux-gnu
-            images.x86_64-linux.default.aarch64-unknown-linux-gnu
-            images.x86_64-linux.default.armv7l-unknown-linux-gnueabihf
+            packages.x86_64-linux.server.x86_64-unknown-linux-musl
+            packages.x86_64-linux.server.aarch64-unknown-linux-musl
+            packages.x86_64-linux.server.armv7l-unknown-linux-musleabihf
+            packages.x86_64-linux.server.x86_64-w64-mingw32
+            packages.x86_64-linux.server.arm64-apple-darwin
+            images.x86_64-linux.server.x86_64-unknown-linux-gnu
+            images.x86_64-linux.server.aarch64-unknown-linux-gnu
+            images.x86_64-linux.server.armv7l-unknown-linux-gnueabihf
+
+  client:
+    if: startsWith(github.ref, 'refs/tags/client/v')
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@c7537bc73ce11ca01e53bd9d119d6e46363f9888 # v1.65.0
+        with:
+          fetch_depth: 0
+          shell: release
+
+      - name: Release to GitHub
+        run: flake-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES: |
+            packages.x86_64-linux.client.x86_64-unknown-linux-musl
+            packages.x86_64-linux.client.aarch64-unknown-linux-musl
+            packages.x86_64-linux.client.armv7l-unknown-linux-musleabihf
+            packages.x86_64-linux.client.x86_64-w64-mingw32
+            packages.x86_64-linux.client.arm64-apple-darwin
