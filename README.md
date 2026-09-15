@@ -55,22 +55,7 @@ bumper "openapi.yaml" "docs/openapi.yaml"
 
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes
 
-## use
-
-### client
-
-Send one name and number to the bundled server:
-
-```sh
-nix run .#client -- alice 10
-```
-
-The client connects to `http://127.0.0.1:8080/grpc` by default. Override the RPC base URL with `--url` or `NUMBER_SERVICE_URL`; the command-line option takes precedence.
-
-```sh
-NUMBER_SERVICE_URL=https://example.com/grpc nix run .#client -- alice 10
-nix run .#client -- --url http://127.0.0.1:9000/grpc alice 10
-```
+## server
 
 ### docker
 
@@ -81,7 +66,19 @@ docker run -P trev.zip/llc/stack:latest
 ### nix
 
 ```sh
-nix run git+https://trev.zip/llc/stack.git
+nix run git+https://trev.zip/llc/stack.git#server
+```
+
+### download
+
+https://trev.zip/llc/stack/releases
+
+## client
+
+### nix
+
+```sh
+nix run git+https://trev.zip/llc/stack.git#client -- alice 10
 ```
 
 ### download
