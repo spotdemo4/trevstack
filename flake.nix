@@ -40,21 +40,16 @@
               go-tools
               govulncheck
 
+              # solid
+              nodejs_24
+              oxlint
+
               # rust
               rustc
               cargo
               rust-analyzer
               rustfmt
               clippy
-
-              # solid
-              nodejs_24
-              oxlint
-
-              vscode-json-languageserver # json
-              yaml-language-server # yaml
-              tombi # toml
-              oxfmt # format
 
               # proto
               buf
@@ -69,12 +64,15 @@
               sqlfluff
               sqls
 
-              # actions
-              zizmor
-
               # nix
               nixd
               nixfmt
+
+              zizmor # actions
+              vscode-json-languageserver # json
+              yaml-language-server # yaml
+              tombi # toml
+              oxfmt # format
 
               # util
               treefmt
