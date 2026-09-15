@@ -66,6 +66,10 @@
       "matchManagers": ["npm"],
       "matchDepTypes": ["engines"],
       "enabled": false
+    },
+    {
+      "matchManagers": ["cargo"],
+      "addLabels": ["rust"]
     }
   ]
 }
