@@ -66,7 +66,7 @@ docker run -P trev.zip/llc/stack/server:latest
 ### nix
 
 ```sh
-nix run git+https://trev.zip/llc/stack.git#server
+nix run git+https://trev.zip/llc/stack#server
 ```
 
 ### download
@@ -78,7 +78,7 @@ https://trev.zip/llc/stack/releases
 ### nix
 
 ```sh
-nix run git+https://trev.zip/llc/stack.git#client -- alice 10
+nix run git+https://trev.zip/llc/stack#client -- alice 10
 ```
 
 ### download
