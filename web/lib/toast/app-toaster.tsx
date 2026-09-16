@@ -434,7 +434,7 @@ export const AppToaster: Component = () => {
                         {renderToastIcon(toast.type)}
                       </div>
 
-                      <div class="min-w-0 flex-1">
+                      <div class="min-w-0 flex-1 self-center">
                         <div class={`truncate text-sm leading-5 font-semibold ${tone().title}`}>
                           {toast.title ?? "Notification"}
                         </div>
