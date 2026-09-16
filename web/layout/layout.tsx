@@ -6,6 +6,7 @@ import { children, type Component, Loading } from "solid-js";
 
 import { NavLink } from "./nav-link";
 import { Navbar } from "./navbar";
+import { NetworkStatus } from "./network-status";
 import { ThemeSwitch } from "./theme-switch";
 
 type LayoutProps = {
@@ -51,6 +52,7 @@ export const Layout: Component<LayoutProps> = (props) => {
       <Loading fallback={<main class="grow" />}>
         <main class="grow">{resolved()}</main>
       </Loading>
+      <NetworkStatus />
       <AppToaster />
     </div>
   );
