@@ -4,11 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"strings"
 )
 
 const (
-	defaultLogLevel = "info"
-	defaultPort     = "8080"
+	defaultLogLevel    = "info"
+	defaultPort        = "8080"
+	supportedLogLevels = "debug, info, warn, error"
 )
 
 type config struct {
@@ -37,7 +39,7 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 		fmt.Fprintln(output)
 		fmt.Fprintln(output, "Options:")
 		fmt.Fprintln(output, "  -h, --help          Show this help menu.")
-		fmt.Fprintln(output, "  --log-level LEVEL   Minimum log level.")
+		fmt.Fprintf(output, "  --log-level LEVEL   Minimum log level (%s).\n", supportedLogLevels)
 		fmt.Fprintln(output, "  --port PORT         Port to listen on.")
 		fmt.Fprintln(output)
 		fmt.Fprintln(output, "Environment:")
@@ -51,6 +53,20 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 	if err := flags.Parse(args); err != nil {
 		return config{}, err
 	}
+	if !isSupportedLogLevel(cfg.logLevel) {
+		err := fmt.Errorf("unsupported log level %q (supported: %s)", cfg.logLevel, supportedLogLevels)
+		fmt.Fprintln(output, err)
+		return config{}, err
+	}
 
 	return cfg, nil
+}
+
+func isSupportedLogLevel(level string) bool {
+	switch strings.ToLower(level) {
+	case "debug", "info", "warn", "error":
+		return true
+	default:
+		return false
+	}
 }

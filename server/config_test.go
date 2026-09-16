@@ -86,7 +86,7 @@ func TestParseConfigHelp(t *testing.T) {
 				t.Fatalf("parseConfig() error = %v, want %v", err, flag.ErrHelp)
 			}
 
-			for _, want := range []string{"Usage: server", "--log-level", "--port", "--help", "LOG_LEVEL", "PORT", defaultLogLevel, defaultPort} {
+			for _, want := range []string{"Usage: server", "--log-level", "--port", "--help", "LOG_LEVEL", "PORT", supportedLogLevels, defaultLogLevel, defaultPort} {
 				if !strings.Contains(output.String(), want) {
 					t.Errorf("help output does not contain %q:\n%s", want, output.String())
 				}
@@ -97,8 +97,10 @@ func TestParseConfigHelp(t *testing.T) {
 
 func TestParseConfigRejectsInvalidFlags(t *testing.T) {
 	tests := []struct {
-		name string
-		args []string
+		name       string
+		args       []string
+		logLevel   string
+		wantOutput string
 	}{
 		{
 			name: "unknown flag",
@@ -109,6 +111,16 @@ func TestParseConfigRejectsInvalidFlags(t *testing.T) {
 			args: []string{"--log-level"},
 		},
 		{
+			name:       "unsupported log level flag",
+			args:       []string{"--log-level", "trace"},
+			wantOutput: supportedLogLevels,
+		},
+		{
+			name:       "unsupported log level environment",
+			logLevel:   "trace",
+			wantOutput: supportedLogLevels,
+		},
+		{
 			name: "missing port value",
 			args: []string{"--port"},
 		},
@@ -117,12 +129,20 @@ func TestParseConfigRejectsInvalidFlags(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			var output bytes.Buffer
-			_, err := parseConfig(test.args, func(string) string { return "" }, &output)
+			_, err := parseConfig(test.args, func(key string) string {
+				if key == "LOG_LEVEL" {
+					return test.logLevel
+				}
+				return ""
+			}, &output)
 			if err == nil {
 				t.Fatal("parseConfig() error = nil, want non-nil")
 			}
 			if errors.Is(err, flag.ErrHelp) {
 				t.Errorf("parseConfig() error = %v, want non-help error", err)
+			}
+			if test.wantOutput != "" && !strings.Contains(output.String(), test.wantOutput) {
+				t.Errorf("output does not contain %q:\n%s", test.wantOutput, output.String())
 			}
 		})
 	}
