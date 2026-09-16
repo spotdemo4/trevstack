@@ -81,9 +81,9 @@ export const SelectInput: Component<SelectInputProps> = (props) => {
             });
           }}
         >
-          <Show when={!isMulti()}>
-            <option value="" disabled={selectProps.required}>
-              {props.placeholder ?? "Select an option"}
+          <Show when={!isMulti() && props.placeholder !== undefined}>
+            <option value="" disabled>
+              {props.placeholder}
             </option>
           </Show>
           <For each={props.items}>

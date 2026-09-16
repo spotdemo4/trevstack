@@ -90,7 +90,6 @@ export const Metrics: Component = () => {
                 value: String(opt.value),
               }))}
               value={[String(interval())]}
-              placeholder="Select interval"
               onValueChange={(details) => {
                 const first = details.value[0];
                 if (typeof first === "string") {
