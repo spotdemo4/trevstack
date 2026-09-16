@@ -29,7 +29,7 @@
     --splitter-thumb-color: var(--catppuccin-color-overlay0);
   }
 
-  &:focus {
+  &:focus-visible {
     --splitter-border-color: var(--catppuccin-color-sky);
     --splitter-thumb-color: var(--catppuccin-color-sky);
   }
