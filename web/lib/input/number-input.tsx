@@ -2,7 +2,8 @@ import {
   NumberInput as ArkNumberInput,
   type NumberInputRootProps,
 } from "@ark-ui/solid/number-input";
-import { MinusIcon, PlusIcon } from "lucide-solid";
+import MinusIcon from "lucide-solid/icons/minus";
+import PlusIcon from "lucide-solid/icons/plus";
 import { type Component, type JSX, Show, splitProps } from "solid-js";
 import { twMerge } from "tailwind-merge";
 

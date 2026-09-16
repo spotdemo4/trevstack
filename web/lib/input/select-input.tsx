@@ -1,7 +1,7 @@
 import { createMediaQuery } from "$lib/media-query";
 import { createListCollection } from "@ark-ui/solid/collection";
 import { Select as ArkSelect, type SelectRootProps } from "@ark-ui/solid/select";
-import { ChevronDownIcon } from "lucide-solid";
+import ChevronDownIcon from "lucide-solid/icons/chevron-down";
 import { type Component, createMemo, For, Show, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 import { twMerge } from "tailwind-merge";

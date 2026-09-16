@@ -1,6 +1,7 @@
 import { Button } from "$lib/button";
-import { Swap } from "@ark-ui/solid";
-import { Moon, Sun } from "lucide-solid";
+import { Swap } from "@ark-ui/solid/swap";
+import Moon from "lucide-solid/icons/moon";
+import Sun from "lucide-solid/icons/sun";
 import { createSignal } from "solid-js";
 
 import styles from "./theme-switch.module.css";

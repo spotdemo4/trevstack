@@ -9,7 +9,7 @@ import { Table } from "$lib/table";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createStandardSchema } from "@bufbuild/protovalidate";
-import { SlidersHorizontal } from "lucide-solid";
+import SlidersHorizontal from "lucide-solid/icons/sliders-horizontal";
 import { type Component, createSignal, Show } from "solid-js";
 
 export const Numbers: Component = () => {

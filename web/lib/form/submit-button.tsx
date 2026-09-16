@@ -1,4 +1,4 @@
-import { Ellipsis } from "lucide-solid";
+import Ellipsis from "lucide-solid/icons/ellipsis";
 import { Show, type Component } from "solid-js";
 import { twMerge } from "tailwind-merge";
 

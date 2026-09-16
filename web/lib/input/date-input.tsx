@@ -7,7 +7,9 @@ import {
 import { DatePicker, useDatePicker } from "@ark-ui/solid/date-picker";
 import { type DateValue, parseDate } from "@internationalized/date";
 import { mergeProps } from "@zag-js/solid";
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-solid";
+import CalendarIcon from "lucide-solid/icons/calendar";
+import ChevronLeftIcon from "lucide-solid/icons/chevron-left";
+import ChevronRightIcon from "lucide-solid/icons/chevron-right";
 import { type Component, Index, type JSX, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { twMerge } from "tailwind-merge";

@@ -1,5 +1,5 @@
 import { Toast, Toaster } from "@ark-ui/solid/toast";
-import { X } from "lucide-solid";
+import X from "lucide-solid/icons/x";
 import type { Component } from "solid-js";
 import { Show } from "solid-js";
 import { Portal } from "solid-js/web";

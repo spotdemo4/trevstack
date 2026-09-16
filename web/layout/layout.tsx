@@ -1,7 +1,7 @@
 import { Button } from "$lib/button";
 import { AppToaster } from "$lib/toast";
-import { ExternalLink } from "lucide-solid";
-import { GitBranch } from "lucide-solid";
+import ExternalLink from "lucide-solid/icons/external-link";
+import GitBranch from "lucide-solid/icons/git-branch";
 import { type Component, children, type JSX } from "solid-js";
 
 import { NavLink } from "./nav-link";

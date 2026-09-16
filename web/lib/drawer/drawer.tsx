@@ -1,5 +1,5 @@
 import { Drawer as ArkDrawer } from "@ark-ui/solid/drawer";
-import { X } from "lucide-solid";
+import X from "lucide-solid/icons/x";
 import { type Component, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 import { twMerge } from "tailwind-merge";
