@@ -10,11 +10,87 @@ info:
     email: spam@trev.xyz
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: stack_session
   schemas:
+    auth.v1.CheckSessionRequest:
+      type: object
+      title: CheckSessionRequest
+      additionalProperties: false
+    auth.v1.CheckSessionResponse:
+      type: object
+      title: CheckSessionResponse
+      additionalProperties: false
+    auth.v1.LoginRequest:
+      type: object
+      properties:
+        username:
+          type:
+            - string
+            - "null"
+          title: username
+          maxLength: 64
+          minLength: 3
+          pattern: ^[A-Za-z0-9][A-Za-z0-9_-]*$
+        password:
+          type:
+            - string
+            - "null"
+          title: password
+          minLength: 8
+          description: |
+            string.max_bytes = 72
+      title: LoginRequest
+      required:
+        - username
+        - password
+      additionalProperties: false
+    auth.v1.LoginResponse:
+      type: object
+      properties:
+        jwt:
+          type: string
+          title: jwt
+      title: LoginResponse
+      additionalProperties: false
+    auth.v1.LogoutRequest:
+      type: object
+      title: LogoutRequest
+      additionalProperties: false
+    auth.v1.LogoutResponse:
+      type: object
+      title: LogoutResponse
+      additionalProperties: false
+    auth.v1.SignupRequest:
+      type: object
+      properties:
+        username:
+          type:
+            - string
+            - "null"
+          title: username
+          maxLength: 64
+          minLength: 3
+          pattern: ^[A-Za-z0-9][A-Za-z0-9_-]*$
+        password:
+          type:
+            - string
+            - "null"
+          title: password
+          minLength: 8
+          description: |
+            string.max_bytes = 72
+      title: SignupRequest
+      required:
+        - username
+        - password
+      additionalProperties: false
+    auth.v1.SignupResponse:
+      type: object
+      title: SignupResponse
+      additionalProperties: false
     connect-protocol-version:
       type: number
       title: Connect-Protocol-Version
@@ -493,8 +569,156 @@ components:
       title: TopNamesResponse
       additionalProperties: false
 security:
-  - bearerAuth: []
+  - sessionCookie: []
 paths:
+  /auth.v1.AuthService/Login:
+    post:
+      security: []
+      operationId: auth.v1.AuthService.Login
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                required:
+                  - jwt
+      tags:
+        - auth.v1.AuthService
+      summary: Login
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/auth.v1.LoginRequest"
+        required: true
+  /auth.v1.AuthService/Logout:
+    post:
+      security: []
+      operationId: auth.v1.AuthService.Logout
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+      tags:
+        - auth.v1.AuthService
+      summary: Logout
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/auth.v1.LogoutRequest"
+        required: true
+  /auth.v1.AuthService/Signup:
+    post:
+      security: []
+      operationId: auth.v1.AuthService.Signup
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+      tags:
+        - auth.v1.AuthService
+      summary: Signup
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/auth.v1.SignupRequest"
+        required: true
+  /auth.v1.AuthService/CheckSession:
+    post:
+      tags:
+        - auth.v1.AuthService
+      summary: CheckSession
+      operationId: auth.v1.AuthService.CheckSession
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: "#/components/schemas/connect-protocol-version"
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: "#/components/schemas/connect-timeout-header"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/auth.v1.CheckSessionRequest"
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/auth.v1.CheckSessionResponse"
   /number.v1.NumberService/Add:
     post:
       tags:
@@ -672,4 +896,5 @@ paths:
               schema:
                 $ref: "#/components/schemas/number.v1.TopNamesResponse"
 tags:
+  - name: auth.v1.AuthService
   - name: number.v1.NumberService

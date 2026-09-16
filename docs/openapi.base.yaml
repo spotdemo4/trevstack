@@ -12,10 +12,56 @@ info:
 
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: stack_session
 
 security:
-  - bearerAuth: []
+  - sessionCookie: []
+
+paths:
+  /auth.v1.AuthService/Login:
+    post:
+      security: []
+      operationId: auth.v1.AuthService.Login
+      responses:
+        default:
+          description: Error
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                required:
+                  - jwt
+  /auth.v1.AuthService/Logout:
+    post:
+      security: []
+      operationId: auth.v1.AuthService.Logout
+      responses:
+        default:
+          description: Error
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+  /auth.v1.AuthService/Signup:
+    post:
+      security: []
+      operationId: auth.v1.AuthService.Signup
+      responses:
+        default:
+          description: Error
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object

@@ -57,8 +57,10 @@ func New(ctx context.Context) (*sql.DB, error) {
 	}
 
 	configDir := filepath.Join(userConfigDir, "trevstack")
-	err = os.MkdirAll(configDir, 0755)
-	if err != nil {
+	if err := os.MkdirAll(configDir, 0700); err != nil {
+		return nil, err
+	}
+	if err := os.Chmod(configDir, 0700); err != nil {
 		return nil, err
 	}
 
@@ -68,8 +70,12 @@ func New(ctx context.Context) (*sql.DB, error) {
 		return nil, err
 	}
 
-	err = db.Ping()
-	if err != nil {
+	if err := db.Ping(); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	if err := os.Chmod(dbPath, 0600); err != nil {
+		_ = db.Close()
 		return nil, err
 	}
 

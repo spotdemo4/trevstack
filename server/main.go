@@ -16,7 +16,9 @@ import (
 
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
+	"trev.zip/llc/stack/server/auth"
 	"trev.zip/llc/stack/server/database"
+	authv1handler "trev.zip/llc/stack/server/handlers/auth/v1"
 	docshandler "trev.zip/llc/stack/server/handlers/docs"
 	numberv1handler "trev.zip/llc/stack/server/handlers/number/v1"
 	webhandler "trev.zip/llc/stack/server/handlers/web"
@@ -57,11 +59,14 @@ func main() {
 		return
 	}
 
+	sessionManager := auth.NewManager(cfg.jwtSecret, cfg.authCookieSecure)
+	ai := interceptors.NewAuthInterceptor(sessionManager)
 	li := interceptors.NewLogInterceptor(log)
 	vi := validate.NewInterceptor()
 
 	api := http.NewServeMux()
-	api.Handle(numberv1handler.New(connect.WithInterceptors(li, vi)))
+	api.Handle(authv1handler.New(sessionManager, connect.WithInterceptors(li, ai, vi)))
+	api.Handle(numberv1handler.New(connect.WithInterceptors(li, ai, vi)))
 
 	mux := http.NewServeMux()
 	mux.Handle("/", webhandler.New(WebFS))

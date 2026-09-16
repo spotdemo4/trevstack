@@ -1,0 +1,86 @@
+.TriggerOpen {
+  background: var(--catppuccin-color-surface0);
+}
+
+.Panel {
+  position: fixed;
+  inset: unset;
+  top: calc(var(--spacing-header) + 0.5rem);
+  right: 0.5rem;
+  width: min(14rem, calc(100vw - 1rem));
+  margin: 0;
+  padding: 0.375rem;
+  border: 1px solid var(--catppuccin-color-surface1);
+  border-radius: var(--radius-lg);
+  background: var(--catppuccin-color-mantle);
+  color: var(--catppuccin-color-text);
+  box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--catppuccin-color-crust) 35%, transparent);
+  opacity: 0;
+  transform: translateY(-0.25rem) scale(0.98);
+  transition:
+    opacity 150ms ease-out,
+    transform 150ms ease-out,
+    overlay 150ms allow-discrete,
+    display 150ms allow-discrete;
+
+  &:popover-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  &::backdrop {
+    background: transparent;
+  }
+}
+
+@starting-style {
+  .Panel:popover-open {
+    opacity: 0;
+    transform: translateY(-0.25rem) scale(0.98);
+  }
+}
+
+.Action {
+  display: flex;
+  min-height: 2.75rem;
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-md);
+  padding: 0.625rem 0.75rem;
+  color: var(--catppuccin-color-text);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: left;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+
+  &:hover:not(:disabled) {
+    background: var(--catppuccin-color-surface0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--catppuccin-color-sky);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    cursor: wait;
+    color: var(--catppuccin-color-subtext0);
+  }
+}
+
+@media (min-width: 48rem) {
+  .Panel {
+    right: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Panel,
+  .Action {
+    transition: none;
+  }
+}

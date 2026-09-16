@@ -8,6 +8,8 @@ import { Layout } from "./layout/layout";
 const Home = lazy(() => import("./routes/home"));
 const Numbers = lazy(() => import("./routes/numbers"));
 const Metrics = lazy(() => import("./routes/metrics"));
+const Auth = lazy(() => import("./routes/auth"));
+const Forbidden = lazy(() => import("./routes/403"));
 const NotFound = lazy(() => import("./routes/404"));
 
 const Router = createRouter({
@@ -15,6 +17,8 @@ const Router = createRouter({
     { path: "/", component: Home },
     { path: "/numbers", component: Numbers },
     { path: "/metrics", component: Metrics },
+    { path: "/auth", component: Auth },
+    { path: "/403", component: Forbidden },
     { path: "*404", component: NotFound },
   ],
 });

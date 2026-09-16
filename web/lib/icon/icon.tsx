@@ -58,6 +58,13 @@ export const GitBranch: Component<IconProps> = (props) => (
   </Svg>
 );
 
+export const User: Component<IconProps> = (props) => (
+  <Svg {...props}>
+    <path d="M20 21a8 8 0 0 0-16 0" />
+    <circle cx="12" cy="7" r="4" />
+  </Svg>
+);
+
 export const Ellipsis: Component<IconProps> = (props) => (
   <Svg {...props}>
     <circle cx="5" cy="12" r="1" />

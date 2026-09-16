@@ -1,9 +1,13 @@
 import { TextInput } from "$lib/input";
-import { For, Show, type Component, createUniqueId } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { For, Show, type Component, createUniqueId, omit } from "solid-js";
 
 import type { FieldController } from "./hook";
 
-type TextFieldProps = {
+type TextFieldProps = Omit<
+  JSX.InputHTMLAttributes<HTMLInputElement>,
+  "class" | "id" | "name" | "value" | "onInput" | "onBlur"
+> & {
   class?: string;
   field: FieldController<string | undefined>;
   label?: string;
@@ -12,6 +16,7 @@ type TextFieldProps = {
 export const TextField: Component<TextFieldProps> = (props) => {
   const id = createUniqueId();
   const errorId = `${id}-errors`;
+  const inputProps = omit(props, "class", "field", "label");
 
   return (
     <div class="flex flex-col gap-1.5">
@@ -25,6 +30,7 @@ export const TextField: Component<TextFieldProps> = (props) => {
         </label>
       </Show>
       <TextInput
+        {...inputProps}
         id={id}
         name={props.field.name}
         value={props.field.value() ?? ""}

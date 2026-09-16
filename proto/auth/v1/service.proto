@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "auth/v1/check_session.proto";
+import "auth/v1/login.proto";
+import "auth/v1/logout.proto";
+import "auth/v1/signup.proto";
+
+service AuthService {
+  rpc Signup(SignupRequest) returns (SignupResponse) {}
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+  rpc CheckSession(CheckSessionRequest) returns (CheckSessionResponse) {}
+}

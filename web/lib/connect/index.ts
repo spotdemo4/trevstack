@@ -1,1 +1,1 @@
-export { NumberClient } from "./clients";
+export { AuthClient, NumberClient } from "./clients";

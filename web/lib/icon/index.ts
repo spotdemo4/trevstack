@@ -14,5 +14,6 @@ export {
   SlidersHorizontal,
   Sun,
   TriangleAlert,
+  User,
   X,
 } from "./icon";
