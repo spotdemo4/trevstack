@@ -19,6 +19,8 @@ import styles from "./table.module.css";
 const ROW_HEIGHT = 35;
 const OVERSCAN = 5;
 
+export type TableScrollMode = "element" | "window";
+
 type HeaderProps = {
   class?: string;
   children?: JSX.Element;
@@ -40,6 +42,7 @@ type TableProps = {
    * value. Example: `["200px", "1fr", "120px"]`.
    */
   columns: string[];
+  scrollMode?: TableScrollMode;
   onScroll?: (start: number, end: number) => void;
   children?: JSX.Element;
 };
@@ -47,6 +50,7 @@ type TableProps = {
 type TableContextValue = {
   ref: () => HTMLDivElement | undefined;
   columns: () => string[];
+  scrollMode: () => TableScrollMode;
   onScroll?: (start: number, end: number) => void;
 };
 
@@ -69,32 +73,84 @@ const useTableContext = (componentName: string) => {
 const createFixedRowVirtualizer = (options: {
   count: () => number;
   getScrollElement: () => HTMLDivElement | undefined;
+  getBodyElement: () => HTMLTableSectionElement | undefined;
+  scrollMode: () => TableScrollMode;
   onRangeChange?: (start: number, end: number) => void;
 }): FixedRowVirtualizer => {
-  const [scrollTop, setScrollTop] = createSignal(0);
-  const [clientHeight, setClientHeight] = createSignal(0);
+  const [viewportStart, setViewportStart] = createSignal(0);
+  const [viewportEnd, setViewportEnd] = createSignal(0);
   let resizeObserver: ResizeObserver | undefined;
+  let animationFrame: number | undefined;
 
   const measure = () => {
-    const element = options.getScrollElement();
-    if (!element) return;
+    const body = options.getBodyElement();
+    if (!body?.isConnected) return;
 
-    setScrollTop(element.scrollTop);
-    setClientHeight(element.clientHeight);
+    const bodyRect = body.getBoundingClientRect();
+    let viewportTop: number;
+    let viewportBottom: number;
+
+    if (options.scrollMode() === "window") {
+      const visualViewport = window.visualViewport;
+      viewportTop = visualViewport?.offsetTop ?? 0;
+      viewportBottom = viewportTop + (visualViewport?.height ?? window.innerHeight);
+    } else {
+      const element = options.getScrollElement();
+      if (!element?.isConnected) return;
+
+      const elementRect = element.getBoundingClientRect();
+      viewportTop = elementRect.top;
+      viewportBottom = elementRect.bottom;
+    }
+
+    setViewportStart(viewportTop - bodyRect.top);
+    setViewportEnd(viewportBottom - bodyRect.top);
+  };
+
+  const scheduleMeasure = () => {
+    if (animationFrame !== undefined) return;
+
+    animationFrame = requestAnimationFrame(() => {
+      animationFrame = undefined;
+      measure();
+    });
   };
 
   onSettled(() => {
-    const element = options.getScrollElement();
-    if (!element) return;
+    const body = options.getBodyElement();
+    if (!body) return;
 
-    element.addEventListener("scroll", measure, { passive: true });
-    resizeObserver = new ResizeObserver(measure);
-    resizeObserver.observe(element);
+    resizeObserver = new ResizeObserver(scheduleMeasure);
+    resizeObserver.observe(body);
+
+    const scrollMode = options.scrollMode();
+    const element = options.getScrollElement();
+    const visualViewport = window.visualViewport;
+
+    if (scrollMode === "window") {
+      window.addEventListener("scroll", scheduleMeasure, { passive: true });
+      window.addEventListener("resize", scheduleMeasure);
+      visualViewport?.addEventListener("scroll", scheduleMeasure, { passive: true });
+      visualViewport?.addEventListener("resize", scheduleMeasure);
+    } else if (element) {
+      element.addEventListener("scroll", scheduleMeasure, { passive: true });
+      resizeObserver.observe(element);
+    }
+
     measure();
 
     return () => {
-      element.removeEventListener("scroll", measure);
+      if (scrollMode === "window") {
+        window.removeEventListener("scroll", scheduleMeasure);
+        window.removeEventListener("resize", scheduleMeasure);
+        visualViewport?.removeEventListener("scroll", scheduleMeasure);
+        visualViewport?.removeEventListener("resize", scheduleMeasure);
+      } else {
+        element?.removeEventListener("scroll", scheduleMeasure);
+      }
+
       resizeObserver?.disconnect();
+      if (animationFrame !== undefined) cancelAnimationFrame(animationFrame);
     };
   });
 
@@ -102,10 +158,17 @@ const createFixedRowVirtualizer = (options: {
     const count = Math.max(0, options.count());
     if (count === 0) return { start: 0, end: -1 };
 
-    const firstVisible = Math.min(count - 1, Math.max(0, Math.floor(scrollTop() / ROW_HEIGHT)));
+    const totalSize = count * ROW_HEIGHT;
+    const visibleStart = Math.max(0, viewportStart());
+    const visibleEnd = Math.min(totalSize, viewportEnd());
+    if (visibleEnd <= visibleStart || visibleEnd <= 0 || visibleStart >= totalSize) {
+      return { start: 0, end: -1 };
+    }
+
+    const firstVisible = Math.min(count - 1, Math.floor(visibleStart / ROW_HEIGHT));
     const lastVisible = Math.min(
       count - 1,
-      Math.max(firstVisible, Math.ceil((scrollTop() + clientHeight()) / ROW_HEIGHT) - 1),
+      Math.max(firstVisible, Math.ceil(visibleEnd / ROW_HEIGHT) - 1),
     );
 
     return {
@@ -140,18 +203,24 @@ const createFixedRowVirtualizer = (options: {
 
 const Table: Component<TableProps> = (props) => {
   let parentRef: HTMLDivElement | undefined;
+  const scrollMode = () => props.scrollMode ?? "element";
 
   return (
     <TableContext
       value={{
         ref: () => parentRef,
         columns: () => props.columns,
+        scrollMode,
         onScroll: props.onScroll,
       }}
     >
       <div
         ref={(node) => (parentRef = node)}
-        class={twMerge("h-full overflow-auto bg-ctp-base", props.class)}
+        class={twMerge(
+          scrollMode() === "element" ? "h-full overflow-auto" : "overflow-visible",
+          "bg-ctp-base",
+          props.class,
+        )}
       >
         <table class="block w-full border-separate border-spacing-0 text-ctp-text [&_td]:truncate [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
           {props.children}
@@ -182,6 +251,7 @@ const Header: Component<HeaderProps> = (props) => {
 
 const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
   const table = useTableContext("Table.Rows");
+  let bodyRef: HTMLTableSectionElement | undefined;
   let lastStart = -1;
   let lastEnd = -1;
   let onScrollTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -202,6 +272,8 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
   const virtualizer = createFixedRowVirtualizer({
     count: () => props.items.length,
     getScrollElement: table.ref,
+    getBodyElement: () => bodyRef,
+    scrollMode: table.scrollMode,
     onRangeChange: notifyRange,
   });
 
@@ -211,6 +283,7 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
 
   return (
     <tbody
+      ref={(node) => (bodyRef = node)}
       style={{
         display: "block",
         height: `${virtualizer.totalSize()}px`,

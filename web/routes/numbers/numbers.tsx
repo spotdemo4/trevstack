@@ -11,7 +11,7 @@ import { TextField } from "$lib/form/text-field";
 import { SlidersHorizontal } from "$lib/icon";
 import { createMediaQuery } from "$lib/media-query";
 import { Splitter } from "$lib/splitter";
-import { Table } from "$lib/table";
+import { Table, type TableScrollMode } from "$lib/table";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createStandardSchema } from "@bufbuild/protovalidate";
@@ -48,8 +48,8 @@ export const Numbers: Component = () => {
     </Form>
   );
 
-  const TableContent: Component = () => (
-    <Table.Table columns={["12rem", "2fr", "1fr"]}>
+  const TableContent: Component<{ scrollMode?: TableScrollMode }> = (props) => (
+    <Table.Table columns={["12rem", "2fr", "1fr"]} scrollMode={props.scrollMode}>
       <Table.Header>
         <th>Timestamp</th>
         <th>Name</th>
@@ -70,29 +70,27 @@ export const Numbers: Component = () => {
   );
 
   return (
-    <div class="h-body">
-      <Show
-        when={isDesktop()}
-        fallback={
-          <div class="relative h-full">
-            <div class="h-full min-h-0">
-              <TableContent />
-            </div>
-            <Drawer.Root>
-              <Drawer.Trigger class="absolute right-4 bottom-4 z-10 m-0 shadow-lg">
-                <SlidersHorizontal size={16} /> Filters
-              </Drawer.Trigger>
-              <Drawer.Content>
-                <div class="flex items-center justify-between">
-                  <Drawer.Title>Filters</Drawer.Title>
-                  <Drawer.CloseTrigger />
-                </div>
-                <FormContent />
-              </Drawer.Content>
-            </Drawer.Root>
-          </div>
-        }
-      >
+    <Show
+      when={isDesktop()}
+      fallback={
+        <div class="pb-[calc(4rem+env(safe-area-inset-bottom))]">
+          <TableContent scrollMode="window" />
+          <Drawer.Root>
+            <Drawer.Trigger class="fixed right-[calc(1rem+env(safe-area-inset-right))] bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 m-0 shadow-lg">
+              <SlidersHorizontal size={16} /> Filters
+            </Drawer.Trigger>
+            <Drawer.Content>
+              <div class="flex items-center justify-between">
+                <Drawer.Title>Filters</Drawer.Title>
+                <Drawer.CloseTrigger />
+              </div>
+              <FormContent />
+            </Drawer.Content>
+          </Drawer.Root>
+        </div>
+      }
+    >
+      <div class="h-body">
         <Splitter.Root
           class="h-full"
           defaultSize={[15, 50]}
@@ -106,7 +104,7 @@ export const Numbers: Component = () => {
             <TableContent />
           </Splitter.Panel>
         </Splitter.Root>
-      </Show>
-    </div>
+      </div>
+    </Show>
   );
 };
