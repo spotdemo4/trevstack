@@ -1,64 +1,58 @@
 import { DateInput } from "$lib/input";
-import { Field } from "@ark-ui/solid/field";
-import { type Timestamp, timestampDate, timestampFromDate } from "@bufbuild/protobuf/wkt";
-import { CalendarDate, parseDate, fromDate, toCalendarDate } from "@internationalized/date";
-import { createMemo, For, type Component } from "solid-js";
+import type { Timestamp } from "@bufbuild/protobuf/wkt";
+import { timestampDate, timestampFromDate } from "@bufbuild/protobuf/wkt";
+import { For, Show, type Component, createUniqueId } from "solid-js";
 
-import { useFieldContext } from "./context";
+import type { FieldController } from "./hook";
 
-function timestampToDateString(ts: Timestamp | undefined): string {
-  if (!ts) return "";
-  const jsDate = timestampDate(ts);
-  const zonedDateTime = fromDate(jsDate, "UTC");
-  const calendarDate = toCalendarDate(zonedDateTime);
-  return calendarDate.toString();
+function timestampToDateString(timestamp: Timestamp | undefined): string {
+  return timestamp ? timestampDate(timestamp).toISOString().slice(0, 10) : "";
 }
 
-function calendarDateToTimestamp(value: CalendarDate): Timestamp {
-  const jsDate = value.toDate("UTC");
-  return timestampFromDate(jsDate);
+function dateStringToTimestamp(value: string): Timestamp | undefined {
+  if (!value) return undefined;
+  const date = new Date(`${value}T00:00:00Z`);
+  return Number.isNaN(date.getTime()) ? undefined : timestampFromDate(date);
 }
 
 type DateFieldProps = {
   class?: string;
+  field: FieldController<Timestamp | undefined>;
   label?: string;
 };
 
 export const DateField: Component<DateFieldProps> = (props) => {
-  const field = useFieldContext<Timestamp | undefined>();
-  const name = field().name;
-  const errors = createMemo(() => [
-    ...new Set(field().state.meta.errors.map((err) => err.message as string)),
-  ]);
-
-  const value = createMemo(() => {
-    const str = timestampToDateString(field().state.value);
-    return str ? [parseDate(str)] : [];
-  });
+  const id = createUniqueId();
+  const errorId = `${id}-errors`;
 
   return (
-    <Field.Root
-      invalid={!(field().state.meta.isValid || !field().state.meta.isBlurred)}
-      class="flex flex-col gap-1.5"
-    >
+    <div class="flex min-w-42 flex-col gap-1.5">
+      <Show when={props.label}>
+        <label
+          for={id}
+          class="text-sm font-medium text-ctp-subtext1 aria-invalid:text-ctp-red"
+          aria-invalid={props.field.invalid() ? "true" : undefined}
+        >
+          {props.label}
+        </label>
+      </Show>
       <DateInput
-        name={name}
-        label={props.label}
+        id={id}
+        name={props.field.name}
+        invalid={props.field.invalid()}
+        aria-describedby={props.field.invalid() ? errorId : undefined}
         class={props.class}
-        value={value()}
-        onBlur={field().handleBlur}
-        onValueChange={(details) => {
-          const first = details.value[0];
-          if (first instanceof CalendarDate) {
-            field().handleChange(calendarDateToTimestamp(first));
-          } else if (!first) {
-            field().handleChange(undefined);
-          }
-        }}
+        value={timestampToDateString(props.field.value())}
+        onBlur={props.field.handleBlur}
+        onValueChange={(value) => props.field.handleChange(dateStringToTimestamp(value))}
       />
-      <For each={errors()}>
-        {(err) => <Field.ErrorText class="text-xs text-ctp-red">{err}</Field.ErrorText>}
-      </For>
-    </Field.Root>
+      <Show when={props.field.invalid()}>
+        <div id={errorId}>
+          <For each={props.field.errors()}>
+            {(error) => <span class="block text-xs text-ctp-red">{error}</span>}
+          </For>
+        </div>
+      </Show>
+    </div>
   );
 };

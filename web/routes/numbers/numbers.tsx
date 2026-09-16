@@ -2,14 +2,19 @@ import { ListRequestSchema, type ListRequest } from "$connect/number/v1/list_pb"
 import { NumberClient } from "$lib/connect";
 import { Drawer } from "$lib/drawer";
 import { createStreamingStore } from "$lib/effect";
+import { DateField } from "$lib/form/date-field";
+import { Form } from "$lib/form/form";
 import { useForm } from "$lib/form/hook";
+import { NumberField } from "$lib/form/number-field";
+import { SubmitButton } from "$lib/form/submit-button";
+import { TextField } from "$lib/form/text-field";
+import { SlidersHorizontal } from "$lib/icon";
 import { createMediaQuery } from "$lib/media-query";
 import { Splitter } from "$lib/splitter";
 import { Table } from "$lib/table";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { createStandardSchema } from "@bufbuild/protovalidate";
-import SlidersHorizontal from "lucide-solid/icons/sliders-horizontal";
 import { type Component, createSignal, Show } from "solid-js";
 
 export const Numbers: Component = () => {
@@ -27,24 +32,20 @@ export const Numbers: Component = () => {
     validators: {
       onChange: createStandardSchema(ListRequestSchema),
     },
-    onSubmit: async ({ value }) => setRequest(value),
+    onSubmit: async ({ value }) => {
+      setRequest(value);
+    },
   }));
 
   const FormContent: Component = () => (
-    <form.AppForm>
-      <form.Form class="justify-center">
-        <form.AppField name="name">{(field) => <field.TextField label="Name" />}</form.AppField>
-        <form.AppField name="minimum">
-          {(field) => <field.NumberField label="Minimum" />}
-        </form.AppField>
-        <form.AppField name="maximum">
-          {(field) => <field.NumberField label="Maximum" />}
-        </form.AppField>
-        <form.AppField name="start">{(field) => <field.DateField label="Start" />}</form.AppField>
-        <form.AppField name="end">{(field) => <field.DateField label="End" />}</form.AppField>
-        <form.SubmitButton label="Filter" />
-      </form.Form>
-    </form.AppForm>
+    <Form form={form} class="justify-center">
+      <TextField field={form.field("name")} label="Name" />
+      <NumberField field={form.field("minimum")} label="Minimum" />
+      <NumberField field={form.field("maximum")} label="Maximum" />
+      <DateField field={form.field("start")} label="Start" />
+      <DateField field={form.field("end")} label="End" />
+      <SubmitButton form={form} label="Filter" />
+    </Form>
   );
 
   const TableContent: Component = () => (

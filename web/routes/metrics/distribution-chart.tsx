@@ -36,105 +36,107 @@ export const DistributionChart: Component<DistributionChartProps> = (props) => {
     tooltipRef = element;
   };
 
-  createEffect(() => {
-    const w = width();
-    const h = height();
-    if (w === 0) return;
-
-    const compactNumber = format("~s");
-    const roundToNearestThousand = (value: number): number =>
-      Math.abs(value) < 1000 ? value : Math.round(value / 1000) * 1000;
-
-    const shortRangeLabel = (lower: number, upper: number): string => {
-      const shortLower = compactNumber(roundToNearestThousand(lower)).replace("G", "B");
-      const shortUpper = compactNumber(roundToNearestThousand(upper)).replace("G", "B");
-      return lower === upper ? shortLower : `${shortLower}-${shortUpper}`;
-    };
-
-    const data = props.buckets.map((b, i) => ({
-      key: `${i}`,
-      label: shortRangeLabel(b.lower, b.upper),
-      fullLabel: b.lower === b.upper ? `${b.lower}` : `${b.lower}-${b.upper}`,
-      lower: b.lower,
-      upper: b.upper,
-      count: Number(b.count),
-    }));
-
-    const svg = select(svgRef);
-    svg.selectAll("*").remove();
-    hideChartTooltip(tooltipRef);
-    if (data.length === 0) return;
-
-    const showTooltip = (event: PointerEvent, text: string) => {
-      showChartTooltip({ event, container: containerRef, tooltip: tooltipRef, text });
-    };
-    const hideTooltip = () => {
+  createEffect(
+    () => ({
+      width: width(),
+      height: height(),
+      data: props.buckets.map((b, i) => ({
+        key: `${i}`,
+        label: (() => {
+          const compactNumber = format("~s");
+          const roundToNearestThousand = (value: number): number =>
+            Math.abs(value) < 1000 ? value : Math.round(value / 1000) * 1000;
+          const shortLower = compactNumber(roundToNearestThousand(b.lower)).replace("G", "B");
+          const shortUpper = compactNumber(roundToNearestThousand(b.upper)).replace("G", "B");
+          return b.lower === b.upper ? shortLower : `${shortLower}-${shortUpper}`;
+        })(),
+        fullLabel: b.lower === b.upper ? `${b.lower}` : `${b.lower}-${b.upper}`,
+        count: Number(b.count),
+      })),
+    }),
+    ({ width: w, height: h, data }) => {
+      const svg = select(svgRef);
+      svg.selectAll("*").remove();
       hideChartTooltip(tooltipRef);
-    };
+      const cleanup = () => {
+        svg.selectAll("*").remove();
+        hideChartTooltip(tooltipRef);
+      };
+      if (w === 0 || data.length === 0) return cleanup;
 
-    const { innerW, innerH } = getChartInnerSize(w, h, margin);
+      const showTooltip = (event: PointerEvent, text: string) => {
+        showChartTooltip({ event, container: containerRef, tooltip: tooltipRef, text });
+      };
+      const hideTooltip = () => {
+        hideChartTooltip(tooltipRef);
+      };
 
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+      const { innerW, innerH } = getChartInnerSize(w, h, margin);
 
-    const x = scaleBand<string>()
-      .domain(data.map((d) => d.key))
-      .range([0, innerW])
-      .padding(0.15);
-    const labelByKey = new Map(data.map((d) => [d.key, d.label]));
+      const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const y = scaleLinear()
-      .domain([0, max(data, (d) => d.count) ?? 1])
-      .nice()
-      .range([innerH, 0]);
+      const x = scaleBand<string>()
+        .domain(data.map((d) => d.key))
+        .range([0, innerW])
+        .padding(0.15);
+      const labelByKey = new Map(data.map((d) => [d.key, d.label]));
 
-    // Show every Nth label so they don't collide on narrow widths.
-    const skip = Math.max(1, Math.ceil(data.length / Math.max(1, Math.floor(innerW / 60))));
+      const y = scaleLinear()
+        .domain([0, max(data, (d) => d.count) ?? 1])
+        .nice()
+        .range([innerH, 0]);
 
-    g.append("g")
-      .attr("transform", `translate(0,${innerH})`)
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(
-        axisBottom(x)
-          .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
-          .tickFormat((key) => labelByKey.get(key) ?? key)
-          .tickSizeOuter(0),
-      )
-      .selectAll("text")
-      .attr("transform", "rotate(-35)")
-      .attr("dy", "0.35em")
-      .style("text-anchor", "end");
+      // Show every Nth label so they don't collide on narrow widths.
+      const skip = Math.max(1, Math.ceil(data.length / Math.max(1, Math.floor(innerW / 60))));
 
-    g.append("g")
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(axisLeft(y).ticks(5).tickSizeOuter(0));
+      g.append("g")
+        .attr("transform", `translate(0,${innerH})`)
+        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .call(
+          axisBottom(x)
+            .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
+            .tickFormat((key) => labelByKey.get(key) ?? key)
+            .tickSizeOuter(0),
+        )
+        .selectAll("text")
+        .attr("transform", "rotate(-35)")
+        .attr("dy", "0.35em")
+        .style("text-anchor", "end");
 
-    g.append("g")
-      .selectAll("rect")
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("class", `${styles.VerticalBar} fill-ctp-mauve`)
-      .attr("x", (d) => x(d.key) ?? 0)
-      .attr("y", (d) => y(d.count))
-      .attr("width", x.bandwidth())
-      .attr("height", (d) => innerH - y(d.count))
-      .attr("rx", 2)
-      .on("pointerenter", (event: PointerEvent, d) => {
-        select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-mauve", false)
-          .classed("fill-ctp-pink", true);
-        showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
-      })
-      .on("pointermove", (event: PointerEvent, d) => {
-        showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
-      })
-      .on("pointerleave", (event: PointerEvent) => {
-        select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-pink", false)
-          .classed("fill-ctp-mauve", true);
-        hideTooltip();
-      });
-  });
+      g.append("g")
+        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .call(axisLeft(y).ticks(5).tickSizeOuter(0));
+
+      g.append("g")
+        .selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("class", `${styles.VerticalBar} fill-ctp-mauve`)
+        .attr("x", (d) => x(d.key) ?? 0)
+        .attr("y", (d) => y(d.count))
+        .attr("width", x.bandwidth())
+        .attr("height", (d) => innerH - y(d.count))
+        .attr("rx", 2)
+        .on("pointerenter", (event: PointerEvent, d) => {
+          select(event.currentTarget as SVGRectElement)
+            .classed("fill-ctp-mauve", false)
+            .classed("fill-ctp-pink", true);
+          showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
+        })
+        .on("pointermove", (event: PointerEvent, d) => {
+          showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
+        })
+        .on("pointerleave", (event: PointerEvent) => {
+          select(event.currentTarget as SVGRectElement)
+            .classed("fill-ctp-pink", false)
+            .classed("fill-ctp-mauve", true);
+          hideTooltip();
+        });
+
+      return cleanup;
+    },
+  );
 
   return (
     <ChartFrame

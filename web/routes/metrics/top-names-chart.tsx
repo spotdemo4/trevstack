@@ -40,106 +40,113 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
     tooltipRef = element;
   };
 
-  createEffect(() => {
-    const w = width();
-    const h = dynamicHeight();
-    if (w === 0) return;
-
-    const data = props.names.map((n) => ({
-      name: n.name,
-      count: Number(n.count),
-      sum: Number(n.sum),
-      average: n.average,
-    }));
-
-    const svg = select(svgRef);
-    svg.selectAll("*").remove();
-    hideChartTooltip(tooltipRef);
-    if (data.length === 0) return;
-
-    const formatInteger = format(",");
-    const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
-      showChartTooltip({
-        event,
-        container: containerRef,
-        tooltip: tooltipRef,
-        text: `${d.name}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
-      });
-    };
-    const hideTooltip = () => {
+  createEffect(
+    () => ({
+      width: width(),
+      height: dynamicHeight(),
+      data: props.names.map((n) => ({
+        name: n.name,
+        count: Number(n.count),
+        sum: Number(n.sum),
+        average: n.average,
+      })),
+    }),
+    ({ width: w, height: h, data }) => {
+      const svg = select(svgRef);
+      svg.selectAll("*").remove();
       hideChartTooltip(tooltipRef);
-    };
+      const cleanup = () => {
+        svg.selectAll("*").remove();
+        hideChartTooltip(tooltipRef);
+      };
+      if (w === 0 || data.length === 0) return cleanup;
 
-    const { innerW, innerH } = getChartInnerSize(w, h, margin);
+      const formatInteger = format(",");
+      const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
+        showChartTooltip({
+          event,
+          container: containerRef,
+          tooltip: tooltipRef,
+          text: `${d.name}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
+        });
+      };
+      const hideTooltip = () => {
+        hideChartTooltip(tooltipRef);
+      };
 
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+      const { innerW, innerH } = getChartInnerSize(w, h, margin);
 
-    const y = scaleBand<string>()
-      .domain(data.map((d) => d.name))
-      .range([0, innerH])
-      .padding(0.2);
+      const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = scaleLinear()
-      .domain([0, max(data, (d) => d.count) ?? 1])
-      .nice()
-      .range([0, innerW]);
+      const y = scaleBand<string>()
+        .domain(data.map((d) => d.name))
+        .range([0, innerH])
+        .padding(0.2);
 
-    g.append("g")
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(axisLeft(y).tickSizeOuter(0))
-      .selectAll("text")
-      .attr("class", "truncate");
+      const x = scaleLinear()
+        .domain([0, max(data, (d) => d.count) ?? 1])
+        .nice()
+        .range([0, innerW]);
 
-    g.append("g")
-      .attr("transform", `translate(0,${innerH})`)
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(
-        axisBottom(x)
-          .ticks(Math.max(2, Math.floor(innerW / 80)))
-          .tickSizeOuter(0),
-      );
+      g.append("g")
+        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .call(axisLeft(y).tickSizeOuter(0))
+        .selectAll("text")
+        .attr("class", "truncate");
 
-    g.append("g")
-      .selectAll("rect")
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("class", `${styles.HorizontalBar} fill-ctp-peach`)
-      .attr("x", 0)
-      .attr("y", (d) => y(d.name) ?? 0)
-      .attr("width", (d) => x(d.count))
-      .attr("height", y.bandwidth())
-      .attr("rx", 2)
-      .on("pointerenter", (event: PointerEvent, d) => {
-        select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-peach", false)
-          .classed("fill-ctp-yellow", true);
-        showTooltip(event, d);
-      })
-      .on("pointermove", (event: PointerEvent, d) => {
-        showTooltip(event, d);
-      })
-      .on("pointerleave", (event: PointerEvent) => {
-        select(event.currentTarget as SVGRectElement)
-          .classed("fill-ctp-yellow", false)
-          .classed("fill-ctp-peach", true);
-        hideTooltip();
-      });
+      g.append("g")
+        .attr("transform", `translate(0,${innerH})`)
+        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .call(
+          axisBottom(x)
+            .ticks(Math.max(2, Math.floor(innerW / 80)))
+            .tickSizeOuter(0),
+        );
 
-    g.append("g")
-      .selectAll("text")
-      .data(data)
-      .enter()
-      .append("text")
-      .attr(
-        "class",
-        `${styles.ValueLabel} pointer-events-none fill-ctp-text font-mono text-xs tabular-nums`,
-      )
-      .attr("x", (d) => x(d.count) + 6)
-      .attr("y", (d) => (y(d.name) ?? 0) + y.bandwidth() / 2)
-      .attr("dy", "0.35em")
-      .text((d) => d.count);
-  });
+      g.append("g")
+        .selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("class", `${styles.HorizontalBar} fill-ctp-peach`)
+        .attr("x", 0)
+        .attr("y", (d) => y(d.name) ?? 0)
+        .attr("width", (d) => x(d.count))
+        .attr("height", y.bandwidth())
+        .attr("rx", 2)
+        .on("pointerenter", (event: PointerEvent, d) => {
+          select(event.currentTarget as SVGRectElement)
+            .classed("fill-ctp-peach", false)
+            .classed("fill-ctp-yellow", true);
+          showTooltip(event, d);
+        })
+        .on("pointermove", (event: PointerEvent, d) => {
+          showTooltip(event, d);
+        })
+        .on("pointerleave", (event: PointerEvent) => {
+          select(event.currentTarget as SVGRectElement)
+            .classed("fill-ctp-yellow", false)
+            .classed("fill-ctp-peach", true);
+          hideTooltip();
+        });
+
+      g.append("g")
+        .selectAll("text")
+        .data(data)
+        .enter()
+        .append("text")
+        .attr(
+          "class",
+          `${styles.ValueLabel} pointer-events-none fill-ctp-text font-mono text-xs tabular-nums`,
+        )
+        .attr("x", (d) => x(d.count) + 6)
+        .attr("y", (d) => (y(d.name) ?? 0) + y.bandwidth() / 2)
+        .attr("dy", "0.35em")
+        .text((d) => d.count);
+
+      return cleanup;
+    },
+  );
 
   return (
     <ChartFrame

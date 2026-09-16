@@ -1,15 +1,12 @@
 import { useLocation } from "@solidjs/router";
+import type { JSX } from "@solidjs/web";
 import {
   type Accessor,
   type Component,
   createContext,
-  createMemo,
-  createSignal,
   createEffect,
-  on,
-  onCleanup,
-  type JSX,
-  onMount,
+  createSignal,
+  onSettled,
   useContext,
 } from "solid-js";
 import { twMerge } from "tailwind-merge";
@@ -32,8 +29,7 @@ const NavbarRoot: Component<NavbarProps> = (props) => {
     opacity: "0",
   });
 
-  // oxlint-disable-next-line no-unassigned-vars
-  let navRef!: HTMLElement;
+  let navRef: HTMLElement | undefined;
 
   const updateIndicator = () => {
     if (!navRef) {
@@ -60,7 +56,7 @@ const NavbarRoot: Component<NavbarProps> = (props) => {
     });
   };
 
-  onMount(() => {
+  onSettled(() => {
     updateIndicator();
 
     if (!navRef) {
@@ -75,35 +71,34 @@ const NavbarRoot: Component<NavbarProps> = (props) => {
     });
 
     window.addEventListener("resize", updateIndicator);
-    onCleanup(() => {
+    return () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", updateIndicator);
-    });
+    };
   });
 
   const location = useLocation();
-  const pathname = createMemo(() => location.pathname);
   createEffect(
-    on(pathname, () => {
+    () => location.pathname,
+    () => {
       requestAnimationFrame(updateIndicator);
-    }),
+    },
   );
 
   return (
-    <NavbarContext.Provider value={{ indicatorStyle }}>
-      <nav ref={navRef} class={twMerge("relative flex h-full items-center gap-6", props.class)}>
+    <NavbarContext value={{ indicatorStyle }}>
+      <nav
+        ref={(element) => (navRef = element)}
+        class={twMerge("relative flex h-full items-center gap-6", props.class)}
+      >
         {props.children}
       </nav>
-    </NavbarContext.Provider>
+    </NavbarContext>
   );
 };
 
 const Indicator: Component = () => {
   const context = useContext(NavbarContext);
-
-  if (!context) {
-    return null;
-  }
 
   return (
     <span

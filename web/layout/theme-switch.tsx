@@ -1,7 +1,5 @@
 import { Button } from "$lib/button";
-import { Swap } from "@ark-ui/solid/swap";
-import Moon from "lucide-solid/icons/moon";
-import Sun from "lucide-solid/icons/sun";
+import { Moon, Sun } from "$lib/icon";
 import { createSignal } from "solid-js";
 
 import styles from "./theme-switch.module.css";
@@ -33,20 +31,30 @@ export const ThemeSwitch = () => {
   return (
     <Button.Icon
       type="button"
+      aria-label={dark() ? "Switch to light theme" : "Switch to dark theme"}
+      aria-pressed={dark() ? "true" : "false"}
       onClick={() => {
         const next = !dark();
         setDark(next);
         toggleTheme(next);
       }}
     >
-      <Swap.Root swap={dark()} class={styles.Root}>
-        <Swap.Indicator type="on" class={styles.FadeIndicator}>
+      <span class={styles.Root}>
+        <span
+          aria-hidden="true"
+          data-state={dark() ? "open" : "closed"}
+          class={styles.FadeIndicator}
+        >
           <Sun />
-        </Swap.Indicator>
-        <Swap.Indicator type="off" class={styles.FadeIndicator}>
+        </span>
+        <span
+          aria-hidden="true"
+          data-state={dark() ? "closed" : "open"}
+          class={styles.FadeIndicator}
+        >
           <Moon />
-        </Swap.Indicator>
-      </Swap.Root>
+        </span>
+      </span>
     </Button.Icon>
   );
 };

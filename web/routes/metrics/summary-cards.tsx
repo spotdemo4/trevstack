@@ -41,14 +41,14 @@ export const SummaryCards: Component<SummaryCardsProps> = (props) => {
             <div class={styles.Card} data-state={pending() ? "loading" : "ready"}>
               <Card class="p-4">
                 <div class={styles.ContentFrame}>
-                  <div class={styles.SkeletonLayer} aria-hidden={!pending()}>
+                  <div class={styles.SkeletonLayer} aria-hidden={pending() ? "false" : "true"}>
                     <Skeleton class="mb-3 h-3 w-20" />
                     <Skeleton class="h-6 w-24" />
                   </div>
 
                   <Show when={stat()}>
                     {(s) => (
-                      <div class={styles.ValueLayer} aria-hidden={pending()}>
+                      <div class={styles.ValueLayer} aria-hidden={pending() ? "true" : "false"}>
                         <div class="text-xs tracking-wide text-ctp-subtext0 uppercase">
                           {s().label}
                         </div>

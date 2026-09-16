@@ -1,88 +1,174 @@
-import { Skeleton } from "$lib/skeleton";
-import { createFormHook } from "@tanstack/solid-form";
-import { type Component, type ComponentProps, lazy, Show, Suspense } from "solid-js";
-import { twMerge } from "tailwind-merge";
+import { createSignal, onSettled } from "solid-js";
 
-import { fieldContext, formContext } from "./context";
-import type { DateField as DateFieldImpl } from "./date-field";
-import { Form } from "./form";
-import type { NumberField as NumberFieldImpl } from "./number-field";
-import { ResetButton } from "./reset-button";
-import type { SelectField as SelectFieldImpl } from "./select-field";
-import { SubmitButton } from "./submit-button";
-import type { TextField as TextFieldImpl } from "./text-field";
+export type StandardSchemaIssue = {
+  message: string;
+  path?: readonly (PropertyKey | { key: PropertyKey })[];
+};
 
-import styles from "./hook.module.css";
+type StandardSchemaResult<T> =
+  | { value: T; issues?: undefined }
+  | { issues: readonly StandardSchemaIssue[] };
 
-const FieldFallback: Component<{ label?: string; class?: string }> = (props) => (
-  <div class={`${styles.fieldFallback} flex flex-col gap-1.5`}>
-    <Show when={props.label}>
-      <label class="text-sm font-medium text-ctp-subtext1">{props.label}</label>
-    </Show>
-    <Skeleton
-      class={twMerge("h-9.5 min-w-42 border border-ctp-surface1 bg-ctp-base", props.class)}
-    />
-  </div>
-);
+export type StandardSchema<T> = {
+  readonly "~standard": {
+    readonly validate: (
+      value: unknown,
+    ) => StandardSchemaResult<T> | Promise<StandardSchemaResult<T>>;
+  };
+};
 
-const LazyTextField = lazy(() => import("./text-field").then((m) => ({ default: m.TextField })));
+export type FieldController<T> = {
+  readonly name: string;
+  readonly value: () => T;
+  readonly errors: () => string[];
+  readonly isBlurred: () => boolean;
+  readonly isValid: () => boolean;
+  readonly invalid: () => boolean;
+  readonly handleChange: (value: T) => void;
+  readonly handleBlur: () => void;
+};
 
-const TextField: Component<ComponentProps<typeof TextFieldImpl>> = (props) => (
-  <Suspense fallback={<FieldFallback label={props.label} />}>
-    <div class={styles.fieldContent}>
-      <LazyTextField {...props} />
-    </div>
-  </Suspense>
-);
+export type FormController<T extends object> = {
+  readonly values: () => T;
+  readonly errors: () => string[];
+  readonly isSubmitting: () => boolean;
+  readonly isValidating: () => boolean;
+  readonly isValid: () => boolean;
+  readonly isDefaultValue: () => boolean;
+  readonly canSubmit: () => boolean;
+  readonly field: <K extends keyof T & string>(name: K) => FieldController<T[K]>;
+  readonly reset: () => void;
+  readonly handleSubmit: () => Promise<boolean>;
+};
 
-const LazyNumberField = lazy(() =>
-  import("./number-field").then((m) => ({ default: m.NumberField })),
-);
+type FormOptions<T extends object> = {
+  defaultValues: T;
+  validators?: {
+    onMount?: StandardSchema<T>;
+    onChange?: StandardSchema<T>;
+  };
+  onSubmit: (args: { value: T }) => void | Promise<unknown>;
+};
 
-const NumberField: Component<ComponentProps<typeof NumberFieldImpl>> = (props) => (
-  <Suspense fallback={<FieldFallback label={props.label} />}>
-    <div class={styles.fieldContent}>
-      <LazyNumberField {...props} />
-    </div>
-  </Suspense>
-);
+type FormOptionsAccessor<T extends object> = FormOptions<T> | (() => FormOptions<T>);
 
-const LazyDateField = lazy(() => import("./date-field").then((m) => ({ default: m.DateField })));
+type ErrorState = Record<string, string[]>;
 
-const DateField: Component<ComponentProps<typeof DateFieldImpl>> = (props) => (
-  <Suspense fallback={<FieldFallback label={props.label} class={props.class} />}>
-    <div class={styles.fieldContent}>
-      <LazyDateField {...props} />
-    </div>
-  </Suspense>
-);
+function issueKey(issue: StandardSchemaIssue): string | undefined {
+  const first = issue.path?.[0];
+  if (typeof first === "string" || typeof first === "number") return String(first);
+  if (first && typeof first === "object" && "key" in first) return String(first.key);
+  return undefined;
+}
 
-const LazySelectField = lazy(() =>
-  import("./select-field").then((m) => ({ default: m.SelectField })),
-);
+function errorsFromIssues(issues: readonly StandardSchemaIssue[]): ErrorState {
+  const errors: ErrorState = {};
+  for (const issue of issues) {
+    const key = issueKey(issue) ?? "";
+    (errors[key] ??= []).push(issue.message);
+  }
+  return errors;
+}
 
-const SelectField: Component<ComponentProps<typeof SelectFieldImpl>> = (props) => (
-  <Suspense fallback={<FieldFallback label={props.label} />}>
-    <div class={styles.fieldContent}>
-      <LazySelectField {...props} />
-    </div>
-  </Suspense>
-);
+function hasErrors(errors: ErrorState): boolean {
+  return Object.values(errors).some((messages) => messages.length > 0);
+}
 
-const { useAppForm, withForm } = createFormHook({
-  fieldComponents: {
-    TextField,
-    NumberField,
-    DateField,
-    SelectField,
-  },
-  formComponents: {
-    Form,
-    SubmitButton,
-    ResetButton,
-  },
-  fieldContext,
-  formContext,
-});
+function sameValues<T extends object>(a: T, b: T): boolean {
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  return [...keys].every((key) => Object.is(a[key as keyof T], b[key as keyof T]));
+}
 
-export { useAppForm as useForm, withForm };
+export function useForm<T extends object>(options: FormOptionsAccessor<T>): FormController<T> {
+  const config = typeof options === "function" ? options() : options;
+  const initialValues = { ...config.defaultValues } as Exclude<T, Function>;
+  const [values, setValues] = createSignal<T>(initialValues);
+  const [errorState, setErrorState] = createSignal<ErrorState>({});
+  const [blurred, setBlurred] = createSignal<Record<string, boolean>>({});
+  const [isSubmitting, setIsSubmitting] = createSignal(false);
+  const [isValidating, setIsValidating] = createSignal(false);
+  let validationId = 0;
+
+  const validate = async (schema: StandardSchema<T> | undefined, value: T): Promise<boolean> => {
+    if (!schema) {
+      setErrorState({});
+      return true;
+    }
+
+    const currentValidation = ++validationId;
+    setIsValidating(true);
+    try {
+      const result = await schema["~standard"].validate(value);
+      if (currentValidation !== validationId) return !hasErrors(errorState());
+      const errors = "issues" in result && result.issues ? errorsFromIssues(result.issues) : {};
+      setErrorState(errors);
+      return !hasErrors(errors);
+    } finally {
+      if (currentValidation === validationId) setIsValidating(false);
+    }
+  };
+
+  const validateOnChange = (value: T): void => {
+    const schema = config.validators?.onChange;
+    if (schema) void validate(schema, value);
+  };
+
+  const field = <K extends keyof T & string>(name: K): FieldController<T[K]> => ({
+    name,
+    value: () => values()[name],
+    errors: () => errorState()[name] ?? [],
+    isBlurred: () => blurred()[name] === true,
+    isValid: () => (errorState()[name] ?? []).length === 0,
+    invalid: () => blurred()[name] === true && (errorState()[name] ?? []).length > 0,
+    handleChange: (value) => {
+      const next = { ...values(), [name]: value } as T;
+      setValues(() => next);
+      validateOnChange(next);
+    },
+    handleBlur: () => setBlurred((current) => ({ ...current, [name]: true })),
+  });
+
+  const reset = (): void => {
+    validationId += 1;
+    setValues(() => ({ ...config.defaultValues }));
+    setErrorState({});
+    setBlurred({});
+    setIsValidating(false);
+  };
+
+  const handleSubmit = async (): Promise<boolean> => {
+    setBlurred((current) => {
+      const next = { ...current };
+      for (const key of Object.keys(values())) next[key] = true;
+      return next;
+    });
+
+    const schema = config.validators?.onChange ?? config.validators?.onMount;
+    if (!(await validate(schema, values()))) return false;
+
+    setIsSubmitting(true);
+    try {
+      await config.onSubmit({ value: values() });
+      return true;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  onSettled(() => {
+    if (config.validators?.onMount) void validate(config.validators.onMount, values());
+  });
+
+  return {
+    values,
+    errors: () => errorState()[""] ?? [],
+    isSubmitting,
+    isValidating,
+    isValid: () => !hasErrors(errorState()),
+    isDefaultValue: () => sameValues(values(), config.defaultValues),
+    canSubmit: () => !isSubmitting() && !isValidating() && !hasErrors(errorState()),
+    field,
+    reset,
+    handleSubmit,
+  };
+}

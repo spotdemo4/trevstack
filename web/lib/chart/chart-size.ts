@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, onCleanup, onMount } from "solid-js";
+import { type Accessor, createSignal, onSettled } from "solid-js";
 
 export type ChartMargin = {
   top: number;
@@ -14,7 +14,7 @@ export function useChartSize(
   const [width, setWidth] = createSignal(0);
   const [height] = createSignal(fallbackHeight);
 
-  onMount(() => {
+  onSettled(() => {
     const el = ref();
     if (!el) return;
     const ro = new ResizeObserver((entries) => {
@@ -22,7 +22,7 @@ export function useChartSize(
       if (entry) setWidth(entry.contentRect.width);
     });
     ro.observe(el);
-    onCleanup(() => ro.disconnect());
+    return () => ro.disconnect();
   });
 
   return { width, height };

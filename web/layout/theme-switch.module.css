@@ -12,15 +12,21 @@
   place-items: center;
 
   &[data-state="open"] {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
     animation-name: fade-in, spin-in;
     animation-duration: 180ms;
     animation-timing-function: ease-out;
+    animation-fill-mode: both;
   }
 
   &[data-state="closed"] {
+    opacity: 0;
+    transform: rotate(12deg) scale(0.82);
     animation-name: fade-out, spin-out;
     animation-duration: 120ms;
     animation-timing-function: ease-in;
+    animation-fill-mode: both;
   }
 }
 

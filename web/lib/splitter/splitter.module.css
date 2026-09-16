@@ -7,6 +7,7 @@
   border: none;
   padding: 0;
   cursor: col-resize;
+  touch-action: none;
 
   --splitter-border-color: var(--catppuccin-color-surface1);
   --splitter-thumb-color: var(--catppuccin-color-surface2);
@@ -83,7 +84,7 @@
     height: 100%;
   }
 
-  &[data-focus]:focus-visible {
+  .ResizeTrigger:focus-visible & {
     outline: 2px solid var(--catppuccin-color-sky);
     outline-offset: 2px;
   }

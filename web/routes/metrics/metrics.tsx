@@ -2,10 +2,14 @@ import { TimeInterval } from "$connect/number/v1/metrics_pb";
 import { Card } from "$lib/card";
 import { NumberClient } from "$lib/connect";
 import { createEffectResource, toastFailure } from "$lib/effect";
+import { DateField } from "$lib/form/date-field";
+import { Form } from "$lib/form/form";
 import { useForm } from "$lib/form/hook";
+import { ResetButton } from "$lib/form/reset-button";
+import { SubmitButton } from "$lib/form/submit-button";
 import { NumberInput, SelectInput } from "$lib/input";
 import { type Timestamp } from "@bufbuild/protobuf/wkt";
-import { type Component, createMemo, createSignal } from "solid-js";
+import { Errored, isPending, Loading, type Component, createMemo, createSignal } from "solid-js";
 
 import { DistributionChart } from "./distribution-chart";
 import { SummaryCards } from "./summary-cards";
@@ -32,46 +36,49 @@ export const Metrics: Component = () => {
 
   const form = useForm(() => ({
     defaultValues: {} as MetricsRange,
-    onSubmit: async ({ value }) => setRangeFilter(value),
+    onSubmit: async ({ value }) => {
+      setRangeFilter(value);
+    },
   }));
 
   const range = createMemo(() => rangeFilter());
 
-  const [summary] = createEffectResource(range, (req) =>
+  const summary = createEffectResource(range, (req) =>
     toastFailure("Failed to load summary")(NumberClient.summary(req)),
   );
 
   const timeSeriesArgs = createMemo(() => ({ ...range(), interval: interval() }));
-  const [timeSeries] = createEffectResource(timeSeriesArgs, (req) =>
+  const timeSeries = createEffectResource(timeSeriesArgs, (req) =>
     toastFailure("Failed to load activity over time")(NumberClient.timeSeries(req)),
   );
 
   const distributionArgs = createMemo(() => ({ ...range(), bucketCount: bucketCount() }));
-  const [distribution] = createEffectResource(distributionArgs, (req) =>
+  const distribution = createEffectResource(distributionArgs, (req) =>
     toastFailure("Failed to load number distribution")(NumberClient.distribution(req)),
   );
 
   const topNamesArgs = createMemo(() => ({ ...range(), limit: limit() }));
-  const [topNames] = createEffectResource(topNamesArgs, (req) =>
+  const topNames = createEffectResource(topNamesArgs, (req) =>
     toastFailure("Failed to load top names")(NumberClient.topNames(req)),
   );
 
   return (
     <div class="mx-auto flex max-w-7xl flex-col gap-4 p-4">
-      <form.AppForm>
-        <form.Form class="flex flex-row flex-wrap items-end justify-center gap-2 md:justify-start">
-          <form.AppField name="start">
-            {(field) => <field.DateField label="Start" class="bg-ctp-mantle" />}
-          </form.AppField>
-          <form.AppField name="end">
-            {(field) => <field.DateField label="End" class="bg-ctp-mantle" />}
-          </form.AppField>
-          <form.SubmitButton />
-          <form.ResetButton />
-        </form.Form>
-      </form.AppForm>
+      <Form
+        form={form}
+        class="flex flex-row flex-wrap items-end justify-center gap-2 md:justify-start"
+      >
+        <DateField field={form.field("start")} label="Start" class="bg-ctp-mantle" />
+        <DateField field={form.field("end")} label="End" class="bg-ctp-mantle" />
+        <SubmitButton form={form} />
+        <ResetButton form={form} />
+      </Form>
 
-      <SummaryCards data={summary()} loading={summary.loading} />
+      <Errored fallback={<div class="text-sm text-ctp-red">Failed to load summary.</div>}>
+        <Loading fallback={<SummaryCards data={undefined} loading={true} />}>
+          <SummaryCards data={summary()} loading={isPending(summary)} />
+        </Loading>
+      </Errored>
 
       <Card class="p-4">
         <div class="mb-3 flex items-center justify-between gap-2">
@@ -93,7 +100,23 @@ export const Metrics: Component = () => {
             />
           </div>
         </div>
-        <TimeSeriesChart points={timeSeries()?.points ?? []} />
+        <Errored
+          fallback={
+            <div class="flex h-[280px] items-center justify-center text-sm text-ctp-red">
+              Failed to load activity.
+            </div>
+          }
+        >
+          <Loading
+            fallback={
+              <div class="flex h-[280px] items-center justify-center text-sm text-ctp-subtext0">
+                Loading...
+              </div>
+            }
+          >
+            <TimeSeriesChart points={timeSeries()?.points ?? []} />
+          </Loading>
+        </Errored>
       </Card>
 
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -105,19 +128,35 @@ export const Metrics: Component = () => {
                 min={1}
                 max={100}
                 value={String(bucketCount())}
-                onValueChange={(c) => {
+                onValueChange={(details) => {
                   if (
-                    !Number.isNaN(c.valueAsNumber) &&
-                    c.valueAsNumber >= 1 &&
-                    c.valueAsNumber <= 100
+                    !Number.isNaN(details.valueAsNumber) &&
+                    details.valueAsNumber >= 1 &&
+                    details.valueAsNumber <= 100
                   ) {
-                    setBucketCount(c.valueAsNumber);
+                    setBucketCount(details.valueAsNumber);
                   }
                 }}
               />
             </div>
           </div>
-          <DistributionChart buckets={distribution()?.buckets ?? []} />
+          <Errored
+            fallback={
+              <div class="flex h-[260px] items-center justify-center text-sm text-ctp-red">
+                Failed to load distribution.
+              </div>
+            }
+          >
+            <Loading
+              fallback={
+                <div class="flex h-[260px] items-center justify-center text-sm text-ctp-subtext0">
+                  Loading...
+                </div>
+              }
+            >
+              <DistributionChart buckets={distribution()?.buckets ?? []} />
+            </Loading>
+          </Errored>
         </Card>
 
         <Card class="p-4">
@@ -128,19 +167,35 @@ export const Metrics: Component = () => {
                 min={1}
                 max={100}
                 value={String(limit())}
-                onValueChange={(c) => {
+                onValueChange={(details) => {
                   if (
-                    !Number.isNaN(c.valueAsNumber) &&
-                    c.valueAsNumber >= 1 &&
-                    c.valueAsNumber <= 100
+                    !Number.isNaN(details.valueAsNumber) &&
+                    details.valueAsNumber >= 1 &&
+                    details.valueAsNumber <= 100
                   ) {
-                    setLimit(c.valueAsNumber);
+                    setLimit(details.valueAsNumber);
                   }
                 }}
               />
             </div>
           </div>
-          <TopNamesChart names={topNames()?.names ?? []} />
+          <Errored
+            fallback={
+              <div class="flex h-[260px] items-center justify-center text-sm text-ctp-red">
+                Failed to load top names.
+              </div>
+            }
+          >
+            <Loading
+              fallback={
+                <div class="flex h-[260px] items-center justify-center text-sm text-ctp-subtext0">
+                  Loading...
+                </div>
+              }
+            >
+              <TopNamesChart names={topNames()?.names ?? []} />
+            </Loading>
+          </Errored>
         </Card>
       </div>
     </div>

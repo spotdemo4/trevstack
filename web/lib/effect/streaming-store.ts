@@ -1,6 +1,5 @@
 import { Effect, Fiber, Stream } from "effect";
-import { createEffect, createSignal, on, onCleanup, type Accessor } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createEffect, createSignal, createStore, type Accessor } from "solid-js";
 
 export type StreamingStore<Item> = {
   items: Item[];
@@ -18,12 +17,15 @@ export function createStreamingStore<Req, Resp, Item, E>(
   let runId = 0;
 
   createEffect(
-    on(request, (req) => {
+    () => request(),
+    (req) => {
       const currentRunId = ++runId;
       if (fiber) Effect.runFork(Fiber.interrupt(fiber));
 
       setLoading(true);
-      setItems([]);
+      setItems((draft) => {
+        draft.length = 0;
+      });
 
       let pending: Item[] = [];
       let rafId = 0;
@@ -36,12 +38,10 @@ export function createStreamingStore<Req, Resp, Item, E>(
         if (!pending.length) return;
         const batch = pending;
         pending = [];
-        setItems((prev) => [...prev, ...batch]);
+        setItems((draft) => {
+          draft.push(...batch);
+        });
       };
-
-      onCleanup(() => {
-        if (rafId) cancelAnimationFrame(rafId);
-      });
 
       const program = stream(req).pipe(
         Stream.runForEach((resp) =>
@@ -62,13 +62,14 @@ export function createStreamingStore<Req, Resp, Item, E>(
       );
 
       fiber = Effect.runFork(program);
-    }),
-  );
 
-  onCleanup(() => {
-    runId += 1;
-    if (fiber) Effect.runFork(Fiber.interrupt(fiber));
-  });
+      return () => {
+        runId += 1;
+        if (rafId) cancelAnimationFrame(rafId);
+        if (fiber) Effect.runFork(Fiber.interrupt(fiber));
+      };
+    },
+  );
 
   return { items, loading };
 }

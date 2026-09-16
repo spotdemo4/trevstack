@@ -1,11 +1,23 @@
 import { Skeleton } from "$lib/skeleton";
-import { debounce } from "@solid-primitives/scheduled";
-import { createVirtualizer } from "@tanstack/solid-virtual";
-import type { JSX } from "solid-js";
-import { type Component, createContext, For, Index, Show, useContext } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import {
+  type Component,
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  onCleanup,
+  onSettled,
+  Show,
+  useContext,
+} from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 import styles from "./table.module.css";
+
+const ROW_HEIGHT = 35;
+const OVERSCAN = 5;
 
 type HeaderProps = {
   class?: string;
@@ -38,6 +50,11 @@ type TableContextValue = {
   onScroll?: (start: number, end: number) => void;
 };
 
+type FixedRowVirtualizer = {
+  items: () => number[];
+  totalSize: () => number;
+};
+
 const TableContext = createContext<TableContextValue>();
 
 const useTableContext = (componentName: string) => {
@@ -49,11 +66,83 @@ const useTableContext = (componentName: string) => {
   return context;
 };
 
+const createFixedRowVirtualizer = (options: {
+  count: () => number;
+  getScrollElement: () => HTMLDivElement | undefined;
+  onRangeChange?: (start: number, end: number) => void;
+}): FixedRowVirtualizer => {
+  const [scrollTop, setScrollTop] = createSignal(0);
+  const [clientHeight, setClientHeight] = createSignal(0);
+  let resizeObserver: ResizeObserver | undefined;
+
+  const measure = () => {
+    const element = options.getScrollElement();
+    if (!element) return;
+
+    setScrollTop(element.scrollTop);
+    setClientHeight(element.clientHeight);
+  };
+
+  onSettled(() => {
+    const element = options.getScrollElement();
+    if (!element) return;
+
+    element.addEventListener("scroll", measure, { passive: true });
+    resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(element);
+    measure();
+
+    return () => {
+      element.removeEventListener("scroll", measure);
+      resizeObserver?.disconnect();
+    };
+  });
+
+  const range = createMemo(() => {
+    const count = Math.max(0, options.count());
+    if (count === 0) return { start: 0, end: -1 };
+
+    const firstVisible = Math.min(count - 1, Math.max(0, Math.floor(scrollTop() / ROW_HEIGHT)));
+    const lastVisible = Math.min(
+      count - 1,
+      Math.max(firstVisible, Math.ceil((scrollTop() + clientHeight()) / ROW_HEIGHT) - 1),
+    );
+
+    return {
+      start: Math.max(0, firstVisible - OVERSCAN),
+      end: Math.min(count - 1, lastVisible + OVERSCAN),
+    };
+  });
+
+  const items = createMemo(() => {
+    const { start, end } = range();
+    const visibleItems: number[] = [];
+
+    for (let index = start; index <= end; index += 1) {
+      visibleItems.push(index);
+    }
+
+    return visibleItems;
+  });
+
+  createEffect(
+    () => range(),
+    ({ start, end }) => {
+      if (end >= start) options.onRangeChange?.(start, end);
+    },
+  );
+
+  return {
+    items,
+    totalSize: () => Math.max(0, options.count()) * ROW_HEIGHT,
+  };
+};
+
 const Table: Component<TableProps> = (props) => {
   let parentRef: HTMLDivElement | undefined;
 
   return (
-    <TableContext.Provider
+    <TableContext
       value={{
         ref: () => parentRef,
         columns: () => props.columns,
@@ -68,7 +157,7 @@ const Table: Component<TableProps> = (props) => {
           {props.children}
         </table>
       </div>
-    </TableContext.Provider>
+    </TableContext>
   );
 };
 
@@ -93,35 +182,39 @@ const Header: Component<HeaderProps> = (props) => {
 
 const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
   const table = useTableContext("Table.Rows");
-  const onScroll = table.onScroll ? debounce(table.onScroll, 100) : undefined;
+  let lastStart = -1;
+  let lastEnd = -1;
+  let onScrollTimeout: ReturnType<typeof setTimeout> | undefined;
 
-  let start = 0;
-  let end = 0;
+  const notifyRange = (start: number, end: number) => {
+    if (start === lastStart && end === lastEnd) return;
+    lastStart = start;
+    lastEnd = end;
 
-  const virtualizer = createVirtualizer({
-    // https://github.com/TanStack/virtual/issues/661#issuecomment-1937805648
-    get count() {
-      return props.items.length;
-    },
-    // https://github.com/TanStack/virtual/issues/1011#issuecomment-3677935028
-    getScrollElement: () => (table.ref()?.isConnected ? table.ref()! : null),
-    overscan: 5,
-    estimateSize: () => 35,
-    onChange: (i) => {
-      if (!i.range) return;
-      if (i.range.startIndex === start && i.range.endIndex === end) return;
-      start = i.range.startIndex;
-      end = i.range.endIndex;
-      onScroll?.(start, end);
-    },
+    if (!table.onScroll) return;
+    if (onScrollTimeout) clearTimeout(onScrollTimeout);
+    onScrollTimeout = setTimeout(() => {
+      onScrollTimeout = undefined;
+      table.onScroll?.(start, end);
+    }, 100);
+  };
+
+  const virtualizer = createFixedRowVirtualizer({
+    count: () => props.items.length,
+    getScrollElement: table.ref,
+    onRangeChange: notifyRange,
+  });
+
+  onCleanup(() => {
+    if (onScrollTimeout) clearTimeout(onScrollTimeout);
   });
 
   return (
     <tbody
       style={{
         display: "block",
-        height: `${virtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-        position: "relative", //needed for absolute positioning of rows
+        height: `${virtualizer.totalSize()}px`,
+        position: "relative",
       }}
     >
       <Show
@@ -134,15 +227,14 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
           </tr>
         }
       >
-        {/* Only the visible items in the virtualizer, manually positioned to be in view */}
-        <For each={virtualizer.getVirtualItems()}>
-          {(virtualItem) => (
+        <For each={virtualizer.items()}>
+          {(index) => (
             <tr
-              data-index={virtualItem.index}
+              data-index={index}
               class={twMerge(
                 "border-b border-ctp-surface0/60 text-sm transition-colors",
                 "hover:bg-ctp-surface0/40",
-                virtualItem.index % 2 === 0 ? "bg-ctp-base" : "bg-ctp-mantle/40",
+                index % 2 === 0 ? "bg-ctp-base" : "bg-ctp-mantle/40",
                 "[&>td]:flex [&>td]:items-center",
                 styles.fadeIn,
                 props.class,
@@ -151,21 +243,21 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
                 display: "grid",
                 "grid-template-columns": table.columns().join(" "),
                 position: "absolute",
-                height: `${virtualItem.size}px`,
-                transform: `translateY(${virtualItem.start}px)`, //this should always be a `style` as it changes on scroll
+                height: `${ROW_HEIGHT}px`,
+                transform: `translateY(${index * ROW_HEIGHT}px)`,
                 width: "100%",
               }}
             >
               <Show
-                when={props.items[virtualItem.index]}
+                when={props.items[index]}
                 fallback={
-                  <Index each={table.columns()}>
+                  <For each={table.columns()}>
                     {() => (
                       <td>
                         <Skeleton class="w-full" />
                       </td>
                     )}
-                  </Index>
+                  </For>
                 }
                 keyed
               >

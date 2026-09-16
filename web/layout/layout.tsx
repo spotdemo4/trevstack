@@ -1,8 +1,8 @@
 import { Button } from "$lib/button";
+import { ExternalLink, GitBranch } from "$lib/icon";
 import { AppToaster } from "$lib/toast";
-import ExternalLink from "lucide-solid/icons/external-link";
-import GitBranch from "lucide-solid/icons/git-branch";
-import { type Component, children, type JSX } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { children, type Component, Loading } from "solid-js";
 
 import { NavLink } from "./nav-link";
 import { Navbar } from "./navbar";
@@ -48,7 +48,9 @@ export const Layout: Component<LayoutProps> = (props) => {
           </div>
         </div>
       </header>
-      <main class="grow">{resolved()}</main>
+      <Loading fallback={<main class="grow" />}>
+        <main class="grow">{resolved()}</main>
+      </Loading>
       <AppToaster />
     </div>
   );

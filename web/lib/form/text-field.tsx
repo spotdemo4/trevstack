@@ -1,39 +1,46 @@
 import { TextInput } from "$lib/input";
-import { Field } from "@ark-ui/solid/field";
-import { createMemo, For, Show, type Component } from "solid-js";
+import { For, Show, type Component, createUniqueId } from "solid-js";
 
-import { useFieldContext } from "./context";
+import type { FieldController } from "./hook";
 
 type TextFieldProps = {
+  class?: string;
+  field: FieldController<string | undefined>;
   label?: string;
 };
 
 export const TextField: Component<TextFieldProps> = (props) => {
-  const field = useFieldContext<string>();
-  const name = field().name;
-  const errors = createMemo(() => [
-    ...new Set(field().state.meta.errors.map((err) => err.message as string)),
-  ]);
+  const id = createUniqueId();
+  const errorId = `${id}-errors`;
 
   return (
-    <Field.Root
-      invalid={!(field().state.meta.isValid || !field().state.meta.isBlurred)}
-      class="flex flex-col gap-1.5"
-    >
+    <div class="flex flex-col gap-1.5">
       <Show when={props.label}>
-        <Field.Label class="text-sm font-medium text-ctp-subtext1 data-invalid:text-ctp-red">
+        <label
+          for={id}
+          class="text-sm font-medium text-ctp-subtext1 aria-invalid:text-ctp-red"
+          aria-invalid={props.field.invalid() ? "true" : undefined}
+        >
           {props.label}
-        </Field.Label>
+        </label>
       </Show>
       <TextInput
-        name={name}
-        value={field().state.value ?? ""}
-        onInput={(e) => field().handleChange(e.target.value)}
-        onBlur={field().handleBlur}
+        id={id}
+        name={props.field.name}
+        value={props.field.value() ?? ""}
+        aria-invalid={props.field.invalid() ? "true" : undefined}
+        aria-describedby={props.field.invalid() ? errorId : undefined}
+        onInput={(event) => props.field.handleChange(event.currentTarget.value)}
+        onBlur={props.field.handleBlur}
+        class={props.class}
       />
-      <For each={errors()}>
-        {(err) => <Field.ErrorText class="text-xs text-ctp-red">{err}</Field.ErrorText>}
-      </For>
-    </Field.Root>
+      <Show when={props.field.invalid()}>
+        <div id={errorId}>
+          <For each={props.field.errors()}>
+            {(error) => <span class="block text-xs text-ctp-red">{error}</span>}
+          </For>
+        </div>
+      </Show>
+    </div>
   );
 };

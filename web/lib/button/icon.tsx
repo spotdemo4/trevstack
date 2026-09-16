@@ -1,5 +1,7 @@
-import { type Component, type JSX, splitProps } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import type { JSX } from "@solidjs/web";
+import { Dynamic } from "@solidjs/web";
+import type { Component } from "solid-js";
+import { omit } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 import styles from "./button.module.css";
@@ -18,12 +20,12 @@ type IconProps = (IconAsButtonProps | IconAsAnchorProps) & {
 };
 
 export const Icon: Component<IconProps> = (props) => {
-  const [local, rest] = splitProps(props, ["as", "class", "children"]);
-  const component = local.as ?? "button";
+  const component = props.as ?? "button";
+  const rest = omit(props, "as", "class", "children");
 
   return (
-    <Dynamic component={component} class={twMerge(styles.Icon, local.class)} {...rest}>
-      {local.children}
+    <Dynamic component={component} class={twMerge(styles.Icon, props.class)} {...rest}>
+      {props.children}
     </Dynamic>
   );
 };

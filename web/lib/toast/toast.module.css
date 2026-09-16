@@ -31,3 +31,9 @@
 .toastRoot[data-state="closed"] {
   animation: toast-out 150ms ease-in forwards;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .toastRoot {
+    animation: none !important;
+  }
+}

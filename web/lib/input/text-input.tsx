@@ -1,18 +1,21 @@
-import { Field, type FieldInputProps } from "@ark-ui/solid/field";
-import { type Component, splitProps } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import type { Component } from "solid-js";
+import { omit } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
-type TextInputProps = FieldInputProps;
+type TextInputProps = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, "class"> & {
+  class?: string;
+};
 
 export const TextInput: Component<TextInputProps> = (props) => {
-  const [local, rest] = splitProps(props, ["class"]);
+  const rest = omit(props, "class");
 
   return (
-    <Field.Input
+    <input
       {...rest}
       class={twMerge(
-        "h-9.5 rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none data-invalid:border-ctp-red data-invalid:focus:ring-ctp-red/40",
-        local.class,
+        "h-9.5 rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none aria-invalid:border-ctp-red aria-invalid:focus:ring-ctp-red/40",
+        props.class,
       )}
     />
   );

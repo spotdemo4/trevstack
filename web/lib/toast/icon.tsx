@@ -1,9 +1,5 @@
-import CircleAlert from "lucide-solid/icons/circle-alert";
-import CircleCheck from "lucide-solid/icons/circle-check";
-import Info from "lucide-solid/icons/info";
-import LoaderCircle from "lucide-solid/icons/loader-circle";
-import TriangleAlert from "lucide-solid/icons/triangle-alert";
-import type { JSX } from "solid-js";
+import { CircleAlert, CircleCheck, Info, LoaderCircle, TriangleAlert } from "$lib/icon";
+import type { JSX } from "@solidjs/web";
 
 export const renderToastIcon = (type?: string): JSX.Element => {
   switch (type) {

@@ -38,123 +38,130 @@ export const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
     tooltipRef = element;
   };
 
-  createEffect(() => {
-    const w = width();
-    const h = height();
-    if (w === 0) return;
-
-    const data = props.points
-      .filter((p) => p.bucket)
-      .map((p) => ({
-        date: timestampDate(p.bucket!),
-        count: Number(p.count),
-        sum: Number(p.sum),
-        average: p.average,
-      }));
-
-    const svg = select(svgRef);
-    svg.selectAll("*").remove();
-    hideChartTooltip(tooltipRef);
-    if (data.length === 0) return;
-
-    const formatInteger = format(",");
-    const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
-      showChartTooltip({
-        event,
-        container: containerRef,
-        tooltip: tooltipRef,
-        text: `${d.date.toLocaleString()}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
-      });
-    };
-    const hideTooltip = () => {
+  createEffect(
+    () => ({
+      width: width(),
+      height: height(),
+      data: props.points
+        .filter((p) => p.bucket)
+        .map((p) => ({
+          date: timestampDate(p.bucket!),
+          count: Number(p.count),
+          sum: Number(p.sum),
+          average: p.average,
+        })),
+    }),
+    ({ width: w, height: h, data }) => {
+      const svg = select(svgRef);
+      svg.selectAll("*").remove();
       hideChartTooltip(tooltipRef);
-    };
+      const cleanup = () => {
+        svg.selectAll("*").remove();
+        hideChartTooltip(tooltipRef);
+      };
+      if (w === 0 || data.length === 0) return cleanup;
 
-    const { innerW, innerH } = getChartInnerSize(w, h, margin);
+      const formatInteger = format(",");
+      const showTooltip = (event: PointerEvent, d: (typeof data)[number]) => {
+        showChartTooltip({
+          event,
+          container: containerRef,
+          tooltip: tooltipRef,
+          text: `${d.date.toLocaleString()}\nTotal value: ${formatInteger(d.sum)}\nCount: ${formatInteger(d.count)}\nAverage: ${formatInteger(d.average)}`,
+        });
+      };
+      const hideTooltip = () => {
+        hideChartTooltip(tooltipRef);
+      };
 
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+      const { innerW, innerH } = getChartInnerSize(w, h, margin);
 
-    const x = scaleTime()
-      .domain(extent(data, (d) => d.date) as [Date, Date])
-      .range([0, innerW]);
+      const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const y = scaleLinear()
-      .domain([0, max(data, (d) => d.count) ?? 1])
-      .nice()
-      .range([innerH, 0]);
+      const x = scaleTime()
+        .domain(extent(data, (d) => d.date) as [Date, Date])
+        .range([0, innerW]);
 
-    g.append("g")
-      .attr("transform", `translate(0,${innerH})`)
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(
-        axisBottom(x)
-          .ticks(Math.max(2, Math.floor(innerW / 90)))
-          .tickSizeOuter(0),
-      );
+      const y = scaleLinear()
+        .domain([0, max(data, (d) => d.count) ?? 1])
+        .nice()
+        .range([innerH, 0]);
 
-    g.append("g")
-      .attr("class", `${styles.Axis} text-ctp-subtext0`)
-      .call(axisLeft(y).ticks(5).tickSizeOuter(0));
+      g.append("g")
+        .attr("transform", `translate(0,${innerH})`)
+        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .call(
+          axisBottom(x)
+            .ticks(Math.max(2, Math.floor(innerW / 90)))
+            .tickSizeOuter(0),
+        );
 
-    // Subtle horizontal grid lines.
-    g.append("g")
-      .attr("class", `${styles.Grid} text-ctp-surface1`)
-      .selectAll("line")
-      .data(y.ticks(5))
-      .enter()
-      .append("line")
-      .attr("x1", 0)
-      .attr("x2", innerW)
-      .attr("y1", (d) => y(d))
-      .attr("y2", (d) => y(d))
-      .attr("stroke", "currentColor")
-      .attr("stroke-dasharray", "2,3");
+      g.append("g")
+        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
-    const areaGen = area<(typeof data)[number]>()
-      .x((d) => x(d.date))
-      .y0(innerH)
-      .y1((d) => y(d.count))
-      .curve(curveMonotoneX);
+      // Subtle horizontal grid lines.
+      g.append("g")
+        .attr("class", `${styles.Grid} text-ctp-surface1`)
+        .selectAll("line")
+        .data(y.ticks(5))
+        .enter()
+        .append("line")
+        .attr("x1", 0)
+        .attr("x2", innerW)
+        .attr("y1", (d) => y(d))
+        .attr("y2", (d) => y(d))
+        .attr("stroke", "currentColor")
+        .attr("stroke-dasharray", "2,3");
 
-    const lineGen = line<(typeof data)[number]>()
-      .x((d) => x(d.date))
-      .y((d) => y(d.count))
-      .curve(curveMonotoneX);
+      const areaGen = area<(typeof data)[number]>()
+        .x((d) => x(d.date))
+        .y0(innerH)
+        .y1((d) => y(d.count))
+        .curve(curveMonotoneX);
 
-    g.append("path")
-      .datum(data)
-      .attr("class", `${styles.Area} fill-ctp-blue/20`)
-      .attr("d", areaGen);
+      const lineGen = line<(typeof data)[number]>()
+        .x((d) => x(d.date))
+        .y((d) => y(d.count))
+        .curve(curveMonotoneX);
 
-    g.append("path")
-      .datum(data)
-      .attr("class", `${styles.Line} stroke-ctp-blue`)
-      .attr("fill", "none")
-      .attr("pathLength", 1)
-      .attr("stroke-width", 2)
-      .attr("d", lineGen);
+      g.append("path")
+        .datum(data)
+        .attr("class", `${styles.Area} fill-ctp-blue/20`)
+        .attr("d", areaGen);
 
-    g.append("g")
-      .selectAll("circle")
-      .data(data)
-      .enter()
-      .append("circle")
-      .attr("class", `${styles.Point} fill-ctp-blue`)
-      .attr("cx", (d) => x(d.date))
-      .attr("cy", (d) => y(d.count))
-      .attr("r", 3)
-      .on("pointerenter", (event: PointerEvent, d) => {
-        select(event.currentTarget as SVGCircleElement).attr("r", 5);
-        showTooltip(event, d);
-      })
-      .on("pointermove", (event: PointerEvent, d) => {
-        showTooltip(event, d);
-      })
-      .on("pointerleave", (event: PointerEvent) => {
-        select(event.currentTarget as SVGCircleElement).attr("r", 3);
-        hideTooltip();
-      });
-  });
+      g.append("path")
+        .datum(data)
+        .attr("class", `${styles.Line} stroke-ctp-blue`)
+        .attr("fill", "none")
+        .attr("pathLength", 1)
+        .attr("stroke-width", 2)
+        .attr("d", lineGen);
+
+      g.append("g")
+        .selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("class", `${styles.Point} fill-ctp-blue`)
+        .attr("cx", (d) => x(d.date))
+        .attr("cy", (d) => y(d.count))
+        .attr("r", 3)
+        .on("pointerenter", (event: PointerEvent, d) => {
+          select(event.currentTarget as SVGCircleElement).attr("r", 5);
+          showTooltip(event, d);
+        })
+        .on("pointermove", (event: PointerEvent, d) => {
+          showTooltip(event, d);
+        })
+        .on("pointerleave", (event: PointerEvent) => {
+          select(event.currentTarget as SVGCircleElement).attr("r", 3);
+          hideTooltip();
+        });
+
+      return cleanup;
+    },
+  );
 
   return (
     <ChartFrame
