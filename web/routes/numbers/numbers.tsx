@@ -92,7 +92,7 @@ export const Numbers: Component = () => {
     >
       <div class="h-body">
         <Splitter.Root
-          class="h-full"
+          class="h-full bg-ctp-mantle"
           defaultSize={[15, 50]}
           panels={[{ id: "a", minSize: 20, maxSize: 50 }, { id: "b" }]}
         >
