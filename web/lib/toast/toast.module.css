@@ -24,16 +24,122 @@
   }
 }
 
+.toastViewport {
+  right: calc(1.25rem + env(safe-area-inset-right));
+  bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  height: 0;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.toastItem {
+  --toast-scale: max(0.7, calc(1 - var(--toast-index) * 0.1));
+
+  z-index: calc(100 - var(--toast-index));
+  pointer-events: auto;
+  transform: translate3d(0, calc(var(--toast-index) * -0.75rem), 0) scale(var(--toast-scale));
+  transform-origin: bottom center;
+  transition:
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
+  will-change: transform;
+}
+
+.toastItem[data-collapsed-hidden="true"] {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.toastSwipe {
+  width: 100%;
+  touch-action: pan-y;
+  transform: translate3d(var(--toast-swipe-x, 0), 0, 0);
+}
+
+.toastSwipe[data-swipe-state] {
+  will-change: transform;
+}
+
+.toastSwipe[data-swipe-state="snapback"] {
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.toastSwipe[data-swipe-state="committing"] {
+  transition: transform 120ms ease-in;
+}
+
+.toastContent {
+  transition: opacity 150ms ease;
+}
+
+.toastItem:not([data-frontmost="true"]) .toastContent {
+  pointer-events: none;
+  opacity: 0;
+}
+
 .toastRoot[data-state="open"] {
   animation: toast-in 200ms ease-out;
 }
 
 .toastRoot[data-state="closed"] {
+  pointer-events: none;
   animation: toast-out 150ms ease-in forwards;
 }
 
+.toastViewport:focus-within .toastItem {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translate3d(0, calc(var(--toast-offset-y) * -1), 0) scale(1);
+}
+
+.toastViewport:focus-within .toastContent {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.toastViewport:focus-within .toastItem::after {
+  position: absolute;
+  inset: auto 0 -0.75rem;
+  height: calc(0.75rem + 1px);
+  content: "";
+}
+
+@media (hover: hover) {
+  .toastViewport:hover .toastItem {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translate3d(0, calc(var(--toast-offset-y) * -1), 0) scale(1);
+  }
+
+  .toastViewport:hover .toastContent {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .toastViewport:hover .toastItem::after {
+    position: absolute;
+    inset: auto 0 -0.75rem;
+    height: calc(0.75rem + 1px);
+    content: "";
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .toastItem,
+  .toastSwipe,
+  .toastContent {
+    transition: none;
+  }
+
   .toastRoot {
+    animation: none !important;
+  }
+
+  .toastRoot[data-state="closed"] {
+    opacity: 0;
+  }
+
+  .toastIcon :global(.animate-spin) {
     animation: none !important;
   }
 }
