@@ -26,8 +26,7 @@ func TestNewLogLevel(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Setenv("LOG_LEVEL", tt.value)
-			logger := New()
+			logger := New(tt.value)
 			ctx := context.Background()
 
 			if !logger.Enabled(ctx, tt.enabled) {

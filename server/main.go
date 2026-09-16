@@ -41,7 +41,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	log := logger.New()
+	log := logger.New(cfg.logLevel)
 	ctx = logger.WithLog(ctx, log)
 
 	db, err := database.New(ctx)

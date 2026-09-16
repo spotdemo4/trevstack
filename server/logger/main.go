@@ -7,10 +7,9 @@ import (
 	"strings"
 )
 
-func New() *slog.Logger {
+func New(level string) *slog.Logger {
 	var loglevel slog.Level
 
-	level := os.Getenv("LOG_LEVEL")
 	switch strings.ToLower(level) {
 	case "debug":
 		loglevel = slog.LevelDebug
@@ -33,12 +32,12 @@ func WithLog(ctx context.Context, logger *slog.Logger) context.Context {
 
 func FromContext(ctx context.Context) *slog.Logger {
 	if ctx == nil {
-		return New()
+		return New("info")
 	}
 
 	logger, ok := ctx.Value(key{}).(*slog.Logger)
 	if !ok {
-		return New()
+		return New("info")
 	}
 
 	return logger
