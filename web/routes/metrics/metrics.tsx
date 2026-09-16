@@ -102,14 +102,14 @@ export const Metrics: Component = () => {
         </div>
         <Errored
           fallback={
-            <div class="flex h-[280px] items-center justify-center text-sm text-ctp-red">
+            <div class="flex h-70 items-center justify-center text-sm text-ctp-red">
               Failed to load activity.
             </div>
           }
         >
           <Loading
             fallback={
-              <div class="flex h-[280px] items-center justify-center text-sm text-ctp-subtext0">
+              <div class="flex h-70 items-center justify-center text-sm text-ctp-subtext0">
                 Loading...
               </div>
             }
@@ -142,14 +142,14 @@ export const Metrics: Component = () => {
           </div>
           <Errored
             fallback={
-              <div class="flex h-[260px] items-center justify-center text-sm text-ctp-red">
+              <div class="flex h-65 items-center justify-center text-sm text-ctp-red">
                 Failed to load distribution.
               </div>
             }
           >
             <Loading
               fallback={
-                <div class="flex h-[260px] items-center justify-center text-sm text-ctp-subtext0">
+                <div class="flex h-65 items-center justify-center text-sm text-ctp-subtext0">
                   Loading...
                 </div>
               }
@@ -181,14 +181,14 @@ export const Metrics: Component = () => {
           </div>
           <Errored
             fallback={
-              <div class="flex h-[260px] items-center justify-center text-sm text-ctp-red">
+              <div class="flex h-65 items-center justify-center text-sm text-ctp-red">
                 Failed to load top names.
               </div>
             }
           >
             <Loading
               fallback={
-                <div class="flex h-[260px] items-center justify-center text-sm text-ctp-subtext0">
+                <div class="flex h-65 items-center justify-center text-sm text-ctp-subtext0">
                   Loading...
                 </div>
               }
