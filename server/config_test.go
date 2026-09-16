@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"flag"
+	"net/netip"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -16,11 +18,13 @@ func TestParseConfig(t *testing.T) {
 		args             []string
 		logLevel         string
 		port             string
-		jwtSecret        string
-		authCookieSecure string
-		wantLogLevel     string
-		wantPort         string
-		wantCookieSecure bool
+		jwtSecret             string
+		authCookieSecure      string
+		trustedProxyCIDRs     string
+		wantLogLevel          string
+		wantPort              string
+		wantCookieSecure      bool
+		wantTrustedProxyCIDRs []netip.Prefix
 	}{
 		{
 			name:         "defaults",
@@ -43,6 +47,17 @@ func TestParseConfig(t *testing.T) {
 			wantLogLevel:     defaultLogLevel,
 			wantPort:         defaultPort,
 			wantCookieSecure: true,
+		},
+		{
+			name:                 "trusted proxy environment",
+			jwtSecret:            testJWTSecret,
+			trustedProxyCIDRs:    "10.0.0.1/8, 2001:db8::1/32",
+			wantLogLevel:         defaultLogLevel,
+			wantPort:             defaultPort,
+			wantTrustedProxyCIDRs: []netip.Prefix{
+				netip.MustParsePrefix("10.0.0.0/8"),
+				netip.MustParsePrefix("2001:db8::/32"),
+			},
 		},
 		{
 			name:         "flags",
@@ -82,6 +97,8 @@ func TestParseConfig(t *testing.T) {
 					return test.logLevel
 				case "PORT":
 					return test.port
+				case "TRUSTED_PROXY_CIDRS":
+					return test.trustedProxyCIDRs
 				default:
 					return ""
 				}
@@ -97,6 +114,9 @@ func TestParseConfig(t *testing.T) {
 			}
 			if cfg.authCookieSecure != test.wantCookieSecure {
 				t.Errorf("authCookieSecure = %t, want %t", cfg.authCookieSecure, test.wantCookieSecure)
+			}
+			if !slices.Equal(cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs) {
+				t.Errorf("trustedProxyCIDRs = %v, want %v", cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs)
 			}
 			if cfg.jwtSecret != testJWTSecret {
 				t.Errorf("jwtSecret = %q, want test secret", cfg.jwtSecret)
@@ -148,6 +168,22 @@ func TestParseConfigRejectsInvalidCookieSecure(t *testing.T) {
 	}
 }
 
+func TestParseConfigRejectsInvalidTrustedProxyCIDRs(t *testing.T) {
+	var output bytes.Buffer
+	_, err := parseConfig(nil, func(key string) string {
+		if key == "JWT_SECRET" {
+			return testJWTSecret
+		}
+		if key == "TRUSTED_PROXY_CIDRS" {
+			return "10.0.0.0/8,not-a-cidr"
+		}
+		return ""
+	}, &output)
+	if err == nil || !strings.Contains(err.Error(), "invalid TRUSTED_PROXY_CIDRS value") {
+		t.Fatalf("parseConfig() error = %v, want invalid trusted proxy CIDRs error", err)
+	}
+}
+
 func TestParseConfigHelp(t *testing.T) {
 	for _, arg := range []string{"-h", "--help"} {
 		t.Run(arg, func(t *testing.T) {
@@ -157,7 +193,7 @@ func TestParseConfigHelp(t *testing.T) {
 				t.Fatalf("parseConfig() error = %v, want %v", err, flag.ErrHelp)
 			}
 
-			for _, want := range []string{"Usage: server", "--log-level", "--port", "--help", "AUTH_COOKIE_SECURE", "JWT_SECRET", "LOG_LEVEL", "PORT", supportedLogLevels, defaultLogLevel, defaultPort} {
+			for _, want := range []string{"Usage: server", "--log-level", "--port", "--help", "AUTH_COOKIE_SECURE", "JWT_SECRET", "LOG_LEVEL", "PORT", "TRUSTED_PROXY_CIDRS", supportedLogLevels, defaultLogLevel, defaultPort} {
 				if !strings.Contains(output.String(), want) {
 					t.Errorf("help output does not contain %q:\n%s", want, output.String())
 				}
@@ -233,6 +269,8 @@ func TestParseConfigHelpIgnoresInvalidEnvironment(t *testing.T) {
 					return "not-a-bool"
 				case "JWT_SECRET":
 					return ""
+				case "TRUSTED_PROXY_CIDRS":
+					return "not-a-cidr"
 				default:
 					return ""
 				}

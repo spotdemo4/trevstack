@@ -17,6 +17,7 @@ import (
 	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
 	"trev.zip/llc/stack/server/database"
 	authhandler "trev.zip/llc/stack/server/handlers/auth/v1"
+	"trev.zip/llc/stack/server/interceptors"
 )
 
 const handlerTestSecret = "01234567890123456789012345678901"
@@ -34,7 +35,11 @@ func (t *recordingTransport) RoundTrip(req *http.Request) (*http.Response, error
 	return resp, err
 }
 
-func newAuthTest(t *testing.T, secure bool) (authv1connect.AuthServiceClient, *sql.DB, *recordingTransport, *auth.Manager) {
+func newAuthTest(
+	t *testing.T,
+	secure bool,
+	opts ...connect.HandlerOption,
+) (authv1connect.AuthServiceClient, *sql.DB, *recordingTransport, *auth.Manager) {
 	t.Helper()
 
 	db, err := sql.Open("sqlite3", "file::memory:?_foreign_keys=true")
@@ -49,7 +54,7 @@ func newAuthTest(t *testing.T, secure bool) (authv1connect.AuthServiceClient, *s
 
 	manager := auth.NewManager(handlerTestSecret, secure)
 	mux := http.NewServeMux()
-	mux.Handle(authhandler.New(manager))
+	mux.Handle(authhandler.New(manager, opts...))
 	srv := httptest.NewUnstartedServer(mux)
 	srv.Config.BaseContext = func(_ net.Listener) context.Context {
 		return database.WithDatabase(context.Background(), db)
@@ -181,6 +186,83 @@ func TestLoginRejectsInvalidCredentials(t *testing.T) {
 				t.Errorf("invalid login set cookies: %v", transport.last.Cookies())
 			}
 		})
+	}
+}
+
+func TestAuthRateLimitReturnsResourceExhausted(t *testing.T) {
+	limiter := interceptors.NewRateLimitInterceptor(map[string]interceptors.RateLimitPolicy{
+		authv1connect.AuthServiceLoginProcedure: {Requests: 1, Window: time.Hour},
+	}, nil)
+	client, _, transport, _ := newAuthTest(
+		t,
+		false,
+		connect.WithInterceptors(limiter),
+	)
+	request := authv1.LoginRequest_builder{
+		Username: new("missing"),
+		Password: new("password"),
+	}.Build()
+
+	if _, err := client.Login(context.Background(), request); connect.CodeOf(err) != connect.CodeUnauthenticated {
+		t.Fatalf("first Login() code = %v, want Unauthenticated", connect.CodeOf(err))
+	}
+	_, err := client.Login(context.Background(), request)
+	if got := connect.CodeOf(err); got != connect.CodeResourceExhausted {
+		t.Fatalf("second Login() code = %v, want ResourceExhausted", got)
+	}
+	connectErr, ok := err.(*connect.Error)
+	if !ok {
+		t.Fatalf("second Login() error type = %T, want *connect.Error", err)
+	}
+	if got := connectErr.Meta().Get("Retry-After"); got == "" {
+		t.Error("second Login() Retry-After is empty")
+	}
+	if transport.last == nil || transport.last.StatusCode != http.StatusTooManyRequests {
+		t.Fatalf("second Login() HTTP response = %#v, want status 429", transport.last)
+	}
+}
+
+func TestAuthRateLimitUsesIndependentProcedureBuckets(t *testing.T) {
+	limiter := interceptors.NewRateLimitInterceptor(map[string]interceptors.RateLimitPolicy{
+		authv1connect.AuthServiceLoginProcedure:  {Requests: 1, Window: time.Hour},
+		authv1connect.AuthServiceSignupProcedure: {Requests: 1, Window: time.Hour},
+	}, nil)
+	client, _, _, _ := newAuthTest(
+		t,
+		false,
+		connect.WithInterceptors(limiter),
+	)
+	password := "correct horse battery staple"
+
+	if _, err := client.Signup(context.Background(), authv1.SignupRequest_builder{
+		Username: new("alice"),
+		Password: new(password),
+	}.Build()); err != nil {
+		t.Fatalf("Signup() error = %v", err)
+	}
+	if _, err := client.Login(context.Background(), authv1.LoginRequest_builder{
+		Username: new("alice"),
+		Password: new(password),
+	}.Build()); err != nil {
+		t.Fatalf("Login() after Signup() error = %v", err)
+	}
+
+	if _, err := client.Signup(context.Background(), authv1.SignupRequest_builder{
+		Username: new("bob"),
+		Password: new(password),
+	}.Build()); connect.CodeOf(err) != connect.CodeResourceExhausted {
+		t.Errorf("second Signup() code = %v, want ResourceExhausted", connect.CodeOf(err))
+	}
+	if _, err := client.Login(context.Background(), authv1.LoginRequest_builder{
+		Username: new("alice"),
+		Password: new(password),
+	}.Build()); connect.CodeOf(err) != connect.CodeResourceExhausted {
+		t.Errorf("second Login() code = %v, want ResourceExhausted", connect.CodeOf(err))
+	}
+	for request := 1; request <= 2; request++ {
+		if _, err := client.Logout(context.Background(), authv1.LogoutRequest_builder{}.Build()); err != nil {
+			t.Errorf("Logout() request %d error = %v", request, err)
+		}
 	}
 }
 

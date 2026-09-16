@@ -12,7 +12,7 @@ func WithCORS(h http.Handler) http.Handler {
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: connectcors.AllowedMethods(),
 		AllowedHeaders: connectcors.AllowedHeaders(),
-		ExposedHeaders: connectcors.ExposedHeaders(),
+		ExposedHeaders: append(connectcors.ExposedHeaders(), "Retry-After"),
 	})
 
 	return middleware.Handler(h)

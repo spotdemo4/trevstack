@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/netip"
 	"strconv"
 	"strings"
 )
@@ -16,10 +17,11 @@ const (
 )
 
 type config struct {
-	authCookieSecure bool
-	jwtSecret        string
-	logLevel         string
-	port             string
+	authCookieSecure  bool
+	jwtSecret         string
+	logLevel          string
+	port              string
+	trustedProxyCIDRs []netip.Prefix
 }
 
 func parseConfig(args []string, getenv func(string) string, output io.Writer) (config, error) {
@@ -51,6 +53,7 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 		fmt.Fprintln(output, "  JWT_SECRET          JWT signing secret (required, at least 32 bytes).")
 		fmt.Fprintf(output, "  LOG_LEVEL           Fallback log level (default: %s).\n", defaultLogLevel)
 		fmt.Fprintf(output, "  PORT                Fallback port (default: %s).\n", defaultPort)
+		fmt.Fprintln(output, "  TRUSTED_PROXY_CIDRS Comma-separated proxy CIDRs allowed to set X-Forwarded-For.")
 		fmt.Fprintln(output)
 		fmt.Fprintln(output, "Precedence: --log-level, LOG_LEVEL, then info.")
 		fmt.Fprintln(output, "            --port, PORT, then 8080.")
@@ -65,6 +68,13 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 			return config{}, fmt.Errorf("invalid AUTH_COOKIE_SECURE value: %w", err)
 		}
 		cfg.authCookieSecure = secure
+	}
+	if value := getenv("TRUSTED_PROXY_CIDRS"); value != "" {
+		trustedProxyCIDRs, err := parseTrustedProxyCIDRs(value)
+		if err != nil {
+			return config{}, err
+		}
+		cfg.trustedProxyCIDRs = trustedProxyCIDRs
 	}
 	if !isSupportedLogLevel(cfg.logLevel) {
 		err := fmt.Errorf("unsupported log level %q (supported: %s)", cfg.logLevel, supportedLogLevels)
@@ -83,6 +93,20 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 	}
 
 	return cfg, nil
+}
+
+func parseTrustedProxyCIDRs(value string) ([]netip.Prefix, error) {
+	parts := strings.Split(value, ",")
+	prefixes := make([]netip.Prefix, 0, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		prefix, err := netip.ParsePrefix(part)
+		if err != nil {
+			return nil, fmt.Errorf("invalid TRUSTED_PROXY_CIDRS value %q: %w", part, err)
+		}
+		prefixes = append(prefixes, prefix.Masked())
+	}
+	return prefixes, nil
 }
 
 func isSupportedLogLevel(level string) bool {

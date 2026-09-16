@@ -17,6 +17,7 @@ import (
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
 	"trev.zip/llc/stack/server/auth"
+	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
 	"trev.zip/llc/stack/server/database"
 	authv1handler "trev.zip/llc/stack/server/handlers/auth/v1"
 	docshandler "trev.zip/llc/stack/server/handlers/docs"
@@ -24,6 +25,13 @@ import (
 	webhandler "trev.zip/llc/stack/server/handlers/web"
 	"trev.zip/llc/stack/server/interceptors"
 	"trev.zip/llc/stack/server/logger"
+)
+
+const (
+	loginRateLimitRequests  = 5
+	loginRateLimitWindow    = time.Minute
+	signupRateLimitRequests = 3
+	signupRateLimitWindow   = time.Hour
 )
 
 var (
@@ -62,10 +70,23 @@ func main() {
 	sessionManager := auth.NewManager(cfg.jwtSecret, cfg.authCookieSecure)
 	ai := interceptors.NewAuthInterceptor(sessionManager)
 	li := interceptors.NewLogInterceptor(log)
+	rli := interceptors.NewRateLimitInterceptor(
+		map[string]interceptors.RateLimitPolicy{
+			authv1connect.AuthServiceLoginProcedure: {
+				Requests: loginRateLimitRequests,
+				Window:   loginRateLimitWindow,
+			},
+			authv1connect.AuthServiceSignupProcedure: {
+				Requests: signupRateLimitRequests,
+				Window:   signupRateLimitWindow,
+			},
+		},
+		cfg.trustedProxyCIDRs,
+	)
 	vi := validate.NewInterceptor()
 
 	api := http.NewServeMux()
-	api.Handle(authv1handler.New(sessionManager, connect.WithInterceptors(li, ai, vi)))
+	api.Handle(authv1handler.New(sessionManager, connect.WithInterceptors(rli, li, ai, vi)))
 	api.Handle(numberv1handler.New(connect.WithInterceptors(li, ai, vi)))
 
 	mux := http.NewServeMux()
