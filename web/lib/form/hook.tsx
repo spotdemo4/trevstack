@@ -130,10 +130,12 @@ export function useForm<T extends object>(options: FormOptionsAccessor<T>): Form
 
   const reset = (): void => {
     validationId += 1;
-    setValues(() => ({ ...config.defaultValues }));
+    const next = { ...config.defaultValues } as T;
+    setValues(() => next);
     setErrorState({});
     setBlurred({});
     setIsValidating(false);
+    if (config.validators?.onMount) void validate(config.validators.onMount, next);
   };
 
   const handleSubmit = async (): Promise<boolean> => {
