@@ -13,8 +13,8 @@
 
 .dialog[open] {
   display: flex;
-  align-items: stretch;
-  justify-content: flex-start;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .dialog::backdrop {
@@ -22,8 +22,31 @@
   animation: drawer-backdrop-in 200ms ease-out;
 }
 
-.dialog[open] .content {
-  animation: drawer-content-in 300ms cubic-bezier(0.22, 1, 0.36, 1);
+.dialog[data-entering] .content {
+  transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.dialog[data-opening] .content {
+  transform: translate3d(0, 100%, 0);
+}
+
+.dialog[data-closing]::backdrop {
+  animation: drawer-backdrop-out 200ms ease-in forwards;
+}
+
+.dialog[data-closing] .content {
+  pointer-events: none;
+  animation: drawer-content-out 250ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.content {
+  backface-visibility: hidden;
+  transform: translate3d(0, var(--drawer-drag-offset, 0), 0);
+  will-change: transform;
+}
+
+.content[data-settling] {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes drawer-backdrop-in {
@@ -35,14 +58,23 @@
   }
 }
 
-@keyframes drawer-content-in {
+@keyframes drawer-backdrop-out {
   from {
-    opacity: 0;
-    transform: translate3d(-100%, 0, 0) scale(0.98);
+    opacity: 1;
   }
   to {
+    opacity: 0;
+  }
+}
+
+@keyframes drawer-content-out {
+  from {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, var(--drawer-drag-offset, 0), 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0) scale(0.98);
   }
 }
 
@@ -50,5 +82,6 @@
   .dialog::backdrop,
   .content {
     animation: none !important;
+    transition: none !important;
   }
 }
