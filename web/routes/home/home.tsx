@@ -7,17 +7,14 @@ import { NumberField } from "$lib/form/number-field";
 import { SubmitButton } from "$lib/form/submit-button";
 import { TextField } from "$lib/form/text-field";
 import { toaster } from "$lib/toast";
-import { create } from "@bufbuild/protobuf";
-import { createStandardSchema } from "@bufbuild/protovalidate";
 import { Effect } from "effect";
 import type { Component } from "solid-js";
 
 export const Home: Component = () => {
-  const form = useForm(() => ({
-    defaultValues: { ...create(AddRequestSchema) },
-    validators: {
-      onMount: createStandardSchema(AddRequestSchema),
-      onChange: createStandardSchema(AddRequestSchema),
+  const form = useForm(AddRequestSchema, () => ({
+    validation: {
+      onMount: true,
+      onChange: true,
     },
     onSubmit: ({ value }) =>
       NumberClient.add({ name: value.name, number: value.number }).pipe(

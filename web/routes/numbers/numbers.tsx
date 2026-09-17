@@ -14,7 +14,6 @@ import { Splitter } from "$lib/splitter";
 import { Table, type TableScrollMode } from "$lib/table";
 import { create } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
-import { createStandardSchema } from "@bufbuild/protovalidate";
 import { type Component, createSignal, Show } from "solid-js";
 
 export const Numbers: Component = () => {
@@ -27,10 +26,9 @@ export const Numbers: Component = () => {
     (resp) => resp.item!,
   );
 
-  const form = useForm(() => ({
-    defaultValues: { ...create(ListRequestSchema) },
-    validators: {
-      onChange: createStandardSchema(ListRequestSchema),
+  const form = useForm(ListRequestSchema, () => ({
+    validation: {
+      onChange: true,
     },
     onSubmit: async ({ value }) => {
       setRequest(value);

@@ -1,14 +1,12 @@
-import { type LoginRequest, LoginRequestSchema } from "$connect/auth/v1/login_pb";
-import { type SignupRequest, SignupRequestSchema } from "$connect/auth/v1/signup_pb";
+import { LoginRequestSchema } from "$connect/auth/v1/login_pb";
+import { SignupRequestSchema } from "$connect/auth/v1/signup_pb";
 import { Card } from "$lib/card";
 import { AuthClient } from "$lib/connect";
 import { Form } from "$lib/form/form";
-import { type FormController, useForm } from "$lib/form/hook";
+import { type MessageFormController, useForm } from "$lib/form/hook";
 import { SubmitButton } from "$lib/form/submit-button";
 import { TextField } from "$lib/form/text-field";
 import { toaster } from "$lib/toast";
-import { create } from "@bufbuild/protobuf";
-import { createStandardSchema } from "@bufbuild/protovalidate";
 import { useNavigate } from "@solidjs/router";
 import { Effect } from "effect";
 import { Show, type Component, createSignal } from "solid-js";
@@ -18,11 +16,10 @@ export const Auth: Component = () => {
   const [mode, setMode] = createSignal<"login" | "signup">("login");
   const returnTo = getReturnPath();
 
-  const loginForm = useForm(() => ({
-    defaultValues: { ...create(LoginRequestSchema) },
-    validators: {
-      onMount: createStandardSchema(LoginRequestSchema),
-      onChange: createStandardSchema(LoginRequestSchema),
+  const loginForm = useForm(LoginRequestSchema, () => ({
+    validation: {
+      onMount: true,
+      onChange: true,
     },
     onSubmit: ({ value }) =>
       AuthClient.login({ username: value.username, password: value.password }).pipe(
@@ -42,11 +39,10 @@ export const Auth: Component = () => {
       ),
   }));
 
-  const signupForm = useForm(() => ({
-    defaultValues: { ...create(SignupRequestSchema) },
-    validators: {
-      onMount: createStandardSchema(SignupRequestSchema),
-      onChange: createStandardSchema(SignupRequestSchema),
+  const signupForm = useForm(SignupRequestSchema, () => ({
+    validation: {
+      onMount: true,
+      onChange: true,
     },
     onSubmit: ({ value }) =>
       Effect.gen(function* () {
@@ -100,7 +96,9 @@ export const Auth: Component = () => {
   );
 };
 
-const LoginForm: Component<{ form: FormController<LoginRequest> }> = (props) => (
+const LoginForm: Component<{
+  form: MessageFormController<typeof LoginRequestSchema>;
+}> = (props) => (
   <Form form={props.form} class="flex-col">
     <TextField field={props.form.field("username")} label="Username" autocomplete="username" />
     <TextField
@@ -113,7 +111,9 @@ const LoginForm: Component<{ form: FormController<LoginRequest> }> = (props) => 
   </Form>
 );
 
-const SignupForm: Component<{ form: FormController<SignupRequest> }> = (props) => (
+const SignupForm: Component<{
+  form: MessageFormController<typeof SignupRequestSchema>;
+}> = (props) => (
   <Form form={props.form} class="flex-col">
     <TextField field={props.form.field("username")} label="Username" autocomplete="username" />
     <TextField
