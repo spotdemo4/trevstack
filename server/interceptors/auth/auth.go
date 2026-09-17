@@ -1,4 +1,4 @@
-package interceptors
+package auth
 
 import (
 	"context"
@@ -7,15 +7,15 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	"trev.zip/llc/stack/server/auth"
+	domainauth "trev.zip/llc/stack/server/auth"
 	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
 )
 
 type AuthInterceptor struct {
-	auth *auth.Manager
+	auth *domainauth.Manager
 }
 
-func NewAuthInterceptor(manager *auth.Manager) *AuthInterceptor {
+func NewAuthInterceptor(manager *domainauth.Manager) *AuthInterceptor {
 	return &AuthInterceptor{auth: manager}
 }
 
@@ -25,7 +25,7 @@ func (i *AuthInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
 		req connect.AnyRequest,
 	) (connect.AnyResponse, error) {
 		setCookie := func(cookie *http.Cookie) error {
-			return auth.SetResponseCookie(ctx, cookie)
+			return domainauth.SetResponseCookie(ctx, cookie)
 		}
 		if err := i.authenticate(req.Spec().Procedure, req.Header(), setCookie); err != nil {
 			return nil, err
@@ -72,7 +72,7 @@ func (i *AuthInterceptor) authenticate(
 	}
 
 	if _, err := i.auth.Parse(cookie.Value); err != nil {
-		if auth.IsExpiredOnly(err) {
+		if domainauth.IsExpiredOnly(err) {
 			if cookieErr := setCookie(i.auth.DeleteCookie()); cookieErr != nil {
 				return connect.NewError(connect.CodeInternal, errors.New("could not clear expired session"))
 			}
@@ -90,15 +90,15 @@ func sessionCookie(header http.Header) (*http.Cookie, error) {
 		for part := range strings.SplitSeq(line, ";") {
 			part = strings.TrimSpace(part)
 			name, _, hasValue := strings.Cut(part, "=")
-			if strings.TrimSpace(name) != auth.CookieName {
+			if strings.TrimSpace(name) != domainauth.CookieName {
 				continue
 			}
-			if !hasValue || name != auth.CookieName || session != nil {
+			if !hasValue || name != domainauth.CookieName || session != nil {
 				return nil, errors.New("invalid session cookie")
 			}
 
 			cookies, err := http.ParseCookie(part)
-			if err != nil || len(cookies) != 1 || cookies[0].Name != auth.CookieName {
+			if err != nil || len(cookies) != 1 || cookies[0].Name != domainauth.CookieName {
 				return nil, errors.New("invalid session cookie")
 			}
 			session = cookies[0]

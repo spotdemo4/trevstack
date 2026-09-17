@@ -1,4 +1,4 @@
-package interceptors
+package cors
 
 import (
 	"net/http"

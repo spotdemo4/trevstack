@@ -17,7 +17,7 @@ import (
 	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
 	"trev.zip/llc/stack/server/database"
 	authhandler "trev.zip/llc/stack/server/handlers/auth/v1"
-	"trev.zip/llc/stack/server/interceptors"
+	ratelimitinterceptor "trev.zip/llc/stack/server/interceptors/ratelimit"
 )
 
 const handlerTestSecret = "01234567890123456789012345678901"
@@ -190,7 +190,7 @@ func TestLoginRejectsInvalidCredentials(t *testing.T) {
 }
 
 func TestAuthRateLimitReturnsResourceExhausted(t *testing.T) {
-	limiter := interceptors.NewRateLimitInterceptor(map[string]interceptors.RateLimitPolicy{
+	limiter := ratelimitinterceptor.NewRateLimitInterceptor(map[string]ratelimitinterceptor.RateLimitPolicy{
 		authv1connect.AuthServiceLoginProcedure: {Requests: 1, Window: time.Hour},
 	}, nil)
 	client, _, transport, _ := newAuthTest(
@@ -223,7 +223,7 @@ func TestAuthRateLimitReturnsResourceExhausted(t *testing.T) {
 }
 
 func TestAuthRateLimitUsesIndependentProcedureBuckets(t *testing.T) {
-	limiter := interceptors.NewRateLimitInterceptor(map[string]interceptors.RateLimitPolicy{
+	limiter := ratelimitinterceptor.NewRateLimitInterceptor(map[string]ratelimitinterceptor.RateLimitPolicy{
 		authv1connect.AuthServiceLoginProcedure:  {Requests: 1, Window: time.Hour},
 		authv1connect.AuthServiceSignupProcedure: {Requests: 1, Window: time.Hour},
 	}, nil)

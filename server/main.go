@@ -23,7 +23,10 @@ import (
 	docshandler "trev.zip/llc/stack/server/handlers/docs"
 	numberv1handler "trev.zip/llc/stack/server/handlers/number/v1"
 	webhandler "trev.zip/llc/stack/server/handlers/web"
-	"trev.zip/llc/stack/server/interceptors"
+	authinterceptor "trev.zip/llc/stack/server/interceptors/auth"
+	corsinterceptor "trev.zip/llc/stack/server/interceptors/cors"
+	loginterceptor "trev.zip/llc/stack/server/interceptors/log"
+	ratelimitinterceptor "trev.zip/llc/stack/server/interceptors/ratelimit"
 	"trev.zip/llc/stack/server/logger"
 )
 
@@ -68,10 +71,10 @@ func main() {
 	}
 
 	sessionManager := auth.NewManager(cfg.jwtSecret, cfg.authCookieSecure)
-	ai := interceptors.NewAuthInterceptor(sessionManager)
-	li := interceptors.NewLogInterceptor(log)
-	rli := interceptors.NewRateLimitInterceptor(
-		map[string]interceptors.RateLimitPolicy{
+	ai := authinterceptor.NewAuthInterceptor(sessionManager)
+	li := loginterceptor.NewLogInterceptor(log)
+	rli := ratelimitinterceptor.NewRateLimitInterceptor(
+		map[string]ratelimitinterceptor.RateLimitPolicy{
 			authv1connect.AuthServiceLoginProcedure: {
 				Requests: loginRateLimitRequests,
 				Window:   loginRateLimitWindow,
@@ -100,7 +103,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:      fmt.Sprintf(":%s", cfg.port),
-		Handler:   interceptors.WithCORS(mux),
+		Handler:   corsinterceptor.WithCORS(mux),
 		Protocols: p,
 		BaseContext: func(_ net.Listener) context.Context {
 			return ctx

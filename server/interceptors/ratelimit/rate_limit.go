@@ -1,4 +1,4 @@
-package interceptors
+package ratelimit
 
 import (
 	"container/list"

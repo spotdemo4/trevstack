@@ -1,4 +1,4 @@
-package interceptors
+package auth
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/mattn/go-sqlite3"
-	"trev.zip/llc/stack/server/auth"
+	domainauth "trev.zip/llc/stack/server/auth"
 	authv1 "trev.zip/llc/stack/server/connect/auth/v1"
 	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
 	numberv1 "trev.zip/llc/stack/server/connect/number/v1"
@@ -61,7 +61,7 @@ func TestIsPublicAuthProcedure(t *testing.T) {
 }
 
 func TestAuthInterceptorCheckSession(t *testing.T) {
-	manager := auth.NewManager(interceptorTestSecret, false)
+	manager := domainauth.NewManager(interceptorTestSecret, false)
 	mux := http.NewServeMux()
 	mux.Handle(authhandler.New(manager, connect.WithInterceptors(NewAuthInterceptor(manager))))
 	srv := httptest.NewServer(mux)
@@ -78,14 +78,14 @@ func TestAuthInterceptorCheckSession(t *testing.T) {
 		t.Fatalf("Issue() error = %v", err)
 	}
 	ctx, info := connect.NewClientContext(context.Background())
-	info.RequestHeader().Set("Cookie", (&http.Cookie{Name: auth.CookieName, Value: token}).String())
+	info.RequestHeader().Set("Cookie", (&http.Cookie{Name: domainauth.CookieName, Value: token}).String())
 	if _, err := client.CheckSession(ctx, &authv1.CheckSessionRequest{}); err != nil {
 		t.Fatalf("CheckSession() with valid cookie error = %v", err)
 	}
 }
 
 func TestAuthInterceptorStreamingHandler(t *testing.T) {
-	manager := auth.NewManager(interceptorTestSecret, false)
+	manager := domainauth.NewManager(interceptorTestSecret, false)
 	interceptor := NewAuthInterceptor(manager)
 
 	tests := []struct {
@@ -123,7 +123,7 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 	}{
 		name:       "protected procedure with valid cookie",
 		procedure:  "/number.v1.NumberService/Stream",
-		header:     http.Header{"Cookie": []string{(&http.Cookie{Name: auth.CookieName, Value: valid}).String()}},
+		header:     http.Header{"Cookie": []string{(&http.Cookie{Name: domainauth.CookieName, Value: valid}).String()}},
 		wantCalled: true,
 	})
 
@@ -155,10 +155,10 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 }
 
 func TestAuthInterceptorStreamingHandlerClearsExpiredCookie(t *testing.T) {
-	manager := auth.NewManager(interceptorTestSecret, false)
+	manager := domainauth.NewManager(interceptorTestSecret, false)
 	interceptor := NewAuthInterceptor(manager)
 	now := time.Now().UTC()
-	token := signInterceptorClaims(t, auth.Claims{
+	token := signInterceptorClaims(t, domainauth.Claims{
 		Username: "trev",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "42",
@@ -170,7 +170,7 @@ func TestAuthInterceptorStreamingHandlerClearsExpiredCookie(t *testing.T) {
 	conn := &fakeStreamingConn{
 		spec: connect.Spec{Procedure: "/number.v1.NumberService/Stream"},
 		header: http.Header{
-			"Cookie": []string{(&http.Cookie{Name: auth.CookieName, Value: token}).String()},
+			"Cookie": []string{(&http.Cookie{Name: domainauth.CookieName, Value: token}).String()},
 		},
 		responseHeader: make(http.Header),
 	}
@@ -185,7 +185,7 @@ func TestAuthInterceptorStreamingHandlerClearsExpiredCookie(t *testing.T) {
 
 	response := &http.Response{Header: conn.responseHeader}
 	cookies := response.Cookies()
-	if len(cookies) != 1 || cookies[0].Name != auth.CookieName || cookies[0].MaxAge != -1 {
+	if len(cookies) != 1 || cookies[0].Name != domainauth.CookieName || cookies[0].MaxAge != -1 {
 		t.Errorf("deletion cookies = %v", cookies)
 	}
 }
@@ -206,7 +206,7 @@ func TestAuthInterceptorProtectedUnaryRequiresCookie(t *testing.T) {
 func TestAuthInterceptorProtectedUnaryRejectsMalformedSessionCookie(t *testing.T) {
 	client, _ := newProtectedTest(t)
 	ctx, info := connect.NewClientContext(context.Background())
-	info.RequestHeader().Set("Cookie", auth.CookieName)
+	info.RequestHeader().Set("Cookie", domainauth.CookieName)
 
 	_, err := client.Add(ctx, (&numberv1.AddRequest_builder{
 		Name: new("security-test"), Number: new(uint32(1)),
@@ -222,7 +222,7 @@ func TestAuthInterceptorProtectedUnaryRejectsMalformedSessionCookie(t *testing.T
 func TestAuthInterceptorProtectedUnaryExpiredTokens(t *testing.T) {
 	client, transport := newProtectedTest(t)
 	now := time.Now().UTC()
-	claims := auth.Claims{
+	claims := domainauth.Claims{
 		Username: "trev",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "42",
@@ -247,7 +247,7 @@ func TestAuthInterceptorProtectedUnaryExpiredTokens(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			transport.last = nil
 			ctx, info := connect.NewClientContext(context.Background())
-			info.RequestHeader().Set("Cookie", (&http.Cookie{Name: auth.CookieName, Value: test.token}).String())
+			info.RequestHeader().Set("Cookie", (&http.Cookie{Name: domainauth.CookieName, Value: test.token}).String())
 			request := (&numberv1.AddRequest_builder{
 				Name: new("security-test"), Number: new(uint32(1)),
 			}).Build()
@@ -293,7 +293,7 @@ func newProtectedTest(t *testing.T) (numberv1connect.NumberServiceClient, *recor
 	if err := database.Migrate(context.Background(), db); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
-	manager := auth.NewManager(interceptorTestSecret, false)
+	manager := domainauth.NewManager(interceptorTestSecret, false)
 	mux := http.NewServeMux()
 	mux.Handle(numberhandler.New(connect.WithInterceptors(NewAuthInterceptor(manager))))
 	srv := httptest.NewUnstartedServer(mux)
@@ -306,7 +306,7 @@ func newProtectedTest(t *testing.T) (numberv1connect.NumberServiceClient, *recor
 	return numberv1connect.NewNumberServiceClient(&http.Client{Transport: transport}, srv.URL), transport
 }
 
-func signInterceptorClaims(t *testing.T, claims auth.Claims, secret string) string {
+func signInterceptorClaims(t *testing.T, claims domainauth.Claims, secret string) string {
 	t.Helper()
 	value, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))
 	if err != nil {
