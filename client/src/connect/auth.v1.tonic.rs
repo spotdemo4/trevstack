@@ -10,7 +10,8 @@ pub mod auth_service_client {
     )]
     use tonic::codegen::http::Uri;
     use tonic::codegen::*;
-    ///
+    /** Account registration and cookie-based sessions. These operations do not require an existing session.
+    */
     #[derive(Debug, Clone)]
     pub struct AuthServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -90,7 +91,8 @@ pub mod auth_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Creates an account with a case-insensitive username. Does not sign in or set a session cookie.
+        */
         pub async fn signup(
             &mut self,
             request: impl tonic::IntoRequest<super::SignupRequest>,
@@ -105,7 +107,9 @@ pub mod auth_service_client {
                 .insert(GrpcMethod::new("auth.v1.AuthService", "Signup"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
+         Unknown usernames and incorrect passwords both return an unauthenticated error.
+        */
         pub async fn login(
             &mut self,
             request: impl tonic::IntoRequest<super::LoginRequest>,
@@ -120,7 +124,8 @@ pub mod auth_service_client {
                 .insert(GrpcMethod::new("auth.v1.AuthService", "Login"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
+        */
         pub async fn logout(
             &mut self,
             request: impl tonic::IntoRequest<super::LogoutRequest>,

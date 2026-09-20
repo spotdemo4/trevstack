@@ -21,15 +21,24 @@ export const file_number_v1_metrics: GenFile /*@__PURE__*/ = fileDesc(
 /**
  * Scalar summary metrics across all items, suitable for stat cards.
  *
+ * Example (protobuf JSON):
+ * ```json
+ * {"start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+ * ```
+ *
  * @generated from message number.v1.SummaryRequest
  */
 export type SummaryRequest = Message<"number.v1.SummaryRequest"> & {
   /**
+   * Inclusive lower timestamp bound; omit for no lower bound.
+   *
    * @generated from field: google.protobuf.Timestamp start = 1;
    */
   start?: Timestamp | undefined;
 
   /**
+   * Inclusive upper timestamp bound; omit for no upper bound.
+   *
    * @generated from field: google.protobuf.Timestamp end = 2;
    */
   end?: Timestamp | undefined;
@@ -45,6 +54,13 @@ export const SummaryRequestSchema: GenMessage<SummaryRequest> /*@__PURE__*/ = me
 );
 
 /**
+ * Counts and sums use decimal strings for 64-bit integers in protobuf JSON.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"totalCount": "3", "totalSum": "42", "average": 14, "min": 7, "max": 21, "distinctNames": 2}
+ * ```
+ *
  * @generated from message number.v1.SummaryResponse
  */
 export type SummaryResponse = Message<"number.v1.SummaryResponse"> & {
@@ -89,6 +105,13 @@ export const SummaryResponseSchema: GenMessage<SummaryResponse> /*@__PURE__*/ = 
 );
 
 /**
+ * Selects the UTC bucket interval and optional time range.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"interval": "TIME_INTERVAL_DAY", "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+ * ```
+ *
  * @generated from message number.v1.TimeSeriesRequest
  */
 export type TimeSeriesRequest = Message<"number.v1.TimeSeriesRequest"> & {
@@ -98,11 +121,15 @@ export type TimeSeriesRequest = Message<"number.v1.TimeSeriesRequest"> & {
   interval?: TimeInterval | undefined;
 
   /**
+   * Inclusive lower timestamp bound; omit for no lower bound.
+   *
    * @generated from field: google.protobuf.Timestamp start = 2;
    */
   start?: Timestamp | undefined;
 
   /**
+   * Inclusive upper timestamp bound; omit for no upper bound.
+   *
    * @generated from field: google.protobuf.Timestamp end = 3;
    */
   end?: Timestamp | undefined;
@@ -171,7 +198,12 @@ export const TimeSeriesResponseSchema: GenMessage<TimeSeriesResponse> /*@__PURE_
 );
 
 /**
- * Histogram of `number` values across equal-width buckets, suitable for bar charts.
+ * Histogram of `number` values across approximately equal-width buckets, suitable for bar charts.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"bucketCount": 10, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+ * ```
  *
  * @generated from message number.v1.DistributionRequest
  */
@@ -182,11 +214,15 @@ export type DistributionRequest = Message<"number.v1.DistributionRequest"> & {
   bucketCount?: number | undefined;
 
   /**
+   * Inclusive lower timestamp bound; omit for no lower bound.
+   *
    * @generated from field: google.protobuf.Timestamp start = 2;
    */
   start?: Timestamp | undefined;
 
   /**
+   * Inclusive upper timestamp bound; omit for no upper bound.
+   *
    * @generated from field: google.protobuf.Timestamp end = 3;
    */
   end?: Timestamp | undefined;
@@ -250,6 +286,11 @@ export const DistributionResponseSchema: GenMessage<DistributionResponse> /*@__P
 /**
  * Top N names by frequency and total value, suitable for bar/pie charts.
  *
+ * Example (protobuf JSON):
+ * ```json
+ * {"limit": 5, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+ * ```
+ *
  * @generated from message number.v1.TopNamesRequest
  */
 export type TopNamesRequest = Message<"number.v1.TopNamesRequest"> & {
@@ -259,11 +300,15 @@ export type TopNamesRequest = Message<"number.v1.TopNamesRequest"> & {
   limit?: number | undefined;
 
   /**
+   * Inclusive lower timestamp bound; omit for no lower bound.
+   *
    * @generated from field: google.protobuf.Timestamp start = 2;
    */
   start?: Timestamp | undefined;
 
   /**
+   * Inclusive upper timestamp bound; omit for no upper bound.
+   *
    * @generated from field: google.protobuf.Timestamp end = 3;
    */
   end?: Timestamp | undefined;

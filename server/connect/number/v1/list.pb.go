@@ -118,6 +118,12 @@ func (b0 Item_builder) Build() *Item {
 	return m0
 }
 
+// Optional filters for the item stream. Timestamps use RFC 3339 strings in protobuf JSON.
+//
+// Example (protobuf JSON):
+// ```json
+// {"name": "visits", "minimum": 1, "maximum": 100, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 type ListRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof"`
@@ -306,6 +312,12 @@ func (b0 ListRequest_builder) Build() *ListRequest {
 	return m0
 }
 
+// One matching item in the server stream, not an array of results.
+//
+// Example (protobuf JSON):
+// ```json
+// {"item": {"timestamp": "2026-09-20T12:00:00Z", "name": "visits", "number": 7}}
+// ```
 type ListResponse struct {
 	state           protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Item *Item                  `protobuf:"bytes,1,opt,name=item,proto3"`

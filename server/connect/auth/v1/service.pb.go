@@ -25,11 +25,11 @@ var File_auth_v1_service_proto protoreflect.FileDescriptor
 
 const file_auth_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x15auth/v1/service.proto\x12\aauth.v1\x1a\x13auth/v1/login.proto\x1a\x14auth/v1/logout.proto\x1a\x14auth/v1/signup.proto\x1a$gnostic/openapi/v3/annotations.proto2\xd0\x01\n" +
-	"\vAuthService\x12@\n" +
-	"\x06Signup\x12\x16.auth.v1.SignupRequest\x1a\x17.auth.v1.SignupResponse\"\x05\xbaG\x02Z\x00\x12=\n" +
-	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\"\x05\xbaG\x02Z\x00\x12@\n" +
-	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x05\xbaG\x02Z\x00B\x8a\x01\n" +
+	"\x15auth/v1/service.proto\x12\aauth.v1\x1a\x13auth/v1/login.proto\x1a\x14auth/v1/logout.proto\x1a\x14auth/v1/signup.proto\x1a$gnostic/openapi/v3/annotations.proto2\x8e\x02\n" +
+	"\vAuthService\x12S\n" +
+	"\x06Signup\x12\x16.auth.v1.SignupRequest\x1a\x17.auth.v1.SignupResponse\"\x18\xbaG\x15\x12\x11Create an accountZ\x00\x12N\n" +
+	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\"\x16\xbaG\x13\x12\x0fStart a sessionZ\x00\x12Z\n" +
+	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x1f\xbaG\x1c\x12\x18Clear the session cookieZ\x00B\x8a\x01\n" +
 	"\vcom.auth.v1B\fServiceProtoP\x01Z0trev.zip/llc/stack/server/connect/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_service_proto_goTypes = []any{

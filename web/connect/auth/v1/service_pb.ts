@@ -17,7 +17,7 @@ import { file_auth_v1_signup } from "./signup_pb";
  * Describes the file auth/v1/service.proto.
  */
 export const file_auth_v1_service: GenFile /*@__PURE__*/ = fileDesc(
-  "ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEy0AEKC0F1dGhTZXJ2aWNlEkAKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiBbpHAloAEj0KBUxvZ2luEhUuYXV0aC52MS5Mb2dpblJlcXVlc3QaFi5hdXRoLnYxLkxvZ2luUmVzcG9uc2UiBbpHAloAEkAKBkxvZ291dBIWLmF1dGgudjEuTG9nb3V0UmVxdWVzdBoXLmF1dGgudjEuTG9nb3V0UmVzcG9uc2UiBbpHAloAQooBCgtjb20uYXV0aC52MUIMU2VydmljZVByb3RvUAFaMHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
+  "ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEyjgIKC0F1dGhTZXJ2aWNlElMKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiGLpHFRIRQ3JlYXRlIGFuIGFjY291bnRaABJOCgVMb2dpbhIVLmF1dGgudjEuTG9naW5SZXF1ZXN0GhYuYXV0aC52MS5Mb2dpblJlc3BvbnNlIha6RxMSD1N0YXJ0IGEgc2Vzc2lvbloAEloKBkxvZ291dBIWLmF1dGgudjEuTG9nb3V0UmVxdWVzdBoXLmF1dGgudjEuTG9nb3V0UmVzcG9uc2UiH7pHHBIYQ2xlYXIgdGhlIHNlc3Npb24gY29va2llWgBCigEKC2NvbS5hdXRoLnYxQgxTZXJ2aWNlUHJvdG9QAVowdHJldi56aXAvbGxjL3N0YWNrL3NlcnZlci9jb25uZWN0L2F1dGgvdjE7YXV0aHYxogIDQVhYqgIHQXV0aC5WMcoCB0F1dGhcVjHiAhNBdXRoXFYxXEdQQk1ldGFkYXRh6gIIQXV0aDo6VjFiBnByb3RvMw",
   [
     file_auth_v1_login,
     file_auth_v1_logout,
@@ -27,10 +27,14 @@ export const file_auth_v1_service: GenFile /*@__PURE__*/ = fileDesc(
 );
 
 /**
+ * Account registration and cookie-based sessions. These operations do not require an existing session.
+ *
  * @generated from service auth.v1.AuthService
  */
 export const AuthService: GenService<{
   /**
+   * Creates an account with a case-insensitive username. Does not sign in or set a session cookie.
+   *
    * @generated from rpc auth.v1.AuthService.Signup
    */
   signup: {
@@ -39,6 +43,9 @@ export const AuthService: GenService<{
     output: typeof SignupResponseSchema;
   };
   /**
+   * Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
+   * Unknown usernames and incorrect passwords both return an unauthenticated error.
+   *
    * @generated from rpc auth.v1.AuthService.Login
    */
   login: {
@@ -47,6 +54,8 @@ export const AuthService: GenService<{
     output: typeof LoginResponseSchema;
   };
   /**
+   * Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
+   *
    * @generated from rpc auth.v1.AuthService.Logout
    */
   logout: {

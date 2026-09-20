@@ -8,6 +8,7 @@ package authv1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
+	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -21,6 +22,12 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Credentials for an existing account.
+//
+// Example (protobuf JSON):
+// ```json
+// {"username": "demo_user", "password": "example-password"}
+// ```
 type LoginRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Username    *string                `protobuf:"bytes,1,opt,name=username,proto3,oneof"`
@@ -114,6 +121,7 @@ type LoginRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Username *string
+	// Account password; accepted as input and never returned in a response.
 	Password *string
 }
 
@@ -132,6 +140,13 @@ func (b0 LoginRequest_builder) Build() *LoginRequest {
 	return m0
 }
 
+// Session token and metadata returned after successful authentication.
+// The example token is a placeholder, not a usable JWT.
+//
+// Example (protobuf JSON):
+// ```json
+// {"jwt": "example-session-token", "sub": "demo_user", "exp": "1893456000"}
+// ```
 type LoginResponse struct {
 	state          protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Jwt string                 `protobuf:"bytes,1,opt,name=jwt,proto3"`
@@ -202,10 +217,11 @@ func (x *LoginResponse) SetExp(v int64) {
 type LoginResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	// Signed session token.
 	Jwt string
 	// The canonical username used as the session token's subject.
 	Sub string
-	// The session token's expiration as a Unix timestamp in seconds.
+	// The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
 	Exp int64
 }
 
@@ -223,16 +239,16 @@ var File_auth_v1_login_proto protoreflect.FileDescriptor
 
 const file_auth_v1_login_proto_rawDesc = "" +
 	"\n" +
-	"\x13auth/v1/login.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\"\xa3\x01\n" +
-	"\fLoginRequest\x12J\n" +
-	"\busername\x18\x01 \x01(\tB)\xbaH&\xc8\x01\x01r!\x10\x03\x18@2\x1b^[A-Za-z0-9][A-Za-z0-9_-]*$H\x00R\busername\x88\x01\x01\x12-\n" +
-	"\bpassword\x18\x02 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\b(HH\x01R\bpassword\x88\x01\x01B\v\n" +
+	"\x13auth/v1/login.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\x1a$gnostic/openapi/v3/annotations.proto\"\xd7\x01\n" +
+	"\fLoginRequest\x12Z\n" +
+	"\busername\x18\x01 \x01(\tB9\xbaG\r:\v\x12\tdemo_user\xbaH&\xc8\x01\x01r!\x10\x03\x18@2\x1b^[A-Za-z0-9][A-Za-z0-9_-]*$H\x00R\busername\x88\x01\x01\x12Q\n" +
+	"\bpassword\x18\x02 \x01(\tB0\xbaG! \x01:\x12\x12\x10example-password\x9a\x02\bpassword\xbaH\t\xc8\x01\x01r\x04\x10\b(HH\x01R\bpassword\x88\x01\x01B\v\n" +
 	"\t_usernameB\v\n" +
-	"\t_password\"E\n" +
-	"\rLoginResponse\x12\x10\n" +
-	"\x03jwt\x18\x01 \x01(\tR\x03jwt\x12\x10\n" +
-	"\x03sub\x18\x02 \x01(\tR\x03sub\x12\x10\n" +
-	"\x03exp\x18\x03 \x01(\x03R\x03expB\x88\x01\n" +
+	"\t_password\"\x8a\x01\n" +
+	"\rLoginResponse\x12.\n" +
+	"\x03jwt\x18\x01 \x01(\tB\x1c\xbaG\x19:\x17\x12\x15example-session-tokenR\x03jwt\x12\"\n" +
+	"\x03sub\x18\x02 \x01(\tB\x10\xbaG\r:\v\x12\tdemo_userR\x03sub\x12%\n" +
+	"\x03exp\x18\x03 \x01(\x03B\x13\xbaG\x10:\x0e\x12\f\"1893456000\"R\x03expB\x88\x01\n" +
 	"\vcom.auth.v1B\n" +
 	"LoginProtoP\x01Z0trev.zip/llc/stack/server/connect/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 

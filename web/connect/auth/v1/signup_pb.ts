@@ -7,16 +7,24 @@ import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
 
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
+import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 
 /**
  * Describes the file auth/v1/signup.proto.
  */
 export const file_auth_v1_signup: GenFile /*@__PURE__*/ = fileDesc(
-  "ChRhdXRoL3YxL3NpZ251cC5wcm90bxIHYXV0aC52MSKQAQoNU2lnbnVwUmVxdWVzdBJACgh1c2VybmFtZRgBIAEoCUIpukgmyAEBciEQAxhAMhteW0EtWmEtejAtOV1bQS1aYS16MC05Xy1dKiRIAIgBARIjCghwYXNzd29yZBgCIAEoCUIMukgJyAEBcgQQCChISAGIAQFCCwoJX3VzZXJuYW1lQgsKCV9wYXNzd29yZCIQCg5TaWdudXBSZXNwb25zZUKJAQoLY29tLmF1dGgudjFCC1NpZ251cFByb3RvUAFaMHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
-  [file_buf_validate_validate],
+  "ChRhdXRoL3YxL3NpZ251cC5wcm90bxIHYXV0aC52MSLEAQoNU2lnbnVwUmVxdWVzdBJQCgh1c2VybmFtZRgBIAEoCUI5ukcNOgsSCWRlbW9fdXNlcrpIJsgBAXIhEAMYQDIbXltBLVphLXowLTldW0EtWmEtejAtOV8tXSokSACIAQESRwoIcGFzc3dvcmQYAiABKAlCMLpHISABOhISEGV4YW1wbGUtcGFzc3dvcmSaAghwYXNzd29yZLpICcgBAXIEEAgoSEgBiAEBQgsKCV91c2VybmFtZUILCglfcGFzc3dvcmQiEAoOU2lnbnVwUmVzcG9uc2VCiQEKC2NvbS5hdXRoLnYxQgtTaWdudXBQcm90b1ABWjB0cmV2LnppcC9sbGMvc3RhY2svc2VydmVyL2Nvbm5lY3QvYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z",
+  [file_buf_validate_validate, file_gnostic_openapi_v3_annotations],
 );
 
 /**
+ * Credentials for a new account.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"username": "demo_user", "password": "example-password"}
+ * ```
+ *
  * @generated from message auth.v1.SignupRequest
  */
 export type SignupRequest = Message<"auth.v1.SignupRequest"> & {
@@ -26,6 +34,8 @@ export type SignupRequest = Message<"auth.v1.SignupRequest"> & {
   username?: string | undefined;
 
   /**
+   * Account password; accepted as input and never returned in a response.
+   *
    * @generated from field: optional string password = 2;
    */
   password?: string | undefined;

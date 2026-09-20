@@ -3,7 +3,14 @@ syntax = "proto3";
 package auth.v1;
 
 import "buf/validate/validate.proto";
+import "gnostic/openapi/v3/annotations.proto";
 
+// Credentials for an existing account.
+//
+// Example (protobuf JSON):
+// ```json
+// {"username": "demo_user", "password": "example-password"}
+// ```
 message LoginRequest {
   optional string username = 1 [
     (buf.validate.field).required = true,
@@ -11,21 +18,44 @@ message LoginRequest {
       min_len: 3
       max_len: 64
       pattern: "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    (gnostic.openapi.v3.property) = {
+      example: {yaml: "demo_user"}
     }
   ];
+  // Account password; accepted as input and never returned in a response.
   optional string password = 2 [
     (buf.validate.field).required = true,
     (buf.validate.field).string = {
       min_len: 8
       max_bytes: 72
+    },
+    (gnostic.openapi.v3.property) = {
+      format: "password"
+      write_only: true
+      example: {yaml: "example-password"}
     }
   ];
 }
 
+// Session token and metadata returned after successful authentication.
+// The example token is a placeholder, not a usable JWT.
+//
+// Example (protobuf JSON):
+// ```json
+// {"jwt": "example-session-token", "sub": "demo_user", "exp": "1893456000"}
+// ```
 message LoginResponse {
-  string jwt = 1;
+  // Signed session token.
+  string jwt = 1 [(gnostic.openapi.v3.property) = {
+    example: {yaml: "example-session-token"}
+  }];
   // The canonical username used as the session token's subject.
-  string sub = 2;
-  // The session token's expiration as a Unix timestamp in seconds.
-  int64 exp = 3;
+  string sub = 2 [(gnostic.openapi.v3.property) = {
+    example: {yaml: "demo_user"}
+  }];
+  // The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
+  int64 exp = 3 [(gnostic.openapi.v3.property) = {
+    example: {yaml: "\"1893456000\""}
+  }];
 }

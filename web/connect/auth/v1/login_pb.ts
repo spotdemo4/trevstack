@@ -7,16 +7,24 @@ import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
 
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
+import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 
 /**
  * Describes the file auth/v1/login.proto.
  */
 export const file_auth_v1_login: GenFile /*@__PURE__*/ = fileDesc(
-  "ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIo8BCgxMb2dpblJlcXVlc3QSQAoIdXNlcm5hbWUYASABKAlCKbpIJsgBAXIhEAMYQDIbXltBLVphLXowLTldW0EtWmEtejAtOV8tXSokSACIAQESIwoIcGFzc3dvcmQYAiABKAlCDLpICcgBAXIEEAgoSEgBiAEBQgsKCV91c2VybmFtZUILCglfcGFzc3dvcmQiNgoNTG9naW5SZXNwb25zZRILCgNqd3QYASABKAkSCwoDc3ViGAIgASgJEgsKA2V4cBgDIAEoA0KIAQoLY29tLmF1dGgudjFCCkxvZ2luUHJvdG9QAVowdHJldi56aXAvbGxjL3N0YWNrL3NlcnZlci9jb25uZWN0L2F1dGgvdjE7YXV0aHYxogIDQVhYqgIHQXV0aC5WMcoCB0F1dGhcVjHiAhNBdXRoXFYxXEdQQk1ldGFkYXRh6gIIQXV0aDo6VjFiBnByb3RvMw",
-  [file_buf_validate_validate],
+  "ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIsMBCgxMb2dpblJlcXVlc3QSUAoIdXNlcm5hbWUYASABKAlCObpHDToLEglkZW1vX3VzZXK6SCbIAQFyIRADGEAyG15bQS1aYS16MC05XVtBLVphLXowLTlfLV0qJEgAiAEBEkcKCHBhc3N3b3JkGAIgASgJQjC6RyEgAToSEhBleGFtcGxlLXBhc3N3b3JkmgIIcGFzc3dvcmS6SAnIAQFyBBAIKEhIAYgBAUILCglfdXNlcm5hbWVCCwoJX3Bhc3N3b3JkInsKDUxvZ2luUmVzcG9uc2USKQoDand0GAEgASgJQhy6Rxk6FxIVZXhhbXBsZS1zZXNzaW9uLXRva2VuEh0KA3N1YhgCIAEoCUIQukcNOgsSCWRlbW9fdXNlchIgCgNleHAYAyABKANCE7pHEDoOEgwiMTg5MzQ1NjAwMCJCiAEKC2NvbS5hdXRoLnYxQgpMb2dpblByb3RvUAFaMHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
+  [file_buf_validate_validate, file_gnostic_openapi_v3_annotations],
 );
 
 /**
+ * Credentials for an existing account.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"username": "demo_user", "password": "example-password"}
+ * ```
+ *
  * @generated from message auth.v1.LoginRequest
  */
 export type LoginRequest = Message<"auth.v1.LoginRequest"> & {
@@ -26,6 +34,8 @@ export type LoginRequest = Message<"auth.v1.LoginRequest"> & {
   username?: string | undefined;
 
   /**
+   * Account password; accepted as input and never returned in a response.
+   *
    * @generated from field: optional string password = 2;
    */
   password?: string | undefined;
@@ -41,10 +51,20 @@ export const LoginRequestSchema: GenMessage<LoginRequest> /*@__PURE__*/ = messag
 );
 
 /**
+ * Session token and metadata returned after successful authentication.
+ * The example token is a placeholder, not a usable JWT.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"jwt": "example-session-token", "sub": "demo_user", "exp": "1893456000"}
+ * ```
+ *
  * @generated from message auth.v1.LoginResponse
  */
 export type LoginResponse = Message<"auth.v1.LoginResponse"> & {
   /**
+   * Signed session token.
+   *
    * @generated from field: string jwt = 1;
    */
   jwt: string;
@@ -57,7 +77,7 @@ export type LoginResponse = Message<"auth.v1.LoginResponse"> & {
   sub: string;
 
   /**
-   * The session token's expiration as a Unix timestamp in seconds.
+   * The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
    *
    * @generated from field: int64 exp = 3;
    */

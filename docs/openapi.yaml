@@ -22,6 +22,8 @@ components:
           type:
             - string
             - "null"
+          examples:
+            - demo_user
           title: username
           maxLength: 64
           minLength: 3
@@ -30,34 +32,61 @@ components:
           type:
             - string
             - "null"
+          examples:
+            - example-password
           title: password
           minLength: 8
+          format: password
           description: |
+            Account password; accepted as input and never returned in a response.
             string.max_bytes = 72
+          writeOnly: true
       title: LoginRequest
       required:
         - username
         - password
       additionalProperties: false
+      description: |-
+        Credentials for an existing account.
+
+         Example (protobuf JSON):
+         ```json
+         {"username": "demo_user", "password": "example-password"}
+         ```
     auth.v1.LoginResponse:
       type: object
       properties:
         jwt:
           type: string
+          examples:
+            - example-session-token
           title: jwt
+          description: Signed session token.
         sub:
           type: string
+          examples:
+            - demo_user
           title: sub
           description: The canonical username used as the session token's subject.
         exp:
           type:
             - integer
             - string
+          examples:
+            - "1893456000"
           title: exp
           format: int64
-          description: The session token's expiration as a Unix timestamp in seconds.
+          description: The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
       title: LoginResponse
       additionalProperties: false
+      description: |-
+        Session token and metadata returned after successful authentication.
+         The example token is a placeholder, not a usable JWT.
+
+         Example (protobuf JSON):
+         ```json
+         {"jwt": "example-session-token", "sub": "demo_user", "exp": "1893456000"}
+         ```
     auth.v1.LogoutRequest:
       type: object
       title: LogoutRequest
@@ -73,6 +102,8 @@ components:
           type:
             - string
             - "null"
+          examples:
+            - demo_user
           title: username
           maxLength: 64
           minLength: 3
@@ -81,15 +112,27 @@ components:
           type:
             - string
             - "null"
+          examples:
+            - example-password
           title: password
           minLength: 8
+          format: password
           description: |
+            Account password; accepted as input and never returned in a response.
             string.max_bytes = 72
+          writeOnly: true
       title: SignupRequest
       required:
         - username
         - password
       additionalProperties: false
+      description: |-
+        Credentials for a new account.
+
+         Example (protobuf JSON):
+         ```json
+         {"username": "demo_user", "password": "example-password"}
+         ```
     auth.v1.SignupResponse:
       type: object
       title: SignupResponse
@@ -266,6 +309,8 @@ components:
           type:
             - string
             - "null"
+          examples:
+            - visits
           title: name
           maxLength: 50
           minLength: 1
@@ -281,6 +326,13 @@ components:
         - name
         - number
       additionalProperties: false
+      description: |-
+        A named positive value to record.
+
+         Example (protobuf JSON):
+         ```json
+         {"name": "visits", "number": 7}
+         ```
     number.v1.AddResponse:
       type: object
       properties:
@@ -288,10 +340,18 @@ components:
           type:
             - integer
             - string
+          examples:
+            - "42"
           title: sum
           format: int64
+          description: Sum of all stored numbers after this addition, encoded as a decimal string in protobuf JSON.
       title: AddResponse
       additionalProperties: false
+      description: |-
+        Example (protobuf JSON):
+         ```json
+         {"sum": "42"}
+         ```
     number.v1.DistributionBucket:
       type: object
       properties:
@@ -321,16 +381,23 @@ components:
           minimum: 1
         start:
           title: start
+          description: Inclusive lower timestamp bound; omit for no lower bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
           title: end
+          description: Inclusive upper timestamp bound; omit for no upper bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: DistributionRequest
       required:
         - bucketCount
       additionalProperties: false
       description: |
-        Histogram of `number` values across equal-width buckets, suitable for bar charts.
+        Histogram of `number` values across approximately equal-width buckets, suitable for bar charts.
+
+         Example (protobuf JSON):
+         ```json
+         {"bucketCount": 10, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+         ```
         end_after_start // End must be after start
     number.v1.DistributionResponse:
       type: object
@@ -393,6 +460,12 @@ components:
       title: ListRequest
       additionalProperties: false
       description: |
+        Optional filters for the item stream. Timestamps use RFC 3339 strings in protobuf JSON.
+
+         Example (protobuf JSON):
+         ```json
+         {"name": "visits", "minimum": 1, "maximum": 100, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+         ```
         end_after_start // End must be after start
         minimum_less_than_maximum // Minimum must be less than maximum
     number.v1.ListResponse:
@@ -403,19 +476,33 @@ components:
           $ref: "#/components/schemas/number.v1.Item"
       title: ListResponse
       additionalProperties: false
+      description: |-
+        One matching item in the server stream, not an array of results.
+
+         Example (protobuf JSON):
+         ```json
+         {"item": {"timestamp": "2026-09-20T12:00:00Z", "name": "visits", "number": 7}}
+         ```
     number.v1.SummaryRequest:
       type: object
       properties:
         start:
           title: start
+          description: Inclusive lower timestamp bound; omit for no lower bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
           title: end
+          description: Inclusive upper timestamp bound; omit for no upper bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: SummaryRequest
       additionalProperties: false
       description: |
         Scalar summary metrics across all items, suitable for stat cards.
+
+         Example (protobuf JSON):
+         ```json
+         {"start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+         ```
         end_after_start // End must be after start
     number.v1.SummaryResponse:
       type: object
@@ -447,6 +534,13 @@ components:
           title: distinct_names
       title: SummaryResponse
       additionalProperties: false
+      description: |-
+        Counts and sums use decimal strings for 64-bit integers in protobuf JSON.
+
+         Example (protobuf JSON):
+         ```json
+         {"totalCount": "3", "totalSum": "42", "average": 14, "min": 7, "max": 21, "distinctNames": 2}
+         ```
     number.v1.TimeInterval:
       type: string
       title: TimeInterval
@@ -494,15 +588,23 @@ components:
           title: interval
         start:
           title: start
+          description: Inclusive lower timestamp bound; omit for no lower bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
           title: end
+          description: Inclusive upper timestamp bound; omit for no upper bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: TimeSeriesRequest
       required:
         - interval
       additionalProperties: false
       description: |
+        Selects the UTC bucket interval and optional time range.
+
+         Example (protobuf JSON):
+         ```json
+         {"interval": "TIME_INTERVAL_DAY", "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+         ```
         end_after_start // End must be after start
     number.v1.TimeSeriesResponse:
       type: object
@@ -550,9 +652,11 @@ components:
           minimum: 1
         start:
           title: start
+          description: Inclusive lower timestamp bound; omit for no lower bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
         end:
           title: end
+          description: Inclusive upper timestamp bound; omit for no upper bound.
           $ref: "#/components/schemas/google.protobuf.Timestamp"
       title: TopNamesRequest
       required:
@@ -560,6 +664,11 @@ components:
       additionalProperties: false
       description: |
         Top N names by frequency and total value, suitable for bar/pie charts.
+
+         Example (protobuf JSON):
+         ```json
+         {"limit": 5, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+         ```
         end_after_start // End must be after start
     number.v1.TopNamesResponse:
       type: object
@@ -578,7 +687,10 @@ paths:
     post:
       tags:
         - auth.v1.AuthService
-      summary: Login
+      summary: Start a session
+      description: |-
+        Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
+         Unknown usernames and incorrect passwords both return an unauthenticated error.
       operationId: auth.v1.AuthService.Login
       parameters:
         - name: Connect-Protocol-Version
@@ -615,7 +727,8 @@ paths:
     post:
       tags:
         - auth.v1.AuthService
-      summary: Logout
+      summary: Clear the session cookie
+      description: Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
       operationId: auth.v1.AuthService.Logout
       parameters:
         - name: Connect-Protocol-Version
@@ -652,7 +765,8 @@ paths:
     post:
       tags:
         - auth.v1.AuthService
-      summary: Signup
+      summary: Create an account
+      description: Creates an account with a case-insensitive username. Does not sign in or set a session cookie.
       operationId: auth.v1.AuthService.Signup
       parameters:
         - name: Connect-Protocol-Version
@@ -689,7 +803,8 @@ paths:
     post:
       tags:
         - number.v1.NumberService
-      summary: Add
+      summary: Record a number
+      description: Records a named value and returns the sum of all stored numbers, not just this name or user.
       operationId: number.v1.NumberService.Add
       parameters:
         - name: Connect-Protocol-Version
@@ -724,7 +839,10 @@ paths:
     post:
       tags:
         - number.v1.NumberService
-      summary: Distribution
+      summary: Get the value distribution
+      description: |-
+        Groups values into approximately equal-width buckets over the observed range, including empty buckets.
+         No matching items produce no buckets; identical values produce a single bucket.
       operationId: number.v1.NumberService.Distribution
       parameters:
         - name: Connect-Protocol-Version
@@ -760,7 +878,10 @@ paths:
     post:
       tags:
         - number.v1.NumberService
-      summary: Summary
+      summary: Summarize recorded numbers
+      description: |-
+        Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
+         All aggregates are zero when no items match.
       operationId: number.v1.NumberService.Summary
       parameters:
         - name: Connect-Protocol-Version
@@ -795,7 +916,10 @@ paths:
     post:
       tags:
         - number.v1.NumberService
-      summary: TimeSeries
+      summary: Get metrics over time
+      description: |-
+        Returns counts, sums, and averages in ascending UTC time buckets. Empty buckets are omitted.
+         Weeks begin on Sunday; months begin on the first day.
       operationId: number.v1.NumberService.TimeSeries
       parameters:
         - name: Connect-Protocol-Version
@@ -830,7 +954,8 @@ paths:
     post:
       tags:
         - number.v1.NumberService
-      summary: TopNames
+      summary: Get the most frequent names
+      description: Ranks names by item count, then total value, both descending, up to the requested limit.
       operationId: number.v1.NumberService.TopNames
       parameters:
         - name: Connect-Protocol-Version
@@ -863,4 +988,6 @@ paths:
                 $ref: "#/components/schemas/number.v1.TopNamesResponse"
 tags:
   - name: auth.v1.AuthService
+    description: Account registration and cookie-based sessions. These operations do not require an existing session.
   - name: number.v1.NumberService
+    description: Records and analyzes named numbers shared across all users. Requires a valid session cookie.

@@ -7,23 +7,31 @@ import "auth/v1/logout.proto";
 import "auth/v1/signup.proto";
 import "gnostic/openapi/v3/annotations.proto";
 
+// Account registration and cookie-based sessions. These operations do not require an existing session.
 service AuthService {
+  // Creates an account with a case-insensitive username. Does not sign in or set a session cookie.
   rpc Signup(SignupRequest) returns (SignupResponse) {
     option (gnostic.openapi.v3.operation) = {
+      summary: "Create an account"
       security: [
         {}
       ]
     };
   }
+  // Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
+  // Unknown usernames and incorrect passwords both return an unauthenticated error.
   rpc Login(LoginRequest) returns (LoginResponse) {
     option (gnostic.openapi.v3.operation) = {
+      summary: "Start a session"
       security: [
         {}
       ]
     };
   }
+  // Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
   rpc Logout(LogoutRequest) returns (LogoutResponse) {
     option (gnostic.openapi.v3.operation) = {
+      summary: "Clear the session cookie"
       security: [
         {}
       ]

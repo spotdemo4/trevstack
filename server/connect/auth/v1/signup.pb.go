@@ -8,6 +8,7 @@ package authv1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
+	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -21,6 +22,12 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Credentials for a new account.
+//
+// Example (protobuf JSON):
+// ```json
+// {"username": "demo_user", "password": "example-password"}
+// ```
 type SignupRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Username    *string                `protobuf:"bytes,1,opt,name=username,proto3,oneof"`
@@ -114,6 +121,7 @@ type SignupRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Username *string
+	// Account password; accepted as input and never returned in a response.
 	Password *string
 }
 
@@ -179,10 +187,10 @@ var File_auth_v1_signup_proto protoreflect.FileDescriptor
 
 const file_auth_v1_signup_proto_rawDesc = "" +
 	"\n" +
-	"\x14auth/v1/signup.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\"\xa4\x01\n" +
-	"\rSignupRequest\x12J\n" +
-	"\busername\x18\x01 \x01(\tB)\xbaH&\xc8\x01\x01r!\x10\x03\x18@2\x1b^[A-Za-z0-9][A-Za-z0-9_-]*$H\x00R\busername\x88\x01\x01\x12-\n" +
-	"\bpassword\x18\x02 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\b(HH\x01R\bpassword\x88\x01\x01B\v\n" +
+	"\x14auth/v1/signup.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\x1a$gnostic/openapi/v3/annotations.proto\"\xd8\x01\n" +
+	"\rSignupRequest\x12Z\n" +
+	"\busername\x18\x01 \x01(\tB9\xbaG\r:\v\x12\tdemo_user\xbaH&\xc8\x01\x01r!\x10\x03\x18@2\x1b^[A-Za-z0-9][A-Za-z0-9_-]*$H\x00R\busername\x88\x01\x01\x12Q\n" +
+	"\bpassword\x18\x02 \x01(\tB0\xbaG! \x01:\x12\x12\x10example-password\x9a\x02\bpassword\xbaH\t\xc8\x01\x01r\x04\x10\b(HH\x01R\bpassword\x88\x01\x01B\v\n" +
 	"\t_usernameB\v\n" +
 	"\t_password\"\x10\n" +
 	"\x0eSignupResponseB\x89\x01\n" +

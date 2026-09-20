@@ -3,7 +3,14 @@ syntax = "proto3";
 package auth.v1;
 
 import "buf/validate/validate.proto";
+import "gnostic/openapi/v3/annotations.proto";
 
+// Credentials for a new account.
+//
+// Example (protobuf JSON):
+// ```json
+// {"username": "demo_user", "password": "example-password"}
+// ```
 message SignupRequest {
   optional string username = 1 [
     (buf.validate.field).required = true,
@@ -11,13 +18,22 @@ message SignupRequest {
       min_len: 3
       max_len: 64
       pattern: "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    (gnostic.openapi.v3.property) = {
+      example: {yaml: "demo_user"}
     }
   ];
+  // Account password; accepted as input and never returned in a response.
   optional string password = 2 [
     (buf.validate.field).required = true,
     (buf.validate.field).string = {
       min_len: 8
       max_bytes: 72
+    },
+    (gnostic.openapi.v3.property) = {
+      format: "password"
+      write_only: true
+      example: {yaml: "example-password"}
     }
   ];
 }

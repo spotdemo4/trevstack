@@ -7,16 +7,24 @@ import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
 
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
+import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 
 /**
  * Describes the file number/v1/add.proto.
  */
 export const file_number_v1_add: GenFile /*@__PURE__*/ = fileDesc(
-  "ChNudW1iZXIvdjEvYWRkLnByb3RvEgludW1iZXIudjEiZgoKQWRkUmVxdWVzdBIfCgRuYW1lGAEgASgJQgy6SAnIAQFyBBABGDJIAIgBARIjCgZudW1iZXIYAiABKA1CDrpIC8gBASoGGMCEPSgBSAGIAQFCBwoFX25hbWVCCQoHX251bWJlciIaCgtBZGRSZXNwb25zZRILCgNzdW0YASABKARClAEKDWNvbS5udW1iZXIudjFCCEFkZFByb3RvUAFaNHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9udW1iZXIvdjE7bnVtYmVydjGiAgNOWFiqAglOdW1iZXIuVjHKAglOdW1iZXJcVjHiAhVOdW1iZXJcVjFcR1BCTWV0YWRhdGHqAgpOdW1iZXI6OlYxYgZwcm90bzM",
-  [file_buf_validate_validate],
+  "ChNudW1iZXIvdjEvYWRkLnByb3RvEgludW1iZXIudjEicwoKQWRkUmVxdWVzdBIsCgRuYW1lGAEgASgJQhm6Rwo6CBIGdmlzaXRzukgJyAEBcgQQARgySACIAQESIwoGbnVtYmVyGAIgASgNQg66SAvIAQEqBhjAhD0oAUgBiAEBQgcKBV9uYW1lQgkKB19udW1iZXIiJwoLQWRkUmVzcG9uc2USGAoDc3VtGAEgASgEQgu6Rwg6BhIEIjQyIkKUAQoNY29tLm51bWJlci52MUIIQWRkUHJvdG9QAVo0dHJldi56aXAvbGxjL3N0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw",
+  [file_buf_validate_validate, file_gnostic_openapi_v3_annotations],
 );
 
 /**
+ * A named positive value to record.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"name": "visits", "number": 7}
+ * ```
+ *
  * @generated from message number.v1.AddRequest
  */
 export type AddRequest = Message<"number.v1.AddRequest"> & {
@@ -41,10 +49,17 @@ export const AddRequestSchema: GenMessage<AddRequest> /*@__PURE__*/ = messageDes
 );
 
 /**
+ * Example (protobuf JSON):
+ * ```json
+ * {"sum": "42"}
+ * ```
+ *
  * @generated from message number.v1.AddResponse
  */
 export type AddResponse = Message<"number.v1.AddResponse"> & {
   /**
+   * Sum of all stored numbers after this addition, encoded as a decimal string in protobuf JSON.
+   *
    * @generated from field: uint64 sum = 1;
    */
   sum: bigint;

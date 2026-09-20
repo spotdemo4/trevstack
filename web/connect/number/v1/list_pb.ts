@@ -45,6 +45,13 @@ export type Item = Message<"number.v1.Item"> & {
 export const ItemSchema: GenMessage<Item> /*@__PURE__*/ = messageDesc(file_number_v1_list, 0);
 
 /**
+ * Optional filters for the item stream. Timestamps use RFC 3339 strings in protobuf JSON.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"name": "visits", "minimum": 1, "maximum": 100, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+ * ```
+ *
  * @generated from message number.v1.ListRequest
  */
 export type ListRequest = Message<"number.v1.ListRequest"> & {
@@ -84,6 +91,13 @@ export const ListRequestSchema: GenMessage<ListRequest> /*@__PURE__*/ = messageD
 );
 
 /**
+ * One matching item in the server stream, not an array of results.
+ *
+ * Example (protobuf JSON):
+ * ```json
+ * {"item": {"timestamp": "2026-09-20T12:00:00Z", "name": "visits", "number": 7}}
+ * ```
+ *
  * @generated from message number.v1.ListResponse
  */
 export type ListResponse = Message<"number.v1.ListResponse"> & {

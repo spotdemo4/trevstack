@@ -8,6 +8,7 @@ package numberv1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
+	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -21,6 +22,12 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// A named positive value to record.
+//
+// Example (protobuf JSON):
+// ```json
+// {"name": "visits", "number": 7}
+// ```
 type AddRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Name        *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof"`
@@ -129,6 +136,10 @@ func (b0 AddRequest_builder) Build() *AddRequest {
 	return m0
 }
 
+// Example (protobuf JSON):
+// ```json
+// {"sum": "42"}
+// ```
 type AddResponse struct {
 	state          protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Sum uint64                 `protobuf:"varint,1,opt,name=sum,proto3"`
@@ -175,6 +186,7 @@ func (x *AddResponse) SetSum(v uint64) {
 type AddResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	// Sum of all stored numbers after this addition, encoded as a decimal string in protobuf JSON.
 	Sum uint64
 }
 
@@ -190,15 +202,16 @@ var File_number_v1_add_proto protoreflect.FileDescriptor
 
 const file_number_v1_add_proto_rawDesc = "" +
 	"\n" +
-	"\x13number/v1/add.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\"t\n" +
+	"\x13number/v1/add.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\x1a$gnostic/openapi/v3/annotations.proto\"\x81\x01\n" +
 	"\n" +
-	"AddRequest\x12%\n" +
-	"\x04name\x18\x01 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x01\x182H\x00R\x04name\x88\x01\x01\x12+\n" +
+	"AddRequest\x122\n" +
+	"\x04name\x18\x01 \x01(\tB\x19\xbaG\n" +
+	":\b\x12\x06visits\xbaH\t\xc8\x01\x01r\x04\x10\x01\x182H\x00R\x04name\x88\x01\x01\x12+\n" +
 	"\x06number\x18\x02 \x01(\rB\x0e\xbaH\v\xc8\x01\x01*\x06\x18\xc0\x84=(\x01H\x01R\x06number\x88\x01\x01B\a\n" +
 	"\x05_nameB\t\n" +
-	"\a_number\"\x1f\n" +
-	"\vAddResponse\x12\x10\n" +
-	"\x03sum\x18\x01 \x01(\x04R\x03sumB\x94\x01\n" +
+	"\a_number\",\n" +
+	"\vAddResponse\x12\x1d\n" +
+	"\x03sum\x18\x01 \x01(\x04B\v\xbaG\b:\x06\x12\x04\"42\"R\x03sumB\x94\x01\n" +
 	"\rcom.number.v1B\bAddProtoP\x01Z4trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 

@@ -6,8 +6,15 @@ import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
 // Scalar summary metrics across all items, suitable for stat cards.
+//
+// Example (protobuf JSON):
+// ```json
+// {"start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 message SummaryRequest {
+  // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 1;
+  // Inclusive upper timestamp bound; omit for no upper bound.
   google.protobuf.Timestamp end = 2;
 
   option (buf.validate.message).cel = {
@@ -17,6 +24,12 @@ message SummaryRequest {
   };
 }
 
+// Counts and sums use decimal strings for 64-bit integers in protobuf JSON.
+//
+// Example (protobuf JSON):
+// ```json
+// {"totalCount": "3", "totalSum": "42", "average": 14, "min": 7, "max": 21, "distinctNames": 2}
+// ```
 message SummaryResponse {
   int64 total_count = 1;
   uint64 total_sum = 2;
@@ -35,6 +48,12 @@ enum TimeInterval {
   TIME_INTERVAL_MONTH = 4;
 }
 
+// Selects the UTC bucket interval and optional time range.
+//
+// Example (protobuf JSON):
+// ```json
+// {"interval": "TIME_INTERVAL_DAY", "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 message TimeSeriesRequest {
   optional TimeInterval interval = 1 [
     (buf.validate.field).required = true,
@@ -43,7 +62,9 @@ message TimeSeriesRequest {
       not_in: [0]
     }
   ];
+  // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 2;
+  // Inclusive upper timestamp bound; omit for no upper bound.
   google.protobuf.Timestamp end = 3;
 
   option (buf.validate.message).cel = {
@@ -64,7 +85,12 @@ message TimeSeriesResponse {
   repeated TimeSeriesPoint points = 1;
 }
 
-// Histogram of `number` values across equal-width buckets, suitable for bar charts.
+// Histogram of `number` values across approximately equal-width buckets, suitable for bar charts.
+//
+// Example (protobuf JSON):
+// ```json
+// {"bucketCount": 10, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 message DistributionRequest {
   optional uint32 bucket_count = 1 [
     (buf.validate.field).required = true,
@@ -73,7 +99,9 @@ message DistributionRequest {
       lte: 100
     }
   ];
+  // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 2;
+  // Inclusive upper timestamp bound; omit for no upper bound.
   google.protobuf.Timestamp end = 3;
 
   option (buf.validate.message).cel = {
@@ -94,6 +122,11 @@ message DistributionResponse {
 }
 
 // Top N names by frequency and total value, suitable for bar/pie charts.
+//
+// Example (protobuf JSON):
+// ```json
+// {"limit": 5, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 message TopNamesRequest {
   optional uint32 limit = 1 [
     (buf.validate.field).required = true,
@@ -102,7 +135,9 @@ message TopNamesRequest {
       lte: 100
     }
   ];
+  // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 2;
+  // Inclusive upper timestamp bound; omit for no upper bound.
   google.protobuf.Timestamp end = 3;
 
   option (buf.validate.message).cel = {

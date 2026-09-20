@@ -7,6 +7,7 @@
 package numberv1
 
 import (
+	_ "github.com/google/gnostic/openapiv3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -24,15 +25,15 @@ var File_number_v1_service_proto protoreflect.FileDescriptor
 
 const file_number_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x17number/v1/service.proto\x12\tnumber.v1\x1a\x13number/v1/add.proto\x1a\x14number/v1/list.proto\x1a\x17number/v1/metrics.proto2\xaf\x03\n" +
-	"\rNumberService\x126\n" +
-	"\x03Add\x12\x15.number.v1.AddRequest\x1a\x16.number.v1.AddResponse\"\x00\x12;\n" +
-	"\x04List\x12\x16.number.v1.ListRequest\x1a\x17.number.v1.ListResponse\"\x000\x01\x12B\n" +
-	"\aSummary\x12\x19.number.v1.SummaryRequest\x1a\x1a.number.v1.SummaryResponse\"\x00\x12K\n" +
+	"\x17number/v1/service.proto\x12\tnumber.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x13number/v1/add.proto\x1a\x14number/v1/list.proto\x1a\x17number/v1/metrics.proto2\xd5\x04\n" +
+	"\rNumberService\x12J\n" +
+	"\x03Add\x12\x15.number.v1.AddRequest\x1a\x16.number.v1.AddResponse\"\x14\xbaG\x11\x12\x0fRecord a number\x12U\n" +
+	"\x04List\x12\x16.number.v1.ListRequest\x1a\x17.number.v1.ListResponse\"\x1a\xbaG\x17\x12\x15Stream matching items0\x01\x12a\n" +
+	"\aSummary\x12\x19.number.v1.SummaryRequest\x1a\x1a.number.v1.SummaryResponse\"\x1f\xbaG\x1c\x12\x1aSummarize recorded numbers\x12e\n" +
 	"\n" +
-	"TimeSeries\x12\x1c.number.v1.TimeSeriesRequest\x1a\x1d.number.v1.TimeSeriesResponse\"\x00\x12Q\n" +
-	"\fDistribution\x12\x1e.number.v1.DistributionRequest\x1a\x1f.number.v1.DistributionResponse\"\x00\x12E\n" +
-	"\bTopNames\x12\x1a.number.v1.TopNamesRequest\x1a\x1b.number.v1.TopNamesResponse\"\x00B\x98\x01\n" +
+	"TimeSeries\x12\x1c.number.v1.TimeSeriesRequest\x1a\x1d.number.v1.TimeSeriesResponse\"\x1a\xbaG\x17\x12\x15Get metrics over time\x12p\n" +
+	"\fDistribution\x12\x1e.number.v1.DistributionRequest\x1a\x1f.number.v1.DistributionResponse\"\x1f\xbaG\x1c\x12\x1aGet the value distribution\x12e\n" +
+	"\bTopNames\x12\x1a.number.v1.TopNamesRequest\x1a\x1b.number.v1.TopNamesResponse\" \xbaG\x1d\x12\x1bGet the most frequent namesB\x98\x01\n" +
 	"\rcom.number.v1B\fServiceProtoP\x01Z4trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 

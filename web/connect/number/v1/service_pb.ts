@@ -5,6 +5,7 @@
 import type { GenFile, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 
+import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 import type { AddRequestSchema, AddResponseSchema } from "./add_pb";
 import { file_number_v1_add } from "./add_pb";
 import type { ListRequestSchema, ListResponseSchema } from "./list_pb";
@@ -25,15 +26,24 @@ import { file_number_v1_metrics } from "./metrics_pb";
  * Describes the file number/v1/service.proto.
  */
 export const file_number_v1_service: GenFile /*@__PURE__*/ = fileDesc(
-  "ChdudW1iZXIvdjEvc2VydmljZS5wcm90bxIJbnVtYmVyLnYxMq8DCg1OdW1iZXJTZXJ2aWNlEjYKA0FkZBIVLm51bWJlci52MS5BZGRSZXF1ZXN0GhYubnVtYmVyLnYxLkFkZFJlc3BvbnNlIgASOwoETGlzdBIWLm51bWJlci52MS5MaXN0UmVxdWVzdBoXLm51bWJlci52MS5MaXN0UmVzcG9uc2UiADABEkIKB1N1bW1hcnkSGS5udW1iZXIudjEuU3VtbWFyeVJlcXVlc3QaGi5udW1iZXIudjEuU3VtbWFyeVJlc3BvbnNlIgASSwoKVGltZVNlcmllcxIcLm51bWJlci52MS5UaW1lU2VyaWVzUmVxdWVzdBodLm51bWJlci52MS5UaW1lU2VyaWVzUmVzcG9uc2UiABJRCgxEaXN0cmlidXRpb24SHi5udW1iZXIudjEuRGlzdHJpYnV0aW9uUmVxdWVzdBofLm51bWJlci52MS5EaXN0cmlidXRpb25SZXNwb25zZSIAEkUKCFRvcE5hbWVzEhoubnVtYmVyLnYxLlRvcE5hbWVzUmVxdWVzdBobLm51bWJlci52MS5Ub3BOYW1lc1Jlc3BvbnNlIgBCmAEKDWNvbS5udW1iZXIudjFCDFNlcnZpY2VQcm90b1ABWjR0cmV2LnppcC9sbGMvc3RhY2svc2VydmVyL2Nvbm5lY3QvbnVtYmVyL3YxO251bWJlcnYxogIDTlhYqgIJTnVtYmVyLlYxygIJTnVtYmVyXFYx4gIVTnVtYmVyXFYxXEdQQk1ldGFkYXRh6gIKTnVtYmVyOjpWMWIGcHJvdG8z",
-  [file_number_v1_add, file_number_v1_list, file_number_v1_metrics],
+  "ChdudW1iZXIvdjEvc2VydmljZS5wcm90bxIJbnVtYmVyLnYxMtUECg1OdW1iZXJTZXJ2aWNlEkoKA0FkZBIVLm51bWJlci52MS5BZGRSZXF1ZXN0GhYubnVtYmVyLnYxLkFkZFJlc3BvbnNlIhS6RxESD1JlY29yZCBhIG51bWJlchJVCgRMaXN0EhYubnVtYmVyLnYxLkxpc3RSZXF1ZXN0GhcubnVtYmVyLnYxLkxpc3RSZXNwb25zZSIaukcXEhVTdHJlYW0gbWF0Y2hpbmcgaXRlbXMwARJhCgdTdW1tYXJ5EhkubnVtYmVyLnYxLlN1bW1hcnlSZXF1ZXN0GhoubnVtYmVyLnYxLlN1bW1hcnlSZXNwb25zZSIfukccEhpTdW1tYXJpemUgcmVjb3JkZWQgbnVtYmVycxJlCgpUaW1lU2VyaWVzEhwubnVtYmVyLnYxLlRpbWVTZXJpZXNSZXF1ZXN0Gh0ubnVtYmVyLnYxLlRpbWVTZXJpZXNSZXNwb25zZSIaukcXEhVHZXQgbWV0cmljcyBvdmVyIHRpbWUScAoMRGlzdHJpYnV0aW9uEh4ubnVtYmVyLnYxLkRpc3RyaWJ1dGlvblJlcXVlc3QaHy5udW1iZXIudjEuRGlzdHJpYnV0aW9uUmVzcG9uc2UiH7pHHBIaR2V0IHRoZSB2YWx1ZSBkaXN0cmlidXRpb24SZQoIVG9wTmFtZXMSGi5udW1iZXIudjEuVG9wTmFtZXNSZXF1ZXN0GhsubnVtYmVyLnYxLlRvcE5hbWVzUmVzcG9uc2UiILpHHRIbR2V0IHRoZSBtb3N0IGZyZXF1ZW50IG5hbWVzQpgBCg1jb20ubnVtYmVyLnYxQgxTZXJ2aWNlUHJvdG9QAVo0dHJldi56aXAvbGxjL3N0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw",
+  [
+    file_gnostic_openapi_v3_annotations,
+    file_number_v1_add,
+    file_number_v1_list,
+    file_number_v1_metrics,
+  ],
 );
 
 /**
+ * Records and analyzes named numbers shared across all users. Requires a valid session cookie.
+ *
  * @generated from service number.v1.NumberService
  */
 export const NumberService: GenService<{
   /**
+   * Records a named value and returns the sum of all stored numbers, not just this name or user.
+   *
    * @generated from rpc number.v1.NumberService.Add
    */
   add: {
@@ -42,6 +52,9 @@ export const NumberService: GenService<{
     output: typeof AddResponseSchema;
   };
   /**
+   * Streams one response per matching item, newest inserted first. An empty result sends no messages.
+   * Name filtering uses a substring match; number and timestamp bounds are inclusive.
+   *
    * @generated from rpc number.v1.NumberService.List
    */
   list: {
@@ -50,6 +63,9 @@ export const NumberService: GenService<{
     output: typeof ListResponseSchema;
   };
   /**
+   * Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
+   * All aggregates are zero when no items match.
+   *
    * @generated from rpc number.v1.NumberService.Summary
    */
   summary: {
@@ -58,6 +74,9 @@ export const NumberService: GenService<{
     output: typeof SummaryResponseSchema;
   };
   /**
+   * Returns counts, sums, and averages in ascending UTC time buckets. Empty buckets are omitted.
+   * Weeks begin on Sunday; months begin on the first day.
+   *
    * @generated from rpc number.v1.NumberService.TimeSeries
    */
   timeSeries: {
@@ -66,6 +85,9 @@ export const NumberService: GenService<{
     output: typeof TimeSeriesResponseSchema;
   };
   /**
+   * Groups values into approximately equal-width buckets over the observed range, including empty buckets.
+   * No matching items produce no buckets; identical values produce a single bucket.
+   *
    * @generated from rpc number.v1.NumberService.Distribution
    */
   distribution: {
@@ -74,6 +96,8 @@ export const NumberService: GenService<{
     output: typeof DistributionResponseSchema;
   };
   /**
+   * Ranks names by item count, then total value, both descending, up to the requested limit.
+   *
    * @generated from rpc number.v1.NumberService.TopNames
    */
   topNames: {

@@ -74,6 +74,11 @@ func (x TimeInterval) Number() protoreflect.EnumNumber {
 }
 
 // Scalar summary metrics across all items, suitable for stat cards.
+//
+// Example (protobuf JSON):
+// ```json
+// {"start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 type SummaryRequest struct {
 	state            protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Start *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=start,proto3"`
@@ -154,8 +159,10 @@ func (x *SummaryRequest) ClearEnd() {
 type SummaryRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	// Inclusive lower timestamp bound; omit for no lower bound.
 	Start *timestamppb.Timestamp
-	End   *timestamppb.Timestamp
+	// Inclusive upper timestamp bound; omit for no upper bound.
+	End *timestamppb.Timestamp
 }
 
 func (b0 SummaryRequest_builder) Build() *SummaryRequest {
@@ -167,6 +174,12 @@ func (b0 SummaryRequest_builder) Build() *SummaryRequest {
 	return m0
 }
 
+// Counts and sums use decimal strings for 64-bit integers in protobuf JSON.
+//
+// Example (protobuf JSON):
+// ```json
+// {"totalCount": "3", "totalSum": "42", "average": 14, "min": 7, "max": 21, "distinctNames": 2}
+// ```
 type SummaryResponse struct {
 	state                    protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_TotalCount    int64                  `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3"`
@@ -294,6 +307,12 @@ func (b0 SummaryResponse_builder) Build() *SummaryResponse {
 	return m0
 }
 
+// Selects the UTC bucket interval and optional time range.
+//
+// Example (protobuf JSON):
+// ```json
+// {"interval": "TIME_INTERVAL_DAY", "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 type TimeSeriesRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Interval    TimeInterval           `protobuf:"varint,1,opt,name=interval,proto3,enum=number.v1.TimeInterval,oneof"`
@@ -404,8 +423,10 @@ type TimeSeriesRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Interval *TimeInterval
-	Start    *timestamppb.Timestamp
-	End      *timestamppb.Timestamp
+	// Inclusive lower timestamp bound; omit for no lower bound.
+	Start *timestamppb.Timestamp
+	// Inclusive upper timestamp bound; omit for no upper bound.
+	End *timestamppb.Timestamp
 }
 
 func (b0 TimeSeriesRequest_builder) Build() *TimeSeriesRequest {
@@ -590,7 +611,12 @@ func (b0 TimeSeriesResponse_builder) Build() *TimeSeriesResponse {
 	return m0
 }
 
-// Histogram of `number` values across equal-width buckets, suitable for bar charts.
+// Histogram of `number` values across approximately equal-width buckets, suitable for bar charts.
+//
+// Example (protobuf JSON):
+// ```json
+// {"bucketCount": 10, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 type DistributionRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_BucketCount uint32                 `protobuf:"varint,1,opt,name=bucket_count,json=bucketCount,proto3,oneof"`
@@ -699,8 +725,10 @@ type DistributionRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	BucketCount *uint32
-	Start       *timestamppb.Timestamp
-	End         *timestamppb.Timestamp
+	// Inclusive lower timestamp bound; omit for no lower bound.
+	Start *timestamppb.Timestamp
+	// Inclusive upper timestamp bound; omit for no upper bound.
+	End *timestamppb.Timestamp
 }
 
 func (b0 DistributionRequest_builder) Build() *DistributionRequest {
@@ -861,6 +889,11 @@ func (b0 DistributionResponse_builder) Build() *DistributionResponse {
 }
 
 // Top N names by frequency and total value, suitable for bar/pie charts.
+//
+// Example (protobuf JSON):
+// ```json
+// {"limit": 5, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
+// ```
 type TopNamesRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Limit       uint32                 `protobuf:"varint,1,opt,name=limit,proto3,oneof"`
@@ -969,8 +1002,10 @@ type TopNamesRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Limit *uint32
+	// Inclusive lower timestamp bound; omit for no lower bound.
 	Start *timestamppb.Timestamp
-	End   *timestamppb.Timestamp
+	// Inclusive upper timestamp bound; omit for no upper bound.
+	End *timestamppb.Timestamp
 }
 
 func (b0 TopNamesRequest_builder) Build() *TopNamesRequest {

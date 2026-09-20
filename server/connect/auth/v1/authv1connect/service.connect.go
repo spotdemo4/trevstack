@@ -43,8 +43,12 @@ const (
 
 // AuthServiceClient is a client for the auth.v1.AuthService service.
 type AuthServiceClient interface {
+	// Creates an account with a case-insensitive username. Does not sign in or set a session cookie.
 	Signup(context.Context, *v1.SignupRequest) (*v1.SignupResponse, error)
+	// Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
+	// Unknown usernames and incorrect passwords both return an unauthenticated error.
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
 	Logout(context.Context, *v1.LogoutRequest) (*v1.LogoutResponse, error)
 }
 
@@ -116,8 +120,12 @@ func (c *authServiceClient) Logout(ctx context.Context, req *v1.LogoutRequest) (
 
 // AuthServiceHandler is an implementation of the auth.v1.AuthService service.
 type AuthServiceHandler interface {
+	// Creates an account with a case-insensitive username. Does not sign in or set a session cookie.
 	Signup(context.Context, *v1.SignupRequest) (*v1.SignupResponse, error)
+	// Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
+	// Unknown usernames and incorrect passwords both return an unauthenticated error.
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
 	Logout(context.Context, *v1.LogoutRequest) (*v1.LogoutResponse, error)
 }
 

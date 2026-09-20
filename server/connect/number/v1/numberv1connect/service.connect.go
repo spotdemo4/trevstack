@@ -51,11 +51,21 @@ const (
 
 // NumberServiceClient is a client for the number.v1.NumberService service.
 type NumberServiceClient interface {
+	// Records a named value and returns the sum of all stored numbers, not just this name or user.
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
+	// Streams one response per matching item, newest inserted first. An empty result sends no messages.
+	// Name filtering uses a substring match; number and timestamp bounds are inclusive.
 	List(context.Context, *v1.ListRequest) (*connect.ServerStreamForClient[v1.ListResponse], error)
+	// Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
+	// All aggregates are zero when no items match.
 	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
+	// Returns counts, sums, and averages in ascending UTC time buckets. Empty buckets are omitted.
+	// Weeks begin on Sunday; months begin on the first day.
 	TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error)
+	// Groups values into approximately equal-width buckets over the observed range, including empty buckets.
+	// No matching items produce no buckets; identical values produce a single bucket.
 	Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error)
+	// Ranks names by item count, then total value, both descending, up to the requested limit.
 	TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error)
 }
 
@@ -171,11 +181,21 @@ func (c *numberServiceClient) TopNames(ctx context.Context, req *v1.TopNamesRequ
 
 // NumberServiceHandler is an implementation of the number.v1.NumberService service.
 type NumberServiceHandler interface {
+	// Records a named value and returns the sum of all stored numbers, not just this name or user.
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
+	// Streams one response per matching item, newest inserted first. An empty result sends no messages.
+	// Name filtering uses a substring match; number and timestamp bounds are inclusive.
 	List(context.Context, *v1.ListRequest, *connect.ServerStream[v1.ListResponse]) error
+	// Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
+	// All aggregates are zero when no items match.
 	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
+	// Returns counts, sums, and averages in ascending UTC time buckets. Empty buckets are omitted.
+	// Weeks begin on Sunday; months begin on the first day.
 	TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error)
+	// Groups values into approximately equal-width buckets over the observed range, including empty buckets.
+	// No matching items produce no buckets; identical values produce a single bucket.
 	Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error)
+	// Ranks names by item count, then total value, both descending, up to the requested limit.
 	TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error)
 }
 

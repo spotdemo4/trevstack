@@ -10,7 +10,8 @@ pub mod number_service_client {
     )]
     use tonic::codegen::http::Uri;
     use tonic::codegen::*;
-    ///
+    /** Records and analyzes named numbers shared across all users. Requires a valid session cookie.
+    */
     #[derive(Debug, Clone)]
     pub struct NumberServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -90,7 +91,8 @@ pub mod number_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        ///
+        /** Records a named value and returns the sum of all stored numbers, not just this name or user.
+        */
         pub async fn add(
             &mut self,
             request: impl tonic::IntoRequest<super::AddRequest>,
@@ -105,7 +107,9 @@ pub mod number_service_client {
                 .insert(GrpcMethod::new("number.v1.NumberService", "Add"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Streams one response per matching item, newest inserted first. An empty result sends no messages.
+         Name filtering uses a substring match; number and timestamp bounds are inclusive.
+        */
         pub async fn list(
             &mut self,
             request: impl tonic::IntoRequest<super::ListRequest>,
@@ -123,7 +127,9 @@ pub mod number_service_client {
                 .insert(GrpcMethod::new("number.v1.NumberService", "List"));
             self.inner.server_streaming(req, path, codec).await
         }
-        ///
+        /** Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
+         All aggregates are zero when no items match.
+        */
         pub async fn summary(
             &mut self,
             request: impl tonic::IntoRequest<super::SummaryRequest>,
@@ -138,7 +144,9 @@ pub mod number_service_client {
                 .insert(GrpcMethod::new("number.v1.NumberService", "Summary"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Returns counts, sums, and averages in ascending UTC time buckets. Empty buckets are omitted.
+         Weeks begin on Sunday; months begin on the first day.
+        */
         pub async fn time_series(
             &mut self,
             request: impl tonic::IntoRequest<super::TimeSeriesRequest>,
@@ -154,7 +162,9 @@ pub mod number_service_client {
                 .insert(GrpcMethod::new("number.v1.NumberService", "TimeSeries"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Groups values into approximately equal-width buckets over the observed range, including empty buckets.
+         No matching items produce no buckets; identical values produce a single bucket.
+        */
         pub async fn distribution(
             &mut self,
             request: impl tonic::IntoRequest<super::DistributionRequest>,
@@ -171,7 +181,8 @@ pub mod number_service_client {
                 .insert(GrpcMethod::new("number.v1.NumberService", "Distribution"));
             self.inner.unary(req, path, codec).await
         }
-        ///
+        /** Ranks names by item count, then total value, both descending, up to the requested limit.
+        */
         pub async fn top_names(
             &mut self,
             request: impl tonic::IntoRequest<super::TopNamesRequest>,
