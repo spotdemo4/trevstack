@@ -11,6 +11,7 @@ require (
 	connectrpc.com/validate v0.7.0
 	github.com/Marlliton/slogpretty v0.1.3
 	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/google/gnostic v0.7.1
 	github.com/mattn/go-sqlite3 v1.14.52
 	github.com/rs/cors v1.11.1
 	golang.org/x/crypto v0.57.0
@@ -22,6 +23,7 @@ require (
 	cel.dev/cel-go v0.32.0 // indirect
 	cel.dev/expr v0.25.3 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
+	github.com/google/gnostic-models v0.7.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/exp v0.0.0-20260820142414-ca536658362e // indirect
 	golang.org/x/text v0.42.0 // indirect

@@ -5,9 +5,28 @@ package auth.v1;
 import "auth/v1/login.proto";
 import "auth/v1/logout.proto";
 import "auth/v1/signup.proto";
+import "gnostic/openapi/v3/annotations.proto";
 
 service AuthService {
-  rpc Signup(SignupRequest) returns (SignupResponse) {}
-  rpc Login(LoginRequest) returns (LoginResponse) {}
-  rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+  rpc Signup(SignupRequest) returns (SignupResponse) {
+    option (gnostic.openapi.v3.operation) = {
+      security: [
+        {}
+      ]
+    };
+  }
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (gnostic.openapi.v3.operation) = {
+      security: [
+        {}
+      ]
+    };
+  }
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (gnostic.openapi.v3.operation) = {
+      security: [
+        {}
+      ]
+    };
+  }
 }

@@ -5,6 +5,7 @@
 import type { GenFile, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 
+import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 import type { LoginRequestSchema, LoginResponseSchema } from "./login_pb";
 import { file_auth_v1_login } from "./login_pb";
 import type { LogoutRequestSchema, LogoutResponseSchema } from "./logout_pb";
@@ -16,8 +17,13 @@ import { file_auth_v1_signup } from "./signup_pb";
  * Describes the file auth/v1/service.proto.
  */
 export const file_auth_v1_service: GenFile /*@__PURE__*/ = fileDesc(
-  "ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEywQEKC0F1dGhTZXJ2aWNlEjsKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiABI4CgVMb2dpbhIVLmF1dGgudjEuTG9naW5SZXF1ZXN0GhYuYXV0aC52MS5Mb2dpblJlc3BvbnNlIgASOwoGTG9nb3V0EhYuYXV0aC52MS5Mb2dvdXRSZXF1ZXN0GhcuYXV0aC52MS5Mb2dvdXRSZXNwb25zZSIAQooBCgtjb20uYXV0aC52MUIMU2VydmljZVByb3RvUAFaMHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
-  [file_auth_v1_login, file_auth_v1_logout, file_auth_v1_signup],
+  "ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEy0AEKC0F1dGhTZXJ2aWNlEkAKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiBbpHAloAEj0KBUxvZ2luEhUuYXV0aC52MS5Mb2dpblJlcXVlc3QaFi5hdXRoLnYxLkxvZ2luUmVzcG9uc2UiBbpHAloAEkAKBkxvZ291dBIWLmF1dGgudjEuTG9nb3V0UmVxdWVzdBoXLmF1dGgudjEuTG9nb3V0UmVzcG9uc2UiBbpHAloAQooBCgtjb20uYXV0aC52MUIMU2VydmljZVByb3RvUAFaMHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
+  [
+    file_auth_v1_login,
+    file_auth_v1_logout,
+    file_auth_v1_signup,
+    file_gnostic_openapi_v3_annotations,
+  ],
 );
 
 /**

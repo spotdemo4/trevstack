@@ -21,7 +21,7 @@ plugins:
     opt:
       - base=docs/openapi.base.yaml
       - path=openapi.yaml
-      - features=connectrpc;protovalidate
+      - features=connectrpc;protovalidate;gnostic
 
   - local: protoc-gen-es
     out: web/connect
@@ -49,3 +49,5 @@ managed:
   disable:
     - file_option: go_package
       module: buf.build/bufbuild/protovalidate
+    - file_option: go_package
+      module: buf.build/gnostic/gnostic

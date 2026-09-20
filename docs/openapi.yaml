@@ -576,40 +576,10 @@ security:
 paths:
   /auth.v1.AuthService/Login:
     post:
-      security: []
-      operationId: auth.v1.AuthService.Login
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/connect.error"
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  jwt:
-                    type: string
-                  sub:
-                    type: string
-                    description: The canonical username used as the session token's subject.
-                  exp:
-                    type:
-                      - integer
-                      - string
-                    format: int64
-                    description: The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
-                required:
-                  - jwt
-                  - sub
-                  - exp
       tags:
         - auth.v1.AuthService
       summary: Login
+      operationId: auth.v1.AuthService.Login
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -626,10 +596,6 @@ paths:
             schema:
               $ref: "#/components/schemas/auth.v1.LoginRequest"
         required: true
-  /auth.v1.AuthService/Logout:
-    post:
-      security: []
-      operationId: auth.v1.AuthService.Logout
       responses:
         default:
           description: Error
@@ -642,10 +608,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/auth.v1.LoginResponse"
+      security:
+        - {}
+  /auth.v1.AuthService/Logout:
+    post:
       tags:
         - auth.v1.AuthService
       summary: Logout
+      operationId: auth.v1.AuthService.Logout
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -662,10 +633,6 @@ paths:
             schema:
               $ref: "#/components/schemas/auth.v1.LogoutRequest"
         required: true
-  /auth.v1.AuthService/Signup:
-    post:
-      security: []
-      operationId: auth.v1.AuthService.Signup
       responses:
         default:
           description: Error
@@ -678,10 +645,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/auth.v1.LogoutResponse"
+      security:
+        - {}
+  /auth.v1.AuthService/Signup:
+    post:
       tags:
         - auth.v1.AuthService
       summary: Signup
+      operationId: auth.v1.AuthService.Signup
       parameters:
         - name: Connect-Protocol-Version
           in: header
@@ -698,6 +670,21 @@ paths:
             schema:
               $ref: "#/components/schemas/auth.v1.SignupRequest"
         required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/connect.error"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/auth.v1.SignupResponse"
+      security:
+        - {}
   /number.v1.NumberService/Add:
     post:
       tags:
