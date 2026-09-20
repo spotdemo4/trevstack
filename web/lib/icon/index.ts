@@ -17,3 +17,4 @@ export {
   User,
   X,
 } from "./icon";
+export { PageLoading } from "./page-loading";

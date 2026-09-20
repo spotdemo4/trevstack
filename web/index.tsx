@@ -1,4 +1,5 @@
 import { getSignInPath, isPublicPath, session } from "$lib/auth";
+import { PageLoading } from "$lib/icon";
 import { AppToaster } from "$lib/toast";
 import { createRouter, useLocation, useNavigate } from "@solidjs/router";
 import { type JSX, render } from "@solidjs/web";
@@ -63,10 +64,6 @@ const App: Component<{ children?: JSX.Element }> = (props) => {
     </>
   );
 };
-
-const PageLoading: Component = () => (
-  <div class="flex h-body items-center justify-center text-sm text-ctp-subtext0">Loading…</div>
-);
 
 const wrapper = document.getElementById("app");
 
