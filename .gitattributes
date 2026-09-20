@@ -11,6 +11,9 @@ package-lock.json linguist-generated=true
 *.go diff=go linguist-language=Go
 go.mod text linguist-language=Go
 
+# Rust source files use Rust diff driver
+*.rs text diff=rust linguist-language=Rust
+
 # Node / TypeScript source files
 *.js text diff=javascript linguist-language=JavaScript
 *.mjs text diff=javascript
