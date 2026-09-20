@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://www.schemastore.org/buf.gen.json
+# https://buf.build/docs/configuration/v2/buf-gen-yaml
 version: v2
 
 plugins:
