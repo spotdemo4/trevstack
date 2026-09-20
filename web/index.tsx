@@ -74,7 +74,9 @@ if (!wrapper) {
   throw new Error("Wrapper div not found");
 }
 
+const cleanupSession = session.initialize();
+
 render(() => {
-  onCleanup(session.initialize());
+  onCleanup(cleanupSession);
   return <Router>{(props) => <App>{props.children}</App>}</Router>;
 }, wrapper);

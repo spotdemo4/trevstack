@@ -1,6 +1,8 @@
 import { strict as assert } from "node:assert";
 import { afterEach, beforeEach, test } from "node:test";
 
+import { createRoot, onCleanup, untrack } from "solid-js";
+
 import { SESSION_STORAGE_KEY, session, type SessionClaims } from "./session.ts";
 
 const NOW = 1_700_000_000_000;
@@ -227,11 +229,23 @@ void test("rejects invalid persisted, fractional, old, unavailable, and expired 
   assert.ok(session.claims());
 });
 
-void test("restores cached claims synchronously before rendering", () => {
+void test("restores cached claims before entering a render root and cleans up with it", () => {
   const claims = validClaims();
   storage.values.set(SESSION_STORAGE_KEY, JSON.stringify(claims));
-  cleanup = session.initialize();
-  assert.deepEqual(session.claims(), claims);
+  const cleanupSession = session.initialize();
+  cleanup = cleanupSession;
+
+  const dispose = createRoot((dispose) => {
+    onCleanup(cleanupSession);
+    assert.deepEqual(untrack(session.claims), claims);
+    return dispose;
+  });
+
+  assert.equal(browser.listenerCount("storage"), 1);
+  assert.equal(timers.size, 1);
+  dispose();
+  assert.equal(browser.listenerCount("storage"), 0);
+  assert.equal(timers.size, 0);
 });
 
 void test("storage write and removal failures do not prevent local login or logout", () => {
