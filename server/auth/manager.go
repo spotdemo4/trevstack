@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"connectrpc.com/connect"
@@ -14,12 +13,11 @@ import (
 
 const (
 	CookieName = "stack_session"
-	issuer     = "stack"
+	issuer     = "stack/session/v2"
 	tokenTTL   = 24 * time.Hour
 )
 
 type Claims struct {
-	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 
@@ -30,9 +28,6 @@ func (c Claims) Validate() error {
 	}
 	if c.IssuedAt == nil {
 		errs = append(errs, fmt.Errorf("%w: iat", jwt.ErrTokenRequiredClaimMissing))
-	}
-	if c.Username == "" {
-		errs = append(errs, fmt.Errorf("%w: username", jwt.ErrTokenRequiredClaimMissing))
 	}
 	return errors.Join(errs...)
 }
@@ -51,16 +46,15 @@ func NewManager(secret string, secure bool) *Manager {
 	}
 }
 
-func (m *Manager) Issue(userID int64, username string) (string, time.Time, error) {
+func (m *Manager) Issue(username string) (string, time.Time, error) {
 	now := m.now()
-	expires := now.Add(tokenTTL)
+	expires := jwt.NewNumericDate(now.Add(tokenTTL))
 	claims := Claims{
-		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expires),
+			ExpiresAt: expires,
 			IssuedAt:  jwt.NewNumericDate(now),
 			Issuer:    issuer,
-			Subject:   strconv.FormatInt(userID, 10),
+			Subject:   username,
 		},
 	}
 
@@ -69,7 +63,7 @@ func (m *Manager) Issue(userID int64, username string) (string, time.Time, error
 	if err != nil {
 		return "", time.Time{}, err
 	}
-	return signed, expires, nil
+	return signed, expires.Time, nil
 }
 
 func (m *Manager) Parse(value string) (*Claims, error) {

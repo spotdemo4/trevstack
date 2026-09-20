@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/base64"
 	"errors"
 	"net/http"
 	"strings"
@@ -22,7 +23,6 @@ func TestClaimsValidate(t *testing.T) {
 		{
 			name: "valid",
 			claims: Claims{
-				Username: "trev",
 				RegisteredClaims: jwt.RegisteredClaims{
 					Subject:  "42",
 					IssuedAt: now,
@@ -34,7 +34,7 @@ func TestClaimsValidate(t *testing.T) {
 			claims: Claims{
 				RegisteredClaims: jwt.RegisteredClaims{},
 			},
-			want: []string{"sub", "iat", "username"},
+			want: []string{"sub", "iat"},
 		},
 	}
 
@@ -64,11 +64,11 @@ func TestManagerIssueAndParse(t *testing.T) {
 	manager := NewManager(managerTestSecret, true)
 	manager.now = func() time.Time { return now }
 
-	value, expires, err := manager.Issue(42, "trev")
+	value, expires, err := manager.Issue("trev")
 	if err != nil {
 		t.Fatalf("Issue() error = %v", err)
 	}
-	if want := now.Add(tokenTTL); !expires.Equal(want) {
+	if want := now.Add(tokenTTL).Truncate(time.Second); !expires.Equal(want) {
 		t.Errorf("expires = %v, want %v", expires, want)
 	}
 
@@ -76,11 +76,33 @@ func TestManagerIssueAndParse(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Parse() error = %v", err)
 	}
-	if claims.Subject != "42" || claims.Username != "trev" || claims.Issuer != issuer {
-		t.Errorf("claims = %#v, want subject 42, username trev, issuer %q", claims, issuer)
+	if claims.Subject != "trev" || claims.Issuer != issuer {
+		t.Errorf("claims = %#v, want subject trev, issuer %q", claims, issuer)
 	}
 	if !claims.ExpiresAt.Time.Equal(expires) {
 		t.Errorf("ExpiresAt = %v, want %v", claims.ExpiresAt.Time, expires)
+	}
+	payload, err := base64.RawURLEncoding.DecodeString(strings.Split(value, ".")[1])
+	if err != nil {
+		t.Fatalf("decode JWT payload: %v", err)
+	}
+	if strings.Contains(string(payload), "username") {
+		t.Errorf("JWT payload = %s, must not contain username claim", payload)
+	}
+}
+
+func TestManagerIssueNumericLookingUsername(t *testing.T) {
+	manager := NewManager(managerTestSecret, false)
+	value, _, err := manager.Issue("42")
+	if err != nil {
+		t.Fatalf("Issue() error = %v", err)
+	}
+	claims, err := manager.Parse(value)
+	if err != nil {
+		t.Fatalf("Parse() error = %v", err)
+	}
+	if claims.Subject != "42" {
+		t.Errorf("claims.Subject = %q, want numeric-looking username 42", claims.Subject)
 	}
 }
 
@@ -88,7 +110,6 @@ func TestManagerParseRejectsInvalidTokens(t *testing.T) {
 	manager := NewManager(managerTestSecret, false)
 	now := time.Now().UTC()
 	validClaims := Claims{
-		Username: "trev",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "42",
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -113,14 +134,13 @@ func TestManagerParseRejectsInvalidTokens(t *testing.T) {
 			want:  jwt.ErrTokenSignatureInvalid,
 		},
 		{
-			name: "wrong issuer",
+			name: "legacy issuer",
 			value: signClaims(t, Claims{
-				Username: "trev",
 				RegisteredClaims: jwt.RegisteredClaims{
 					Subject:   "42",
 					IssuedAt:  validClaims.IssuedAt,
 					ExpiresAt: validClaims.ExpiresAt,
-					Issuer:    "other",
+					Issuer:    "stack",
 				},
 			}, managerTestSecret),
 			want: jwt.ErrTokenInvalidIssuer,
@@ -141,7 +161,6 @@ func TestIsExpiredOnly(t *testing.T) {
 	manager := NewManager(managerTestSecret, false)
 	now := time.Now().UTC()
 	expired := Claims{
-		Username: "trev",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "42",
 			IssuedAt:  jwt.NewNumericDate(now.Add(-2 * time.Hour)),

@@ -39,9 +39,6 @@ const (
 	AuthServiceLoginProcedure = "/auth.v1.AuthService/Login"
 	// AuthServiceLogoutProcedure is the fully-qualified name of the AuthService's Logout RPC.
 	AuthServiceLogoutProcedure = "/auth.v1.AuthService/Logout"
-	// AuthServiceCheckSessionProcedure is the fully-qualified name of the AuthService's CheckSession
-	// RPC.
-	AuthServiceCheckSessionProcedure = "/auth.v1.AuthService/CheckSession"
 )
 
 // AuthServiceClient is a client for the auth.v1.AuthService service.
@@ -49,7 +46,6 @@ type AuthServiceClient interface {
 	Signup(context.Context, *v1.SignupRequest) (*v1.SignupResponse, error)
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
 	Logout(context.Context, *v1.LogoutRequest) (*v1.LogoutResponse, error)
-	CheckSession(context.Context, *v1.CheckSessionRequest) (*v1.CheckSessionResponse, error)
 }
 
 // NewAuthServiceClient constructs a client for the auth.v1.AuthService service. By default, it uses
@@ -81,21 +77,14 @@ func NewAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(authServiceMethods.ByName("Logout")),
 			connect.WithClientOptions(opts...),
 		),
-		checkSession: connect.NewClient[v1.CheckSessionRequest, v1.CheckSessionResponse](
-			httpClient,
-			baseURL+AuthServiceCheckSessionProcedure,
-			connect.WithSchema(authServiceMethods.ByName("CheckSession")),
-			connect.WithClientOptions(opts...),
-		),
 	}
 }
 
 // authServiceClient implements AuthServiceClient.
 type authServiceClient struct {
-	signup       *connect.Client[v1.SignupRequest, v1.SignupResponse]
-	login        *connect.Client[v1.LoginRequest, v1.LoginResponse]
-	logout       *connect.Client[v1.LogoutRequest, v1.LogoutResponse]
-	checkSession *connect.Client[v1.CheckSessionRequest, v1.CheckSessionResponse]
+	signup *connect.Client[v1.SignupRequest, v1.SignupResponse]
+	login  *connect.Client[v1.LoginRequest, v1.LoginResponse]
+	logout *connect.Client[v1.LogoutRequest, v1.LogoutResponse]
 }
 
 // Signup calls auth.v1.AuthService.Signup.
@@ -125,21 +114,11 @@ func (c *authServiceClient) Logout(ctx context.Context, req *v1.LogoutRequest) (
 	return nil, err
 }
 
-// CheckSession calls auth.v1.AuthService.CheckSession.
-func (c *authServiceClient) CheckSession(ctx context.Context, req *v1.CheckSessionRequest) (*v1.CheckSessionResponse, error) {
-	response, err := c.checkSession.CallUnary(ctx, connect.NewRequest(req))
-	if response != nil {
-		return response.Msg, err
-	}
-	return nil, err
-}
-
 // AuthServiceHandler is an implementation of the auth.v1.AuthService service.
 type AuthServiceHandler interface {
 	Signup(context.Context, *v1.SignupRequest) (*v1.SignupResponse, error)
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
 	Logout(context.Context, *v1.LogoutRequest) (*v1.LogoutResponse, error)
-	CheckSession(context.Context, *v1.CheckSessionRequest) (*v1.CheckSessionResponse, error)
 }
 
 // NewAuthServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -167,12 +146,6 @@ func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(authServiceMethods.ByName("Logout")),
 		connect.WithHandlerOptions(opts...),
 	)
-	authServiceCheckSessionHandler := connect.NewUnaryHandlerSimple(
-		AuthServiceCheckSessionProcedure,
-		svc.CheckSession,
-		connect.WithSchema(authServiceMethods.ByName("CheckSession")),
-		connect.WithHandlerOptions(opts...),
-	)
 	return "/auth.v1.AuthService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AuthServiceSignupProcedure:
@@ -181,8 +154,6 @@ func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption
 			authServiceLoginHandler.ServeHTTP(w, r)
 		case AuthServiceLogoutProcedure:
 			authServiceLogoutHandler.ServeHTTP(w, r)
-		case AuthServiceCheckSessionProcedure:
-			authServiceCheckSessionHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -202,8 +173,4 @@ func (UnimplementedAuthServiceHandler) Login(context.Context, *v1.LoginRequest) 
 
 func (UnimplementedAuthServiceHandler) Logout(context.Context, *v1.LogoutRequest) (*v1.LogoutResponse, error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("auth.v1.AuthService.Logout is not implemented"))
-}
-
-func (UnimplementedAuthServiceHandler) CheckSession(context.Context, *v1.CheckSessionRequest) (*v1.CheckSessionResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("auth.v1.AuthService.CheckSession is not implemented"))
 }

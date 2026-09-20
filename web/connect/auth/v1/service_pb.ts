@@ -5,8 +5,6 @@
 import type { GenFile, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 
-import type { CheckSessionRequestSchema, CheckSessionResponseSchema } from "./check_session_pb";
-import { file_auth_v1_check_session } from "./check_session_pb";
 import type { LoginRequestSchema, LoginResponseSchema } from "./login_pb";
 import { file_auth_v1_login } from "./login_pb";
 import type { LogoutRequestSchema, LogoutResponseSchema } from "./logout_pb";
@@ -18,8 +16,8 @@ import { file_auth_v1_signup } from "./signup_pb";
  * Describes the file auth/v1/service.proto.
  */
 export const file_auth_v1_service: GenFile /*@__PURE__*/ = fileDesc(
-  "ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEykAIKC0F1dGhTZXJ2aWNlEjsKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiABI4CgVMb2dpbhIVLmF1dGgudjEuTG9naW5SZXF1ZXN0GhYuYXV0aC52MS5Mb2dpblJlc3BvbnNlIgASOwoGTG9nb3V0EhYuYXV0aC52MS5Mb2dvdXRSZXF1ZXN0GhcuYXV0aC52MS5Mb2dvdXRSZXNwb25zZSIAEk0KDENoZWNrU2Vzc2lvbhIcLmF1dGgudjEuQ2hlY2tTZXNzaW9uUmVxdWVzdBodLmF1dGgudjEuQ2hlY2tTZXNzaW9uUmVzcG9uc2UiAEKKAQoLY29tLmF1dGgudjFCDFNlcnZpY2VQcm90b1ABWjB0cmV2LnppcC9sbGMvc3RhY2svc2VydmVyL2Nvbm5lY3QvYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z",
-  [file_auth_v1_check_session, file_auth_v1_login, file_auth_v1_logout, file_auth_v1_signup],
+  "ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEywQEKC0F1dGhTZXJ2aWNlEjsKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiABI4CgVMb2dpbhIVLmF1dGgudjEuTG9naW5SZXF1ZXN0GhYuYXV0aC52MS5Mb2dpblJlc3BvbnNlIgASOwoGTG9nb3V0EhYuYXV0aC52MS5Mb2dvdXRSZXF1ZXN0GhcuYXV0aC52MS5Mb2dvdXRSZXNwb25zZSIAQooBCgtjb20uYXV0aC52MUIMU2VydmljZVByb3RvUAFaMHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
+  [file_auth_v1_login, file_auth_v1_logout, file_auth_v1_signup],
 );
 
 /**
@@ -49,13 +47,5 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof LogoutRequestSchema;
     output: typeof LogoutResponseSchema;
-  };
-  /**
-   * @generated from rpc auth.v1.AuthService.CheckSession
-   */
-  checkSession: {
-    methodKind: "unary";
-    input: typeof CheckSessionRequestSchema;
-    output: typeof CheckSessionResponseSchema;
   };
 }> /*@__PURE__*/ = serviceDesc(file_auth_v1_service, 0);

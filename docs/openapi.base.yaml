@@ -37,8 +37,19 @@ paths:
                 properties:
                   jwt:
                     type: string
+                  sub:
+                    type: string
+                    description: The canonical username used as the session token's subject.
+                  exp:
+                    type:
+                      - integer
+                      - string
+                    format: int64
+                    description: The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
                 required:
                   - jwt
+                  - sub
+                  - exp
   /auth.v1.AuthService/Logout:
     post:
       security: []

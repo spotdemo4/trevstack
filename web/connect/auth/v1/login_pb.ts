@@ -12,7 +12,7 @@ import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
  * Describes the file auth/v1/login.proto.
  */
 export const file_auth_v1_login: GenFile /*@__PURE__*/ = fileDesc(
-  "ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIo8BCgxMb2dpblJlcXVlc3QSQAoIdXNlcm5hbWUYASABKAlCKbpIJsgBAXIhEAMYQDIbXltBLVphLXowLTldW0EtWmEtejAtOV8tXSokSACIAQESIwoIcGFzc3dvcmQYAiABKAlCDLpICcgBAXIEEAgoSEgBiAEBQgsKCV91c2VybmFtZUILCglfcGFzc3dvcmQiHAoNTG9naW5SZXNwb25zZRILCgNqd3QYASABKAlCiAEKC2NvbS5hdXRoLnYxQgpMb2dpblByb3RvUAFaMHRyZXYuemlwL2xsYy9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
+  "ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIo8BCgxMb2dpblJlcXVlc3QSQAoIdXNlcm5hbWUYASABKAlCKbpIJsgBAXIhEAMYQDIbXltBLVphLXowLTldW0EtWmEtejAtOV8tXSokSACIAQESIwoIcGFzc3dvcmQYAiABKAlCDLpICcgBAXIEEAgoSEgBiAEBQgsKCV91c2VybmFtZUILCglfcGFzc3dvcmQiNgoNTG9naW5SZXNwb25zZRILCgNqd3QYASABKAkSCwoDc3ViGAIgASgJEgsKA2V4cBgDIAEoA0KIAQoLY29tLmF1dGgudjFCCkxvZ2luUHJvdG9QAVowdHJldi56aXAvbGxjL3N0YWNrL3NlcnZlci9jb25uZWN0L2F1dGgvdjE7YXV0aHYxogIDQVhYqgIHQXV0aC5WMcoCB0F1dGhcVjHiAhNBdXRoXFYxXEdQQk1ldGFkYXRh6gIIQXV0aDo6VjFiBnByb3RvMw",
   [file_buf_validate_validate],
 );
 
@@ -48,6 +48,20 @@ export type LoginResponse = Message<"auth.v1.LoginResponse"> & {
    * @generated from field: string jwt = 1;
    */
   jwt: string;
+
+  /**
+   * The canonical username used as the session token's subject.
+   *
+   * @generated from field: string sub = 2;
+   */
+  sub: string;
+
+  /**
+   * The session token's expiration as a Unix timestamp in seconds.
+   *
+   * @generated from field: int64 exp = 3;
+   */
+  exp: bigint;
 };
 
 /**

@@ -22,11 +22,9 @@ func (h *Handler) Login(
 ) (*authv1.LoginResponse, error) {
 	db := database.FromContext(ctx)
 
-	var id int64
 	var username string
 	var passwordHash string
 	err := db.QueryRowContext(ctx, selectUserSQL, normalizeUsername(req.GetUsername())).Scan(
-		&id,
 		&username,
 		&passwordHash,
 	)
@@ -41,7 +39,7 @@ func (h *Handler) Login(
 		return nil, invalidCredentialsError()
 	}
 
-	token, expires, err := h.auth.Issue(id, username)
+	token, expires, err := h.auth.Issue(username)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, errors.New("could not create session"))
 	}
@@ -51,6 +49,8 @@ func (h *Handler) Login(
 
 	response := &authv1.LoginResponse{}
 	response.SetJwt(token)
+	response.SetSub(username)
+	response.SetExp(expires.Unix())
 	return response, nil
 }
 

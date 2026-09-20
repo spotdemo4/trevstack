@@ -15,14 +15,6 @@ components:
       in: cookie
       name: stack_session
   schemas:
-    auth.v1.CheckSessionRequest:
-      type: object
-      title: CheckSessionRequest
-      additionalProperties: false
-    auth.v1.CheckSessionResponse:
-      type: object
-      title: CheckSessionResponse
-      additionalProperties: false
     auth.v1.LoginRequest:
       type: object
       properties:
@@ -53,6 +45,17 @@ components:
         jwt:
           type: string
           title: jwt
+        sub:
+          type: string
+          title: sub
+          description: The canonical username used as the session token's subject.
+        exp:
+          type:
+            - integer
+            - string
+          title: exp
+          format: int64
+          description: The session token's expiration as a Unix timestamp in seconds.
       title: LoginResponse
       additionalProperties: false
     auth.v1.LogoutRequest:
@@ -591,8 +594,19 @@ paths:
                 properties:
                   jwt:
                     type: string
+                  sub:
+                    type: string
+                    description: The canonical username used as the session token's subject.
+                  exp:
+                    type:
+                      - integer
+                      - string
+                    format: int64
+                    description: The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
                 required:
                   - jwt
+                  - sub
+                  - exp
       tags:
         - auth.v1.AuthService
       summary: Login
@@ -684,41 +698,6 @@ paths:
             schema:
               $ref: "#/components/schemas/auth.v1.SignupRequest"
         required: true
-  /auth.v1.AuthService/CheckSession:
-    post:
-      tags:
-        - auth.v1.AuthService
-      summary: CheckSession
-      operationId: auth.v1.AuthService.CheckSession
-      parameters:
-        - name: Connect-Protocol-Version
-          in: header
-          required: true
-          schema:
-            $ref: "#/components/schemas/connect-protocol-version"
-        - name: Connect-Timeout-Ms
-          in: header
-          schema:
-            $ref: "#/components/schemas/connect-timeout-header"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/auth.v1.CheckSessionRequest"
-        required: true
-      responses:
-        default:
-          description: Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/connect.error"
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/auth.v1.CheckSessionResponse"
   /number.v1.NumberService/Add:
     post:
       tags:

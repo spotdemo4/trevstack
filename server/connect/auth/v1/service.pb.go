@@ -24,35 +24,30 @@ var File_auth_v1_service_proto protoreflect.FileDescriptor
 
 const file_auth_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x15auth/v1/service.proto\x12\aauth.v1\x1a\x1bauth/v1/check_session.proto\x1a\x13auth/v1/login.proto\x1a\x14auth/v1/logout.proto\x1a\x14auth/v1/signup.proto2\x90\x02\n" +
+	"\x15auth/v1/service.proto\x12\aauth.v1\x1a\x13auth/v1/login.proto\x1a\x14auth/v1/logout.proto\x1a\x14auth/v1/signup.proto2\xc1\x01\n" +
 	"\vAuthService\x12;\n" +
 	"\x06Signup\x12\x16.auth.v1.SignupRequest\x1a\x17.auth.v1.SignupResponse\"\x00\x128\n" +
 	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\"\x00\x12;\n" +
-	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x00\x12M\n" +
-	"\fCheckSession\x12\x1c.auth.v1.CheckSessionRequest\x1a\x1d.auth.v1.CheckSessionResponse\"\x00B\x8a\x01\n" +
+	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x00B\x8a\x01\n" +
 	"\vcom.auth.v1B\fServiceProtoP\x01Z0trev.zip/llc/stack/server/connect/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_service_proto_goTypes = []any{
-	(*SignupRequest)(nil),        // 0: auth.v1.SignupRequest
-	(*LoginRequest)(nil),         // 1: auth.v1.LoginRequest
-	(*LogoutRequest)(nil),        // 2: auth.v1.LogoutRequest
-	(*CheckSessionRequest)(nil),  // 3: auth.v1.CheckSessionRequest
-	(*SignupResponse)(nil),       // 4: auth.v1.SignupResponse
-	(*LoginResponse)(nil),        // 5: auth.v1.LoginResponse
-	(*LogoutResponse)(nil),       // 6: auth.v1.LogoutResponse
-	(*CheckSessionResponse)(nil), // 7: auth.v1.CheckSessionResponse
+	(*SignupRequest)(nil),  // 0: auth.v1.SignupRequest
+	(*LoginRequest)(nil),   // 1: auth.v1.LoginRequest
+	(*LogoutRequest)(nil),  // 2: auth.v1.LogoutRequest
+	(*SignupResponse)(nil), // 3: auth.v1.SignupResponse
+	(*LoginResponse)(nil),  // 4: auth.v1.LoginResponse
+	(*LogoutResponse)(nil), // 5: auth.v1.LogoutResponse
 }
 var file_auth_v1_service_proto_depIdxs = []int32{
 	0, // 0: auth.v1.AuthService.Signup:input_type -> auth.v1.SignupRequest
 	1, // 1: auth.v1.AuthService.Login:input_type -> auth.v1.LoginRequest
 	2, // 2: auth.v1.AuthService.Logout:input_type -> auth.v1.LogoutRequest
-	3, // 3: auth.v1.AuthService.CheckSession:input_type -> auth.v1.CheckSessionRequest
-	4, // 4: auth.v1.AuthService.Signup:output_type -> auth.v1.SignupResponse
-	5, // 5: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
-	6, // 6: auth.v1.AuthService.Logout:output_type -> auth.v1.LogoutResponse
-	7, // 7: auth.v1.AuthService.CheckSession:output_type -> auth.v1.CheckSessionResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	3, // 3: auth.v1.AuthService.Signup:output_type -> auth.v1.SignupResponse
+	4, // 4: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
+	5, // 5: auth.v1.AuthService.Logout:output_type -> auth.v1.LogoutResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -63,7 +58,6 @@ func file_auth_v1_service_proto_init() {
 	if File_auth_v1_service_proto != nil {
 		return
 	}
-	file_auth_v1_check_session_proto_init()
 	file_auth_v1_login_proto_init()
 	file_auth_v1_logout_proto_init()
 	file_auth_v1_signup_proto_init()

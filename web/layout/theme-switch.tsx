@@ -11,22 +11,23 @@ function toggleTheme(dark: boolean) {
     document.documentElement.classList.add("mocha");
     document.documentElement.classList.remove("light");
     document.documentElement.classList.remove("latte");
-    localStorage.theme = "dark";
   } else {
     document.querySelector("#theme-color")?.setAttribute("content", "#04a5e5");
     document.documentElement.classList.add("light");
     document.documentElement.classList.add("latte");
     document.documentElement.classList.remove("dark");
     document.documentElement.classList.remove("mocha");
-    localStorage.theme = "light";
+  }
+
+  try {
+    localStorage.setItem("theme", dark ? "dark" : "light");
+  } catch {
+    // Theme changes still work when storage is unavailable.
   }
 }
 
 export const ThemeSwitch = () => {
-  const [dark, setDark] = createSignal(
-    localStorage.theme === "dark" ||
-      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches),
-  );
+  const [dark, setDark] = createSignal(document.documentElement.classList.contains("dark"));
 
   return (
     <Button.Icon

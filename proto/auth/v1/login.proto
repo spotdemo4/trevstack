@@ -24,4 +24,8 @@ message LoginRequest {
 
 message LoginResponse {
   string jwt = 1;
+  // The canonical username used as the session token's subject.
+  string sub = 2;
+  // The session token's expiration as a Unix timestamp in seconds.
+  int64 exp = 3;
 }

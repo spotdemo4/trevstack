@@ -1,16 +1,17 @@
+import { session } from "$lib/auth";
 import { Button } from "$lib/button";
 import { AuthClient } from "$lib/connect";
 import { LoaderCircle, User } from "$lib/icon";
 import { toaster } from "$lib/toast";
-import { useLocation, useNavigate } from "@solidjs/router";
+import { useNavigate } from "@solidjs/router";
 import { Effect } from "effect";
 import { type Component, Show, createSignal, createUniqueId } from "solid-js";
 
 import styles from "./user-menu.module.css";
 
 export const UserMenu: Component = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const subject = () => session.claims()?.sub ?? "";
   const popoverId = createUniqueId();
   const [isOpen, setIsOpen] = createSignal(false);
   const [isLoggingOut, setIsLoggingOut] = createSignal(false);
@@ -25,6 +26,7 @@ export const UserMenu: Component = () => {
         Effect.match({
           onSuccess: () => {
             popover?.hidePopover();
+            session.clear();
             toaster.success({ title: "Signed out" });
             navigate("/auth", { replace: true });
           },
@@ -41,16 +43,17 @@ export const UserMenu: Component = () => {
   };
 
   return (
-    <Show when={!isPublicPath(normalizePath(location.pathname))}>
+    <Show when={session.claims()}>
       <Button.Icon
         type="button"
-        aria-label="Open account actions"
+        aria-label={`Open account actions for ${subject()}`}
         aria-controls={popoverId}
         aria-expanded={isOpen() ? "true" : "false"}
         popovertarget={popoverId}
-        class={isOpen() ? styles.TriggerOpen : undefined}
+        class={`${styles.Trigger} ${isOpen() ? styles.TriggerOpen : ""}`}
       >
         <User />
+        <span class="hidden max-w-32 truncate text-sm md:block">{subject()}</span>
       </Button.Icon>
       <div
         ref={(element) => (popover = element)}
@@ -61,6 +64,9 @@ export const UserMenu: Component = () => {
         class={styles.Panel}
         onToggle={(event) => setIsOpen(event.newState === "open")}
       >
+        <p class="truncate px-3 py-2 text-sm text-ctp-subtext0" title={subject()}>
+          {subject()}
+        </p>
         <button type="button" class={styles.Action} disabled={isLoggingOut()} onClick={logout}>
           <Show when={isLoggingOut()} fallback="Log out">
             <LoaderCircle class="animate-spin" size={18} />
@@ -71,11 +77,3 @@ export const UserMenu: Component = () => {
     </Show>
   );
 };
-
-function isPublicPath(path: string) {
-  return path === "/auth" || path === "/403";
-}
-
-function normalizePath(path: string) {
-  return path.toLowerCase().replace(/\/+$/, "") || "/";
-}

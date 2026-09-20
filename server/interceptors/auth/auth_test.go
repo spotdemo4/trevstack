@@ -13,12 +13,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/mattn/go-sqlite3"
 	domainauth "trev.zip/llc/stack/server/auth"
-	authv1 "trev.zip/llc/stack/server/connect/auth/v1"
-	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
 	numberv1 "trev.zip/llc/stack/server/connect/number/v1"
 	"trev.zip/llc/stack/server/connect/number/v1/numberv1connect"
 	"trev.zip/llc/stack/server/database"
-	authhandler "trev.zip/llc/stack/server/handlers/auth/v1"
 	numberhandler "trev.zip/llc/stack/server/handlers/number/v1"
 )
 
@@ -50,7 +47,6 @@ func TestIsPublicAuthProcedure(t *testing.T) {
 	}
 	for _, procedure := range []string{
 		"/number.v1.NumberService/Add",
-		"/auth.v1.AuthService/CheckSession",
 		"/auth.v1.AuthService/Other",
 		"",
 	} {
@@ -60,27 +56,116 @@ func TestIsPublicAuthProcedure(t *testing.T) {
 	}
 }
 
-func TestAuthInterceptorCheckSession(t *testing.T) {
+func TestAuthInterceptorSyntheticUnary(t *testing.T) {
 	manager := domainauth.NewManager(interceptorTestSecret, false)
+	called := false
 	mux := http.NewServeMux()
-	mux.Handle(authhandler.New(manager, connect.WithInterceptors(NewAuthInterceptor(manager))))
+	mux.Handle(numberv1connect.NumberServiceAddProcedure, connect.NewUnaryHandlerSimple[numberv1.AddRequest, numberv1.AddResponse](
+		numberv1connect.NumberServiceAddProcedure,
+		func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error) {
+			called = true
+			return &numberv1.AddResponse{}, nil
+		},
+		connect.WithInterceptors(NewAuthInterceptor(manager)),
+	))
 	srv := httptest.NewServer(mux)
 	t.Cleanup(srv.Close)
-	client := authv1connect.NewAuthServiceClient(http.DefaultClient, srv.URL)
+	client := numberv1connect.NewNumberServiceClient(http.DefaultClient, srv.URL)
 
-	_, err := client.CheckSession(context.Background(), &authv1.CheckSessionRequest{})
+	_, err := client.Add(context.Background(), (&numberv1.AddRequest_builder{
+		Name: new("security-test"), Number: new(uint32(1)),
+	}).Build())
 	if got := connect.CodeOf(err); got != connect.CodeUnauthenticated {
-		t.Fatalf("CheckSession() without cookie code = %v, want Unauthenticated", got)
+		t.Fatalf("Add() without cookie code = %v, want Unauthenticated", got)
+	}
+	if called {
+		t.Fatal("handler called without cookie")
 	}
 
-	token, _, err := manager.Issue(42, "trev")
+	token, _, err := manager.Issue("trev")
 	if err != nil {
 		t.Fatalf("Issue() error = %v", err)
 	}
 	ctx, info := connect.NewClientContext(context.Background())
 	info.RequestHeader().Set("Cookie", (&http.Cookie{Name: domainauth.CookieName, Value: token}).String())
-	if _, err := client.CheckSession(ctx, &authv1.CheckSessionRequest{}); err != nil {
-		t.Fatalf("CheckSession() with valid cookie error = %v", err)
+	if _, err := client.Add(ctx, (&numberv1.AddRequest_builder{
+		Name: new("security-test"), Number: new(uint32(1)),
+	}).Build()); err != nil {
+		t.Fatalf("Add() with valid cookie error = %v", err)
+	}
+	if !called {
+		t.Fatal("handler not called with valid cookie")
+	}
+}
+
+func TestAuthInterceptorUnaryHandlerReceivesClaims(t *testing.T) {
+	manager := domainauth.NewManager(interceptorTestSecret, false)
+	token, expires, err := manager.Issue("trev")
+	if err != nil {
+		t.Fatalf("Issue() error = %v", err)
+	}
+
+	var gotClaims *domainauth.Claims
+	mux := http.NewServeMux()
+	mux.Handle(numberv1connect.NumberServiceAddProcedure, connect.NewUnaryHandlerSimple[numberv1.AddRequest, numberv1.AddResponse](
+		numberv1connect.NumberServiceAddProcedure,
+		func(ctx context.Context, _ *numberv1.AddRequest) (*numberv1.AddResponse, error) {
+			gotClaims, _ = domainauth.ClaimsFromContext(ctx)
+			return &numberv1.AddResponse{}, nil
+		},
+		connect.WithInterceptors(NewAuthInterceptor(manager)),
+	))
+	srv := httptest.NewServer(mux)
+	t.Cleanup(srv.Close)
+	client := numberv1connect.NewNumberServiceClient(http.DefaultClient, srv.URL)
+
+	ctx, info := connect.NewClientContext(context.Background())
+	info.RequestHeader().Set("Cookie", (&http.Cookie{Name: domainauth.CookieName, Value: token}).String())
+	if _, err := client.Add(ctx, (&numberv1.AddRequest_builder{
+		Name: new("security-test"), Number: new(uint32(1)),
+	}).Build()); err != nil {
+		t.Fatalf("Add() error = %v", err)
+	}
+	if gotClaims == nil {
+		t.Fatal("handler received no claims")
+	}
+	if gotClaims.Subject != "trev" {
+		t.Errorf("claims subject = %q, want trev", gotClaims.Subject)
+	}
+	if gotClaims.ExpiresAt == nil || gotClaims.ExpiresAt.Time.Unix() != expires.Unix() {
+		t.Errorf("claims expiration = %v, want %v", gotClaims.ExpiresAt, expires)
+	}
+}
+
+func TestAuthInterceptorRejectedCredentialsDoNotReachUnaryHandler(t *testing.T) {
+	manager := domainauth.NewManager(interceptorTestSecret, false)
+	called := false
+	mux := http.NewServeMux()
+	mux.Handle(numberv1connect.NumberServiceAddProcedure, connect.NewUnaryHandlerSimple[numberv1.AddRequest, numberv1.AddResponse](
+		numberv1connect.NumberServiceAddProcedure,
+		func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error) {
+			called = true
+			return &numberv1.AddResponse{}, nil
+		},
+		connect.WithInterceptors(NewAuthInterceptor(manager)),
+	))
+	srv := httptest.NewServer(mux)
+	t.Cleanup(srv.Close)
+	client := numberv1connect.NewNumberServiceClient(http.DefaultClient, srv.URL)
+
+	ctx, info := connect.NewClientContext(context.Background())
+	info.RequestHeader().Set("Cookie", domainauth.CookieName)
+	_, err := client.Add(ctx, (&numberv1.AddRequest_builder{
+		Name: new("security-test"), Number: new(uint32(1)),
+	}).Build())
+	if err == nil {
+		t.Fatal("Add() error = nil, want PermissionDenied")
+	}
+	if got := connect.CodeOf(err); got != connect.CodePermissionDenied {
+		t.Fatalf("Add() code = %v, want PermissionDenied", got)
+	}
+	if called {
+		t.Fatal("handler called for rejected credentials")
 	}
 }
 
@@ -89,12 +174,14 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 	interceptor := NewAuthInterceptor(manager)
 
 	tests := []struct {
-		name       string
-		procedure  string
-		header     http.Header
-		wantCode   connect.Code
-		wantErr    bool
-		wantCalled bool
+		name        string
+		procedure   string
+		header      http.Header
+		wantCode    connect.Code
+		wantErr     bool
+		wantCalled  bool
+		wantClaims  bool
+		wantExpires time.Time
 	}{
 		{
 			name:       "public procedure without cookie",
@@ -109,29 +196,35 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 		},
 	}
 
-	valid, _, err := manager.Issue(42, "trev")
+	valid, validExpires, err := manager.Issue("trev")
 	if err != nil {
 		t.Fatalf("Issue() error = %v", err)
 	}
 	tests = append(tests, struct {
-		name       string
-		procedure  string
-		header     http.Header
-		wantCode   connect.Code
-		wantErr    bool
-		wantCalled bool
+		name        string
+		procedure   string
+		header      http.Header
+		wantCode    connect.Code
+		wantErr     bool
+		wantCalled  bool
+		wantClaims  bool
+		wantExpires time.Time
 	}{
-		name:       "protected procedure with valid cookie",
-		procedure:  "/number.v1.NumberService/Stream",
-		header:     http.Header{"Cookie": []string{(&http.Cookie{Name: domainauth.CookieName, Value: valid}).String()}},
-		wantCalled: true,
+		name:        "protected procedure with valid cookie",
+		procedure:   "/number.v1.NumberService/Stream",
+		header:      http.Header{"Cookie": []string{(&http.Cookie{Name: domainauth.CookieName, Value: valid}).String()}},
+		wantCalled:  true,
+		wantClaims:  true,
+		wantExpires: validExpires,
 	})
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			called := false
-			next := func(context.Context, connect.StreamingHandlerConn) error {
+			var handlerContext context.Context
+			next := func(ctx context.Context, _ connect.StreamingHandlerConn) error {
 				called = true
+				handlerContext = ctx
 				return nil
 			}
 			conn := &fakeStreamingConn{
@@ -150,6 +243,20 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 			if called != test.wantCalled {
 				t.Errorf("next called = %t, want %t", called, test.wantCalled)
 			}
+			claims, ok := domainauth.ClaimsFromContext(handlerContext)
+			if test.wantClaims {
+				if !ok {
+					t.Fatal("ClaimsFromContext() = missing claims, want validated claims")
+				}
+				if claims.Subject != "trev" {
+					t.Errorf("claims subject = %q, want trev", claims.Subject)
+				}
+				if claims.ExpiresAt == nil || claims.ExpiresAt.Time.Unix() != test.wantExpires.Unix() {
+					t.Errorf("claims expiration = %v, want %v", claims.ExpiresAt, test.wantExpires)
+				}
+			} else if ok || claims != nil {
+				t.Errorf("public handler claims = (%#v, %t), want (nil, false)", claims, ok)
+			}
 		})
 	}
 }
@@ -159,12 +266,11 @@ func TestAuthInterceptorStreamingHandlerClearsExpiredCookie(t *testing.T) {
 	interceptor := NewAuthInterceptor(manager)
 	now := time.Now().UTC()
 	token := signInterceptorClaims(t, domainauth.Claims{
-		Username: "trev",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "42",
 			IssuedAt:  jwt.NewNumericDate(now.Add(-2 * time.Hour)),
 			ExpiresAt: jwt.NewNumericDate(now.Add(-time.Hour)),
-			Issuer:    "stack",
+			Issuer:    "stack/session/v2",
 		},
 	}, interceptorTestSecret)
 	conn := &fakeStreamingConn{
@@ -223,12 +329,11 @@ func TestAuthInterceptorProtectedUnaryExpiredTokens(t *testing.T) {
 	client, transport := newProtectedTest(t)
 	now := time.Now().UTC()
 	claims := domainauth.Claims{
-		Username: "trev",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   "42",
 			IssuedAt:  jwt.NewNumericDate(now.Add(-2 * time.Hour)),
 			ExpiresAt: jwt.NewNumericDate(now.Add(-time.Hour)),
-			Issuer:    "stack",
+			Issuer:    "stack/session/v2",
 		},
 	}
 	validExpired := signInterceptorClaims(t, claims, interceptorTestSecret)

@@ -73,6 +73,12 @@
 }
 
 @media (min-width: 48rem) {
+  .Trigger {
+    width: auto;
+    gap: 0.5rem;
+    padding-inline: 0.5rem;
+  }
+
   .Panel {
     right: 1rem;
   }

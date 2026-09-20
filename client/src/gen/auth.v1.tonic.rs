@@ -135,21 +135,5 @@ pub mod auth_service_client {
                 .insert(GrpcMethod::new("auth.v1.AuthService", "Logout"));
             self.inner.unary(req, path, codec).await
         }
-        ///
-        pub async fn check_session(
-            &mut self,
-            request: impl tonic::IntoRequest<super::CheckSessionRequest>,
-        ) -> std::result::Result<tonic::Response<super::CheckSessionResponse>, tonic::Status>
-        {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
-            let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/auth.v1.AuthService/CheckSession");
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("auth.v1.AuthService", "CheckSession"));
-            self.inner.unary(req, path, codec).await
-        }
     }
 }

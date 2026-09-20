@@ -1,13 +1,10 @@
 import { Button } from "$lib/button";
 import { ExternalLink, GitBranch } from "$lib/icon";
-import { AppToaster } from "$lib/toast";
 import type { JSX } from "@solidjs/web";
-import { children, type Component, Loading } from "solid-js";
+import { children, type Component } from "solid-js";
 
-import { AuthGate } from "./auth-gate";
 import { NavLink } from "./nav-link";
 import { Navbar } from "./navbar";
-import { NetworkStatus } from "./network-status";
 import { ThemeSwitch } from "./theme-switch";
 import { UserMenu } from "./user-menu";
 
@@ -56,13 +53,7 @@ export const Layout: Component<LayoutProps> = (props) => {
           </div>
         </div>
       </header>
-      <Loading fallback={<main class="grow" />}>
-        <main class="grow">
-          <AuthGate>{resolved()}</AuthGate>
-        </main>
-      </Loading>
-      <NetworkStatus />
-      <AppToaster />
+      <main class="grow">{resolved()}</main>
     </div>
   );
 };

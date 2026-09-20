@@ -1,6 +1,0 @@
-syntax = "proto3";
-
-package auth.v1;
-
-message CheckSessionRequest {}
-message CheckSessionResponse {}

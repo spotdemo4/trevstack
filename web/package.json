@@ -11,7 +11,8 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "node --conditions=browser --test lib/auth/*.test.ts lib/connect/auth-interceptor.test.ts"
   },
   "dependencies": {
     "@bufbuild/protovalidate": "^1.3.0",

@@ -1,5 +1,6 @@
 import { LoginRequestSchema } from "$connect/auth/v1/login_pb";
 import { SignupRequestSchema } from "$connect/auth/v1/signup_pb";
+import { getReturnPath, session } from "$lib/auth";
 import { Card } from "$lib/card";
 import { AuthClient } from "$lib/connect";
 import { Form } from "$lib/form/form";
@@ -14,7 +15,7 @@ import { Show, type Component, createSignal } from "solid-js";
 export const Auth: Component = () => {
   const navigate = useNavigate();
   const [mode, setMode] = createSignal<"login" | "signup">("login");
-  const returnTo = getReturnPath();
+  const returnTo = getReturnPath(window.location.search, window.location.origin);
 
   const loginForm = useForm(LoginRequestSchema, () => ({
     validation: {
@@ -23,6 +24,7 @@ export const Auth: Component = () => {
     },
     onSubmit: ({ value }) =>
       AuthClient.login({ username: value.username, password: value.password }).pipe(
+        Effect.tap(rememberSession),
         Effect.match({
           onSuccess: () => {
             toaster.success({ title: "Signed in" });
@@ -47,8 +49,9 @@ export const Auth: Component = () => {
     onSubmit: ({ value }) =>
       Effect.gen(function* () {
         yield* AuthClient.signup({ username: value.username, password: value.password });
-        yield* AuthClient.login({ username: value.username, password: value.password });
+        return yield* AuthClient.login({ username: value.username, password: value.password });
       }).pipe(
+        Effect.tap(rememberSession),
         Effect.match({
           onSuccess: () => {
             toaster.success({ title: "Account created" });
@@ -126,22 +129,11 @@ const SignupForm: Component<{
   </Form>
 );
 
-function getReturnPath() {
-  const returnTo = new URLSearchParams(window.location.search).get("returnTo");
-  if (!returnTo || !returnTo.startsWith("/")) {
-    return "/";
-  }
-
-  try {
-    const target = new URL(returnTo, window.location.origin);
-    const normalizedPath = target.pathname.toLowerCase().replace(/\/+$/, "") || "/";
-    if (target.origin !== window.location.origin || normalizedPath === "/auth") {
-      return "/";
-    }
-    return `${target.pathname}${target.search}${target.hash}`;
-  } catch {
-    return "/";
-  }
+function rememberSession(response: { sub: string; exp: bigint }) {
+  return Effect.try({
+    try: () => session.setFromLogin({ sub: response.sub, exp: response.exp }),
+    catch: () => new Error("Could not read your session. Please sign in again."),
+  });
 }
 
 function tabClass(active: boolean) {

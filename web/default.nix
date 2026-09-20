@@ -24,6 +24,7 @@ buildNpmPackage (final: {
     runHook preCheck
     oxfmt --check
     oxlint --deny-warnings
+    npm test
     runHook postCheck
   '';
 

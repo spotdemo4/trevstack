@@ -1,9 +1,12 @@
-import { createRouter } from "@solidjs/router";
-import { render } from "@solidjs/web";
-import { lazy } from "solid-js";
+import { getSignInPath, isPublicPath, session } from "$lib/auth";
+import { AppToaster } from "$lib/toast";
+import { createRouter, useLocation, useNavigate } from "@solidjs/router";
+import { type JSX, render } from "@solidjs/web";
+import { type Component, Loading, Show, createEffect, lazy, onCleanup } from "solid-js";
 
 import "./index.css";
 import { Layout } from "./layout/layout";
+import { NetworkStatus } from "./layout/network-status";
 
 const Home = lazy(() => import("./routes/home"));
 const Numbers = lazy(() => import("./routes/numbers"));
@@ -23,10 +26,55 @@ const Router = createRouter({
   ],
 });
 
+const App: Component<{ children?: JSX.Element }> = (props) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isPublic = () => isPublicPath(location.pathname);
+  const hasSession = () => session.claims() !== null;
+
+  createEffect(
+    () =>
+      isPublic() || hasSession()
+        ? null
+        : getSignInPath(`${location.pathname}${location.search}${location.hash}`),
+    (target) => {
+      if (target) navigate(target, { replace: true });
+    },
+  );
+
+  return (
+    <>
+      <Show
+        when={isPublic()}
+        fallback={
+          <Show when={hasSession()}>
+            <Layout>
+              <Loading fallback={<PageLoading />}>{props.children}</Loading>
+            </Layout>
+          </Show>
+        }
+      >
+        <main class="min-h-dvh" style={{ "--spacing-body": "100dvh" }}>
+          <Loading fallback={<PageLoading />}>{props.children}</Loading>
+        </main>
+      </Show>
+      <NetworkStatus />
+      <AppToaster />
+    </>
+  );
+};
+
+const PageLoading: Component = () => (
+  <div class="flex h-body items-center justify-center text-sm text-ctp-subtext0">Loading…</div>
+);
+
 const wrapper = document.getElementById("app");
 
 if (!wrapper) {
   throw new Error("Wrapper div not found");
 }
 
-render(() => <Router>{(props) => <Layout>{props.children}</Layout>}</Router>, wrapper);
+render(() => {
+  onCleanup(session.initialize());
+  return <Router>{(props) => <App>{props.children}</App>}</Router>;
+}, wrapper);

@@ -133,8 +133,11 @@ func TestLoginIssuesJWTAndSecureCookie(t *testing.T) {
 	if err != nil {
 		t.Fatalf("parse returned JWT: %v", err)
 	}
-	if claims.Subject == "" || claims.Username != "alice" {
-		t.Errorf("claims = %#v, want normalized alice and non-empty subject", claims)
+	if claims.Subject != "alice" || response.GetSub() != "alice" {
+		t.Errorf("subject = (%q, %q), want normalized alice", claims.Subject, response.GetSub())
+	}
+	if response.GetExp() != claims.ExpiresAt.Time.Unix() {
+		t.Errorf("response Exp = %d, want token expiration %d", response.GetExp(), claims.ExpiresAt.Time.Unix())
 	}
 
 	if transport.last == nil {
@@ -147,6 +150,9 @@ func TestLoginIssuesJWTAndSecureCookie(t *testing.T) {
 	cookie := cookies[0]
 	if cookie.Name != auth.CookieName || cookie.Value != response.GetJwt() || cookie.Path != "/" {
 		t.Errorf("session cookie = %#v", cookie)
+	}
+	if cookie.Expires.Unix() != response.GetExp() {
+		t.Errorf("cookie expiration = %d, want %d", cookie.Expires.Unix(), response.GetExp())
 	}
 	if !cookie.Secure || !cookie.HttpOnly || cookie.SameSite != http.SameSiteLaxMode {
 		t.Errorf("session cookie security attributes = %#v", cookie)
