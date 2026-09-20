@@ -27,13 +27,13 @@ plugins:
     include_imports: true
 
   - local: protoc-gen-prost
-    out: client/src/gen
+    out: client/src/connect
     strategy: all
     opt:
       - flat_output_dir
 
   - local: protoc-gen-tonic
-    out: client/src/gen
+    out: client/src/connect
     strategy: all
     opt:
       - flat_output_dir

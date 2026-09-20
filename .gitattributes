@@ -10,7 +10,7 @@ package-lock.json linguist-generated=true
 # Linguist: Buf-generated code and OpenAPI specification
 server/connect/** linguist-generated=true
 web/connect/** linguist-generated=true
-client/src/gen/** linguist-generated=true
+client/src/connect/** linguist-generated=true
 docs/openapi.yaml linguist-generated=true
 
 # Go source files use Go diff driver
