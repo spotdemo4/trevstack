@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@catppuccin/tailwindcss": "^1.0.0",
-    "@solidjs/vite-plugin": "^3.0.0-next.43",
+    "@solidjs/vite-plugin": "^3.0.0-next.44",
     "@tailwindcss/vite": "^4.3.3",
     "@types/d3": "^7.4.3",
     "@types/node": "^24.13.6",
