@@ -53,7 +53,7 @@ nix build [.#client | .#server]
 bumper
 ```
 
-releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.1/#summary) changes
+releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.2/#summary) changes
 
 ## server
 
