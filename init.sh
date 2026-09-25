@@ -131,6 +131,9 @@ replace_tracked_text() {
   [[ -n $old && $old != "$new" ]] || return 0
   while IFS= read -r -d '' file; do
     [[ -f $file && ! -L $file ]] || continue
+    case $file in
+      server/connect/* | web/connect/* | client/src/connect/* | docs/openapi.yaml) continue ;;
+    esac
     grep -IqF -- "$old" "$file" || continue
     replace_literal "$old" "$new" "$file"
   done < <(git ls-files -z)
@@ -218,7 +221,6 @@ source_base=${source_module%/server}
 if [[ -z $source_base || $source_base == "$source_module" ]]; then
   source_base=${origin_host}/${origin_repo_path}
 fi
-source_web_url="https://${source_base}"
 source_display=$(sed -n 's/^#[[:space:]]\+//p' README.md 2>/dev/null | head -n 1 || true)
 [[ -n $source_display ]] || source_display=$(sed -n 's/^        name: "\([^"]*\)".*/\1/p' web/vite.config.ts 2>/dev/null | head -n 1 || true)
 source_slug=$(sed -n 's/^  "name":[[:space:]]*"\([^"]*\)-web".*/\1/p' web/package.json 2>/dev/null | head -n 1 || true)
@@ -227,6 +229,8 @@ source_description=$(sed -n 's/^  description = "\(.*\)";/\1/p' flake.nix 2>/dev
 source_license_year=$(sed -n 's/^Copyright (c) \([0-9][0-9][0-9][0-9]\) .*/\1/p' LICENSE 2>/dev/null | head -n 1 || true)
 [[ -n $source_license_year ]] || source_license_year=$year
 [[ -f README.md && -f flake.nix && -f LICENSE && -f client/Cargo.toml && -f client/Cargo.lock && -f client/default.nix && -f docs/default.nix && -f docs/package.json && -f docs/package-lock.json && -f server/default.nix && -f server/go.mod && -f web/default.nix && -f web/package.json ]] || fail 'Required project metadata files are missing.'
+[[ -f CONTRIBUTING.md && -f docs/openapi.base.yaml ]] || fail 'Required project documentation files are missing.'
+[[ $(grep -c '^## using$' README.md) == 1 ]] || fail 'README.md must contain exactly one using section.'
 [[ -n $source_module && $source_module == */server ]] || fail 'Unable to find the server module metadata.'
 [[ -n $source_base ]] || fail 'Unable to find the source repository identity.'
 [[ -n $source_display ]] || fail 'Unable to find the project display name.'
@@ -281,12 +285,26 @@ elif ! $origin_is_github && [[ -d .github ]]; then
   fi
 fi
 
-if [[ -n $delete_provider ]]; then
-  ignored_provider_files=$(git ls-files --others --ignored --exclude-standard -- ".$delete_provider") || fail 'Unable to inspect ignored provider files.'
-  if [[ -n $ignored_provider_files ]]; then
-    fail "Remove ignored files under .$delete_provider before deleting that provider configuration."
+delete_directories=()
+[[ -z $delete_provider ]] || delete_directories+=(".$delete_provider")
+for editor in Zed 'VS Code'; do
+  if [[ $editor == Zed ]]; then
+    editor_directory=.zed
+  else
+    editor_directory=.vscode
   fi
-fi
+  read -r -p "Are you using $editor? [Y/n] " reply || reply=
+  if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
+    delete_directories+=("$editor_directory")
+  fi
+done
+
+for directory in "${delete_directories[@]}"; do
+  ignored_files=$(git ls-files --others --ignored --exclude-standard -- "$directory") || fail 'Unable to inspect ignored configuration files.'
+  if [[ -n $ignored_files ]]; then
+    fail "Remove ignored files under $directory before deleting that configuration."
+  fi
+done
 
 if $origin_is_github; then
   github_repo_path=$origin_repo_path
@@ -353,18 +371,17 @@ trap 'exit 143' TERM
 trap 'exit 129' HUP
 
 changes_started=true
-if [[ -n $source_base && $source_base != "$target_base" ]]; then
-  replace_tracked_text "$source_base" "$target_base"
-fi
-if [[ -n $source_web_url && $source_web_url != "https://${target_base}" ]]; then
-  replace_tracked_text "$source_web_url" "https://${target_base}"
-fi
-if [[ -n $source_display && $source_display != "$title" ]]; then
-  replace_tracked_text "$source_display" "$title"
-fi
-if [[ -n $source_slug && $source_slug != "$slug" ]]; then
-  replace_tracked_text "$source_slug" "$slug"
-fi
+for directory in "${delete_directories[@]}"; do
+  rm -rf "$directory"
+done
+# Replace template names before inserting URLs that may contain those same names.
+replace_tracked_text "$source_slug" "$slug"
+replace_tracked_text "$source_display" "$title"
+renamed_source_base=${source_base//"$source_slug"/"$slug"}
+renamed_source_base=${renamed_source_base//"$source_display"/"$title"}
+replace_tracked_text "$renamed_source_base" "$target_base"
+# Rust imports use underscores even when the Cargo package name contains hyphens.
+replace_literal "${slug}_client" "${slug//-/_}_client" client/src/main.rs
 
 # Rewrite project metadata structurally, deriving old values from the checked-out template.
 if [[ -n $source_description && $source_description != "$description" ]]; then
@@ -416,9 +433,7 @@ reset_openapi_metadata() {
   replacement=$(escape_replacement "  description: \"$json_description\"")
   sed_inplace -E "${description_line}s|^[[:space:]]*description:.*$|$replacement|" "$file"
 }
-for openapi_file in openapi.yaml docs/openapi.yaml; do
-  [[ -f $openapi_file ]] && reset_openapi_metadata "$openapi_file"
-done
+reset_openapi_metadata docs/openapi.base.yaml
 
 # Provider-specific metadata and workflow paths.
 if [[ -f .github/renovate.json ]]; then
@@ -440,7 +455,6 @@ remove_check_blocks() {
   done
 }
 if [[ -n $delete_provider ]]; then
-  rm -rf ".$delete_provider"
   if [[ $delete_provider == github ]]; then
     remove_check_blocks actions-gh renovate-gh
   else
@@ -468,7 +482,7 @@ if [[ -f LICENSE ]]; then
   sed_inplace -E "s|^Copyright \\(c\\) [0-9]{4} .*$|$license_replacement|" LICENSE
 fi
 
-# Preserve the README's current structure while updating its identity and provider badges.
+# Rebuild the README header, retaining only usage and contributing documentation.
 raw_url=
 if $origin_is_github; then
   raw_url="https://raw.githubusercontent.com/${github_repo_path}/refs/heads/main"
@@ -479,30 +493,34 @@ else
   check_badge="[![check](${origin_web_url}/actions/workflows/check.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=check&labelColor=%23313244)](${origin_web_url}/actions?workflow=check.yaml)"
   vulnerable_badge="[![vulnerable](${origin_web_url}/actions/workflows/vulnerable.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](${origin_web_url}/actions?workflow=vulnerable.yaml)"
 fi
+# The raw lockfile URL is nested inside the Shields endpoint URL.
+encoded_lock_url="${raw_url}/flake.lock"
+encoded_lock_url=${encoded_lock_url//:/%253A}
+encoded_lock_url=${encoded_lock_url//\//%252F}
+nixpkgs_badge="[![nixpkgs](https://img.shields.io/endpoint?url=https%3A%2F%2Fnix-shield.trev.zip%2Fbadge%3Furl%3D${encoded_lock_url}%26input%3Dnixpkgs&logoColor=%23bac2de&labelColor=%23313244&color=%235277C3)](https://nixos.org/)"
 go_badge="[![go](<https://img.shields.io/badge/dynamic/regex?url=${raw_url}/server/go.mod&search=toolchain%20go(.*)&replace=%241&style=flat&logo=go&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%2300ADD8>)](https://go.dev/doc/devel/release)"
 node_badge="[![node](https://img.shields.io/badge/dynamic/json?url=${raw_url}/web/package.json&query=%24.engines.node&logo=nodedotjs&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23339933)](https://nodejs.org/en/about/previous-releases)"
 solid_badge="[![solidjs](https://img.shields.io/badge/dynamic/json?url=${raw_url}/web/package.json&query=%24.dependencies.solid-js&logo=solid&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%232C4F7C)](https://www.solidjs.com/)"
-replace_first_matching_line() {
-  local file=$1 regex=$2 replacement=$3 line escaped
-  line=$(grep -n -m 1 -E "$regex" "$file" | cut -d: -f1 || true)
-  [[ -n $line ]] || return 0
-  escaped=$(escape_replacement "$replacement")
-  sed_inplace -E "${line}s|${regex}|${escaped}|" "$file"
-}
-replace_first_matching_line README.md '^\\[!\\[check\\].*$' "$check_badge"
-replace_first_matching_line README.md '^\\[!\\[vulnerable\\].*$' "$vulnerable_badge"
-replace_first_matching_line README.md '^\\[!\\[go\\].*$' "$go_badge"
-replace_first_matching_line README.md '^\\[!\\[node\\].*$' "$node_badge"
-replace_first_matching_line README.md '^\\[!\\[solidjs\\].*$' "$solid_badge"
-readme_subject_pattern=$(escape_pattern "$title")
-replace_first_matching_line README.md "^${readme_subject_pattern} is .*$" "$description"
+rust_badge="[![rust](https://img.shields.io/badge/dynamic/toml?url=${raw_url}/client/Cargo.toml&query=%24.package.rust-version&logo=rust&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23D34516)](https://releases.rs/)"
+
+readme_sections=$(sed -n '/^## using$/,$p' README.md)
+readme_image=$(printf '%s\n' "$readme_sections" | sed -n 's/^docker run -P \([^[:space:]]*\)$/\1/p')
+[[ -n $readme_image ]] || fail 'Unable to find the README server image.'
+image_path=$(printf '%s' "$origin_repo_path" | tr '[:upper:]' '[:lower:]')
+if $origin_is_github; then
+  image="ghcr.io/${image_path}/server:latest"
+else
+  image="${origin_host}/${image_path}/server:latest"
+fi
+readme_sections=${readme_sections//"$readme_image"/"$image"}
+
+{
+  printf '# %s\n\n' "$title"
+  printf '%s\n' "$check_badge" "$vulnerable_badge" "$nixpkgs_badge" "$go_badge" "$node_badge" "$solid_badge" "$rust_badge"
+  printf '\n%s\n\n%s\n' "$description" "$readme_sections"
+} >README.md
 if ! $origin_is_github && [[ -f web/layout/layout.tsx ]]; then
   replace_literal 'on GitHub' 'on Forgejo' web/layout/layout.tsx
-fi
-if grep -qF -- './init.sh' README.md; then
-  sed_inplace '/^Initialize a new project from this template:$/,/^```$/d' README.md
-  initializer_line=$(grep -n -m 1 -F "\`init.sh\` is a one-shot template initializer." README.md | cut -d: -f1 || true)
-  [[ -z $initializer_line ]] || sed_inplace "${initializer_line}d" README.md
 fi
 
 # Preserve all existing remote URLs and push URLs, then add the explicitly selected provider remote.
@@ -553,10 +571,6 @@ mv "$new_git_dir" "$root/.git" || fail 'Unable to activate the new Git repositor
 (cd "$root" && nix run .#configure)
 
 # Include generated and formatted files in the same fresh root commit.
-# buf generation may recreate the generated OpenAPI document, so reset both surfaces afterward.
-for openapi_file in openapi.yaml docs/openapi.yaml; do
-  [[ -f "$root/$openapi_file" ]] && reset_openapi_metadata "$root/$openapi_file"
-done
 git -C "$root" add -A
 git -C "$root" rm --cached --ignore-unmatch -- init.sh >/dev/null 2>&1 || true
 env \
@@ -573,6 +587,12 @@ assert_contains() {
 }
 assert_contains README.md "# $title"
 assert_contains README.md "$description"
+assert_contains README.md '## using'
+assert_contains README.md '[CONTRIBUTING.md](CONTRIBUTING.md)'
+assert_contains README.md "docker run -P $image"
+assert_contains README.md "$nixpkgs_badge"
+assert_contains README.md "$rust_badge"
+assert_contains docs/openapi.base.yaml "  version: $version"
 assert_contains flake.nix "description = \"$nix_description\";"
 assert_contains client/Cargo.toml "name = \"${slug}-client\""
 assert_contains client/Cargo.toml "version = \"$version\""
