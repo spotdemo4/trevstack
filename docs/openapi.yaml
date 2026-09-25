@@ -3,7 +3,7 @@ servers:
   - url: /grpc
 info:
   title: TrevStack API
-  version: 1.0.2
+  version: 1.0.3
   description: API for TrevStack
   contact:
     name: Trev

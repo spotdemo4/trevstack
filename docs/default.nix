@@ -7,7 +7,7 @@
 }:
 buildNpmPackage (final: {
   pname = "trevstack-docs";
-  version = "1.0.2";
+  version = "1.0.3";
 
   src = ./.;
   nodejs = nodejs_24;
