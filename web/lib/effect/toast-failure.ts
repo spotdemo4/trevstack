@@ -1,5 +1,5 @@
-import { toaster } from "$lib/toast/toaster";
 import { ConnectError } from "@connectrpc/connect";
+import { toaster } from "@spotdemo4/solid-toast";
 import { Effect } from "effect";
 
 const errorDescription = (err: unknown) => {

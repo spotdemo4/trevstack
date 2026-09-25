@@ -1,144 +1,49 @@
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translate3d(24px, 0, 0) scale(0.97);
-    filter: blur(3px);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
-  }
+.toastRoot {
+  --app-toast-accent: var(--catppuccin-color-sky);
+
+  border-color: color-mix(in oklab, var(--app-toast-accent) 35%, transparent);
+  background: var(--catppuccin-color-mantle);
 }
 
-@keyframes toast-out {
-  from {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(24px, 0, 0) scale(0.98);
-    filter: blur(2px);
-  }
+.toastRoot[data-type="success"] {
+  --app-toast-accent: var(--catppuccin-color-green);
 }
 
-.toastViewport {
-  right: calc(1.25rem + env(safe-area-inset-right));
-  bottom: calc(1.25rem + env(safe-area-inset-bottom));
-  height: 0;
-  overflow: visible;
-  isolation: isolate;
+.toastRoot[data-type="error"] {
+  --app-toast-accent: var(--catppuccin-color-red);
 }
 
-.toastItem {
-  --toast-scale: max(0.7, calc(1 - var(--toast-index) * 0.1));
-
-  z-index: calc(100 - var(--toast-index));
-  pointer-events: auto;
-  transform: translate3d(0, calc(var(--toast-index) * -0.75rem), 0) scale(var(--toast-scale));
-  transform-origin: bottom center;
-  transition:
-    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 200ms ease;
-  will-change: transform;
+.toastRoot[data-type="warning"] {
+  --app-toast-accent: var(--catppuccin-color-yellow);
 }
 
-.toastItem[data-collapsed-hidden="true"] {
-  pointer-events: none;
-  opacity: 0;
+.toastRoot[data-type="loading"] {
+  --app-toast-accent: var(--catppuccin-color-blue);
 }
 
-.toastSwipe {
-  width: 100%;
-  touch-action: pan-y;
-  transform: translate3d(var(--toast-swipe-x, 0), 0, 0);
-}
-
-.toastSwipe[data-swipe-state] {
-  will-change: transform;
-}
-
-.toastSwipe[data-swipe-state="snapback"] {
-  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.toastSwipe[data-swipe-state="committing"] {
-  transition: transform 120ms ease-in;
-}
-
-.toastContent {
-  transition: opacity 150ms ease;
-}
-
-.toastItem:not([data-frontmost="true"]) .toastContent {
-  pointer-events: none;
-  opacity: 0;
-}
-
-.toastRoot[data-state="open"] {
-  animation: toast-in 200ms ease-out;
-}
-
-.toastRoot[data-state="closed"] {
-  pointer-events: none;
-  animation: toast-out 150ms ease-in forwards;
-}
-
-.toastViewport:focus-within .toastItem {
-  pointer-events: auto;
-  opacity: 1;
-  transform: translate3d(0, calc(var(--toast-offset-y) * -1), 0) scale(1);
-}
-
-.toastViewport:focus-within .toastContent {
-  pointer-events: auto;
-  opacity: 1;
-}
-
-.toastViewport:focus-within .toastItem::after {
+.toastRoot::after {
   position: absolute;
-  inset: auto 0 -0.75rem;
-  height: calc(0.75rem + 1px);
+  inset: auto 0 0;
+  height: 0.125rem;
+  background: color-mix(in oklab, var(--app-toast-accent) 70%, transparent);
+  pointer-events: none;
   content: "";
 }
 
-@media (hover: hover) {
-  .toastViewport:hover .toastItem {
-    pointer-events: auto;
-    opacity: 1;
-    transform: translate3d(0, calc(var(--toast-offset-y) * -1), 0) scale(1);
-  }
+.toastIcon {
+  color: var(--app-toast-accent);
+}
 
-  .toastViewport:hover .toastContent {
-    pointer-events: auto;
-    opacity: 1;
-  }
+.toastRoot:not([data-type="success"]) .toastIcon {
+  background: color-mix(in oklab, var(--app-toast-accent) 12%, transparent);
+}
 
-  .toastViewport:hover .toastItem::after {
-    position: absolute;
-    inset: auto 0 -0.75rem;
-    height: calc(0.75rem + 1px);
-    content: "";
-  }
+.toastDismiss[inert] {
+  pointer-events: none;
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .toastItem,
-  .toastSwipe,
-  .toastContent {
-    transition: none;
-  }
-
-  .toastRoot {
-    animation: none !important;
-  }
-
-  .toastRoot[data-state="closed"] {
-    opacity: 0;
-  }
-
   .toastIcon :global(.animate-spin) {
     animation: none !important;
   }
