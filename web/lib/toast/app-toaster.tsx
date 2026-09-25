@@ -15,8 +15,13 @@ export const AppToaster: Component = () => (
       dismiss: `${styles.toastDismiss} mt-0.5 ml-1 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-ctp-subtext0 transition-colors hover:bg-ctp-surface0/75 hover:text-ctp-text focus-visible:ring-2 focus-visible:ring-ctp-sky/40`,
     }}
     dismissContent={<X size={14} />}
-    renderToast={(toast) => (
+    renderToast={(toast, { remainingPercent }) => (
       <>
+        <div
+          class={styles.toastProgress}
+          style={{ transform: `scaleX(${(remainingPercent() ?? 100) / 100})` }}
+          aria-hidden="true"
+        />
         <div
           class={`${styles.toastIcon} flex h-6 w-6 shrink-0 items-center justify-center`}
           aria-hidden="true"

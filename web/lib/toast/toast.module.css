@@ -21,13 +21,13 @@
   --app-toast-accent: var(--catppuccin-color-blue);
 }
 
-.toastRoot::after {
+.toastProgress {
   position: absolute;
   inset: auto 0 0;
   height: 0.125rem;
   background: color-mix(in oklab, var(--app-toast-accent) 70%, transparent);
   pointer-events: none;
-  content: "";
+  transform-origin: left;
 }
 
 .toastIcon {
