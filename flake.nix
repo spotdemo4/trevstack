@@ -150,11 +150,14 @@
           server = pkgs.callPackage ./server { inherit docs web; };
         };
 
-        images.default = pkgs.mkImage {
-          src = self.packages.${system}.default;
-          contents = with pkgs; [ dockerTools.caCertificates ];
-          config.ExposedPorts = {
-            "8080/tcp" = { };
+        images = rec {
+          default = server;
+          server = pkgs.mkImage {
+            src = self.packages.${system}.default;
+            contents = with pkgs; [ dockerTools.caCertificates ];
+            config.ExposedPorts = {
+              "8080/tcp" = { };
+            };
           };
         };
 
