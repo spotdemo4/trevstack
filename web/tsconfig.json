@@ -12,6 +12,7 @@
     "isolatedModules": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "noEmit": true,
 
     // Type Checking & Safety

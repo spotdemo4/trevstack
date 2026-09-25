@@ -3,6 +3,7 @@ import { ExternalLink, GitBranch } from "$lib/icon";
 import type { JSX } from "@solidjs/web";
 import { children, type Component } from "solid-js";
 
+import { version } from "../package.json";
 import { NavLink } from "./nav-link";
 import { Navbar } from "./navbar";
 import { ThemeSwitch } from "./theme-switch";
@@ -54,6 +55,9 @@ export const Layout: Component<LayoutProps> = (props) => {
         </div>
       </header>
       <main class="grow">{resolved()}</main>
+      <footer class="flex h-footer shrink-0 items-center justify-center border-t border-ctp-surface1 bg-ctp-crust px-4 text-xs text-ctp-subtext0">
+        v{version}
+      </footer>
     </div>
   );
 };

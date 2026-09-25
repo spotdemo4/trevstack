@@ -5,7 +5,8 @@
 
 @theme {
   --spacing-header: calc(var(--spacing) * 12);
-  --spacing-body: calc(100dvh - var(--spacing-header));
+  --spacing-footer: calc(var(--spacing) * 8);
+  --spacing-body: calc(100dvh - var(--spacing-header) - var(--spacing-footer));
 }
 
 :root {
