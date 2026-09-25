@@ -9,10 +9,15 @@ import { type Component, Show, createSignal, createUniqueId } from "solid-js";
 
 import styles from "./user-menu.module.css";
 
-export const UserMenu: Component = () => {
+type UserMenuProps = {
+  onBeforeNavigate?: () => void;
+};
+
+export const UserMenu: Component<UserMenuProps> = (props) => {
   const navigate = useNavigate();
   const subject = () => session.claims()?.sub ?? "";
   const popoverId = createUniqueId();
+  const anchorName = `--user-menu-${popoverId}`;
   const [isOpen, setIsOpen] = createSignal(false);
   const [isLoggingOut, setIsLoggingOut] = createSignal(false);
   let popover: HTMLDivElement | undefined;
@@ -26,6 +31,7 @@ export const UserMenu: Component = () => {
         Effect.match({
           onSuccess: () => {
             popover?.hidePopover();
+            props.onBeforeNavigate?.();
             session.clear();
             toaster.success({ title: "Signed out" });
             navigate("/auth", { replace: true });
@@ -50,6 +56,7 @@ export const UserMenu: Component = () => {
         aria-controls={popoverId}
         aria-expanded={isOpen() ? "true" : "false"}
         popovertarget={popoverId}
+        style={{ "anchor-name": anchorName }}
         class={`${styles.Trigger} ${isOpen() ? styles.TriggerOpen : ""}`}
       >
         <User />
@@ -61,6 +68,7 @@ export const UserMenu: Component = () => {
         popover="auto"
         role="group"
         aria-label="Account actions"
+        style={{ "position-anchor": anchorName }}
         class={styles.Panel}
         onToggle={(event) => setIsOpen(event.newState === "open")}
       >

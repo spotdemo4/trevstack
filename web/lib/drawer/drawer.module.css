@@ -1,4 +1,9 @@
 .dialog {
+  --drawer-axis-x: 0;
+  --drawer-axis-y: 1;
+  --drawer-exit-x: 0%;
+  --drawer-exit-y: 100%;
+
   inset: 0;
   width: 100vw;
   height: 100dvh;
@@ -17,6 +22,35 @@
   justify-content: center;
 }
 
+.dialog[data-direction="top"] {
+  --drawer-axis-y: -1;
+  --drawer-exit-y: -100%;
+
+  align-items: flex-start;
+}
+
+.dialog[data-direction="left"],
+.dialog[data-direction="right"] {
+  --drawer-axis-y: 0;
+  --drawer-exit-y: 0%;
+
+  align-items: stretch;
+}
+
+.dialog[data-direction="left"] {
+  --drawer-axis-x: -1;
+  --drawer-exit-x: -100%;
+
+  justify-content: flex-start;
+}
+
+.dialog[data-direction="right"] {
+  --drawer-axis-x: 1;
+  --drawer-exit-x: 100%;
+
+  justify-content: flex-end;
+}
+
 .dialog::backdrop {
   background: color-mix(in srgb, var(--catppuccin-color-crust) 60%, transparent);
   animation: drawer-backdrop-in 200ms ease-out;
@@ -27,7 +61,7 @@
 }
 
 .dialog[data-opening] .content {
-  transform: translate3d(0, 100%, 0);
+  transform: translate3d(var(--drawer-exit-x), var(--drawer-exit-y), 0);
 }
 
 .dialog[data-closing]::backdrop {
@@ -40,9 +74,81 @@
 }
 
 .content {
+  --drawer-drag-x: calc(var(--drawer-drag-offset, 0px) * var(--drawer-axis-x));
+  --drawer-drag-y: calc(var(--drawer-drag-offset, 0px) * var(--drawer-axis-y));
+
+  width: 100%;
+  max-height: calc(100dvh - 3rem);
+  flex-direction: column;
+  border-top-width: 1px;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   backface-visibility: hidden;
-  transform: translate3d(0, var(--drawer-drag-offset, 0), 0);
+  transform: translate3d(var(--drawer-drag-x), var(--drawer-drag-y), 0);
   will-change: transform;
+}
+
+.dialog[data-direction="top"] .content {
+  flex-direction: column-reverse;
+  border-top-width: 0;
+  border-bottom-width: 1px;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.dialog[data-direction="left"] .content,
+.dialog[data-direction="right"] .content {
+  width: min(22rem, calc(100vw - 3rem));
+  height: 100%;
+  max-height: none;
+  border-top-width: 0;
+}
+
+.dialog[data-direction="left"] .content {
+  flex-direction: row-reverse;
+  border-right-width: 1px;
+  border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+}
+
+.dialog[data-direction="right"] .content {
+  flex-direction: row;
+  border-left-width: 1px;
+  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+}
+
+.handle {
+  height: 1.75rem;
+}
+
+.grip {
+  width: 3rem;
+  height: 0.375rem;
+}
+
+.dialog[data-direction="left"] .handle,
+.dialog[data-direction="right"] .handle {
+  width: 1.75rem;
+  height: auto;
+}
+
+.dialog[data-direction="left"] .grip,
+.dialog[data-direction="right"] .grip {
+  width: 0.375rem;
+  height: 3rem;
+}
+
+.body {
+  padding: 0 calc(1rem + env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom))
+    calc(1rem + env(safe-area-inset-left));
+}
+
+.dialog[data-direction="top"] .body {
+  padding-top: calc(1rem + env(safe-area-inset-top));
+  padding-bottom: 0;
+}
+
+.dialog[data-direction="left"] .body,
+.dialog[data-direction="right"] .body {
+  flex: 1;
+  padding-top: calc(1rem + env(safe-area-inset-top));
 }
 
 .content[data-settling] {
@@ -70,11 +176,11 @@
 @keyframes drawer-content-out {
   from {
     opacity: 1;
-    transform: translate3d(0, var(--drawer-drag-offset, 0), 0) scale(1);
+    transform: translate3d(var(--drawer-drag-x), var(--drawer-drag-y), 0) scale(1);
   }
   to {
     opacity: 0;
-    transform: translate3d(0, 100%, 0) scale(0.98);
+    transform: translate3d(var(--drawer-exit-x), var(--drawer-exit-y), 0) scale(0.98);
   }
 }
 

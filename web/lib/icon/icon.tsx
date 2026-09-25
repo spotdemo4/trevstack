@@ -79,6 +79,12 @@ export const X: Component<IconProps> = (props) => (
   </Svg>
 );
 
+export const Menu: Component<IconProps> = (props) => (
+  <Svg {...props}>
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </Svg>
+);
+
 export const CircleAlert: Component<IconProps> = (props) => (
   <Svg {...props}>
     <circle cx="12" cy="12" r="10" />

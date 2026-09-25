@@ -84,6 +84,18 @@
   }
 }
 
+@media (width < 900px) {
+  @supports (top: anchor(bottom)) {
+    .Panel {
+      top: anchor(bottom);
+      right: auto;
+      left: clamp(0.5rem, anchor(left), calc(100vw - 14rem - 0.5rem));
+      margin-top: 0.5rem;
+      position-try-fallbacks: flip-block;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .Panel,
   .Action {

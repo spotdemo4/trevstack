@@ -10,6 +10,7 @@ export {
   GitBranch,
   Info,
   LoaderCircle,
+  Menu,
   Moon,
   SlidersHorizontal,
   Sun,

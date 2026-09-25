@@ -20,10 +20,13 @@ type ScrollLock = {
   scrollY: number;
 };
 
+type DrawerDirection = "top" | "right" | "bottom" | "left";
+
 type DrawerContextValue = {
   titleId: string;
+  direction: () => DrawerDirection;
   open: () => void;
-  close: () => void;
+  close: (options?: { immediate?: boolean }) => void;
   handleClosed: () => void;
   setDialog: (dialog: HTMLDialogElement) => void;
   setTrigger: (trigger: HTMLButtonElement) => void;
@@ -31,7 +34,7 @@ type DrawerContextValue = {
 
 const DrawerContext = createContext<DrawerContextValue>();
 
-const useDrawer = () => {
+export const useDrawer = () => {
   const context = useContext(DrawerContext);
   if (!context) throw new Error("Drawer components must be used within Drawer.Root");
   return context;
@@ -39,6 +42,7 @@ const useDrawer = () => {
 
 type RootProps = {
   children?: JSX.Element;
+  direction?: DrawerDirection;
 };
 
 export const Root: Component<RootProps> = (props) => {
@@ -99,37 +103,40 @@ export const Root: Component<RootProps> = (props) => {
     window.scrollTo(lock.scrollX, lock.scrollY);
   };
 
-  const finishClose = () => {
+  const handleClosed = () => {
+    if (dialog?.open) return;
     if (closeTimer !== undefined) window.clearTimeout(closeTimer);
     closeTimer = undefined;
+    cancelOpening();
     dialog?.removeAttribute("data-closing");
-    if (dialog?.open) dialog.close();
+    if (!scrollLock) return;
+    unlockScroll();
+    trigger?.focus({ preventScroll: true });
   };
 
-  const close = () => {
-    if (!dialog?.open || dialog.hasAttribute("data-closing")) return;
+  const finishClose = () => {
+    if (dialog?.open) dialog.close();
+    // Release the lock before a link's default navigation, not in the queued close event.
+    handleClosed();
+  };
+
+  const close: DrawerContextValue["close"] = (options) => {
+    if (!dialog?.open) return;
     cancelOpening();
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (options?.immediate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       finishClose();
       return;
     }
+    if (dialog.hasAttribute("data-closing")) return;
 
     dialog.setAttribute("data-closing", "");
     closeTimer = window.setTimeout(finishClose, closeDuration);
   };
 
-  const handleClosed = () => {
-    if (closeTimer !== undefined) window.clearTimeout(closeTimer);
-    closeTimer = undefined;
-    cancelOpening();
-    dialog?.removeAttribute("data-closing");
-    unlockScroll();
-    trigger?.focus();
-  };
-
   onCleanup(() => {
     if (closeTimer !== undefined) window.clearTimeout(closeTimer);
     cancelOpening();
+    if (dialog?.open) dialog.close();
     unlockScroll();
   });
 
@@ -137,6 +144,7 @@ export const Root: Component<RootProps> = (props) => {
     <DrawerContext
       value={{
         titleId,
+        direction: () => props.direction ?? "bottom",
         open: () => {
           if (!dialog || dialog.open) return;
           dialog.removeAttribute("data-closing");
@@ -215,9 +223,14 @@ export const Content: Component<ContentProps> = (props) => {
   const drawer = useDrawer();
   const contentProps = omit(props, "backdropClass", "positionerClass", "class");
   let content: HTMLDivElement | undefined;
-  let dragStartY = 0;
+  const horizontal = () => drawer.direction() === "left" || drawer.direction() === "right";
+  const outwardSign = () =>
+    drawer.direction() === "left" || drawer.direction() === "top" ? -1 : 1;
+  const pointerPosition = (event: PointerEvent) =>
+    (horizontal() ? event.clientX : event.clientY) * outwardSign();
+  let dragStart = 0;
   let dragDistance = 0;
-  let lastDragY = 0;
+  let lastDragPosition = 0;
   let lastDragTime = 0;
   let dragVelocity = 0;
 
@@ -252,8 +265,10 @@ export const Content: Component<ContentProps> = (props) => {
     <dialog
       ref={drawer.setDialog}
       aria-labelledby={drawer.titleId}
+      data-direction={drawer.direction()}
       class={twMerge(styles.dialog, props.backdropClass, props.positionerClass)}
-      onClose={() => {
+      onClose={(event) => {
+        if (event.currentTarget.open) return;
         content?.removeAttribute("data-dragging");
         content?.removeAttribute("data-settling");
         setDragOffset(0);
@@ -271,19 +286,19 @@ export const Content: Component<ContentProps> = (props) => {
         {...contentProps}
         ref={setContent}
         class={twMerge(
-          `${styles.content} flex max-h-[calc(100dvh-3rem)] w-full flex-col overflow-hidden rounded-t-xl border-t border-ctp-surface0 bg-ctp-mantle shadow-xl`,
+          `${styles.content} flex overflow-hidden border-ctp-surface0 bg-ctp-mantle shadow-xl`,
           props.class,
         )}
       >
         <div
           aria-hidden="true"
-          class="flex h-7 shrink-0 cursor-grab touch-none items-center justify-center active:cursor-grabbing"
+          class={`${styles.handle} flex shrink-0 cursor-grab touch-none items-center justify-center active:cursor-grabbing`}
           onPointerDown={(event) => {
             if (event.button !== 0) return;
             event.currentTarget.setPointerCapture(event.pointerId);
-            dragStartY = event.clientY;
+            dragStart = pointerPosition(event);
             dragDistance = 0;
-            lastDragY = event.clientY;
+            lastDragPosition = dragStart;
             lastDragTime = event.timeStamp;
             dragVelocity = 0;
             content?.removeAttribute("data-settling");
@@ -293,16 +308,18 @@ export const Content: Component<ContentProps> = (props) => {
             if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
             const now = event.timeStamp;
             const elapsed = now - lastDragTime;
-            dragDistance = Math.max(0, event.clientY - dragStartY);
-            if (elapsed > 0) dragVelocity = (event.clientY - lastDragY) / elapsed;
-            lastDragY = event.clientY;
+            const position = pointerPosition(event);
+            dragDistance = Math.max(0, position - dragStart);
+            if (elapsed > 0) dragVelocity = (position - lastDragPosition) / elapsed;
+            lastDragPosition = position;
             lastDragTime = now;
             setDragOffset(dragDistance);
           }}
           onPointerUp={(event) => {
             if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
             event.currentTarget.releasePointerCapture(event.pointerId);
-            const distanceThreshold = Math.min((content?.offsetHeight ?? 0) * 0.25, 120);
+            const size = horizontal() ? content?.offsetWidth : content?.offsetHeight;
+            const distanceThreshold = Math.min((size ?? 0) * 0.25, 120);
             if (dragDistance > distanceThreshold || (dragDistance > 20 && dragVelocity > 0.5)) {
               dismiss();
             } else {
@@ -311,9 +328,11 @@ export const Content: Component<ContentProps> = (props) => {
           }}
           onPointerCancel={settle}
         >
-          <div class="h-1.5 w-12 rounded-full bg-ctp-surface2" />
+          <div class={`${styles.grip} rounded-full bg-ctp-surface2`} />
         </div>
-        <div class="flex min-h-0 flex-col gap-4 overflow-y-auto overscroll-contain px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div
+          class={`${styles.body} flex min-h-0 min-w-0 flex-col gap-4 overflow-y-auto overscroll-contain`}
+        >
           {props.children}
         </div>
       </div>
