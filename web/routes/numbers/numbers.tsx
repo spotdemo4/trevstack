@@ -71,10 +71,10 @@ export const Numbers: Component = () => {
     <Show
       when={isDesktop()}
       fallback={
-        <div class="pb-[calc(4rem+env(safe-area-inset-bottom))]">
+        <div class="pb-[calc(5rem+env(safe-area-inset-bottom))]">
           <TableContent scrollMode="window" />
           <Drawer.Root>
-            <Drawer.Trigger class="fixed right-[calc(1rem+env(safe-area-inset-right))] bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 m-0 shadow-lg">
+            <Drawer.Trigger class="fixed right-[calc(1rem+env(safe-area-inset-right))] bottom-[calc(2rem+env(safe-area-inset-bottom))] z-20 m-0 shadow-lg">
               <SlidersHorizontal size={16} /> Filters
             </Drawer.Trigger>
             <Drawer.Content>
