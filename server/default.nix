@@ -41,8 +41,8 @@ buildGoModule (final: {
     description = "full-stack template";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
-    homepage = "https://trev.zip/llc/stack";
-    changelog = "https://trev.zip/llc/stack/releases";
-    downloadPage = "https://trev.zip/llc/stack/releases/tag/v${final.version}";
+    homepage = "https://trev.zip/template/stack";
+    changelog = "https://trev.zip/template/stack/releases";
+    downloadPage = "https://trev.zip/template/stack/releases/tag/v${final.version}";
   };
 })

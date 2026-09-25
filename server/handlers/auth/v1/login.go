@@ -8,9 +8,9 @@ import (
 
 	"connectrpc.com/connect"
 	"golang.org/x/crypto/bcrypt"
-	"trev.zip/llc/stack/server/auth"
-	authv1 "trev.zip/llc/stack/server/connect/auth/v1"
-	"trev.zip/llc/stack/server/database"
+	"trev.zip/template/stack/server/auth"
+	authv1 "trev.zip/template/stack/server/connect/auth/v1"
+	"trev.zip/template/stack/server/database"
 )
 
 //go:embed select_user.sql

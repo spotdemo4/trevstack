@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	domainauth "trev.zip/llc/stack/server/auth"
-	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
+	domainauth "trev.zip/template/stack/server/auth"
+	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
 )
 
 type AuthInterceptor struct {

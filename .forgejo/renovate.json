@@ -6,7 +6,7 @@
   "requireConfig": "ignored",
   "platform": "forgejo",
   "endpoint": "https://trev.zip/api/v1",
-  "repositories": ["llc/stack"],
+  "repositories": ["template/stack"],
   "allowedCommands": [
     "^buf dep update$",
     "^npm audit fix --audit-level=none --prefix docs$",

@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"trev.zip/llc/stack/server/logger"
+	"trev.zip/template/stack/server/logger"
 )
 
 //go:embed migrations

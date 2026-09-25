@@ -248,9 +248,9 @@ const file_auth_v1_login_proto_rawDesc = "" +
 	"\rLoginResponse\x12.\n" +
 	"\x03jwt\x18\x01 \x01(\tB\x1c\xbaG\x19:\x17\x12\x15example-session-tokenR\x03jwt\x12\"\n" +
 	"\x03sub\x18\x02 \x01(\tB\x10\xbaG\r:\v\x12\tdemo_userR\x03sub\x12%\n" +
-	"\x03exp\x18\x03 \x01(\x03B\x13\xbaG\x10:\x0e\x12\f\"1893456000\"R\x03expB\x88\x01\n" +
+	"\x03exp\x18\x03 \x01(\x03B\x13\xbaG\x10:\x0e\x12\f\"1893456000\"R\x03expB\x8d\x01\n" +
 	"\vcom.auth.v1B\n" +
-	"LoginProtoP\x01Z0trev.zip/llc/stack/server/connect/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
+	"LoginProtoP\x01Z5trev.zip/template/stack/server/connect/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_login_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_auth_v1_login_proto_goTypes = []any{

@@ -5,8 +5,8 @@ import (
 
 	"connectrpc.com/connect"
 	"golang.org/x/crypto/bcrypt"
-	"trev.zip/llc/stack/server/auth"
-	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
+	"trev.zip/template/stack/server/auth"
+	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
 )
 
 var dummyPasswordHash = func() []byte {

@@ -41,7 +41,7 @@ export const Layout: Component<LayoutProps> = (props) => {
               <ThemeSwitch />
               <Button.Icon
                 as="a"
-                href="https://trev.zip/llc/stack"
+                href="https://trev.zip/template/stack"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Open TrevStack on GitHub"

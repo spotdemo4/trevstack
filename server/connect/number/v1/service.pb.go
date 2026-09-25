@@ -33,8 +33,8 @@ const file_number_v1_service_proto_rawDesc = "" +
 	"\n" +
 	"TimeSeries\x12\x1c.number.v1.TimeSeriesRequest\x1a\x1d.number.v1.TimeSeriesResponse\"\x1a\xbaG\x17\x12\x15Get metrics over time\x12p\n" +
 	"\fDistribution\x12\x1e.number.v1.DistributionRequest\x1a\x1f.number.v1.DistributionResponse\"\x1f\xbaG\x1c\x12\x1aGet the value distribution\x12e\n" +
-	"\bTopNames\x12\x1a.number.v1.TopNamesRequest\x1a\x1b.number.v1.TopNamesResponse\" \xbaG\x1d\x12\x1bGet the most frequent namesB\x98\x01\n" +
-	"\rcom.number.v1B\fServiceProtoP\x01Z4trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
+	"\bTopNames\x12\x1a.number.v1.TopNamesRequest\x1a\x1b.number.v1.TopNamesResponse\" \xbaG\x1d\x12\x1bGet the most frequent namesB\x9d\x01\n" +
+	"\rcom.number.v1B\fServiceProtoP\x01Z9trev.zip/template/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 
 var file_number_v1_service_proto_goTypes = []any{

@@ -12,11 +12,11 @@ import (
 	"connectrpc.com/connect"
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/mattn/go-sqlite3"
-	domainauth "trev.zip/llc/stack/server/auth"
-	numberv1 "trev.zip/llc/stack/server/connect/number/v1"
-	"trev.zip/llc/stack/server/connect/number/v1/numberv1connect"
-	"trev.zip/llc/stack/server/database"
-	numberhandler "trev.zip/llc/stack/server/handlers/number/v1"
+	domainauth "trev.zip/template/stack/server/auth"
+	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	"trev.zip/template/stack/server/connect/number/v1/numberv1connect"
+	"trev.zip/template/stack/server/database"
+	numberhandler "trev.zip/template/stack/server/handlers/number/v1"
 )
 
 const interceptorTestSecret = "01234567890123456789012345678901"

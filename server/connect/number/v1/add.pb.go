@@ -211,8 +211,8 @@ const file_number_v1_add_proto_rawDesc = "" +
 	"\x05_nameB\t\n" +
 	"\a_number\",\n" +
 	"\vAddResponse\x12\x1d\n" +
-	"\x03sum\x18\x01 \x01(\x04B\v\xbaG\b:\x06\x12\x04\"42\"R\x03sumB\x94\x01\n" +
-	"\rcom.number.v1B\bAddProtoP\x01Z4trev.zip/llc/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
+	"\x03sum\x18\x01 \x01(\x04B\v\xbaG\b:\x06\x12\x04\"42\"R\x03sumB\x99\x01\n" +
+	"\rcom.number.v1B\bAddProtoP\x01Z9trev.zip/template/stack/server/connect/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 
 var file_number_v1_add_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

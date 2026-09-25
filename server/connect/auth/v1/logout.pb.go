@@ -112,8 +112,8 @@ const file_auth_v1_logout_proto_rawDesc = "" +
 	"\n" +
 	"\x14auth/v1/logout.proto\x12\aauth.v1\"\x0f\n" +
 	"\rLogoutRequest\"\x10\n" +
-	"\x0eLogoutResponseB\x89\x01\n" +
-	"\vcom.auth.v1B\vLogoutProtoP\x01Z0trev.zip/llc/stack/server/connect/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
+	"\x0eLogoutResponseB\x8e\x01\n" +
+	"\vcom.auth.v1B\vLogoutProtoP\x01Z5trev.zip/template/stack/server/connect/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_logout_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_auth_v1_logout_proto_goTypes = []any{

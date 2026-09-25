@@ -9,8 +9,8 @@ import (
 	"connectrpc.com/connect"
 	"github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
-	authv1 "trev.zip/llc/stack/server/connect/auth/v1"
-	"trev.zip/llc/stack/server/database"
+	authv1 "trev.zip/template/stack/server/connect/auth/v1"
+	"trev.zip/template/stack/server/database"
 )
 
 //go:embed insert_user.sql

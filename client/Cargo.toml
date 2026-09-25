@@ -5,8 +5,8 @@ edition = "2024"
 rust-version = "1.85"
 description = "full-stack template"
 license = "MIT"
-homepage = "https://trev.zip/llc/stack"
-repository = "https://trev.zip/llc/stack"
+homepage = "https://trev.zip/template/stack"
+repository = "https://trev.zip/template/stack"
 
 [[bin]]
 name = "client"

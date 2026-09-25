@@ -12,12 +12,12 @@ import (
 	"connectrpc.com/connect"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
-	"trev.zip/llc/stack/server/auth"
-	authv1 "trev.zip/llc/stack/server/connect/auth/v1"
-	"trev.zip/llc/stack/server/connect/auth/v1/authv1connect"
-	"trev.zip/llc/stack/server/database"
-	authhandler "trev.zip/llc/stack/server/handlers/auth/v1"
-	ratelimitinterceptor "trev.zip/llc/stack/server/interceptors/ratelimit"
+	"trev.zip/template/stack/server/auth"
+	authv1 "trev.zip/template/stack/server/connect/auth/v1"
+	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
+	"trev.zip/template/stack/server/database"
+	authhandler "trev.zip/template/stack/server/handlers/auth/v1"
+	ratelimitinterceptor "trev.zip/template/stack/server/interceptors/ratelimit"
 )
 
 const handlerTestSecret = "01234567890123456789012345678901"
