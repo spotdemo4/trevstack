@@ -13,7 +13,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@scalar/api-reference": "^1.72.0"
+    "@scalar/api-reference": "^1.72.1"
   },
   "devDependencies": {
     "typescript": "^7.0.2",
