@@ -1,0 +1,54 @@
+# https://github.com/actions/labeler
+
+actions:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/workflows/**
+          - .forgejo/workflows/**
+
+go:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.go"
+          - "**/go.mod"
+          - "**/go.sum"
+
+nix:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.nix"
+          - "**/flake.lock"
+
+node:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
+          - "**/package.json"
+          - "**/package-lock.json"
+
+proto:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.proto"
+          - "**/buf.yaml"
+          - "**/buf.gen.yaml"
+          - "**/buf.lock"
+
+python:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.py"
+          - "**/pyproject.toml"
+
+rust:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.rs"
+          - "**/Cargo.toml"
+          - "**/Cargo.lock"
+
+sql:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.sql"
+          - "**/.sqlfluff"
