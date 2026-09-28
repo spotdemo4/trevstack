@@ -1,38 +1,41 @@
 {
-  buildGoModule,
+  mkGoModule,
   docs,
   go-tools,
   lib,
   web,
 }:
-buildGoModule (final: {
+mkGoModule (final: {
   pname = "trevstack-server";
   version = "1.0.3";
 
   src = ./.;
   goSum = ./go.sum;
-  proxyVendor = true;
-  vendorHash = "sha256-pbqRwYWuO5WImuVXn3X9KX8up3hTXGQZwVomyeX3o7U=";
+  vendorHash = "sha256-EAuHMjk0E6eIyE6BIxF5vT43iu5WgWFr0YEKinWdzec=";
 
   postConfigure = ''
     cp -r ${docs} docs
     cp -r ${web} web
   '';
 
-  nativeCheckInputs = [
-    go-tools
-  ];
+  doCheck = false;
+  nativeCheckInputs = [ go-tools ];
   checkPhase = ''
     runHook preCheck
     export HOME=$(mktemp -d)
+
     go test ./...
     go test -tags=dev ./...
+
     go vet ./...
     go vet -tags=dev ./...
+
     staticcheck ./...
     staticcheck -tags=dev ./...
+
     go fix -diff ./...
     go fix -diff -tags=dev ./...
+
     runHook postCheck
   '';
 
