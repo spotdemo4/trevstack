@@ -1,9 +1,9 @@
 {
   clippy,
   lib,
-  rustPlatform,
+  mkRustPackage,
 }:
-rustPlatform.buildRustPackage (final: {
+mkRustPackage (final: {
   pname = "trevstack-client";
   version = "2.0.1";
 
