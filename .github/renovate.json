@@ -63,13 +63,21 @@
       "postUpdateOptions": ["npmInstallTwice"]
     },
     {
+      "matchManagers": ["cargo"],
+      "addLabels": ["rust"]
+    },
+    {
       "matchManagers": ["npm"],
       "matchDepTypes": ["engines"],
       "enabled": false
     },
     {
-      "matchManagers": ["cargo"],
-      "addLabels": ["rust"]
+      "matchPackageNames": ["solid-js", "@solidjs/web", "@solidjs/router", "@solidjs/vite-plugin"],
+      "groupName": "solidjs"
+    },
+    {
+      "matchPackageNames": ["@connectrpc/connect", "@connectrpc/connect-web"],
+      "groupName": "connectrpc"
     }
   ]
 }

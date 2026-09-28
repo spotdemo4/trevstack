@@ -155,6 +155,10 @@
 
         images = rec {
           default = server;
+          client = pkgs.mkImage {
+            src = self.packages.${system}.client;
+            contents = with pkgs; [ dockerTools.caCertificates ];
+          };
           server = pkgs.mkImage {
             src = self.packages.${system}.default;
             contents = with pkgs; [ dockerTools.caCertificates ];
