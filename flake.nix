@@ -60,10 +60,6 @@
               protoc-gen-prost
               protoc-gen-tonic
 
-              # sql
-              sqlfluff
-              sqls
-
               # python
               python3
               ruff
@@ -73,11 +69,12 @@
               nixd
               nixfmt
 
-              zizmor # actions
+              oxfmt # format
+              sqlfluff # sql
+              tombi # toml
               vscode-json-languageserver # json
               yaml-language-server # yaml
-              tombi # toml
-              oxfmt # format
+              zizmor # actions
 
               # util
               treefmt
