@@ -19,7 +19,7 @@
     "@connectrpc/connect": "^2.2.0",
     "@connectrpc/connect-web": "^2.2.0",
     "@solidjs/router": "^2.0.0-next.30",
-    "@solidjs/web": "^2.0.0-rc.10",
+    "@solidjs/web": "^2.0.0-rc.11",
     "@trev.zip/solid-toast": "^1.1.2",
     "d3-array": "^3.2.4",
     "d3-axis": "^3.0.0",
@@ -28,12 +28,12 @@
     "d3-selection": "^3.0.0",
     "d3-shape": "^3.2.0",
     "effect": "^3.22.2",
-    "solid-js": "^2.0.0-rc.9",
+    "solid-js": "^2.0.0-rc.11",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@catppuccin/tailwindcss": "^1.0.0",
-    "@solidjs/vite-plugin": "^3.0.0-next.45",
+    "@solidjs/vite-plugin": "^3.0.0-next.46",
     "@tailwindcss/vite": "^4.3.3",
     "@types/d3": "^7.4.3",
     "@types/node": "^24.19.0",
