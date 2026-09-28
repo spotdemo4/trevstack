@@ -7,7 +7,7 @@
 }:
 buildGoModule (final: {
   pname = "trevstack-server";
-  version = "1.0.2";
+  version = "1.0.3";
 
   src = ./.;
   goSum = ./go.sum;
