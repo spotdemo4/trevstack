@@ -6,5 +6,8 @@ use cli::Config;
 use client::ClientError;
 
 pub async fn run(config: Config) -> Result<u64, ClientError> {
-    config.url.add(config.name, config.number).await
+    config
+        .url
+        .add(config.credentials, config.name, config.number)
+        .await
 }
