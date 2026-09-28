@@ -176,28 +176,16 @@
             server
             ;
 
-          sql = {
-            root = ./.;
-            filter = file: file.hasExt "sql";
-            include = [
-              ./.sqlfluff
-            ];
-            packages = with pkgs; [
-              sqlfluff
-            ];
+          go = {
+            src = self.packages.${system}.server;
+            packages = with pkgs; [ go-tools ];
             script = ''
-              sqlfluff lint
-            '';
-          };
-
-          nix = {
-            root = ./.;
-            filter = file: file.hasExt "nix";
-            packages = with pkgs; [
-              nixfmt
-            ];
-            script = ''
-              nixfmt --check "$file"
+              go vet ./...
+              go vet -tags=dev ./...
+              staticcheck ./...
+              staticcheck -tags=dev ./...
+              go fix -diff ./...
+              go fix -diff -tags=dev ./...
             '';
           };
 
@@ -217,12 +205,42 @@
             '';
           };
 
+          integration = {
+            root = ./test;
+            packages = with pkgs; [ python3 ];
+            script = ''
+              for test in test_*.py; do
+                python3 "$test" \
+                  ${pkgs.lib.getExe self.packages.${system}.client} \
+                  ${pkgs.lib.getExe self.packages.${system}.server}
+              done
+            '';
+            __darwinAllowLocalNetworking = true;
+          };
+
+          sql = {
+            root = ./.;
+            filter = file: file.hasExt "sql";
+            include = [ ./.sqlfluff ];
+            packages = with pkgs; [ sqlfluff ];
+            script = ''
+              sqlfluff lint
+            '';
+          };
+
+          nix = {
+            root = ./.;
+            filter = file: file.hasExt "nix";
+            packages = with pkgs; [ nixfmt ];
+            script = ''
+              nixfmt --check "$file"
+            '';
+          };
+
           python = {
             root = ./.;
             filter = file: file.hasExt "py";
-            include = [
-              ./pyproject.toml
-            ];
+            include = [ ./pyproject.toml ];
             packages = with pkgs; [
               python3
               ruff
@@ -233,21 +251,6 @@
               ruff format --check
               pyright
             '';
-          };
-
-          integration = {
-            root = ./test;
-            packages = with pkgs; [
-              python3
-            ];
-            script = ''
-              for test in test_*.py; do
-                python3 "$test" \
-                  ${pkgs.lib.getExe self.packages.${system}.client} \
-                  ${pkgs.lib.getExe self.packages.${system}.server}
-              done
-            '';
-            __darwinAllowLocalNetworking = true;
           };
 
           protobuf = {
@@ -302,9 +305,7 @@
           renovate-gh = {
             root = ./.github;
             files = ./.github/renovate.json;
-            packages = with pkgs; [
-              renovate
-            ];
+            packages = with pkgs; [ renovate ];
             script = ''
               renovate-config-validator renovate.json
             '';
@@ -313,9 +314,7 @@
           renovate-fj = {
             root = ./.forgejo;
             files = ./.forgejo/renovate.json;
-            packages = with pkgs; [
-              renovate
-            ];
+            packages = with pkgs; [ renovate ];
             script = ''
               renovate-config-validator renovate.json
             '';
@@ -324,9 +323,7 @@
           config = {
             root = ./.;
             filter = file: file.hasExt "json" || file.hasExt "yaml" || file.hasExt "toml" || file.hasExt "md";
-            packages = with pkgs; [
-              oxfmt
-            ];
+            packages = with pkgs; [ oxfmt ];
             script = ''
               oxfmt --check
             '';
