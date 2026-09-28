@@ -16,6 +16,7 @@
 
   // repository
   "extends": ["config:recommended"],
+  "addLabels": ["dep"],
   "nix": {
     "enabled": true
   },
