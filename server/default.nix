@@ -1,7 +1,6 @@
 {
   mkGoModule,
   docs,
-  go-tools,
   lib,
   web,
 }:
@@ -19,7 +18,6 @@ mkGoModule (final: {
   '';
 
   doCheck = true;
-  nativeCheckInputs = [ go-tools ];
   checkPhase = ''
     runHook preCheck
     go test ./...
