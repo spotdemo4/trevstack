@@ -18,6 +18,7 @@ mkGoModule (final: {
     cp -r ${web} web
   '';
 
+  doCheck = true;
   nativeCheckInputs = [ go-tools ];
   checkPhase = ''
     runHook preCheck

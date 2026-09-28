@@ -10,6 +10,7 @@ mkRustPackage (final: {
   src = ./.;
   cargoLock.lockFile = ./Cargo.lock;
 
+  doCheck = true;
   nativeCheckInputs = [ clippy ];
   checkPhase = ''
     runHook preCheck
@@ -20,6 +21,7 @@ mkRustPackage (final: {
     runHook postCheck
   '';
 
+  doInstallCheck = true;
   installCheckPhase = ''
     runHook preInstallCheck
 
