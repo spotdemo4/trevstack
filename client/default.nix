@@ -5,7 +5,7 @@
 }:
 rustPlatform.buildRustPackage (final: {
   pname = "trevstack-client";
-  version = "1.0.1";
+  version = "2.0.0";
 
   src = ./.;
   cargoLock.lockFile = ./Cargo.lock;
