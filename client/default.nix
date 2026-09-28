@@ -10,21 +10,22 @@ mkRustPackage (final: {
   src = ./.;
   cargoLock.lockFile = ./Cargo.lock;
 
-  nativeCheckInputs = [
-    clippy
-  ];
+  nativeCheckInputs = [ clippy ];
   checkPhase = ''
     runHook preCheck
+
     cargo test --offline
     cargo clippy --offline --all-targets -- -D warnings
+
     runHook postCheck
   '';
 
-  doInstallCheck = true;
   installCheckPhase = ''
     runHook preInstallCheck
+
     test -x "$out/bin/client"
     "$out/bin/client" --help >/dev/null
+
     runHook postInstallCheck
   '';
 
