@@ -4,23 +4,23 @@ use thiserror::Error;
 use crate::client::{Credentials, ServiceUrl, ServiceUrlError};
 
 const DEFAULT_URL: &str = "http://127.0.0.1:8080/grpc";
-const URL_ENV: &str = "NUMBER_SERVICE_URL";
-const USERNAME_ENV: &str = "NUMBER_SERVICE_USERNAME";
-const PASSWORD_ENV: &str = "NUMBER_SERVICE_PASSWORD";
+const URL_ENV: &str = "STACK_URL";
+const USERNAME_ENV: &str = "STACK_USERNAME";
+const PASSWORD_ENV: &str = "STACK_PASSWORD";
 
 #[derive(Debug, Parser)]
 #[command(version, about = "Send a name and number to the Number service")]
 pub struct Cli {
-    /// Number service base URL [env: NUMBER_SERVICE_URL]
+    /// Number service base URL [env: STACK_URL]
     #[arg(long)]
     url: Option<String>,
 
-    /// Account username [env: NUMBER_SERVICE_USERNAME]
+    /// Account username [env: STACK_USERNAME]
     #[arg(long)]
     username: Option<String>,
 
     /// Account password; prefer the environment variable to keep it out of the
-    /// process list [env: NUMBER_SERVICE_PASSWORD]
+    /// process list [env: STACK_PASSWORD]
     #[arg(long)]
     password: Option<String>,
 

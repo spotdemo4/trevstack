@@ -43,12 +43,12 @@ https://trev.zip/template/stack/releases
 #### nix
 
 ```sh
-NUMBER_SERVICE_PASSWORD=example-password \
+STACK_PASSWORD=example-password \
   nix run git+https://trev.zip/template/stack#client -- --username demo_user alice 10
 ```
 
 The client logs in before adding. Credentials come from `--username`/`--password` or
-`NUMBER_SERVICE_USERNAME`/`NUMBER_SERVICE_PASSWORD`; prefer the environment variable for the password.
+`STACK_USERNAME`/`STACK_PASSWORD`; prefer the environment variable for the password.
 
 #### download
 
