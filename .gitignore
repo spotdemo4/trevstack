@@ -11,6 +11,11 @@
 /result*
 /.direnv/
 
+# python
+/.venv
+.ruff_cache
+__pycache__
+
 # server
 /server/build/
 /server/tmp/

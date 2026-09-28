@@ -64,6 +64,11 @@
               sqlfluff
               sqls
 
+              # python
+              python3
+              ruff
+              pyright
+
               # nix
               nixd
               nixfmt
@@ -139,6 +144,7 @@
             sqlfluff
             nixfmt
             rustfmt
+            ruff
           ];
         };
 
@@ -208,6 +214,39 @@
             script = ''
               cargo fmt --check
             '';
+          };
+
+          python = {
+            root = ./.;
+            filter = file: file.hasExt "py";
+            include = [
+              ./pyproject.toml
+            ];
+            packages = with pkgs; [
+              python3
+              ruff
+              pyright
+            ];
+            script = ''
+              ruff check
+              ruff format --check
+              pyright
+            '';
+          };
+
+          integration = {
+            root = ./test;
+            packages = with pkgs; [
+              python3
+            ];
+            script = ''
+              for test in test_*.py; do
+                python3 "$test" \
+                  ${pkgs.lib.getExe self.packages.${system}.client} \
+                  ${pkgs.lib.getExe self.packages.${system}.server}
+              done
+            '';
+            __darwinAllowLocalNetworking = true;
           };
 
           protobuf = {

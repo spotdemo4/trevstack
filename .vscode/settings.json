@@ -96,6 +96,15 @@
     "editor.defaultFormatter": "sqlfluff.vscode-sqlfluff"
   },
 
+  // charliermarsh.ruff
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "always",
+      "source.organizeImports.ruff": "always"
+    }
+  },
+
   // redhat.vscode-yaml
   "yaml.format.enable": false,
 
