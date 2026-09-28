@@ -1,5 +1,5 @@
 import { X } from "$lib/icon";
-import { Toaster } from "@spotdemo4/solid-toast";
+import { Toaster } from "@trev.zip/solid-toast";
 import { Show, type Component } from "solid-js";
 
 import { renderToastIcon } from "./icon";
