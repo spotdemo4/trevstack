@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -51,23 +52,30 @@ func main() {
 		os.Exit(2)
 	}
 
+	log := logger.New(cfg.logLevel)
+
+	err = run(cfg, log)
+	if err != nil {
+		log.Error("exiting", "error", err)
+		os.Exit(1)
+	}
+}
+
+func run(cfg config, log *slog.Logger) error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	log := logger.New(cfg.logLevel)
 	ctx = logger.WithLog(ctx, log)
 
 	db, err := database.New(ctx)
 	if err != nil {
-		log.ErrorContext(ctx, "could not initialize database", "error", err)
-		return
+		return fmt.Errorf("could not initialize database: %w", err)
 	}
 	ctx = database.WithDatabase(ctx, db)
 
 	err = database.Migrate(ctx, db)
 	if err != nil {
-		log.ErrorContext(ctx, "could not migrate database", "error", err)
-		return
+		return fmt.Errorf("could not migrate database: %w", err)
 	}
 
 	sessionManager := auth.NewManager(cfg.jwtSecret, cfg.authCookieSecure)
@@ -111,12 +119,21 @@ func main() {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
+	// Bind synchronously so a bad or taken port fails startup instead of
+	// leaving the process running without a listener.
+	listener, err := net.Listen("tcp", server.Addr)
+	if err != nil {
+		return fmt.Errorf("could not listen: %w", err)
+	}
+
+	var serveErr error
 	wg := sync.WaitGroup{}
 	wg.Go((func() {
 		log.InfoContext(ctx, "starting", "port", cfg.port)
-		err := server.ListenAndServe()
+		err := server.Serve(listener)
 		if err != nil && err != http.ErrServerClosed {
-			log.ErrorContext(ctx, "could not listen and serve", "error", err)
+			serveErr = fmt.Errorf("could not serve: %w", err)
+			stop()
 		}
 	}))
 
@@ -125,4 +142,5 @@ func main() {
 	server.Shutdown(context.Background())
 
 	wg.Wait()
+	return serveErr
 }
