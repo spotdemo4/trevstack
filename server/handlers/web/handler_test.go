@@ -12,6 +12,7 @@ func TestHandler(t *testing.T) {
 	web := fstest.MapFS{
 		"index.html":    &fstest.MapFile{Data: []byte("<h1>Web</h1>")},
 		"assets/app.js": &fstest.MapFile{Data: []byte("console.log('web')")},
+		"sw.js":         &fstest.MapFile{Data: []byte("self.skipWaiting()")},
 	}
 
 	tests := []struct {
@@ -20,6 +21,7 @@ func TestHandler(t *testing.T) {
 		status      int
 		body        string
 		contentType string
+		cache       string
 	}{
 		{
 			name:        "serves index",
@@ -27,6 +29,7 @@ func TestHandler(t *testing.T) {
 			status:      http.StatusOK,
 			body:        "<h1>Web</h1>",
 			contentType: "text/html",
+			cache:       "no-cache",
 		},
 		{
 			name:        "serves asset",
@@ -34,6 +37,22 @@ func TestHandler(t *testing.T) {
 			status:      http.StatusOK,
 			body:        "console.log('web')",
 			contentType: "text/javascript",
+			cache:       "public, max-age=31536000, immutable",
+		},
+		{
+			name:        "revalidates service worker",
+			path:        "/sw.js",
+			status:      http.StatusOK,
+			body:        "self.skipWaiting()",
+			contentType: "text/javascript",
+			cache:       "no-cache",
+		},
+		{
+			name:        "does not answer missing asset with index",
+			path:        "/assets/old-build.js",
+			status:      http.StatusNotFound,
+			body:        "404 page not found\n",
+			contentType: "text/plain",
 		},
 		{
 			name:        "falls back to index",
@@ -41,6 +60,7 @@ func TestHandler(t *testing.T) {
 			status:      http.StatusOK,
 			body:        "<h1>Web</h1>",
 			contentType: "text/html",
+			cache:       "no-cache",
 		},
 	}
 
@@ -59,6 +79,9 @@ func TestHandler(t *testing.T) {
 			}
 			if !strings.HasPrefix(response.Header().Get("Content-Type"), test.contentType) {
 				t.Errorf("Content-Type = %q, want prefix %q", response.Header().Get("Content-Type"), test.contentType)
+			}
+			if response.Header().Get("Cache-Control") != test.cache {
+				t.Errorf("Cache-Control = %q, want %q", response.Header().Get("Cache-Control"), test.cache)
 			}
 		})
 	}

@@ -1,5 +1,6 @@
 import { getSignInPath, isPublicPath, session } from "$lib/auth";
 import { PageLoading } from "$lib/icon";
+import { registerUpdates } from "$lib/pwa";
 import { AppToaster } from "$lib/toast";
 import { createRouter, useLocation, useNavigate } from "@solidjs/router";
 import { type JSX, render } from "@solidjs/web";
@@ -72,6 +73,7 @@ if (!wrapper) {
 }
 
 const cleanupSession = session.initialize();
+registerUpdates();
 
 render(() => {
   onCleanup(cleanupSession);

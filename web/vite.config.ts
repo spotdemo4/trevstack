@@ -8,7 +8,10 @@ export default defineConfig({
     solidPlugin(),
     tailwindcss(),
     VitePWA({
-      registerType: "autoUpdate",
+      // lib/pwa registers the service worker and asks before updating, so an
+      // update never reloads away unsaved work.
+      registerType: "prompt",
+      injectRegister: false,
       manifest: {
         name: "TrevStack",
         short_name: "TrevStack",

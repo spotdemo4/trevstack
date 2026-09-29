@@ -15,7 +15,7 @@ export const AppToaster: Component = () => (
       dismiss: `${styles.toastDismiss} mt-0.5 ml-1 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-ctp-subtext0 transition-colors hover:bg-ctp-surface0/75 hover:text-ctp-text focus-visible:ring-2 focus-visible:ring-ctp-sky/40`,
     }}
     dismissContent={<X size={14} />}
-    renderToast={(toast, { remainingPercent }) => (
+    renderToast={(toast, { remainingPercent, runAction }) => (
       <>
         <div
           class={styles.toastProgress}
@@ -34,6 +34,17 @@ export const AppToaster: Component = () => (
           </div>
           <Show when={toast.description}>
             <div class="mt-1 text-sm leading-5 text-ctp-subtext1">{toast.description}</div>
+          </Show>
+          <Show when={toast.action}>
+            {(action) => (
+              <button
+                type="button"
+                class="mt-2 inline-flex h-7 cursor-pointer items-center rounded-md bg-ctp-sky px-3 text-sm font-semibold text-ctp-base transition-colors hover:bg-ctp-sapphire focus-visible:ring-2 focus-visible:ring-ctp-sky/50 focus-visible:outline-none"
+                onClick={runAction}
+              >
+                {action().label}
+              </button>
+            )}
           </Show>
         </div>
       </>
