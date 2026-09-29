@@ -189,6 +189,14 @@
             '';
           };
 
+          clippy = {
+            src = self.packages.${system}.client;
+            packages = with pkgs; [ clippy ];
+            script = ''
+              cargo clippy --offline --all-targets -- -D warnings
+            '';
+          };
+
           rust = {
             root = ./client;
             filter = file: file.hasExt "rs";

@@ -11,13 +11,22 @@ mkRustPackage (final: {
   cargoLock.lockFile = ./Cargo.lock;
 
   doCheck = true;
-  nativeCheckInputs = [ clippy ];
   checkPhase = ''
     runHook preCheck
     cargo test --offline
-    cargo clippy --offline --all-targets -- -D warnings
     runHook postCheck
   '';
+
+  # also check the dependencies for clippy, the lints run in the clippy flake check
+  cargoArtifactsArgs = {
+    nativeCheckInputs = [ clippy ];
+    checkPhase = ''
+      runHook preCheck
+      cargo test --offline
+      cargo clippy --offline --all-targets
+      runHook postCheck
+    '';
+  };
 
   doInstallCheck = true;
   installCheckPhase = ''
