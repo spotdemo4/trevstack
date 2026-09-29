@@ -22,6 +22,11 @@ part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
 ### server
 
+```sh
+JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+  server --port 8080
+```
+
 #### docker
 
 ```sh
@@ -36,23 +41,32 @@ nix run git+https://trev.zip/template/stack#server
 
 #### download
 
-https://trev.zip/template/stack/releases
+https://trev.zip/template/stack/releases/tag/server/v1.1.1
 
 ### client
 
-#### nix
-
 ```sh
-STACK_PASSWORD=example-password \
-  nix run git+https://trev.zip/template/stack#client -- --username demo_user alice 10
+client --username demo_user --password example-password alice 10
 ```
 
 The client logs in before adding. Credentials come from `--username`/`--password` or
 `STACK_USERNAME`/`STACK_PASSWORD`; prefer the environment variable for the password.
 
+#### docker
+
+```sh
+docker run trev.zip/llc/stack/client:latest
+```
+
+#### nix
+
+```sh
+nix run git+https://trev.zip/template/stack#client
+```
+
 #### download
 
-https://trev.zip/template/stack/releases
+https://trev.zip/template/stack/releases/tag/client/v2.1.1
 
 ## contributing
 
