@@ -464,7 +464,8 @@ fi
 remove_check_blocks() {
   local key
   for key in "$@"; do
-    sed_inplace "/^[[:space:]]*${key} = {$/,/^[[:space:]]*};$/d" flake.nix
+    # Anchor both ends at the check indentation so nested attrsets (e.g. env) do not end the range early.
+    sed_inplace "/^          ${key} = {$/,/^          };$/d" flake.nix
   done
 }
 if [[ -n $delete_provider ]]; then
