@@ -1,4 +1,4 @@
-"""Shared helpers for integration tests that drive the built client and server.
+"""Shared helpers for integration tests that drive the built client, server, and web app.
 
 Each test script runs as `python3 test_*.py <client> <server>`, where the
 arguments are paths to the client and server executables.
@@ -21,10 +21,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from playwright.sync_api import Browser, Page, Playwright, sync_playwright
+
 JWT_SECRET = "integration-test-secret-that-is-long-enough"
 READY_TIMEOUT = 10.0
 STOP_TIMEOUT = 10.0
 CLIENT_TIMEOUT = 30.0
+BROWSER_TIMEOUT = 10_000  # milliseconds
 
 
 @dataclass(frozen=True)
@@ -78,8 +81,12 @@ class Server:
         )
 
     @property
+    def origin(self) -> str:
+        return f"http://127.0.0.1:{self.port}"
+
+    @property
     def url(self) -> str:
-        return f"http://127.0.0.1:{self.port}/grpc"
+        return f"{self.origin}/grpc"
 
     @property
     def database(self) -> Path:
@@ -153,3 +160,27 @@ class IntegrationTestCase(unittest.TestCase):
             text=True,
             timeout=CLIENT_TIMEOUT,
         )
+
+
+class BrowserTestCase(IntegrationTestCase):
+    """Also opens a page on the server's web app, in a fresh browser context for every test."""
+
+    playwright: Playwright
+    browser: Browser
+    page: Page
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.playwright = sync_playwright().start()
+        cls.addClassCleanup(cls.playwright.stop)
+        cls.browser = cls.playwright.chromium.launch()
+        cls.addClassCleanup(cls.browser.close)
+
+    def setUp(self) -> None:
+        super().setUp()
+        # A service worker would serve cached assets and hide what the server returns.
+        context = self.browser.new_context(base_url=self.server.origin, service_workers="block")
+        self.addCleanup(context.close)
+        context.set_default_timeout(BROWSER_TIMEOUT)
+        self.page = context.new_page()

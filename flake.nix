@@ -31,7 +31,11 @@
         devShells = {
           default = pkgs.mkShell {
             shellHook = pkgs.shellhook.ref;
-            RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
+            env = {
+              RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
+              PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
+              PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+            };
             packages = with pkgs; [
               # go
               go
@@ -61,7 +65,7 @@
               protoc-gen-tonic
 
               # python
-              python3
+              (python3.withPackages (ps: [ ps.playwright ]))
               ruff
               pyright
 
@@ -203,7 +207,13 @@
 
           integration = {
             root = ./test;
-            packages = with pkgs; [ python3 ];
+            packages = with pkgs; [ (python3.withPackages (ps: [ ps.playwright ])) ];
+            env = {
+              PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
+              PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+              # the build sandbox has no fonts, and without them text has no size and is never visible
+              FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; };
+            };
             script = ''
               for test in test_*.py; do
                 python3 "$test" \
@@ -238,7 +248,7 @@
             filter = file: file.hasExt "py";
             include = [ ./pyproject.toml ];
             packages = with pkgs; [
-              python3
+              (python3.withPackages (ps: [ ps.playwright ]))
               ruff
               pyright
             ];
