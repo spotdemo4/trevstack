@@ -307,9 +307,16 @@ if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
   delete_directories+=(client test)
 fi
 
+keep_docs=true
+read -r -p 'Keep OpenAPI docs generation? [Y/n] ' reply || reply=
+if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
+  keep_docs=false
+  delete_directories+=(docs server/handlers/docs)
+fi
+
 for directory in "${delete_directories[@]}"; do
   # Build outputs are safe to discard along with the directories that produced them.
-  ignored_files=$(git ls-files --others --ignored --exclude-standard -- "$directory" ':(exclude)client/target' ':(exclude,glob)**/__pycache__/**' ':(exclude,glob)**/.ruff_cache/**') || fail 'Unable to inspect ignored files.'
+  ignored_files=$(git ls-files --others --ignored --exclude-standard -- "$directory" ':(exclude)client/target' ':(exclude)docs/node_modules' ':(exclude)docs/dist' ':(exclude,glob)**/__pycache__/**' ':(exclude,glob)**/.ruff_cache/**') || fail 'Unable to inspect ignored files.'
   if [[ -n $ignored_files ]]; then
     fail "Remove ignored files under $directory before deleting it."
   fi
@@ -423,7 +430,8 @@ for package_dir in docs web; do
     sed_inplace -E "${package_lock_root_version_line}s|^      \"version\":[[:space:]]*\"[^\"]+\",$|      \"version\": \"$version\",|" "$package_dir/package-lock.json"
   fi
 done
-nix_package_files=(docs/default.nix web/default.nix server/default.nix)
+nix_package_files=(web/default.nix server/default.nix)
+$keep_docs && nix_package_files+=(docs/default.nix)
 if $keep_client; then
   client_version_line=$(grep -n -m 1 -E '^version[[:space:]]*=[[:space:]]*"[^"]+"$' client/Cargo.toml | cut -d: -f1 || true)
   [[ -n $client_version_line ]] || fail 'Unable to find the client package version metadata.'
@@ -446,7 +454,9 @@ reset_openapi_metadata() {
   replacement=$(escape_replacement "  description: \"$json_description\"")
   sed_inplace -E "${description_line}s|^[[:space:]]*description:.*$|$replacement|" "$file"
 }
-reset_openapi_metadata docs/openapi.base.yaml
+if $keep_docs; then
+  reset_openapi_metadata docs/openapi.base.yaml
+fi
 
 # Provider-specific metadata and workflow paths.
 if [[ -f .github/renovate.json ]]; then
@@ -557,6 +567,55 @@ if ! $keep_client; then
     remove_block .vscode/settings.json '  // charliermarsh.ruff'
     sed_inplace -e '/^    "ms-pyright\.pyright",$/d' -e '/^    "charliermarsh\.ruff",$/d' .vscode/extensions.json
   fi
+fi
+if ! $keep_docs; then
+  # The docs handler is the only thing embed_dev.go wires up.
+  rm -f server/embed_dev.go
+  sed_inplace \
+    -e '/^              protoc-gen-connect-openapi$/d' \
+    -e '/^              cd docs && npm install && cd \.\.$/d' \
+    -e '/^          docs = pkgs\.buildPackages\.callPackage \.\/docs { };$/d' \
+    -e 's/^          server = pkgs\.callPackage \.\/server { inherit docs web; };$/          server = pkgs.callPackage .\/server { inherit web; };/' \
+    -e '/^            docs$/d' \
+    flake.nix
+  sed_inplace -e '/^  docs,$/d' -e '/^    cp -r ${docs} docs$/d' server/default.nix
+  remove_block server/embed.go '//go:embed all:docs'
+  sed_inplace '/^[[:space:]]*DocsFS = mustSub(docsfs, "docs")$/d' server/embed.go
+  docs_var_line=$(grep -n -m 1 -E '^[[:space:]]+DocsFS[[:space:]]+fs\.FS$' server/main.go | cut -d: -f1 || true)
+  if [[ -z $docs_var_line || $(sed -n "$((docs_var_line - 1))p;$((docs_var_line + 2))p" server/main.go) != $'var (\n)' ]]; then
+    fail 'Unable to find the DocsFS variable in server/main.go.'
+  fi
+  # Collapse the var block around the remaining WebFS declaration.
+  sed_inplace \
+    -e "$((docs_var_line - 1)),${docs_var_line}d" \
+    -e "$((docs_var_line + 1))s/.*/var WebFS fs.FS/" \
+    -e "$((docs_var_line + 2))d" \
+    -e '/^[[:space:]]*docshandler "/d' \
+    -e '/^[[:space:]]*mux\.Handle("\/docs\/", docshandler\.New(DocsFS))$/d' \
+    server/main.go
+  remove_block buf.gen.yaml '  - local: protoc-gen-connect-openapi'
+  remove_block .gitignore '# docs'
+  replace_literal '# Linguist: Buf-generated code and OpenAPI specification' '# Linguist: Buf-generated code' .gitattributes
+  sed_inplace '/^docs\/openapi\.yaml linguist-generated=true$/d' .gitattributes
+  replace_literal '## Generated API Code and Documentation' '## Generated API Code' AGENTS.md
+  replace_literal ' and OpenAPI documentation' '' AGENTS.md
+  replace_literal ', or `docs/openapi.yaml`' '' AGENTS.md
+  # Restore the list conjunction, which depends on whether the client entry was already removed.
+  replace_literal '`web/connect/`, `client/src/connect/`.' '`web/connect/`, or `client/src/connect/`.' AGENTS.md
+  replace_literal '`server/connect/`, `web/connect/`.' '`server/connect/` or `web/connect/`.' AGENTS.md
+  replace_literal ' Keep `docs/openapi.base.yaml` limited to shared OpenAPI metadata and configuration; do not duplicate generated paths, operations, or schemas there.' '' AGENTS.md
+  docs_link_line=$(grep -n -m 1 -Fx '      href="/docs"' web/layout/layout.tsx | cut -d: -f1 || true)
+  if [[ -z $docs_link_line || $(sed -n "$((docs_link_line - 2))p;$((docs_link_line - 1))p" web/layout/layout.tsx) != $'    <NavLink\n      as="a"' ]]; then
+    fail 'Unable to find the docs link in web/layout/layout.tsx.'
+  fi
+  sed_inplace "$((docs_link_line - 2)),/^    <\/NavLink>$/d" web/layout/layout.tsx
+  replace_literal '{ ExternalLink, GitBranch, Menu }' '{ GitBranch, Menu }' web/layout/layout.tsx
+  replace_literal '[/^\/grpc/, /^\/docs/]' '[/^\/grpc/]' web/vite.config.ts
+  sed_inplace '/^      "\/docs": {$/,/^      },$/d' web/vite.config.ts
+  for provider_directory in .github .forgejo; do
+    [[ -d $provider_directory ]] || continue
+    sed_inplace '/--prefix docs/d' "$provider_directory/renovate.json" "$provider_directory/workflows/vulnerable.yaml"
+  done
 fi
 
 if [[ -n $secondary_remote ]]; then
@@ -685,7 +744,6 @@ assert_contains README.md '## using'
 assert_contains README.md '[CONTRIBUTING.md](CONTRIBUTING.md)'
 assert_contains README.md "docker run -P $image"
 assert_contains README.md "$nixpkgs_badge"
-assert_contains docs/openapi.base.yaml "  version: $version"
 assert_contains flake.nix "description = \"$nix_description\";"
 if $keep_client; then
   assert_contains README.md "$rust_badge"
@@ -700,7 +758,15 @@ else
   [[ ! -e client && ! -e test && ! -e pyproject.toml ]] || fail 'Replacement validation failed: client files still exist.'
   ! grep -qE '\./client|client/|#client|\<cargo\>|rust(fmt|c|-analyzer)|\<ruff\>|pyright|python3|protoc-gen-(prost|tonic)|^### client$' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md || fail 'Replacement validation failed: client references remain.'
 fi
-assert_contains docs/default.nix "version = \"$version\";"
+if $keep_docs; then
+  assert_contains docs/default.nix "version = \"$version\";"
+  assert_contains docs/openapi.base.yaml "  version: $version"
+else
+  [[ ! -e docs && ! -e server/handlers/docs && ! -e server/embed_dev.go ]] || fail 'Replacement validation failed: docs files still exist.'
+  ! grep -qiE 'openapi|\<docs\>' flake.nix server/default.nix server/main.go server/embed.go web/layout/layout.tsx web/vite.config.ts AGENTS.md || fail 'Replacement validation failed: docs references remain.'
+  ! grep -qi 'openapi' buf.gen.yaml .gitattributes && ! grep -q '^/docs/' .gitignore || fail 'Replacement validation failed: docs references remain.'
+  ! grep -rq -- '--prefix docs' .github .forgejo 2>/dev/null || fail 'Replacement validation failed: docs references remain.'
+fi
 assert_contains web/default.nix "version = \"$version\";"
 assert_contains server/default.nix "version = \"$version\";"
 assert_contains server/default.nix "description = \"$nix_description\";"
