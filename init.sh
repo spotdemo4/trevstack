@@ -299,10 +299,19 @@ for editor in Zed 'VS Code'; do
   fi
 done
 
+keep_client=true
+read -r -p 'Keep the Rust client? [Y/n] ' reply || reply=
+if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
+  keep_client=false
+  # The Python integration tests exist only to drive the client binary.
+  delete_directories+=(client test)
+fi
+
 for directory in "${delete_directories[@]}"; do
-  ignored_files=$(git ls-files --others --ignored --exclude-standard -- "$directory") || fail 'Unable to inspect ignored configuration files.'
+  # Build outputs are safe to discard along with the directories that produced them.
+  ignored_files=$(git ls-files --others --ignored --exclude-standard -- "$directory" ':(exclude)client/target' ':(exclude,glob)**/__pycache__/**' ':(exclude,glob)**/.ruff_cache/**') || fail 'Unable to inspect ignored files.'
   if [[ -n $ignored_files ]]; then
-    fail "Remove ignored files under $directory before deleting that configuration."
+    fail "Remove ignored files under $directory before deleting it."
   fi
 done
 
@@ -414,14 +423,18 @@ for package_dir in docs web; do
     sed_inplace -E "${package_lock_root_version_line}s|^      \"version\":[[:space:]]*\"[^\"]+\",$|      \"version\": \"$version\",|" "$package_dir/package-lock.json"
   fi
 done
-client_version_line=$(grep -n -m 1 -E '^version[[:space:]]*=[[:space:]]*"[^"]+"$' client/Cargo.toml | cut -d: -f1 || true)
-[[ -n $client_version_line ]] || fail 'Unable to find the client package version metadata.'
-sed_inplace -E "${client_version_line}s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" client/Cargo.toml
-client_lock_name_line=$(grep -n -m 1 -F "name = \"${slug}-client\"" client/Cargo.lock | cut -d: -f1 || true)
-[[ -n $client_lock_name_line ]] || fail 'Unable to find the client lockfile package metadata.'
-client_lock_version_line=$((client_lock_name_line + 1))
-sed_inplace -E "${client_lock_version_line}s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" client/Cargo.lock
-for nix_package_file in client/default.nix docs/default.nix web/default.nix server/default.nix; do
+nix_package_files=(docs/default.nix web/default.nix server/default.nix)
+if $keep_client; then
+  client_version_line=$(grep -n -m 1 -E '^version[[:space:]]*=[[:space:]]*"[^"]+"$' client/Cargo.toml | cut -d: -f1 || true)
+  [[ -n $client_version_line ]] || fail 'Unable to find the client package version metadata.'
+  sed_inplace -E "${client_version_line}s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" client/Cargo.toml
+  client_lock_name_line=$(grep -n -m 1 -F "name = \"${slug}-client\"" client/Cargo.lock | cut -d: -f1 || true)
+  [[ -n $client_lock_name_line ]] || fail 'Unable to find the client lockfile package metadata.'
+  client_lock_version_line=$((client_lock_name_line + 1))
+  sed_inplace -E "${client_lock_version_line}s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" client/Cargo.lock
+  nix_package_files+=(client/default.nix)
+fi
+for nix_package_file in "${nix_package_files[@]}"; do
   sed_inplace -E 's/(^[[:space:]]+version = ")[^"]+(";)/\1'"$version"'\2/' "$nix_package_file"
 done
 reset_openapi_metadata() {
@@ -471,6 +484,80 @@ if [[ ! -d .forgejo && -f flake.nix ]]; then
   sed_inplace '\|^[[:space:]]*\./\.forgejo/workflows$|d' flake.nix
 fi
 
+# Delete from the line equal to $2 through the line equal to $3, or through the next blank
+# line when $3 is omitted, without leaving doubled or trailing blank lines behind.
+remove_block() {
+  local file=$1 temp
+  temp=$(mktemp)
+  if ! START=$2 END=${3-} awk '
+    state == 1 {
+      if (ENVIRON["END"] == "") { if ($0 == "") state = 0 }
+      else if ($0 == ENVIRON["END"]) state = 2
+      next
+    }
+    state == 2 { state = 0; if ($0 == "") next }
+    !found && $0 == ENVIRON["START"] { found = 1; state = 1; next }
+    $0 == "" { blanks++; next }
+    { for (; blanks > 0; blanks--) print ""; print }
+    END {
+      if (state == 0) for (; blanks > 0; blanks--) print ""
+      exit !found || (state == 1 && ENVIRON["END"] != "")
+    }
+  ' "$file" >"$temp"; then
+    rm -f "$temp"
+    fail "Unable to find the \"$2\" block in $file."
+  fi
+  cat "$temp" >"$file"
+  rm -f "$temp"
+}
+if ! $keep_client; then
+  rm -f pyproject.toml
+  sed_inplace \
+    -e '/^            RUST_SRC_PATH = /d' \
+    -e '/^              protoc-gen-prost$/d' \
+    -e '/^              protoc-gen-tonic$/d' \
+    -e '/^              cargo # cargo update$/d' \
+    -e '/^            rustfmt$/d' \
+    -e '/^            ruff$/d' \
+    -e '/^          client = pkgs\.callPackage \.\/client { };$/d' \
+    -e '/^          client = pkgs\.mkImage {$/,/^          };$/d' \
+    -e '/^            client$/d' \
+    flake.nix
+  remove_block flake.nix '              # rust'
+  remove_block flake.nix '              # python'
+  remove_check_blocks rust integration python
+  remove_block buf.gen.yaml '  - local: protoc-gen-prost'
+  remove_block buf.gen.yaml '  - local: protoc-gen-tonic'
+  remove_block treefmt.toml '[formatter.rustfmt]'
+  remove_block treefmt.toml '[formatter.ruff]'
+  remove_block .gitignore '# client'
+  remove_block .gitignore '# python'
+  remove_block .gitattributes '# Rust source files use Rust diff driver'
+  sed_inplace -e '/^Cargo\.lock linguist-generated=true$/d' -e '/^client\/src\/connect\/\*\* linguist-generated=true$/d' .gitattributes
+  replace_literal ' `client/src/connect/`,' '' AGENTS.md
+  remove_block CONTRIBUTING.md 'run the client with optional arguments:' '```'
+  sed_inplace '/^nix build \.#client$/d' CONTRIBUTING.md
+  for provider_directory in .github .forgejo; do
+    [[ -d $provider_directory ]] || continue
+    replace_literal ', "client/v*"' '' "$provider_directory/workflows/release.yaml"
+    remove_block "$provider_directory/workflows/release.yaml" '  client:' '            images.x86_64-linux.client.armv7l-unknown-linux-gnueabihf'
+    remove_block "$provider_directory/labeler.yaml" 'python:'
+    remove_block "$provider_directory/labeler.yaml" 'rust:'
+    cargo_rule_line=$(grep -n -m 1 -F '"matchManagers": ["cargo"],' "$provider_directory/renovate.json" | cut -d: -f1 || true)
+    if [[ -z $cargo_rule_line || $(sed -n "$((cargo_rule_line - 1))p;$((cargo_rule_line + 2))p" "$provider_directory/renovate.json") != $'    {\n    },' ]]; then
+      fail "Unable to find the cargo rule in $provider_directory/renovate.json."
+    fi
+    sed_inplace "$((cargo_rule_line - 1)),$((cargo_rule_line + 2))d" "$provider_directory/renovate.json"
+  done
+  if [[ -d .zed ]]; then
+    sed_inplace '/^    "Python": {$/,/^    },$/d' .zed/settings.json
+  fi
+  if [[ -d .vscode ]]; then
+    remove_block .vscode/settings.json '  // charliermarsh.ruff'
+    sed_inplace -e '/^    "ms-pyright\.pyright",$/d' -e '/^    "charliermarsh\.ruff",$/d' .vscode/extensions.json
+  fi
+fi
+
 if [[ -n $secondary_remote ]]; then
   # The selected second provider is deliberately the only newly-created remote.
   :
@@ -504,6 +591,12 @@ solid_badge="[![solidjs](https://img.shields.io/badge/dynamic/json?url=${raw_url
 rust_badge="[![rust](https://img.shields.io/badge/dynamic/toml?url=${raw_url}/client/Cargo.toml&query=%24.package.rust-version&logo=rust&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23D34516)](https://releases.rs/)"
 
 readme_sections=$(sed -n '/^## using$/,$p' README.md)
+readme_badges=("$check_badge" "$vulnerable_badge" "$nixpkgs_badge" "$go_badge" "$node_badge" "$solid_badge")
+if $keep_client; then
+  readme_badges+=("$rust_badge")
+else
+  readme_sections=$(printf '%s\n' "$readme_sections" | sed '/^### client$/,/^## contributing$/{/^## contributing$/!d;}')
+fi
 readme_image=$(printf '%s\n' "$readme_sections" | sed -n 's/^docker run -P \([^[:space:]]*\)$/\1/p')
 [[ -n $readme_image ]] || fail 'Unable to find the README server image.'
 image_path=$(printf '%s' "$origin_repo_path" | tr '[:upper:]' '[:lower:]')
@@ -516,7 +609,7 @@ readme_sections=${readme_sections//"$readme_image"/"$image"}
 
 {
   printf '# %s\n\n' "$title"
-  printf '%s\n' "$check_badge" "$vulnerable_badge" "$nixpkgs_badge" "$go_badge" "$node_badge" "$solid_badge" "$rust_badge"
+  printf '%s\n' "${readme_badges[@]}"
   printf '\n%s\n\n%s\n' "$description" "$readme_sections"
 } >README.md
 if ! $origin_is_github && [[ -f web/layout/layout.tsx ]]; then
@@ -591,16 +684,21 @@ assert_contains README.md '## using'
 assert_contains README.md '[CONTRIBUTING.md](CONTRIBUTING.md)'
 assert_contains README.md "docker run -P $image"
 assert_contains README.md "$nixpkgs_badge"
-assert_contains README.md "$rust_badge"
 assert_contains docs/openapi.base.yaml "  version: $version"
 assert_contains flake.nix "description = \"$nix_description\";"
-assert_contains client/Cargo.toml "name = \"${slug}-client\""
-assert_contains client/Cargo.toml "version = \"$version\""
-assert_contains client/Cargo.toml "description = \"$json_description\""
-assert_contains client/Cargo.lock "name = \"${slug}-client\""
-assert_contains client/Cargo.lock "version = \"$version\""
-assert_contains client/default.nix "version = \"$version\";"
-assert_contains client/default.nix "description = \"$nix_description\";"
+if $keep_client; then
+  assert_contains README.md "$rust_badge"
+  assert_contains client/Cargo.toml "name = \"${slug}-client\""
+  assert_contains client/Cargo.toml "version = \"$version\""
+  assert_contains client/Cargo.toml "description = \"$json_description\""
+  assert_contains client/Cargo.lock "name = \"${slug}-client\""
+  assert_contains client/Cargo.lock "version = \"$version\""
+  assert_contains client/default.nix "version = \"$version\";"
+  assert_contains client/default.nix "description = \"$nix_description\";"
+else
+  [[ ! -e client && ! -e test && ! -e pyproject.toml ]] || fail 'Replacement validation failed: client files still exist.'
+  ! grep -qE '\./client|client/|#client|\<cargo\>|rust(fmt|c|-analyzer)|\<ruff\>|pyright|python3|protoc-gen-(prost|tonic)|^### client$' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md || fail 'Replacement validation failed: client references remain.'
+fi
 assert_contains docs/default.nix "version = \"$version\";"
 assert_contains web/default.nix "version = \"$version\";"
 assert_contains server/default.nix "version = \"$version\";"

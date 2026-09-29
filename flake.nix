@@ -189,27 +189,15 @@
             '';
           };
 
-          clippy = {
-            src = self.packages.${system}.client;
-            packages = with pkgs; [ clippy ];
-            script = ''
-              cargo clippy --offline --all-targets -- -D warnings
-            '';
-          };
-
           rust = {
-            root = ./client;
-            filter = file: file.hasExt "rs";
-            include = [
-              ./client/Cargo.lock
-              ./client/Cargo.toml
-            ];
+            src = self.packages.${system}.client;
             packages = with pkgs; [
-              cargo
               rustfmt
+              clippy
             ];
             script = ''
               cargo fmt --check
+              cargo clippy --offline --all-targets -- -D warnings
             '';
           };
 
