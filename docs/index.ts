@@ -8,6 +8,10 @@ createApiReference("#app", {
   agent: {
     disabled: true,
   },
+  hideClientButton: true,
+  mcp: {
+    disabled: true,
+  },
   telemetry: false,
   url: openapi,
   withDefaultFonts: false,
