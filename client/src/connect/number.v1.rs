@@ -8,9 +8,9 @@
 /// ```
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AddRequest {
-    #[prost(string, optional, tag = "1")]
+    #[prost(string, optional, tag="1")]
     pub name: ::core::option::Option<::prost::alloc::string::String>,
-    #[prost(uint32, optional, tag = "2")]
+    #[prost(uint32, optional, tag="2")]
     pub number: ::core::option::Option<u32>,
 }
 /// Example (protobuf JSON):
@@ -20,16 +20,16 @@ pub struct AddRequest {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AddResponse {
     /// Sum of all stored numbers after this addition, encoded as a decimal string in protobuf JSON.
-    #[prost(uint64, tag = "1")]
+    #[prost(uint64, tag="1")]
     pub sum: u64,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Item {
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag="1")]
     pub timestamp: ::core::option::Option<::prost_types::Timestamp>,
-    #[prost(string, tag = "2")]
+    #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
-    #[prost(uint32, tag = "3")]
+    #[prost(uint32, tag="3")]
     pub number: u32,
 }
 /// Optional filters for the item stream. Timestamps use RFC 3339 strings in protobuf JSON.
@@ -40,15 +40,15 @@ pub struct Item {
 /// ```
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListRequest {
-    #[prost(string, optional, tag = "1")]
+    #[prost(string, optional, tag="1")]
     pub name: ::core::option::Option<::prost::alloc::string::String>,
-    #[prost(uint32, optional, tag = "2")]
+    #[prost(uint32, optional, tag="2")]
     pub minimum: ::core::option::Option<u32>,
-    #[prost(uint32, optional, tag = "3")]
+    #[prost(uint32, optional, tag="3")]
     pub maximum: ::core::option::Option<u32>,
-    #[prost(message, optional, tag = "4")]
+    #[prost(message, optional, tag="4")]
     pub start: ::core::option::Option<::prost_types::Timestamp>,
-    #[prost(message, optional, tag = "5")]
+    #[prost(message, optional, tag="5")]
     pub end: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// One matching item in the server stream, not an array of results.
@@ -59,7 +59,7 @@ pub struct ListRequest {
 /// ```
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListResponse {
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag="1")]
     pub item: ::core::option::Option<Item>,
 }
 /// Scalar summary metrics across all items, suitable for stat cards.
@@ -71,10 +71,10 @@ pub struct ListResponse {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SummaryRequest {
     /// Inclusive lower timestamp bound; omit for no lower bound.
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag="1")]
     pub start: ::core::option::Option<::prost_types::Timestamp>,
     /// Inclusive upper timestamp bound; omit for no upper bound.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag="2")]
     pub end: ::core::option::Option<::prost_types::Timestamp>,
 }
 /// Counts and sums use decimal strings for 64-bit integers in protobuf JSON.
@@ -85,17 +85,17 @@ pub struct SummaryRequest {
 /// ```
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct SummaryResponse {
-    #[prost(int64, tag = "1")]
+    #[prost(int64, tag="1")]
     pub total_count: i64,
-    #[prost(uint64, tag = "2")]
+    #[prost(uint64, tag="2")]
     pub total_sum: u64,
-    #[prost(double, tag = "3")]
+    #[prost(double, tag="3")]
     pub average: f64,
-    #[prost(uint32, tag = "4")]
+    #[prost(uint32, tag="4")]
     pub min: u32,
-    #[prost(uint32, tag = "5")]
+    #[prost(uint32, tag="5")]
     pub max: u32,
-    #[prost(uint32, tag = "6")]
+    #[prost(uint32, tag="6")]
     pub distinct_names: u32,
 }
 /// Selects the UTC bucket interval and optional time range.
@@ -106,29 +106,29 @@ pub struct SummaryResponse {
 /// ```
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct TimeSeriesRequest {
-    #[prost(enumeration = "TimeInterval", optional, tag = "1")]
+    #[prost(enumeration="TimeInterval", optional, tag="1")]
     pub interval: ::core::option::Option<i32>,
     /// Inclusive lower timestamp bound; omit for no lower bound.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag="2")]
     pub start: ::core::option::Option<::prost_types::Timestamp>,
     /// Inclusive upper timestamp bound; omit for no upper bound.
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag="3")]
     pub end: ::core::option::Option<::prost_types::Timestamp>,
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct TimeSeriesPoint {
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag="1")]
     pub bucket: ::core::option::Option<::prost_types::Timestamp>,
-    #[prost(int64, tag = "2")]
+    #[prost(int64, tag="2")]
     pub count: i64,
-    #[prost(uint64, tag = "3")]
+    #[prost(uint64, tag="3")]
     pub sum: u64,
-    #[prost(double, tag = "4")]
+    #[prost(double, tag="4")]
     pub average: f64,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TimeSeriesResponse {
-    #[prost(message, repeated, tag = "1")]
+    #[prost(message, repeated, tag="1")]
     pub points: ::prost::alloc::vec::Vec<TimeSeriesPoint>,
 }
 /// Histogram of `number` values across approximately equal-width buckets, suitable for bar charts.
@@ -139,27 +139,27 @@ pub struct TimeSeriesResponse {
 /// ```
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DistributionRequest {
-    #[prost(uint32, optional, tag = "1")]
+    #[prost(uint32, optional, tag="1")]
     pub bucket_count: ::core::option::Option<u32>,
     /// Inclusive lower timestamp bound; omit for no lower bound.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag="2")]
     pub start: ::core::option::Option<::prost_types::Timestamp>,
     /// Inclusive upper timestamp bound; omit for no upper bound.
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag="3")]
     pub end: ::core::option::Option<::prost_types::Timestamp>,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DistributionBucket {
-    #[prost(uint32, tag = "1")]
+    #[prost(uint32, tag="1")]
     pub lower: u32,
-    #[prost(uint32, tag = "2")]
+    #[prost(uint32, tag="2")]
     pub upper: u32,
-    #[prost(int64, tag = "3")]
+    #[prost(int64, tag="3")]
     pub count: i64,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DistributionResponse {
-    #[prost(message, repeated, tag = "1")]
+    #[prost(message, repeated, tag="1")]
     pub buckets: ::prost::alloc::vec::Vec<DistributionBucket>,
 }
 /// Top N names by frequency and total value, suitable for bar/pie charts.
@@ -170,29 +170,29 @@ pub struct DistributionResponse {
 /// ```
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct TopNamesRequest {
-    #[prost(uint32, optional, tag = "1")]
+    #[prost(uint32, optional, tag="1")]
     pub limit: ::core::option::Option<u32>,
     /// Inclusive lower timestamp bound; omit for no lower bound.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag="2")]
     pub start: ::core::option::Option<::prost_types::Timestamp>,
     /// Inclusive upper timestamp bound; omit for no upper bound.
-    #[prost(message, optional, tag = "3")]
+    #[prost(message, optional, tag="3")]
     pub end: ::core::option::Option<::prost_types::Timestamp>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TopName {
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub name: ::prost::alloc::string::String,
-    #[prost(int64, tag = "2")]
+    #[prost(int64, tag="2")]
     pub count: i64,
-    #[prost(uint64, tag = "3")]
+    #[prost(uint64, tag="3")]
     pub sum: u64,
-    #[prost(double, tag = "4")]
+    #[prost(double, tag="4")]
     pub average: f64,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TopNamesResponse {
-    #[prost(message, repeated, tag = "1")]
+    #[prost(message, repeated, tag="1")]
     pub names: ::prost::alloc::vec::Vec<TopName>,
 }
 /// Time-bucketed counts and sums, suitable for line/area charts.

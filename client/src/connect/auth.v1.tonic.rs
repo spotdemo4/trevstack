@@ -6,12 +6,12 @@ pub mod auth_service_client {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value
+        clippy::let_unit_value,
     )]
-    use tonic::codegen::http::Uri;
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /** Account registration and cookie-based sessions. These operations do not require an existing session.
-    */
+*/
     #[derive(Debug, Clone)]
     pub struct AuthServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -50,13 +50,14 @@ pub mod auth_service_client {
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
             T: tonic::codegen::Service<
-                    http::Request<tonic::body::Body>,
-                    Response = http::Response<
-                        <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
-                    >,
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + std::marker::Send + std::marker::Sync,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             AuthServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -92,49 +93,69 @@ pub mod auth_service_client {
             self
         }
         /** Creates an account with a case-insensitive username. Does not sign in or set a session cookie.
-        */
+*/
         pub async fn signup(
             &mut self,
             request: impl tonic::IntoRequest<super::SignupRequest>,
         ) -> std::result::Result<tonic::Response<super::SignupResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/auth.v1.AuthService/Signup");
+            let path = http::uri::PathAndQuery::from_static(
+                "/auth.v1.AuthService/Signup",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("auth.v1.AuthService", "Signup"));
             self.inner.unary(req, path, codec).await
         }
         /** Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
-         Unknown usernames and incorrect passwords both return an unauthenticated error.
-        */
+ Unknown usernames and incorrect passwords both return an unauthenticated error.
+*/
         pub async fn login(
             &mut self,
             request: impl tonic::IntoRequest<super::LoginRequest>,
         ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/auth.v1.AuthService/Login");
+            let path = http::uri::PathAndQuery::from_static(
+                "/auth.v1.AuthService/Login",
+            );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("auth.v1.AuthService", "Login"));
+            req.extensions_mut().insert(GrpcMethod::new("auth.v1.AuthService", "Login"));
             self.inner.unary(req, path, codec).await
         }
         /** Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
-        */
+*/
         pub async fn logout(
             &mut self,
             request: impl tonic::IntoRequest<super::LogoutRequest>,
         ) -> std::result::Result<tonic::Response<super::LogoutResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/auth.v1.AuthService/Logout");
+            let path = http::uri::PathAndQuery::from_static(
+                "/auth.v1.AuthService/Logout",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("auth.v1.AuthService", "Logout"));

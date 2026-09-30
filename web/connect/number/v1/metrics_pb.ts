@@ -2,21 +2,18 @@
 // @generated from file number/v1/metrics.proto (package number.v1, syntax proto3)
 /* eslint-disable */
 
-import type { Message } from "@bufbuild/protobuf";
 import type { GenEnum, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
-
-import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file number/v1/metrics.proto.
  */
-export const file_number_v1_metrics: GenFile /*@__PURE__*/ = fileDesc(
-  "ChdudW1iZXIvdjEvbWV0cmljcy5wcm90bxIJbnVtYmVyLnYxItIBCg5TdW1tYXJ5UmVxdWVzdBIpCgVzdGFydBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDpsukhpGmcKD2VuZF9hZnRlcl9zdGFydBIXRW5kIG11c3QgYmUgYWZ0ZXIgc3RhcnQaOyFoYXModGhpcy5lbmQpIHx8ICFoYXModGhpcy5zdGFydCkgfHwgdGhpcy5lbmQgPiB0aGlzLnN0YXJ0InwKD1N1bW1hcnlSZXNwb25zZRITCgt0b3RhbF9jb3VudBgBIAEoAxIRCgl0b3RhbF9zdW0YAiABKAQSDwoHYXZlcmFnZRgDIAEoARILCgNtaW4YBCABKA0SCwoDbWF4GAUgASgNEhYKDmRpc3RpbmN0X25hbWVzGAYgASgNIqECChFUaW1lU2VyaWVzUmVxdWVzdBI9CghpbnRlcnZhbBgBIAEoDjIXLm51bWJlci52MS5UaW1lSW50ZXJ2YWxCDbpICsgBAYIBBBABIABIAIgBARIpCgVzdGFydBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDpsukhpGmcKD2VuZF9hZnRlcl9zdGFydBIXRW5kIG11c3QgYmUgYWZ0ZXIgc3RhcnQaOyFoYXModGhpcy5lbmQpIHx8ICFoYXModGhpcy5zdGFydCkgfHwgdGhpcy5lbmQgPiB0aGlzLnN0YXJ0QgsKCV9pbnRlcnZhbCJqCg9UaW1lU2VyaWVzUG9pbnQSKgoGYnVja2V0GAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVjb3VudBgCIAEoAxILCgNzdW0YAyABKAQSDwoHYXZlcmFnZRgEIAEoASJAChJUaW1lU2VyaWVzUmVzcG9uc2USKgoGcG9pbnRzGAEgAygLMhoubnVtYmVyLnYxLlRpbWVTZXJpZXNQb2ludCKRAgoTRGlzdHJpYnV0aW9uUmVxdWVzdBInCgxidWNrZXRfY291bnQYASABKA1CDLpICcgBASoEGGQoAUgAiAEBEikKBXN0YXJ0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgNlbmQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wOmy6SGkaZwoPZW5kX2FmdGVyX3N0YXJ0EhdFbmQgbXVzdCBiZSBhZnRlciBzdGFydBo7IWhhcyh0aGlzLmVuZCkgfHwgIWhhcyh0aGlzLnN0YXJ0KSB8fCB0aGlzLmVuZCA+IHRoaXMuc3RhcnRCDwoNX2J1Y2tldF9jb3VudCJBChJEaXN0cmlidXRpb25CdWNrZXQSDQoFbG93ZXIYASABKA0SDQoFdXBwZXIYAiABKA0SDQoFY291bnQYAyABKAMiRgoURGlzdHJpYnV0aW9uUmVzcG9uc2USLgoHYnVja2V0cxgBIAMoCzIdLm51bWJlci52MS5EaXN0cmlidXRpb25CdWNrZXQi/wEKD1RvcE5hbWVzUmVxdWVzdBIgCgVsaW1pdBgBIAEoDUIMukgJyAEBKgQYZCgBSACIAQESKQoFc3RhcnQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEicKA2VuZBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXA6bLpIaRpnCg9lbmRfYWZ0ZXJfc3RhcnQSF0VuZCBtdXN0IGJlIGFmdGVyIHN0YXJ0GjshaGFzKHRoaXMuZW5kKSB8fCAhaGFzKHRoaXMuc3RhcnQpIHx8IHRoaXMuZW5kID4gdGhpcy5zdGFydEIICgZfbGltaXQiRAoHVG9wTmFtZRIMCgRuYW1lGAEgASgJEg0KBWNvdW50GAIgASgDEgsKA3N1bRgDIAEoBBIPCgdhdmVyYWdlGAQgASgBIjUKEFRvcE5hbWVzUmVzcG9uc2USIQoFbmFtZXMYASADKAsyEi5udW1iZXIudjEuVG9wTmFtZSqNAQoMVGltZUludGVydmFsEh0KGVRJTUVfSU5URVJWQUxfVU5TUEVDSUZJRUQQABIWChJUSU1FX0lOVEVSVkFMX0hPVVIQARIVChFUSU1FX0lOVEVSVkFMX0RBWRACEhYKElRJTUVfSU5URVJWQUxfV0VFSxADEhcKE1RJTUVfSU5URVJWQUxfTU9OVEgQBEKdAQoNY29tLm51bWJlci52MUIMTWV0cmljc1Byb3RvUAFaOXRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw",
-  [file_buf_validate_validate, file_google_protobuf_timestamp],
-);
+export const file_number_v1_metrics: GenFile = /*@__PURE__*/
+  fileDesc("ChdudW1iZXIvdjEvbWV0cmljcy5wcm90bxIJbnVtYmVyLnYxItIBCg5TdW1tYXJ5UmVxdWVzdBIpCgVzdGFydBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDpsukhpGmcKD2VuZF9hZnRlcl9zdGFydBIXRW5kIG11c3QgYmUgYWZ0ZXIgc3RhcnQaOyFoYXModGhpcy5lbmQpIHx8ICFoYXModGhpcy5zdGFydCkgfHwgdGhpcy5lbmQgPiB0aGlzLnN0YXJ0InwKD1N1bW1hcnlSZXNwb25zZRITCgt0b3RhbF9jb3VudBgBIAEoAxIRCgl0b3RhbF9zdW0YAiABKAQSDwoHYXZlcmFnZRgDIAEoARILCgNtaW4YBCABKA0SCwoDbWF4GAUgASgNEhYKDmRpc3RpbmN0X25hbWVzGAYgASgNIqECChFUaW1lU2VyaWVzUmVxdWVzdBI9CghpbnRlcnZhbBgBIAEoDjIXLm51bWJlci52MS5UaW1lSW50ZXJ2YWxCDbpICsgBAYIBBBABIABIAIgBARIpCgVzdGFydBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJwoDZW5kGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcDpsukhpGmcKD2VuZF9hZnRlcl9zdGFydBIXRW5kIG11c3QgYmUgYWZ0ZXIgc3RhcnQaOyFoYXModGhpcy5lbmQpIHx8ICFoYXModGhpcy5zdGFydCkgfHwgdGhpcy5lbmQgPiB0aGlzLnN0YXJ0QgsKCV9pbnRlcnZhbCJqCg9UaW1lU2VyaWVzUG9pbnQSKgoGYnVja2V0GAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBINCgVjb3VudBgCIAEoAxILCgNzdW0YAyABKAQSDwoHYXZlcmFnZRgEIAEoASJAChJUaW1lU2VyaWVzUmVzcG9uc2USKgoGcG9pbnRzGAEgAygLMhoubnVtYmVyLnYxLlRpbWVTZXJpZXNQb2ludCKRAgoTRGlzdHJpYnV0aW9uUmVxdWVzdBInCgxidWNrZXRfY291bnQYASABKA1CDLpICcgBASoEGGQoAUgAiAEBEikKBXN0YXJ0GAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBInCgNlbmQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wOmy6SGkaZwoPZW5kX2FmdGVyX3N0YXJ0EhdFbmQgbXVzdCBiZSBhZnRlciBzdGFydBo7IWhhcyh0aGlzLmVuZCkgfHwgIWhhcyh0aGlzLnN0YXJ0KSB8fCB0aGlzLmVuZCA+IHRoaXMuc3RhcnRCDwoNX2J1Y2tldF9jb3VudCJBChJEaXN0cmlidXRpb25CdWNrZXQSDQoFbG93ZXIYASABKA0SDQoFdXBwZXIYAiABKA0SDQoFY291bnQYAyABKAMiRgoURGlzdHJpYnV0aW9uUmVzcG9uc2USLgoHYnVja2V0cxgBIAMoCzIdLm51bWJlci52MS5EaXN0cmlidXRpb25CdWNrZXQi/wEKD1RvcE5hbWVzUmVxdWVzdBIgCgVsaW1pdBgBIAEoDUIMukgJyAEBKgQYZCgBSACIAQESKQoFc3RhcnQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEicKA2VuZBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXA6bLpIaRpnCg9lbmRfYWZ0ZXJfc3RhcnQSF0VuZCBtdXN0IGJlIGFmdGVyIHN0YXJ0GjshaGFzKHRoaXMuZW5kKSB8fCAhaGFzKHRoaXMuc3RhcnQpIHx8IHRoaXMuZW5kID4gdGhpcy5zdGFydEIICgZfbGltaXQiRAoHVG9wTmFtZRIMCgRuYW1lGAEgASgJEg0KBWNvdW50GAIgASgDEgsKA3N1bRgDIAEoBBIPCgdhdmVyYWdlGAQgASgBIjUKEFRvcE5hbWVzUmVzcG9uc2USIQoFbmFtZXMYASADKAsyEi5udW1iZXIudjEuVG9wTmFtZSqNAQoMVGltZUludGVydmFsEh0KGVRJTUVfSU5URVJWQUxfVU5TUEVDSUZJRUQQABIWChJUSU1FX0lOVEVSVkFMX0hPVVIQARIVChFUSU1FX0lOVEVSVkFMX0RBWRACEhYKElRJTUVfSU5URVJWQUxfV0VFSxADEhcKE1RJTUVfSU5URVJWQUxfTU9OVEgQBEKdAQoNY29tLm51bWJlci52MUIMTWV0cmljc1Byb3RvUAFaOXRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci9jb25uZWN0L251bWJlci92MTtudW1iZXJ2MaICA05YWKoCCU51bWJlci5WMcoCCU51bWJlclxWMeICFU51bWJlclxWMVxHUEJNZXRhZGF0YeoCCk51bWJlcjo6VjFiBnByb3RvMw", [file_buf_validate_validate, file_google_protobuf_timestamp]);
 
 /**
  * Scalar summary metrics across all items, suitable for stat cards.
@@ -48,10 +45,8 @@ export type SummaryRequest = Message<"number.v1.SummaryRequest"> & {
  * Describes the message number.v1.SummaryRequest.
  * Use `create(SummaryRequestSchema)` to create a new message.
  */
-export const SummaryRequestSchema: GenMessage<SummaryRequest> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  0,
-);
+export const SummaryRequestSchema: GenMessage<SummaryRequest> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 0);
 
 /**
  * Counts and sums use decimal strings for 64-bit integers in protobuf JSON.
@@ -99,10 +94,8 @@ export type SummaryResponse = Message<"number.v1.SummaryResponse"> & {
  * Describes the message number.v1.SummaryResponse.
  * Use `create(SummaryResponseSchema)` to create a new message.
  */
-export const SummaryResponseSchema: GenMessage<SummaryResponse> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  1,
-);
+export const SummaryResponseSchema: GenMessage<SummaryResponse> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 1);
 
 /**
  * Selects the UTC bucket interval and optional time range.
@@ -139,10 +132,8 @@ export type TimeSeriesRequest = Message<"number.v1.TimeSeriesRequest"> & {
  * Describes the message number.v1.TimeSeriesRequest.
  * Use `create(TimeSeriesRequestSchema)` to create a new message.
  */
-export const TimeSeriesRequestSchema: GenMessage<TimeSeriesRequest> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  2,
-);
+export const TimeSeriesRequestSchema: GenMessage<TimeSeriesRequest> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 2);
 
 /**
  * @generated from message number.v1.TimeSeriesPoint
@@ -173,10 +164,8 @@ export type TimeSeriesPoint = Message<"number.v1.TimeSeriesPoint"> & {
  * Describes the message number.v1.TimeSeriesPoint.
  * Use `create(TimeSeriesPointSchema)` to create a new message.
  */
-export const TimeSeriesPointSchema: GenMessage<TimeSeriesPoint> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  3,
-);
+export const TimeSeriesPointSchema: GenMessage<TimeSeriesPoint> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 3);
 
 /**
  * @generated from message number.v1.TimeSeriesResponse
@@ -192,10 +181,8 @@ export type TimeSeriesResponse = Message<"number.v1.TimeSeriesResponse"> & {
  * Describes the message number.v1.TimeSeriesResponse.
  * Use `create(TimeSeriesResponseSchema)` to create a new message.
  */
-export const TimeSeriesResponseSchema: GenMessage<TimeSeriesResponse> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  4,
-);
+export const TimeSeriesResponseSchema: GenMessage<TimeSeriesResponse> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 4);
 
 /**
  * Histogram of `number` values across approximately equal-width buckets, suitable for bar charts.
@@ -232,10 +219,8 @@ export type DistributionRequest = Message<"number.v1.DistributionRequest"> & {
  * Describes the message number.v1.DistributionRequest.
  * Use `create(DistributionRequestSchema)` to create a new message.
  */
-export const DistributionRequestSchema: GenMessage<DistributionRequest> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  5,
-);
+export const DistributionRequestSchema: GenMessage<DistributionRequest> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 5);
 
 /**
  * @generated from message number.v1.DistributionBucket
@@ -261,10 +246,8 @@ export type DistributionBucket = Message<"number.v1.DistributionBucket"> & {
  * Describes the message number.v1.DistributionBucket.
  * Use `create(DistributionBucketSchema)` to create a new message.
  */
-export const DistributionBucketSchema: GenMessage<DistributionBucket> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  6,
-);
+export const DistributionBucketSchema: GenMessage<DistributionBucket> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 6);
 
 /**
  * @generated from message number.v1.DistributionResponse
@@ -280,7 +263,7 @@ export type DistributionResponse = Message<"number.v1.DistributionResponse"> & {
  * Describes the message number.v1.DistributionResponse.
  * Use `create(DistributionResponseSchema)` to create a new message.
  */
-export const DistributionResponseSchema: GenMessage<DistributionResponse> /*@__PURE__*/ =
+export const DistributionResponseSchema: GenMessage<DistributionResponse> = /*@__PURE__*/
   messageDesc(file_number_v1_metrics, 7);
 
 /**
@@ -318,10 +301,8 @@ export type TopNamesRequest = Message<"number.v1.TopNamesRequest"> & {
  * Describes the message number.v1.TopNamesRequest.
  * Use `create(TopNamesRequestSchema)` to create a new message.
  */
-export const TopNamesRequestSchema: GenMessage<TopNamesRequest> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  8,
-);
+export const TopNamesRequestSchema: GenMessage<TopNamesRequest> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 8);
 
 /**
  * @generated from message number.v1.TopName
@@ -352,10 +333,8 @@ export type TopName = Message<"number.v1.TopName"> & {
  * Describes the message number.v1.TopName.
  * Use `create(TopNameSchema)` to create a new message.
  */
-export const TopNameSchema: GenMessage<TopName> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  9,
-);
+export const TopNameSchema: GenMessage<TopName> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 9);
 
 /**
  * @generated from message number.v1.TopNamesResponse
@@ -371,10 +350,8 @@ export type TopNamesResponse = Message<"number.v1.TopNamesResponse"> & {
  * Describes the message number.v1.TopNamesResponse.
  * Use `create(TopNamesResponseSchema)` to create a new message.
  */
-export const TopNamesResponseSchema: GenMessage<TopNamesResponse> /*@__PURE__*/ = messageDesc(
-  file_number_v1_metrics,
-  10,
-);
+export const TopNamesResponseSchema: GenMessage<TopNamesResponse> = /*@__PURE__*/
+  messageDesc(file_number_v1_metrics, 10);
 
 /**
  * Time-bucketed counts and sums, suitable for line/area charts.
@@ -411,7 +388,6 @@ export enum TimeInterval {
 /**
  * Describes the enum number.v1.TimeInterval.
  */
-export const TimeIntervalSchema: GenEnum<TimeInterval> /*@__PURE__*/ = enumDesc(
-  file_number_v1_metrics,
-  0,
-);
+export const TimeIntervalSchema: GenEnum<TimeInterval> = /*@__PURE__*/
+  enumDesc(file_number_v1_metrics, 0);
+

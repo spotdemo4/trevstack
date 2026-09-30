@@ -2,20 +2,17 @@
 // @generated from file auth/v1/signup.proto (package auth.v1, syntax proto3)
 /* eslint-disable */
 
-import type { Message } from "@bufbuild/protobuf";
 import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
-
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file auth/v1/signup.proto.
  */
-export const file_auth_v1_signup: GenFile /*@__PURE__*/ = fileDesc(
-  "ChRhdXRoL3YxL3NpZ251cC5wcm90bxIHYXV0aC52MSLEAQoNU2lnbnVwUmVxdWVzdBJQCgh1c2VybmFtZRgBIAEoCUI5ukcNOgsSCWRlbW9fdXNlcrpIJsgBAXIhEAMYQDIbXltBLVphLXowLTldW0EtWmEtejAtOV8tXSokSACIAQESRwoIcGFzc3dvcmQYAiABKAlCMLpHISABOhISEGV4YW1wbGUtcGFzc3dvcmSaAghwYXNzd29yZLpICcgBAXIEEAgoSEgBiAEBQgsKCV91c2VybmFtZUILCglfcGFzc3dvcmQiEAoOU2lnbnVwUmVzcG9uc2VCjgEKC2NvbS5hdXRoLnYxQgtTaWdudXBQcm90b1ABWjV0cmV2LnppcC90ZW1wbGF0ZS9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM",
-  [file_buf_validate_validate, file_gnostic_openapi_v3_annotations],
-);
+export const file_auth_v1_signup: GenFile = /*@__PURE__*/
+  fileDesc("ChRhdXRoL3YxL3NpZ251cC5wcm90bxIHYXV0aC52MSLEAQoNU2lnbnVwUmVxdWVzdBJQCgh1c2VybmFtZRgBIAEoCUI5ukcNOgsSCWRlbW9fdXNlcrpIJsgBAXIhEAMYQDIbXltBLVphLXowLTldW0EtWmEtejAtOV8tXSokSACIAQESRwoIcGFzc3dvcmQYAiABKAlCMLpHISABOhISEGV4YW1wbGUtcGFzc3dvcmSaAghwYXNzd29yZLpICcgBAXIEEAgoSEgBiAEBQgsKCV91c2VybmFtZUILCglfcGFzc3dvcmQiEAoOU2lnbnVwUmVzcG9uc2VCjgEKC2NvbS5hdXRoLnYxQgtTaWdudXBQcm90b1ABWjV0cmV2LnppcC90ZW1wbGF0ZS9zdGFjay9zZXJ2ZXIvY29ubmVjdC9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM", [file_buf_validate_validate, file_gnostic_openapi_v3_annotations]);
 
 /**
  * Credentials for a new account.
@@ -45,21 +42,19 @@ export type SignupRequest = Message<"auth.v1.SignupRequest"> & {
  * Describes the message auth.v1.SignupRequest.
  * Use `create(SignupRequestSchema)` to create a new message.
  */
-export const SignupRequestSchema: GenMessage<SignupRequest> /*@__PURE__*/ = messageDesc(
-  file_auth_v1_signup,
-  0,
-);
+export const SignupRequestSchema: GenMessage<SignupRequest> = /*@__PURE__*/
+  messageDesc(file_auth_v1_signup, 0);
 
 /**
  * @generated from message auth.v1.SignupResponse
  */
-export type SignupResponse = Message<"auth.v1.SignupResponse"> & {};
+export type SignupResponse = Message<"auth.v1.SignupResponse"> & {
+};
 
 /**
  * Describes the message auth.v1.SignupResponse.
  * Use `create(SignupResponseSchema)` to create a new message.
  */
-export const SignupResponseSchema: GenMessage<SignupResponse> /*@__PURE__*/ = messageDesc(
-  file_auth_v1_signup,
-  1,
-);
+export const SignupResponseSchema: GenMessage<SignupResponse> = /*@__PURE__*/
+  messageDesc(file_auth_v1_signup, 1);
+

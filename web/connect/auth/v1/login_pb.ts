@@ -2,20 +2,17 @@
 // @generated from file auth/v1/login.proto (package auth.v1, syntax proto3)
 /* eslint-disable */
 
-import type { Message } from "@bufbuild/protobuf";
 import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
-
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file auth/v1/login.proto.
  */
-export const file_auth_v1_login: GenFile /*@__PURE__*/ = fileDesc(
-  "ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIsMBCgxMb2dpblJlcXVlc3QSUAoIdXNlcm5hbWUYASABKAlCObpHDToLEglkZW1vX3VzZXK6SCbIAQFyIRADGEAyG15bQS1aYS16MC05XVtBLVphLXowLTlfLV0qJEgAiAEBEkcKCHBhc3N3b3JkGAIgASgJQjC6RyEgAToSEhBleGFtcGxlLXBhc3N3b3JkmgIIcGFzc3dvcmS6SAnIAQFyBBAIKEhIAYgBAUILCglfdXNlcm5hbWVCCwoJX3Bhc3N3b3JkInsKDUxvZ2luUmVzcG9uc2USKQoDand0GAEgASgJQhy6Rxk6FxIVZXhhbXBsZS1zZXNzaW9uLXRva2VuEh0KA3N1YhgCIAEoCUIQukcNOgsSCWRlbW9fdXNlchIgCgNleHAYAyABKANCE7pHEDoOEgwiMTg5MzQ1NjAwMCJCjQEKC2NvbS5hdXRoLnYxQgpMb2dpblByb3RvUAFaNXRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci9jb25uZWN0L2F1dGgvdjE7YXV0aHYxogIDQVhYqgIHQXV0aC5WMcoCB0F1dGhcVjHiAhNBdXRoXFYxXEdQQk1ldGFkYXRh6gIIQXV0aDo6VjFiBnByb3RvMw",
-  [file_buf_validate_validate, file_gnostic_openapi_v3_annotations],
-);
+export const file_auth_v1_login: GenFile = /*@__PURE__*/
+  fileDesc("ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIsMBCgxMb2dpblJlcXVlc3QSUAoIdXNlcm5hbWUYASABKAlCObpHDToLEglkZW1vX3VzZXK6SCbIAQFyIRADGEAyG15bQS1aYS16MC05XVtBLVphLXowLTlfLV0qJEgAiAEBEkcKCHBhc3N3b3JkGAIgASgJQjC6RyEgAToSEhBleGFtcGxlLXBhc3N3b3JkmgIIcGFzc3dvcmS6SAnIAQFyBBAIKEhIAYgBAUILCglfdXNlcm5hbWVCCwoJX3Bhc3N3b3JkInsKDUxvZ2luUmVzcG9uc2USKQoDand0GAEgASgJQhy6Rxk6FxIVZXhhbXBsZS1zZXNzaW9uLXRva2VuEh0KA3N1YhgCIAEoCUIQukcNOgsSCWRlbW9fdXNlchIgCgNleHAYAyABKANCE7pHEDoOEgwiMTg5MzQ1NjAwMCJCjQEKC2NvbS5hdXRoLnYxQgpMb2dpblByb3RvUAFaNXRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci9jb25uZWN0L2F1dGgvdjE7YXV0aHYxogIDQVhYqgIHQXV0aC5WMcoCB0F1dGhcVjHiAhNBdXRoXFYxXEdQQk1ldGFkYXRh6gIIQXV0aDo6VjFiBnByb3RvMw", [file_buf_validate_validate, file_gnostic_openapi_v3_annotations]);
 
 /**
  * Credentials for an existing account.
@@ -45,10 +42,8 @@ export type LoginRequest = Message<"auth.v1.LoginRequest"> & {
  * Describes the message auth.v1.LoginRequest.
  * Use `create(LoginRequestSchema)` to create a new message.
  */
-export const LoginRequestSchema: GenMessage<LoginRequest> /*@__PURE__*/ = messageDesc(
-  file_auth_v1_login,
-  0,
-);
+export const LoginRequestSchema: GenMessage<LoginRequest> = /*@__PURE__*/
+  messageDesc(file_auth_v1_login, 0);
 
 /**
  * Session token and metadata returned after successful authentication.
@@ -88,7 +83,6 @@ export type LoginResponse = Message<"auth.v1.LoginResponse"> & {
  * Describes the message auth.v1.LoginResponse.
  * Use `create(LoginResponseSchema)` to create a new message.
  */
-export const LoginResponseSchema: GenMessage<LoginResponse> /*@__PURE__*/ = messageDesc(
-  file_auth_v1_login,
-  1,
-);
+export const LoginResponseSchema: GenMessage<LoginResponse> = /*@__PURE__*/
+  messageDesc(file_auth_v1_login, 1);
+

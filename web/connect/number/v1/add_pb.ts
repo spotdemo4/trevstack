@@ -2,20 +2,17 @@
 // @generated from file number/v1/add.proto (package number.v1, syntax proto3)
 /* eslint-disable */
 
-import type { Message } from "@bufbuild/protobuf";
 import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
-
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file number/v1/add.proto.
  */
-export const file_number_v1_add: GenFile /*@__PURE__*/ = fileDesc(
-  "ChNudW1iZXIvdjEvYWRkLnByb3RvEgludW1iZXIudjEicwoKQWRkUmVxdWVzdBIsCgRuYW1lGAEgASgJQhm6Rwo6CBIGdmlzaXRzukgJyAEBcgQQARgySACIAQESIwoGbnVtYmVyGAIgASgNQg66SAvIAQEqBhjAhD0oAUgBiAEBQgcKBV9uYW1lQgkKB19udW1iZXIiJwoLQWRkUmVzcG9uc2USGAoDc3VtGAEgASgEQgu6Rwg6BhIEIjQyIkKZAQoNY29tLm51bWJlci52MUIIQWRkUHJvdG9QAVo5dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL2Nvbm5lY3QvbnVtYmVyL3YxO251bWJlcnYxogIDTlhYqgIJTnVtYmVyLlYxygIJTnVtYmVyXFYx4gIVTnVtYmVyXFYxXEdQQk1ldGFkYXRh6gIKTnVtYmVyOjpWMWIGcHJvdG8z",
-  [file_buf_validate_validate, file_gnostic_openapi_v3_annotations],
-);
+export const file_number_v1_add: GenFile = /*@__PURE__*/
+  fileDesc("ChNudW1iZXIvdjEvYWRkLnByb3RvEgludW1iZXIudjEicwoKQWRkUmVxdWVzdBIsCgRuYW1lGAEgASgJQhm6Rwo6CBIGdmlzaXRzukgJyAEBcgQQARgySACIAQESIwoGbnVtYmVyGAIgASgNQg66SAvIAQEqBhjAhD0oAUgBiAEBQgcKBV9uYW1lQgkKB19udW1iZXIiJwoLQWRkUmVzcG9uc2USGAoDc3VtGAEgASgEQgu6Rwg6BhIEIjQyIkKZAQoNY29tLm51bWJlci52MUIIQWRkUHJvdG9QAVo5dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL2Nvbm5lY3QvbnVtYmVyL3YxO251bWJlcnYxogIDTlhYqgIJTnVtYmVyLlYxygIJTnVtYmVyXFYx4gIVTnVtYmVyXFYxXEdQQk1ldGFkYXRh6gIKTnVtYmVyOjpWMWIGcHJvdG8z", [file_buf_validate_validate, file_gnostic_openapi_v3_annotations]);
 
 /**
  * A named positive value to record.
@@ -43,10 +40,8 @@ export type AddRequest = Message<"number.v1.AddRequest"> & {
  * Describes the message number.v1.AddRequest.
  * Use `create(AddRequestSchema)` to create a new message.
  */
-export const AddRequestSchema: GenMessage<AddRequest> /*@__PURE__*/ = messageDesc(
-  file_number_v1_add,
-  0,
-);
+export const AddRequestSchema: GenMessage<AddRequest> = /*@__PURE__*/
+  messageDesc(file_number_v1_add, 0);
 
 /**
  * Example (protobuf JSON):
@@ -69,7 +64,6 @@ export type AddResponse = Message<"number.v1.AddResponse"> & {
  * Describes the message number.v1.AddResponse.
  * Use `create(AddResponseSchema)` to create a new message.
  */
-export const AddResponseSchema: GenMessage<AddResponse> /*@__PURE__*/ = messageDesc(
-  file_number_v1_add,
-  1,
-);
+export const AddResponseSchema: GenMessage<AddResponse> = /*@__PURE__*/
+  messageDesc(file_number_v1_add, 1);
+

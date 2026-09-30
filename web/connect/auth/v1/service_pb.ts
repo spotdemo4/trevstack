@@ -4,27 +4,19 @@
 
 import type { GenFile, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-
-import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 import type { LoginRequestSchema, LoginResponseSchema } from "./login_pb";
 import { file_auth_v1_login } from "./login_pb";
 import type { LogoutRequestSchema, LogoutResponseSchema } from "./logout_pb";
 import { file_auth_v1_logout } from "./logout_pb";
 import type { SignupRequestSchema, SignupResponseSchema } from "./signup_pb";
 import { file_auth_v1_signup } from "./signup_pb";
+import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 
 /**
  * Describes the file auth/v1/service.proto.
  */
-export const file_auth_v1_service: GenFile /*@__PURE__*/ = fileDesc(
-  "ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEyjgIKC0F1dGhTZXJ2aWNlElMKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiGLpHFRIRQ3JlYXRlIGFuIGFjY291bnRaABJOCgVMb2dpbhIVLmF1dGgudjEuTG9naW5SZXF1ZXN0GhYuYXV0aC52MS5Mb2dpblJlc3BvbnNlIha6RxMSD1N0YXJ0IGEgc2Vzc2lvbloAEloKBkxvZ291dBIWLmF1dGgudjEuTG9nb3V0UmVxdWVzdBoXLmF1dGgudjEuTG9nb3V0UmVzcG9uc2UiH7pHHBIYQ2xlYXIgdGhlIHNlc3Npb24gY29va2llWgBCjwEKC2NvbS5hdXRoLnYxQgxTZXJ2aWNlUHJvdG9QAVo1dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL2Nvbm5lY3QvYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z",
-  [
-    file_auth_v1_login,
-    file_auth_v1_logout,
-    file_auth_v1_signup,
-    file_gnostic_openapi_v3_annotations,
-  ],
-);
+export const file_auth_v1_service: GenFile = /*@__PURE__*/
+  fileDesc("ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEyjgIKC0F1dGhTZXJ2aWNlElMKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiGLpHFRIRQ3JlYXRlIGFuIGFjY291bnRaABJOCgVMb2dpbhIVLmF1dGgudjEuTG9naW5SZXF1ZXN0GhYuYXV0aC52MS5Mb2dpblJlc3BvbnNlIha6RxMSD1N0YXJ0IGEgc2Vzc2lvbloAEloKBkxvZ291dBIWLmF1dGgudjEuTG9nb3V0UmVxdWVzdBoXLmF1dGgudjEuTG9nb3V0UmVzcG9uc2UiH7pHHBIYQ2xlYXIgdGhlIHNlc3Npb24gY29va2llWgBCjwEKC2NvbS5hdXRoLnYxQgxTZXJ2aWNlUHJvdG9QAVo1dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL2Nvbm5lY3QvYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z", [file_auth_v1_login, file_auth_v1_logout, file_auth_v1_signup, file_gnostic_openapi_v3_annotations]);
 
 /**
  * Account registration and cookie-based sessions. These operations do not require an existing session.
@@ -41,7 +33,7 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof SignupRequestSchema;
     output: typeof SignupResponseSchema;
-  };
+  },
   /**
    * Authenticates an account, sets the HttpOnly stack_session cookie, and returns session metadata.
    * Unknown usernames and incorrect passwords both return an unauthenticated error.
@@ -52,7 +44,7 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof LoginRequestSchema;
     output: typeof LoginResponseSchema;
-  };
+  },
   /**
    * Clears the stack_session cookie without requiring an active session. Does not revoke issued JWTs.
    *
@@ -62,5 +54,7 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof LogoutRequestSchema;
     output: typeof LogoutResponseSchema;
-  };
-}> /*@__PURE__*/ = serviceDesc(file_auth_v1_service, 0);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_auth_v1_service, 0);
+

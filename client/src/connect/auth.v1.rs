@@ -8,10 +8,10 @@
 /// ```
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct LoginRequest {
-    #[prost(string, optional, tag = "1")]
+    #[prost(string, optional, tag="1")]
     pub username: ::core::option::Option<::prost::alloc::string::String>,
     /// Account password; accepted as input and never returned in a response.
-    #[prost(string, optional, tag = "2")]
+    #[prost(string, optional, tag="2")]
     pub password: ::core::option::Option<::prost::alloc::string::String>,
 }
 /// Session token and metadata returned after successful authentication.
@@ -24,19 +24,21 @@ pub struct LoginRequest {
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct LoginResponse {
     /// Signed session token.
-    #[prost(string, tag = "1")]
+    #[prost(string, tag="1")]
     pub jwt: ::prost::alloc::string::String,
     /// The canonical username used as the session token's subject.
-    #[prost(string, tag = "2")]
+    #[prost(string, tag="2")]
     pub sub: ::prost::alloc::string::String,
     /// The session token's expiration as Unix seconds, encoded as a decimal string in protobuf JSON.
-    #[prost(int64, tag = "3")]
+    #[prost(int64, tag="3")]
     pub exp: i64,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct LogoutRequest {}
+pub struct LogoutRequest {
+}
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct LogoutResponse {}
+pub struct LogoutResponse {
+}
 /// Credentials for a new account.
 ///
 /// Example (protobuf JSON):
@@ -45,13 +47,14 @@ pub struct LogoutResponse {}
 /// ```
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SignupRequest {
-    #[prost(string, optional, tag = "1")]
+    #[prost(string, optional, tag="1")]
     pub username: ::core::option::Option<::prost::alloc::string::String>,
     /// Account password; accepted as input and never returned in a response.
-    #[prost(string, optional, tag = "2")]
+    #[prost(string, optional, tag="2")]
     pub password: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SignupResponse {}
+pub struct SignupResponse {
+}
 include!("auth.v1.tonic.rs");
 // @@protoc_insertion_point(module)

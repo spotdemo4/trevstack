@@ -471,29 +471,6 @@ if [[ -d .forgejo && -n $forgejo_host ]]; then
   [[ -n $source_registry ]] && replace_tracked_text "REGISTRY: $source_registry" "REGISTRY: $forgejo_host"
   replace_tracked_text "//$source_registry/api/packages" "//$forgejo_host/api/packages"
 fi
-remove_check_blocks() {
-  local key
-  for key in "$@"; do
-    # Anchor both ends at the check indentation so nested attrsets (e.g. env) do not end the range early.
-    sed_inplace "/^          ${key} = {$/,/^          };$/d" flake.nix
-  done
-}
-if [[ -n $delete_provider ]]; then
-  if [[ $delete_provider == github ]]; then
-    remove_check_blocks actions-gh renovate-gh
-  else
-    remove_check_blocks actions-fj renovate-fj
-  fi
-fi
-if [[ ! -d .github && -f flake.nix ]]; then
-  remove_check_blocks actions-gh renovate-gh
-  sed_inplace '\|^[[:space:]]*\./\.github/workflows$|d' flake.nix
-  sed_inplace '/^          renovate = {$/,/^          };/d' flake.nix
-fi
-if [[ ! -d .forgejo && -f flake.nix ]]; then
-  remove_check_blocks actions-fj renovate-fj
-  sed_inplace '\|^[[:space:]]*\./\.forgejo/workflows$|d' flake.nix
-fi
 
 # Delete from the line equal to $2 through the line equal to $3, or through the next blank
 # line when $3 is omitted, without leaving doubled or trailing blank lines behind.
@@ -521,6 +498,32 @@ remove_block() {
   cat "$temp" >"$file"
   rm -f "$temp"
 }
+
+remove_check_blocks() {
+  local key
+  for key in "$@"; do
+    # Anchor both ends at the check indentation so nested attrsets (e.g. env) do not end the range early.
+    grep -qFx "          ${key} = {" flake.nix || continue
+    remove_block flake.nix "          ${key} = {" '          };'
+  done
+}
+if [[ -n $delete_provider ]]; then
+  if [[ $delete_provider == github ]]; then
+    remove_check_blocks actions-gh renovate-gh
+  else
+    remove_check_blocks actions-fj renovate-fj
+  fi
+fi
+if [[ ! -d .github && -f flake.nix ]]; then
+  remove_check_blocks actions-gh renovate-gh
+  sed_inplace '\|^[[:space:]]*\./\.github/workflows$|d' flake.nix
+  sed_inplace '/^          renovate = {$/,/^          };/d' flake.nix
+fi
+if [[ ! -d .forgejo && -f flake.nix ]]; then
+  remove_check_blocks actions-fj renovate-fj
+  sed_inplace '\|^[[:space:]]*\./\.forgejo/workflows$|d' flake.nix
+fi
+
 if ! $keep_client; then
   rm -f pyproject.toml
   sed_inplace \
@@ -541,6 +544,7 @@ if ! $keep_client; then
   remove_block buf.gen.yaml '  - local: protoc-gen-tonic'
   remove_block treefmt.toml '[formatter.rustfmt]'
   remove_block treefmt.toml '[formatter.ruff]'
+  sed_inplace '/^  "client\/src\/connect\/\*\*",$/d' treefmt.toml
   remove_block .gitignore '# client'
   remove_block .gitignore '# python'
   remove_block .gitattributes '# Rust source files use Rust diff driver'
@@ -595,6 +599,7 @@ if ! $keep_docs; then
     server/main.go
   remove_block buf.gen.yaml '  - local: protoc-gen-connect-openapi'
   remove_block .gitignore '# docs'
+  sed_inplace '/^  "docs\/openapi\.yaml",$/d' treefmt.toml
   replace_literal '# Linguist: Buf-generated code and OpenAPI specification' '# Linguist: Buf-generated code' .gitattributes
   sed_inplace '/^docs\/openapi\.yaml linguist-generated=true$/d' .gitattributes
   replace_literal '## Generated API Code and Documentation' '## Generated API Code' AGENTS.md

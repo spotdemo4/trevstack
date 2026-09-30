@@ -6,12 +6,12 @@ pub mod number_service_client {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value
+        clippy::let_unit_value,
     )]
-    use tonic::codegen::http::Uri;
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /** Records and analyzes named numbers shared across all users. Requires a valid session cookie.
-    */
+*/
     #[derive(Debug, Clone)]
     pub struct NumberServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -50,13 +50,14 @@ pub mod number_service_client {
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
             T: tonic::codegen::Service<
-                    http::Request<tonic::body::Body>,
-                    Response = http::Response<
-                        <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
-                    >,
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + std::marker::Send + std::marker::Sync,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             NumberServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -92,24 +93,31 @@ pub mod number_service_client {
             self
         }
         /** Records a named value and returns the sum of all stored numbers, not just this name or user.
-        */
+*/
         pub async fn add(
             &mut self,
             request: impl tonic::IntoRequest<super::AddRequest>,
         ) -> std::result::Result<tonic::Response<super::AddResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/number.v1.NumberService/Add");
+            let path = http::uri::PathAndQuery::from_static(
+                "/number.v1.NumberService/Add",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("number.v1.NumberService", "Add"));
             self.inner.unary(req, path, codec).await
         }
         /** Streams one response per matching item, newest inserted first. An empty result sends no messages.
-         Name filtering uses a substring match; number and timestamp bounds are inclusive.
-        */
+ Name filtering uses a substring match; number and timestamp bounds are inclusive.
+*/
         pub async fn list(
             &mut self,
             request: impl tonic::IntoRequest<super::ListRequest>,
@@ -117,81 +125,125 @@ pub mod number_service_client {
             tonic::Response<tonic::codec::Streaming<super::ListResponse>>,
             tonic::Status,
         > {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/number.v1.NumberService/List");
+            let path = http::uri::PathAndQuery::from_static(
+                "/number.v1.NumberService/List",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("number.v1.NumberService", "List"));
             self.inner.server_streaming(req, path, codec).await
         }
         /** Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
-         All aggregates are zero when no items match.
-        */
+ All aggregates are zero when no items match.
+*/
         pub async fn summary(
             &mut self,
             request: impl tonic::IntoRequest<super::SummaryRequest>,
-        ) -> std::result::Result<tonic::Response<super::SummaryResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+        ) -> std::result::Result<
+            tonic::Response<super::SummaryResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/number.v1.NumberService/Summary");
+            let path = http::uri::PathAndQuery::from_static(
+                "/number.v1.NumberService/Summary",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("number.v1.NumberService", "Summary"));
             self.inner.unary(req, path, codec).await
         }
         /** Returns counts, sums, and averages in ascending UTC time buckets. Empty buckets are omitted.
-         Weeks begin on Sunday; months begin on the first day.
-        */
+ Weeks begin on Sunday; months begin on the first day.
+*/
         pub async fn time_series(
             &mut self,
             request: impl tonic::IntoRequest<super::TimeSeriesRequest>,
-        ) -> std::result::Result<tonic::Response<super::TimeSeriesResponse>, tonic::Status>
-        {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+        ) -> std::result::Result<
+            tonic::Response<super::TimeSeriesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/number.v1.NumberService/TimeSeries");
+            let path = http::uri::PathAndQuery::from_static(
+                "/number.v1.NumberService/TimeSeries",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("number.v1.NumberService", "TimeSeries"));
             self.inner.unary(req, path, codec).await
         }
         /** Groups values into approximately equal-width buckets over the observed range, including empty buckets.
-         No matching items produce no buckets; identical values produce a single bucket.
-        */
+ No matching items produce no buckets; identical values produce a single bucket.
+*/
         pub async fn distribution(
             &mut self,
             request: impl tonic::IntoRequest<super::DistributionRequest>,
-        ) -> std::result::Result<tonic::Response<super::DistributionResponse>, tonic::Status>
-        {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+        ) -> std::result::Result<
+            tonic::Response<super::DistributionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/number.v1.NumberService/Distribution");
+            let path = http::uri::PathAndQuery::from_static(
+                "/number.v1.NumberService/Distribution",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("number.v1.NumberService", "Distribution"));
             self.inner.unary(req, path, codec).await
         }
         /** Ranks names by item count, then total value, both descending, up to the requested limit.
-        */
+*/
         pub async fn top_names(
             &mut self,
             request: impl tonic::IntoRequest<super::TopNamesRequest>,
-        ) -> std::result::Result<tonic::Response<super::TopNamesResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
-            })?;
+        ) -> std::result::Result<
+            tonic::Response<super::TopNamesResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/number.v1.NumberService/TopNames");
+            let path = http::uri::PathAndQuery::from_static(
+                "/number.v1.NumberService/TopNames",
+            );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("number.v1.NumberService", "TopNames"));

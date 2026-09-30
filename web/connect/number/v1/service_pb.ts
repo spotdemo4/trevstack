@@ -4,36 +4,19 @@
 
 import type { GenFile, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-
 import { file_gnostic_openapi_v3_annotations } from "../../gnostic/openapi/v3/annotations_pb";
 import type { AddRequestSchema, AddResponseSchema } from "./add_pb";
 import { file_number_v1_add } from "./add_pb";
 import type { ListRequestSchema, ListResponseSchema } from "./list_pb";
 import { file_number_v1_list } from "./list_pb";
-import type {
-  DistributionRequestSchema,
-  DistributionResponseSchema,
-  SummaryRequestSchema,
-  SummaryResponseSchema,
-  TimeSeriesRequestSchema,
-  TimeSeriesResponseSchema,
-  TopNamesRequestSchema,
-  TopNamesResponseSchema,
-} from "./metrics_pb";
+import type { DistributionRequestSchema, DistributionResponseSchema, SummaryRequestSchema, SummaryResponseSchema, TimeSeriesRequestSchema, TimeSeriesResponseSchema, TopNamesRequestSchema, TopNamesResponseSchema } from "./metrics_pb";
 import { file_number_v1_metrics } from "./metrics_pb";
 
 /**
  * Describes the file number/v1/service.proto.
  */
-export const file_number_v1_service: GenFile /*@__PURE__*/ = fileDesc(
-  "ChdudW1iZXIvdjEvc2VydmljZS5wcm90bxIJbnVtYmVyLnYxMtUECg1OdW1iZXJTZXJ2aWNlEkoKA0FkZBIVLm51bWJlci52MS5BZGRSZXF1ZXN0GhYubnVtYmVyLnYxLkFkZFJlc3BvbnNlIhS6RxESD1JlY29yZCBhIG51bWJlchJVCgRMaXN0EhYubnVtYmVyLnYxLkxpc3RSZXF1ZXN0GhcubnVtYmVyLnYxLkxpc3RSZXNwb25zZSIaukcXEhVTdHJlYW0gbWF0Y2hpbmcgaXRlbXMwARJhCgdTdW1tYXJ5EhkubnVtYmVyLnYxLlN1bW1hcnlSZXF1ZXN0GhoubnVtYmVyLnYxLlN1bW1hcnlSZXNwb25zZSIfukccEhpTdW1tYXJpemUgcmVjb3JkZWQgbnVtYmVycxJlCgpUaW1lU2VyaWVzEhwubnVtYmVyLnYxLlRpbWVTZXJpZXNSZXF1ZXN0Gh0ubnVtYmVyLnYxLlRpbWVTZXJpZXNSZXNwb25zZSIaukcXEhVHZXQgbWV0cmljcyBvdmVyIHRpbWUScAoMRGlzdHJpYnV0aW9uEh4ubnVtYmVyLnYxLkRpc3RyaWJ1dGlvblJlcXVlc3QaHy5udW1iZXIudjEuRGlzdHJpYnV0aW9uUmVzcG9uc2UiH7pHHBIaR2V0IHRoZSB2YWx1ZSBkaXN0cmlidXRpb24SZQoIVG9wTmFtZXMSGi5udW1iZXIudjEuVG9wTmFtZXNSZXF1ZXN0GhsubnVtYmVyLnYxLlRvcE5hbWVzUmVzcG9uc2UiILpHHRIbR2V0IHRoZSBtb3N0IGZyZXF1ZW50IG5hbWVzQp0BCg1jb20ubnVtYmVyLnYxQgxTZXJ2aWNlUHJvdG9QAVo5dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL2Nvbm5lY3QvbnVtYmVyL3YxO251bWJlcnYxogIDTlhYqgIJTnVtYmVyLlYxygIJTnVtYmVyXFYx4gIVTnVtYmVyXFYxXEdQQk1ldGFkYXRh6gIKTnVtYmVyOjpWMWIGcHJvdG8z",
-  [
-    file_gnostic_openapi_v3_annotations,
-    file_number_v1_add,
-    file_number_v1_list,
-    file_number_v1_metrics,
-  ],
-);
+export const file_number_v1_service: GenFile = /*@__PURE__*/
+  fileDesc("ChdudW1iZXIvdjEvc2VydmljZS5wcm90bxIJbnVtYmVyLnYxMtUECg1OdW1iZXJTZXJ2aWNlEkoKA0FkZBIVLm51bWJlci52MS5BZGRSZXF1ZXN0GhYubnVtYmVyLnYxLkFkZFJlc3BvbnNlIhS6RxESD1JlY29yZCBhIG51bWJlchJVCgRMaXN0EhYubnVtYmVyLnYxLkxpc3RSZXF1ZXN0GhcubnVtYmVyLnYxLkxpc3RSZXNwb25zZSIaukcXEhVTdHJlYW0gbWF0Y2hpbmcgaXRlbXMwARJhCgdTdW1tYXJ5EhkubnVtYmVyLnYxLlN1bW1hcnlSZXF1ZXN0GhoubnVtYmVyLnYxLlN1bW1hcnlSZXNwb25zZSIfukccEhpTdW1tYXJpemUgcmVjb3JkZWQgbnVtYmVycxJlCgpUaW1lU2VyaWVzEhwubnVtYmVyLnYxLlRpbWVTZXJpZXNSZXF1ZXN0Gh0ubnVtYmVyLnYxLlRpbWVTZXJpZXNSZXNwb25zZSIaukcXEhVHZXQgbWV0cmljcyBvdmVyIHRpbWUScAoMRGlzdHJpYnV0aW9uEh4ubnVtYmVyLnYxLkRpc3RyaWJ1dGlvblJlcXVlc3QaHy5udW1iZXIudjEuRGlzdHJpYnV0aW9uUmVzcG9uc2UiH7pHHBIaR2V0IHRoZSB2YWx1ZSBkaXN0cmlidXRpb24SZQoIVG9wTmFtZXMSGi5udW1iZXIudjEuVG9wTmFtZXNSZXF1ZXN0GhsubnVtYmVyLnYxLlRvcE5hbWVzUmVzcG9uc2UiILpHHRIbR2V0IHRoZSBtb3N0IGZyZXF1ZW50IG5hbWVzQp0BCg1jb20ubnVtYmVyLnYxQgxTZXJ2aWNlUHJvdG9QAVo5dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL2Nvbm5lY3QvbnVtYmVyL3YxO251bWJlcnYxogIDTlhYqgIJTnVtYmVyLlYxygIJTnVtYmVyXFYx4gIVTnVtYmVyXFYxXEdQQk1ldGFkYXRh6gIKTnVtYmVyOjpWMWIGcHJvdG8z", [file_gnostic_openapi_v3_annotations, file_number_v1_add, file_number_v1_list, file_number_v1_metrics]);
 
 /**
  * Records and analyzes named numbers shared across all users. Requires a valid session cookie.
@@ -50,7 +33,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof AddRequestSchema;
     output: typeof AddResponseSchema;
-  };
+  },
   /**
    * Streams one response per matching item, newest inserted first. An empty result sends no messages.
    * Name filtering uses a substring match; number and timestamp bounds are inclusive.
@@ -61,7 +44,7 @@ export const NumberService: GenService<{
     methodKind: "server_streaming";
     input: typeof ListRequestSchema;
     output: typeof ListResponseSchema;
-  };
+  },
   /**
    * Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
    * All aggregates are zero when no items match.
@@ -72,7 +55,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof SummaryRequestSchema;
     output: typeof SummaryResponseSchema;
-  };
+  },
   /**
    * Returns counts, sums, and averages in ascending UTC time buckets. Empty buckets are omitted.
    * Weeks begin on Sunday; months begin on the first day.
@@ -83,7 +66,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof TimeSeriesRequestSchema;
     output: typeof TimeSeriesResponseSchema;
-  };
+  },
   /**
    * Groups values into approximately equal-width buckets over the observed range, including empty buckets.
    * No matching items produce no buckets; identical values produce a single bucket.
@@ -94,7 +77,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof DistributionRequestSchema;
     output: typeof DistributionResponseSchema;
-  };
+  },
   /**
    * Ranks names by item count, then total value, both descending, up to the requested limit.
    *
@@ -104,5 +87,7 @@ export const NumberService: GenService<{
     methodKind: "unary";
     input: typeof TopNamesRequestSchema;
     output: typeof TopNamesResponseSchema;
-  };
-}> /*@__PURE__*/ = serviceDesc(file_number_v1_service, 0);
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_number_v1_service, 0);
+

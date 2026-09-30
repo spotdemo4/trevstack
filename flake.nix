@@ -131,7 +131,6 @@
               cd server && go mod tidy && cd ..
               cd docs && npm install && cd ..
               cd web && npm install && cd ..
-              treefmt
             '';
           };
         };

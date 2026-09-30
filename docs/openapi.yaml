@@ -179,17 +179,17 @@ components:
         details:
           type: array
           items:
-            $ref: "#/components/schemas/connect.error_details.Any"
+            $ref: '#/components/schemas/connect.error_details.Any'
           description: A list of messages that carry the error details. There is no limit on the number of messages.
       title: Connect Error
       additionalProperties: true
-      description: "Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation"
+      description: 'Error type returned by Connect: https://connectrpc.com/docs/go/errors/#http-representation'
     connect.error_details.Any:
       type: object
       properties:
         type:
           type: string
-          description: "A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`. This is used to determine the schema of the data in the `value` field and is the discriminator for the `debug` field."
+          description: 'A URL that acts as a globally unique identifier for the type of the serialized message. For example: `type.googleapis.com/google.rpc.ErrorInfo`. This is used to determine the schema of the data in the `value` field and is the discriminator for the `debug` field.'
         value:
           type: string
           format: binary
@@ -382,11 +382,11 @@ components:
         start:
           title: start
           description: Inclusive lower timestamp bound; omit for no lower bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         end:
           title: end
           description: Inclusive upper timestamp bound; omit for no upper bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: DistributionRequest
       required:
         - bucketCount
@@ -405,7 +405,7 @@ components:
         buckets:
           type: array
           items:
-            $ref: "#/components/schemas/number.v1.DistributionBucket"
+            $ref: '#/components/schemas/number.v1.DistributionBucket'
           title: buckets
       title: DistributionResponse
       additionalProperties: false
@@ -414,7 +414,7 @@ components:
       properties:
         timestamp:
           title: timestamp
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         name:
           type: string
           title: name
@@ -453,10 +453,10 @@ components:
           minimum: 0
         start:
           title: start
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         end:
           title: end
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: ListRequest
       additionalProperties: false
       description: |
@@ -473,7 +473,7 @@ components:
       properties:
         item:
           title: item
-          $ref: "#/components/schemas/number.v1.Item"
+          $ref: '#/components/schemas/number.v1.Item'
       title: ListResponse
       additionalProperties: false
       description: |-
@@ -489,11 +489,11 @@ components:
         start:
           title: start
           description: Inclusive lower timestamp bound; omit for no lower bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         end:
           title: end
           description: Inclusive upper timestamp bound; omit for no upper bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: SummaryRequest
       additionalProperties: false
       description: |
@@ -556,7 +556,7 @@ components:
       properties:
         bucket:
           title: bucket
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         count:
           type:
             - integer
@@ -580,7 +580,7 @@ components:
       properties:
         interval:
           oneOf:
-            - $ref: "#/components/schemas/number.v1.TimeInterval"
+            - $ref: '#/components/schemas/number.v1.TimeInterval'
             - type: "null"
           not:
             enum:
@@ -589,11 +589,11 @@ components:
         start:
           title: start
           description: Inclusive lower timestamp bound; omit for no lower bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         end:
           title: end
           description: Inclusive upper timestamp bound; omit for no upper bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: TimeSeriesRequest
       required:
         - interval
@@ -612,7 +612,7 @@ components:
         points:
           type: array
           items:
-            $ref: "#/components/schemas/number.v1.TimeSeriesPoint"
+            $ref: '#/components/schemas/number.v1.TimeSeriesPoint'
           title: points
       title: TimeSeriesResponse
       additionalProperties: false
@@ -653,11 +653,11 @@ components:
         start:
           title: start
           description: Inclusive lower timestamp bound; omit for no lower bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
         end:
           title: end
           description: Inclusive upper timestamp bound; omit for no upper bound.
-          $ref: "#/components/schemas/google.protobuf.Timestamp"
+          $ref: '#/components/schemas/google.protobuf.Timestamp'
       title: TopNamesRequest
       required:
         - limit
@@ -676,7 +676,7 @@ components:
         names:
           type: array
           items:
-            $ref: "#/components/schemas/number.v1.TopName"
+            $ref: '#/components/schemas/number.v1.TopName'
           title: names
       title: TopNamesResponse
       additionalProperties: false
@@ -697,16 +697,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/auth.v1.LoginRequest"
+              $ref: '#/components/schemas/auth.v1.LoginRequest'
         required: true
       responses:
         default:
@@ -714,13 +714,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/auth.v1.LoginResponse"
+                $ref: '#/components/schemas/auth.v1.LoginResponse'
       security:
         - {}
   /auth.v1.AuthService/Logout:
@@ -735,16 +735,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/auth.v1.LogoutRequest"
+              $ref: '#/components/schemas/auth.v1.LogoutRequest'
         required: true
       responses:
         default:
@@ -752,13 +752,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/auth.v1.LogoutResponse"
+                $ref: '#/components/schemas/auth.v1.LogoutResponse'
       security:
         - {}
   /auth.v1.AuthService/Signup:
@@ -773,16 +773,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/auth.v1.SignupRequest"
+              $ref: '#/components/schemas/auth.v1.SignupRequest'
         required: true
       responses:
         default:
@@ -790,13 +790,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/auth.v1.SignupResponse"
+                $ref: '#/components/schemas/auth.v1.SignupResponse'
       security:
         - {}
   /number.v1.NumberService/Add:
@@ -811,16 +811,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/number.v1.AddRequest"
+              $ref: '#/components/schemas/number.v1.AddRequest'
         required: true
       responses:
         default:
@@ -828,13 +828,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/number.v1.AddResponse"
+                $ref: '#/components/schemas/number.v1.AddResponse'
   /number.v1.NumberService/Distribution:
     post:
       tags:
@@ -849,16 +849,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/number.v1.DistributionRequest"
+              $ref: '#/components/schemas/number.v1.DistributionRequest'
         required: true
       responses:
         default:
@@ -866,13 +866,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/number.v1.DistributionResponse"
+                $ref: '#/components/schemas/number.v1.DistributionResponse'
   /number.v1.NumberService/List: {}
   /number.v1.NumberService/Summary:
     post:
@@ -888,16 +888,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/number.v1.SummaryRequest"
+              $ref: '#/components/schemas/number.v1.SummaryRequest'
         required: true
       responses:
         default:
@@ -905,13 +905,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/number.v1.SummaryResponse"
+                $ref: '#/components/schemas/number.v1.SummaryResponse'
   /number.v1.NumberService/TimeSeries:
     post:
       tags:
@@ -926,16 +926,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/number.v1.TimeSeriesRequest"
+              $ref: '#/components/schemas/number.v1.TimeSeriesRequest'
         required: true
       responses:
         default:
@@ -943,13 +943,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/number.v1.TimeSeriesResponse"
+                $ref: '#/components/schemas/number.v1.TimeSeriesResponse'
   /number.v1.NumberService/TopNames:
     post:
       tags:
@@ -962,16 +962,16 @@ paths:
           in: header
           required: true
           schema:
-            $ref: "#/components/schemas/connect-protocol-version"
+            $ref: '#/components/schemas/connect-protocol-version'
         - name: Connect-Timeout-Ms
           in: header
           schema:
-            $ref: "#/components/schemas/connect-timeout-header"
+            $ref: '#/components/schemas/connect-timeout-header'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/number.v1.TopNamesRequest"
+              $ref: '#/components/schemas/number.v1.TopNamesRequest'
         required: true
       responses:
         default:
@@ -979,13 +979,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/connect.error"
+                $ref: '#/components/schemas/connect.error'
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/number.v1.TopNamesResponse"
+                $ref: '#/components/schemas/number.v1.TopNamesResponse'
 tags:
   - name: auth.v1.AuthService
     description: Account registration and cookie-based sessions. These operations do not require an existing session.
