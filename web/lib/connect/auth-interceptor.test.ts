@@ -1,7 +1,5 @@
-import assert from "node:assert/strict";
-import { afterEach, beforeEach, test } from "node:test";
-
 import { Code, ConnectError, type Interceptor } from "@connectrpc/connect";
+import { afterEach, beforeEach, expect, type MockInstance, test, vi } from "vitest";
 
 import { session } from "../auth/session.ts";
 import { authInterceptor } from "./auth-interceptor.ts";
@@ -10,7 +8,7 @@ type Request = Parameters<ReturnType<Interceptor>>[0];
 type Response = Awaited<ReturnType<ReturnType<Interceptor>>>;
 
 let redirects: string[];
-let originalWindow: PropertyDescriptor | undefined;
+let replace: MockInstance<Location["replace"]>;
 
 function loginMetadata(sub = "trev") {
   return { sub, exp: BigInt(Math.floor(Date.now() / 1000) + 3600) };
@@ -26,91 +24,74 @@ function request(service = "number.v1.NumberService", method = "List"): Request 
 
 beforeEach(() => {
   redirects = [];
-  originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
-  const values = new Map<string, string>();
-  Object.defineProperty(globalThis, "window", {
-    configurable: true,
-    value: {
-      addEventListener() {},
-      removeEventListener() {},
-      location: {
-        pathname: "/numbers",
-        search: "?sort=desc",
-        hash: "#results",
-        replace: (url: string) => redirects.push(url),
-      },
-      localStorage: {
-        getItem: (key: string) => values.get(key) ?? null,
-        setItem: (key: string, value: string) => values.set(key, value),
-        removeItem: (key: string) => values.delete(key),
-      },
-    },
+  history.replaceState(null, "", "/numbers?sort=desc#results");
+  replace = vi.spyOn(window.location, "replace").mockImplementation((url) => {
+    redirects.push(String(url));
   });
   session.setFromLogin(loginMetadata());
 });
 
 afterEach(() => {
   session.clear();
-  if (originalWindow) Object.defineProperty(globalThis, "window", originalWindow);
-  else Reflect.deleteProperty(globalThis, "window");
+  localStorage.clear();
 });
 
-void test("unary unauthenticated failures clear the session before preserving the return path", async () => {
+test("unary unauthenticated failures clear the session before preserving the return path", async () => {
   const error = new ConnectError("session expired", Code.Unauthenticated);
-  window.location.replace = (url: string) => {
-    assert.equal(session.claims(), null);
-    redirects.push(url);
-  };
+  replace.mockImplementation((url) => {
+    expect(session.claims()).toBeNull();
+    redirects.push(String(url));
+  });
   const invoke = authInterceptor(async () => {
     throw error;
   });
 
-  await assert.rejects(invoke(request()), (caught) => caught === error);
-  assert.equal(session.claims(), null);
-  assert.deepEqual(redirects, ["/auth?returnTo=%2Fnumbers%3Fsort%3Ddesc%23results"]);
+  await expect(invoke(request())).rejects.toBe(error);
+  expect(session.claims()).toBeNull();
+  expect(redirects).toEqual(["/auth?returnTo=%2Fnumbers%3Fsort%3Ddesc%23results"]);
 });
 
-void test("unauthenticated failures on the auth page do not redirect in a loop", async () => {
-  window.location.pathname = "/AUTH/";
+test("unauthenticated failures on the auth page do not redirect in a loop", async () => {
+  history.replaceState(null, "", "/AUTH/");
   const invoke = authInterceptor(async () => {
     throw new ConnectError("missing session", Code.Unauthenticated);
   });
 
-  await assert.rejects(invoke(request()));
-  assert.equal(session.claims(), null);
-  assert.deepEqual(redirects, []);
+  await expect(invoke(request())).rejects.toThrow(ConnectError);
+  expect(session.claims()).toBeNull();
+  expect(redirects).toEqual([]);
 });
 
-void test("permission denied redirects without clearing the hint", async () => {
+test("permission denied redirects without clearing the hint", async () => {
   const invoke = authInterceptor(async () => {
     throw new ConnectError("invalid session", Code.PermissionDenied);
   });
-  await assert.rejects(invoke(request()));
-  assert.equal(session.claims()?.sub, "trev");
-  assert.deepEqual(redirects, ["/403"]);
+  await expect(invoke(request())).rejects.toThrow(ConnectError);
+  expect(session.claims()?.sub).toBe("trev");
+  expect(redirects).toEqual(["/403"]);
 });
 
-void test("network failures leave the session and current page alone", async () => {
+test("network failures leave the session and current page alone", async () => {
   const invoke = authInterceptor(async () => {
     throw new ConnectError("offline", Code.Unavailable);
   });
-  await assert.rejects(invoke(request()));
-  assert.equal(session.claims()?.sub, "trev");
-  assert.deepEqual(redirects, []);
+  await expect(invoke(request())).rejects.toThrow(ConnectError);
+  expect(session.claims()?.sub).toBe("trev");
+  expect(redirects).toEqual([]);
 });
 
-void test("public auth failures are left to the form or logout control", async () => {
+test("public auth failures are left to the form or logout control", async () => {
   const invoke = authInterceptor(async () => {
     throw new ConnectError("invalid credentials", Code.Unauthenticated);
   });
   for (const method of ["Login", "Signup", "Logout"]) {
-    await assert.rejects(invoke(request("auth.v1.AuthService", method)));
-    assert.equal(session.claims()?.sub, "trev");
-    assert.deepEqual(redirects, []);
+    await expect(invoke(request("auth.v1.AuthService", method))).rejects.toThrow(ConnectError);
+    expect(session.claims()?.sub).toBe("trev");
+    expect(redirects).toEqual([]);
   }
 });
 
-void test("old unary failures cannot invalidate a newer login or redirect after logout", async () => {
+test("old unary failures cannot invalidate a newer login or redirect after logout", async () => {
   for (const changeSession of [
     () => session.setFromLogin(loginMetadata("new-user")),
     () => session.clear(),
@@ -119,8 +100,8 @@ void test("old unary failures cannot invalidate a newer login or redirect after 
       changeSession();
       throw new ConnectError("old session expired", Code.Unauthenticated);
     });
-    await assert.rejects(invoke(request()));
-    assert.deepEqual(redirects, []);
+    await expect(invoke(request())).rejects.toThrow(ConnectError);
+    expect(redirects).toEqual([]);
   }
 });
 
@@ -135,30 +116,30 @@ function failingStream() {
   return invoke(request());
 }
 
-void test("streaming failures clear the session and preserve the underlying error", async () => {
+test("streaming failures clear the session and preserve the underlying error", async () => {
   const response = await failingStream();
-  assert.equal(response.stream, true);
+  expect(response.stream).toBe(true);
   if (!response.stream) return;
 
-  await assert.rejects(async () => {
+  await expect(async () => {
     for await (const _message of response.message) {
-      assert.fail("the failing stream should not yield a message");
+      expect.unreachable("the failing stream should not yield a message");
     }
-  }, ConnectError);
-  assert.equal(session.claims(), null);
-  assert.equal(redirects.length, 1);
+  }).rejects.toThrow(ConnectError);
+  expect(session.claims()).toBeNull();
+  expect(redirects).toHaveLength(1);
 });
 
-void test("old streaming failures cannot invalidate a newer session", async () => {
+test("old streaming failures cannot invalidate a newer session", async () => {
   const response = await failingStream();
   session.setFromLogin(loginMetadata("new-user"));
-  if (!response.stream) assert.fail("expected a stream");
+  if (!response.stream) expect.unreachable("expected a stream");
 
-  await assert.rejects(async () => {
+  await expect(async () => {
     for await (const _message of response.message) {
-      assert.fail("the failing stream should not yield a message");
+      expect.unreachable("the failing stream should not yield a message");
     }
-  });
-  assert.equal(session.claims()?.sub, "new-user");
-  assert.deepEqual(redirects, []);
+  }).rejects.toThrow(ConnectError);
+  expect(session.claims()?.sub).toBe("new-user");
+  expect(redirects).toEqual([]);
 });

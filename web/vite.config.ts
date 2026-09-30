@@ -1,7 +1,7 @@
 import solidPlugin from "@solidjs/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [
@@ -46,5 +46,11 @@ export default defineConfig({
   },
   resolve: {
     tsconfigPaths: true,
+  },
+  test: {
+    environment: "happy-dom",
+    include: ["**/*.test.{ts,tsx}"],
+    restoreMocks: true,
+    unstubGlobals: true,
   },
 });

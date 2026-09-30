@@ -1,27 +1,26 @@
-import assert from "node:assert/strict";
-import { test } from "node:test";
+import { expect, test } from "vitest";
 
 import { getReturnPath, getSignInPath, isPublicPath } from "./routing.ts";
 
 const origin = "https://stack.example";
 
-void test("public paths normalize case and trailing slashes without matching child routes", () => {
+test("public paths normalize case and trailing slashes without matching child routes", () => {
   for (const path of ["/auth", "/AUTH/", "/403", "/403///"]) {
-    assert.equal(isPublicPath(path), true, path);
+    expect(isPublicPath(path), path).toBe(true);
   }
   for (const path of ["/", "", "/numbers", "/metrics", "/auth/other", "/403/other"]) {
-    assert.equal(isPublicPath(path), false, path);
+    expect(isPublicPath(path), path).toBe(false);
   }
 });
 
-void test("sign-in round trips the protected path, query, and hash", () => {
+test("sign-in round trips the protected path, query, and hash", () => {
   const path = "/numbers?filter=a%26b&sort=desc#results";
   const target = new URL(getSignInPath(path), origin);
-  assert.equal(target.pathname, "/auth");
-  assert.equal(getReturnPath(target.search, origin), path);
+  expect(target.pathname).toBe("/auth");
+  expect(getReturnPath(target.search, origin)).toBe(path);
 });
 
-void test("return paths reject external destinations and sign-in loops", () => {
+test("return paths reject external destinations and sign-in loops", () => {
   for (const path of [
     "https://other.example",
     "//other.example/path",
@@ -30,8 +29,8 @@ void test("return paths reject external destinations and sign-in loops", () => {
     "/auth",
     "/AUTH///?returnTo=/numbers",
   ]) {
-    assert.equal(getReturnPath(`?returnTo=${encodeURIComponent(path)}`, origin), "/", path);
+    expect(getReturnPath(`?returnTo=${encodeURIComponent(path)}`, origin), path).toBe("/");
   }
-  assert.equal(getReturnPath("", origin), "/");
-  assert.equal(getReturnPath("?returnTo=", origin), "/");
+  expect(getReturnPath("", origin)).toBe("/");
+  expect(getReturnPath("?returnTo=", origin)).toBe("/");
 });

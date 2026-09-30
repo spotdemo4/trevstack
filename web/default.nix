@@ -24,7 +24,7 @@ buildNpmPackage (final: {
     runHook preCheck
     oxfmt --check
     oxlint --deny-warnings
-    npm test
+    CI=true NO_COLOR=1 npm test
     runHook postCheck
   '';
 
