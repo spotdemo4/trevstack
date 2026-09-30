@@ -66,7 +66,7 @@ nix run git+https://trev.zip/template/stack#client
 
 #### download
 
-https://trev.zip/template/stack/releases/tag/client/v2.2.0
+https://trev.zip/template/stack/releases/tag/client/v2.3.0
 
 ## contributing
 
