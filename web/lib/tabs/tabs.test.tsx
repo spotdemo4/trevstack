@@ -3,6 +3,8 @@ import { render, type JSX } from "@solidjs/web";
 import { createSignal, flush } from "solid-js";
 import { afterEach, expect, test, vi } from "vitest";
 
+import styles from "./tabs.module.css";
+
 let dispose: (() => void) | undefined;
 
 function mount(ui: () => JSX.Element) {
@@ -113,4 +115,44 @@ test("controlled tabs report changes without switching on their own", () => {
   tab(container, "Three").click();
   flush();
   expect(onValueChange).toHaveBeenCalledOnce();
+});
+
+test("indicator moves to the selected trigger", () => {
+  const container = mount(() => <Example />);
+  const indicator = container.querySelector<HTMLElement>("[data-tabs-indicator]")!;
+  const three = tab(container, "Three");
+  for (const [key, value] of Object.entries({
+    offsetLeft: 120,
+    offsetTop: 4,
+    offsetWidth: 60,
+    offsetHeight: 36,
+  })) {
+    Object.defineProperty(three, key, { configurable: true, value });
+  }
+
+  // Unmeasurable (zero-size) triggers leave the indicator hidden.
+  expect(indicator.hidden).toBe(true);
+
+  three.click();
+  flush();
+  expect(indicator.hidden).toBe(false);
+  expect(indicator.style.transform).toBe("translate3d(120px, 4px, 0)");
+  expect(indicator.style.width).toBe("60px");
+  expect(indicator.style.height).toBe("36px");
+});
+
+test("panels only animate in after switching tabs", () => {
+  const container = mount(() => <Example />);
+  const panel = (name: string) =>
+    document.getElementById(tab(container, name).getAttribute("aria-controls")!)!;
+
+  expect(panel("One").classList.contains(styles.content)).toBe(false);
+
+  tab(container, "Three").click();
+  flush();
+  expect(panel("Three").classList.contains(styles.content)).toBe(true);
+
+  tab(container, "One").click();
+  flush();
+  expect(panel("One").classList.contains(styles.content)).toBe(true);
 });

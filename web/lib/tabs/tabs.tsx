@@ -1,7 +1,17 @@
 import type { JSX } from "@solidjs/web";
 import type { Component } from "solid-js";
-import { createContext, createSignal, createUniqueId, omit, Show, useContext } from "solid-js";
+import {
+  createContext,
+  createEffect,
+  createSignal,
+  createUniqueId,
+  omit,
+  Show,
+  useContext,
+} from "solid-js";
 import { twMerge } from "tailwind-merge";
+
+import styles from "./tabs.module.css";
 
 type TabsContextValue = {
   value: () => string | undefined;
@@ -55,15 +65,54 @@ type ListProps = Omit<JSX.HTMLAttributes<HTMLDivElement>, "class"> & {
   class?: string;
 };
 
+type IndicatorRect = { x: number; y: number; width: number; height: number };
+
 export const List: Component<ListProps> = (props) => {
-  const rest = omit(props, "class", "onKeyDown");
+  const tabs = useTabs();
+  const rest = omit(props, "class", "children", "onKeyDown");
+  const [list, setList] = createSignal<HTMLDivElement>();
+  const [indicator, setIndicator] = createSignal<IndicatorRect>();
+
+  // Track the active trigger's box so the indicator can slide between triggers.
+  createEffect(
+    () => [list(), tabs.value()] as const,
+    ([list, value]) => {
+      const id = value === undefined ? undefined : tabs.triggerId(value);
+      const trigger = list
+        ? Array.from(list.querySelectorAll<HTMLElement>('[role="tab"]')).find((t) => t.id === id)
+        : undefined;
+      if (!list || !trigger) {
+        setIndicator(undefined);
+        return;
+      }
+
+      const measure = () =>
+        setIndicator(
+          trigger.offsetWidth > 0
+            ? {
+                x: trigger.offsetLeft,
+                y: trigger.offsetTop,
+                width: trigger.offsetWidth,
+                height: trigger.offsetHeight,
+              }
+            : undefined,
+        );
+      measure();
+
+      const observer = new ResizeObserver(measure);
+      observer.observe(list);
+      observer.observe(trigger);
+      return () => observer.disconnect();
+    },
+  );
 
   return (
     <div
       {...rest}
+      ref={setList}
       role="tablist"
       aria-orientation="horizontal"
-      class={twMerge("inline-flex w-fit rounded-lg bg-ctp-crust p-1", props.class)}
+      class={twMerge("relative inline-flex w-fit rounded-lg bg-ctp-crust p-1", props.class)}
       onKeyDown={(event) => {
         if (typeof props.onKeyDown === "function") props.onKeyDown(event);
         if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -91,7 +140,20 @@ export const List: Component<ListProps> = (props) => {
         trigger?.focus();
         trigger?.click();
       }}
-    />
+    >
+      <div
+        aria-hidden="true"
+        data-tabs-indicator=""
+        hidden={!indicator()}
+        class={`${styles.indicator} pointer-events-none absolute top-0 left-0 rounded-md bg-ctp-surface0 shadow-sm`}
+        style={{
+          transform: `translate3d(${indicator()?.x ?? 0}px, ${indicator()?.y ?? 0}px, 0)`,
+          width: `${indicator()?.width ?? 0}px`,
+          height: `${indicator()?.height ?? 0}px`,
+        }}
+      />
+      {props.children}
+    </div>
   );
 };
 
@@ -116,7 +178,7 @@ export const Trigger: Component<TriggerProps> = (props) => {
       tabindex={active() && !props.disabled ? 0 : -1}
       data-state={active() ? "active" : "inactive"}
       class={twMerge(
-        "inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-ctp-subtext0 hover:text-ctp-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ctp-sky disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-ctp-surface0 data-[state=active]:font-semibold data-[state=active]:text-ctp-text data-[state=active]:shadow-sm",
+        "relative inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-ctp-subtext0 transition-colors hover:text-ctp-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ctp-sky disabled:pointer-events-none disabled:opacity-50 data-[state=active]:font-semibold data-[state=active]:text-ctp-text",
         props.class,
       )}
       onClick={(event) => {
@@ -136,6 +198,11 @@ export const Content: Component<ContentProps> = (props) => {
   const tabs = useTabs();
   const rest = omit(props, "class", "children", "value");
   const active = () => tabs.value() === props.value;
+  // Only animate panels that have been hidden, so the initial panel doesn't fade in on load.
+  const [animate, setAnimate] = createSignal(false);
+  createEffect(active, (active) => {
+    if (!active) setAnimate(true);
+  });
 
   return (
     <div
@@ -147,6 +214,7 @@ export const Content: Component<ContentProps> = (props) => {
       tabindex={0}
       data-state={active() ? "active" : "inactive"}
       class={twMerge(
+        animate() && styles.content,
         "min-w-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ctp-sky [[hidden]]:hidden",
         props.class,
       )}
