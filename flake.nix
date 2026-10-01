@@ -104,9 +104,8 @@
               renovate
               go # go get
               cargo # cargo update
-              buf # buf dep update
-              nodejs_24 # npm audit fix
-              fix-hash # vendorHash & bufDeps
+              nodejs_24 # npm install
+              fix-hash # vendorHash
             ];
           };
 
@@ -131,6 +130,18 @@
               cd server && go mod tidy && cd ..
               cd docs && npm install && cd ..
               cd web && npm install && cd ..
+            '';
+          };
+
+          upgrade = {
+            inputsFrom = [ self.devShells.${system}.default ];
+            script = ''
+              buf dep update
+              buf generate
+              npm audit fix --audit-level=none --prefix docs
+              npm audit fix --audit-level=none --prefix web
+              fix-hash .#checks.${system}.protobuf
+              fix-hash .#packages.${system}.server
             '';
           };
         };

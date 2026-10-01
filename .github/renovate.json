@@ -6,13 +6,7 @@
   "requireConfig": "ignored",
   "platform": "github",
   "repositories": ["spotdemo4/trevstack"],
-  "allowedCommands": [
-    "^buf dep update$",
-    "^npm audit fix --audit-level=none --prefix docs$",
-    "^npm audit fix --audit-level=none --prefix web$",
-    "^fix-hash \\.#checks\\.x86_64-linux\\.protobuf$",
-    "^fix-hash \\.#packages\\.x86_64-linux\\.server$"
-  ],
+  "allowedCommands": ["^nix run \\.#upgrade$", "^fix-hash \\.#packages\\.x86_64-linux\\.server$"],
 
   // repository
   "extends": ["config:recommended"],
@@ -26,13 +20,7 @@
     "schedule": ["* * * * 0"], // sunday
     "skipInstalls": false,
     "postUpgradeTasks": {
-      "commands": [
-        "buf dep update",
-        "npm audit fix --audit-level=none --prefix docs",
-        "npm audit fix --audit-level=none --prefix web",
-        "fix-hash .#checks.x86_64-linux.protobuf",
-        "fix-hash .#packages.x86_64-linux.server"
-      ],
+      "commands": ["nix run .#upgrade"],
       "executionMode": "branch"
     }
   },
