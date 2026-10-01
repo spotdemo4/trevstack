@@ -54,3 +54,34 @@ func TestContext(t *testing.T) {
 		t.Fatal("expected fallback logger for nil context")
 	}
 }
+
+type recordingHandler struct {
+	records *[]slog.Record
+}
+
+func (h recordingHandler) Enabled(context.Context, slog.Level) bool { return true }
+
+func (h recordingHandler) WithAttrs([]slog.Attr) slog.Handler { return h }
+
+func (h recordingHandler) WithGroup(string) slog.Handler { return h }
+
+func (h recordingHandler) Handle(_ context.Context, r slog.Record) error {
+	*h.records = append(*h.records, r)
+	return nil
+}
+
+func TestLevelHandler(t *testing.T) {
+	var records []slog.Record
+	inner := recordingHandler{records: &records}
+	logger := slog.New(&levelHandler{Handler: inner, level: slog.LevelWarn})
+
+	logger.Info("ignored")
+	logger.With("component", "api").Warn("included")
+
+	if len(records) != 1 {
+		t.Fatalf("got %d records, want 1", len(records))
+	}
+	if got := records[0].Message; got != "included" {
+		t.Errorf("message = %q, want included", got)
+	}
+}

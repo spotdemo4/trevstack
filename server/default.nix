@@ -10,7 +10,9 @@ mkGoModule (final: {
 
   src = ./.;
   goSum = ./go.sum;
-  vendorHash = "sha256-EAuHMjk0E6eIyE6BIxF5vT43iu5WgWFr0YEKinWdzec=";
+  vendorHash = "sha256-P0LuUP2K/1Zw2Sv9GQZVEpDb/HgYeS1wJRpDVxDHdJU=";
+
+  ldflags = [ "-X main.version=${final.version}" ];
 
   postConfigure = ''
     cp -r ${docs} docs

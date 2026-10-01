@@ -193,7 +193,7 @@ func TestParseConfigHelp(t *testing.T) {
 				t.Fatalf("parseConfig() error = %v, want %v", err, flag.ErrHelp)
 			}
 
-			for _, want := range []string{"Usage: server", "--log-level", "--port", "--help", "AUTH_COOKIE_SECURE", "JWT_SECRET", "LOG_LEVEL", "PORT", "TRUSTED_PROXY_CIDRS", supportedLogLevels, defaultLogLevel, defaultPort} {
+			for _, want := range []string{"Usage: server", "--log-level", "--port", "--help", "AUTH_COOKIE_SECURE", "JWT_SECRET", "LOG_LEVEL", "PORT", "TRUSTED_PROXY_CIDRS", "OTEL_", supportedLogLevels, defaultLogLevel, defaultPort} {
 				if !strings.Contains(output.String(), want) {
 					t.Errorf("help output does not contain %q:\n%s", want, output.String())
 				}

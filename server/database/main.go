@@ -8,7 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/XSAM/otelsql"
 	_ "github.com/mattn/go-sqlite3"
+	semconv "go.opentelemetry.io/otel/semconv/v1.43.0"
 )
 
 var options = []string{
@@ -65,7 +67,15 @@ func New(ctx context.Context) (*sql.DB, error) {
 	}
 
 	dbPath := filepath.Join(configDir, "trevstack.db")
-	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s?%s", dbPath, strings.Join(options, "&")))
+	// Trace queries through the global TracerProvider. Statements are recorded
+	// as written, so bound parameters are never exported.
+	db, err := otelsql.Open("sqlite3", fmt.Sprintf("file:%s?%s", dbPath, strings.Join(options, "&")),
+		otelsql.WithAttributes(semconv.DBSystemNameSQLite),
+		otelsql.WithSpanOptions(otelsql.SpanOptions{
+			OmitConnResetSession: true,
+			OmitConnPrepare:      true,
+		}),
+	)
 	if err != nil {
 		return nil, err
 	}

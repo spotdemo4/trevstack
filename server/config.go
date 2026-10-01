@@ -54,6 +54,8 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 		fmt.Fprintf(output, "  LOG_LEVEL           Fallback log level (default: %s).\n", defaultLogLevel)
 		fmt.Fprintf(output, "  PORT                Fallback port (default: %s).\n", defaultPort)
 		fmt.Fprintln(output, "  TRUSTED_PROXY_CIDRS Comma-separated proxy CIDRs allowed to set X-Forwarded-For.")
+		fmt.Fprintln(output, "  OTEL_*              OpenTelemetry SDK settings; signals export only when an")
+		fmt.Fprintln(output, "                      OTLP endpoint or OTEL_{TRACES,METRICS,LOGS}_EXPORTER is set.")
 		fmt.Fprintln(output)
 		fmt.Fprintln(output, "Precedence: --log-level, LOG_LEVEL, then info.")
 		fmt.Fprintln(output, "            --port, PORT, then 8080.")
