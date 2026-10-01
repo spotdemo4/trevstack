@@ -47,7 +47,7 @@ function liftPromise(fn: PromiseFn) {
 
 function liftIterable(fn: IterableFn) {
   return (request: unknown, options?: CallOptions) =>
-    Stream.unwrapScoped(
+    Stream.unwrap(
       Effect.gen(function* () {
         const controller = new AbortController();
         yield* Effect.addFinalizer(() => Effect.sync(() => controller.abort()));

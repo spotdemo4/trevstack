@@ -13,7 +13,7 @@ export function createStreamingStore<Req, Resp, Item, E>(
 ): StreamingStore<Item> {
   const [items, setItems] = createStore<Item[]>([]);
   const [loading, setLoading] = createSignal(true);
-  let fiber: Fiber.RuntimeFiber<void, E> | null = null;
+  let fiber: Fiber.Fiber<void, E> | null = null;
   let runId = 0;
 
   createEffect(
@@ -52,7 +52,7 @@ export function createStreamingStore<Req, Resp, Item, E>(
           }),
         ),
         Effect.tap(() => Effect.sync(flush)),
-        Effect.tapErrorCause((cause) => Effect.sync(() => console.error(cause))),
+        Effect.tapCause((cause) => Effect.sync(() => console.error(cause))),
         Effect.ensuring(
           Effect.sync(() => {
             flush();

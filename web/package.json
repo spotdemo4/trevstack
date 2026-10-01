@@ -27,7 +27,7 @@
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
     "d3-shape": "^3.2.0",
-    "effect": "^3.22.2",
+    "effect": "^4.0.0",
     "solid-js": "^2.0.0-rc.11",
     "tailwind-merge": "^3.7.0"
   },
