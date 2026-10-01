@@ -41,7 +41,7 @@ nix run git+https://trev.zip/template/stack#server
 
 #### download
 
-https://trev.zip/template/stack/releases/tag/server/v1.1.1
+https://trev.zip/template/stack/releases
 
 ### client
 
@@ -66,7 +66,7 @@ nix run git+https://trev.zip/template/stack#client
 
 #### download
 
-https://trev.zip/template/stack/releases/tag/client/v2.3.0
+https://trev.zip/template/stack/releases
 
 ## contributing
 
