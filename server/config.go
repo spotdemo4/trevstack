@@ -21,6 +21,7 @@ type config struct {
 	jwtSecret         string
 	logLevel          string
 	port              string
+	proxyProtocol     bool
 	trustedProxyCIDRs []netip.Prefix
 }
 
@@ -53,7 +54,10 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 		fmt.Fprintln(output, "  JWT_SECRET          JWT signing secret (required, at least 32 bytes).")
 		fmt.Fprintf(output, "  LOG_LEVEL           Fallback log level (default: %s).\n", defaultLogLevel)
 		fmt.Fprintf(output, "  PORT                Fallback port (default: %s).\n", defaultPort)
-		fmt.Fprintln(output, "  TRUSTED_PROXY_CIDRS Comma-separated proxy CIDRs allowed to set X-Forwarded-For.")
+		fmt.Fprintln(output, "  PROXY_PROTOCOL      Accept PROXY protocol headers from trusted proxies")
+		fmt.Fprintln(output, "                      (default: false; requires TRUSTED_PROXY_CIDRS).")
+		fmt.Fprintln(output, "  TRUSTED_PROXY_CIDRS Comma-separated proxy CIDRs allowed to set X-Forwarded-For")
+		fmt.Fprintln(output, "                      and send PROXY protocol headers.")
 		fmt.Fprintln(output, "  OTEL_*              OpenTelemetry SDK settings; signals export only when an")
 		fmt.Fprintln(output, "                      OTLP endpoint or OTEL_{TRACES,METRICS,LOGS}_EXPORTER is set.")
 		fmt.Fprintln(output)
@@ -77,6 +81,18 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 			return config{}, err
 		}
 		cfg.trustedProxyCIDRs = trustedProxyCIDRs
+	}
+	if value := getenv("PROXY_PROTOCOL"); value != "" {
+		proxyProtocol, err := strconv.ParseBool(value)
+		if err != nil {
+			return config{}, fmt.Errorf("invalid PROXY_PROTOCOL value: %w", err)
+		}
+		cfg.proxyProtocol = proxyProtocol
+	}
+	if cfg.proxyProtocol && len(cfg.trustedProxyCIDRs) == 0 {
+		err := fmt.Errorf("PROXY_PROTOCOL requires TRUSTED_PROXY_CIDRS")
+		fmt.Fprintln(output, err)
+		return config{}, err
 	}
 	if !isSupportedLogLevel(cfg.logLevel) {
 		err := fmt.Errorf("unsupported log level %q (supported: %s)", cfg.logLevel, supportedLogLevels)

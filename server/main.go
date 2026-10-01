@@ -158,7 +158,7 @@ func run(cfg config, log *slog.Logger) error {
 
 	// Bind synchronously so a bad or taken port fails startup instead of
 	// leaving the process running without a listener.
-	listener, err := net.Listen("tcp", server.Addr)
+	listener, err := listen(server.Addr, cfg.proxyProtocol, cfg.trustedProxyCIDRs)
 	if err != nil {
 		return fmt.Errorf("could not listen: %w", err)
 	}

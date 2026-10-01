@@ -21,12 +21,13 @@ Flags take precedence over environment variables.
 
 ### environment
 
-| variable              | default | description                                                                              |
-| --------------------- | ------- | ---------------------------------------------------------------------------------------- |
-| `JWT_SECRET`          |         | **required**, secret used to sign session tokens; at least 32 bytes                      |
-| `AUTH_COOKIE_SECURE`  | `false` | mark the session cookie `Secure`; enable when served over HTTPS                          |
-| `TRUSTED_PROXY_CIDRS` |         | comma-separated proxy CIDRs (e.g. `10.0.0.0/8,::1/128`) allowed to set `X-Forwarded-For` |
-| `OTEL_*`              |         | OpenTelemetry SDK settings, see [opentelemetry](#opentelemetry)                          |
+| variable              | default | description                                                                                   |
+| --------------------- | ------- | --------------------------------------------------------------------------------------------- |
+| `JWT_SECRET`          |         | **required**, secret used to sign session tokens; at least 32 bytes                           |
+| `AUTH_COOKIE_SECURE`  | `false` | mark the session cookie `Secure`; enable when served over HTTPS                               |
+| `TRUSTED_PROXY_CIDRS` |         | comma-separated proxy CIDRs (e.g. `10.0.0.0/8,::1/128`) allowed to set `X-Forwarded-For`      |
+| `PROXY_PROTOCOL`      | `false` | accept PROXY protocol headers from `TRUSTED_PROXY_CIDRS`, see [rate limiting](#rate-limiting) |
+| `OTEL_*`              |         | OpenTelemetry SDK settings, see [opentelemetry](#opentelemetry)                               |
 
 ## routes
 
@@ -65,6 +66,12 @@ The client IP is the connection's peer address. When the peer is in `TRUSTED_PRO
 server walks `X-Forwarded-For` from right to left and uses the first address that is not a trusted
 proxy. Without `TRUSTED_PROXY_CIDRS`, `X-Forwarded-For` is ignored, so set it when running behind a
 reverse proxy or every request will share the proxy's limit.
+
+For TCP load balancers that can't add headers, set `PROXY_PROTOCOL=true` to accept
+[PROXY protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) v1 and v2 headers.
+Only peers in `TRUSTED_PROXY_CIDRS` may send one, and the header is optional for them; connections
+from any other peer that send a header are closed. The header's source address replaces the peer
+address before `X-Forwarded-For` is evaluated, so both can be combined.
 
 ## database
 
