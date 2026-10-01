@@ -27,20 +27,8 @@ JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
   server --port 8080
 ```
 
-#### opentelemetry
-
-The server exports traces, metrics, and logs over OTLP when the standard
-[OpenTelemetry environment variables](https://opentelemetry.io/docs/languages/sdk-configuration/)
-configure an exporter. Nothing is exported by default.
-
-```sh
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
-JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-  server
-```
-
-Signals can also be enabled one at a time with `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`,
-or `OTEL_LOGS_EXPORTER` (`otlp`, `console`, or `none`; metrics also support `prometheus`).
+See [server/README.md](server/README.md) for configuration, OpenTelemetry, and development
+details. The web app it serves is described in [web/README.md](web/README.md).
 
 #### docker
 
@@ -65,7 +53,8 @@ client --username demo_user --password example-password alice 10
 ```
 
 The client logs in before adding. Credentials come from `--username`/`--password` or
-`STACK_USERNAME`/`STACK_PASSWORD`; prefer the environment variable for the password.
+`STACK_USERNAME`/`STACK_PASSWORD`; prefer the environment variable for the password. See
+[client/README.md](client/README.md) for all options.
 
 #### docker
 

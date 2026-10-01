@@ -615,6 +615,9 @@ if ! $keep_docs; then
   fi
   sed_inplace "$((docs_link_line - 2)),/^    <\/NavLink>$/d" web/layout/layout.tsx
   replace_literal '{ ExternalLink, GitBranch, Menu }' '{ GitBranch, Menu }' web/layout/layout.tsx
+  sed_inplace -e '/^| `\/docs\/` /d' -e '/^The API reference is embedded from `docs\/` the same way\.$/d' server/README.md
+  remove_block server/README.md 'With the tag, the API reference is served from `../docs/dist`; build it with `npm run build` in [`../docs`](../docs).'
+  replace_literal '`/grpc` and `/docs` are' '`/grpc` is' web/README.md
   replace_literal '[/^\/grpc/, /^\/docs/]' '[/^\/grpc/]' web/vite.config.ts
   sed_inplace '/^      "\/docs": {$/,/^      },$/d' web/vite.config.ts
   for provider_directory in .github .forgejo; do
