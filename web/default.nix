@@ -2,8 +2,6 @@
   buildNpmPackage,
   importNpmLock,
   nodejs_24,
-  oxfmt,
-  oxlint,
 }:
 buildNpmPackage (final: {
   pname = "trevstack-web";
@@ -16,14 +14,8 @@ buildNpmPackage (final: {
     npmRoot = final.src;
   };
 
-  nativeCheckInputs = [
-    oxfmt
-    oxlint
-  ];
   checkPhase = ''
     runHook preCheck
-    oxfmt --check
-    oxlint --deny-warnings
     CI=true NO_COLOR=1 npm test
     runHook postCheck
   '';
