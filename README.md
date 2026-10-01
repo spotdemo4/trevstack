@@ -20,57 +20,9 @@ part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
 ## using
 
-### server
-
-```sh
-JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-  server --port 8080
-```
-
-See [server/README.md](server/README.md) for configuration, OpenTelemetry, and development
-details. The web app it serves is described in [web/README.md](web/README.md).
-
-#### docker
-
-```sh
-docker run -P trev.zip/llc/stack/server:latest
-```
-
-#### nix
-
-```sh
-nix run git+https://trev.zip/template/stack#server
-```
-
-#### download
-
-https://trev.zip/template/stack/releases
-
-### client
-
-```sh
-client --username demo_user --password example-password alice 10
-```
-
-The client logs in before adding. Credentials come from `--username`/`--password` or
-`STACK_USERNAME`/`STACK_PASSWORD`; prefer the environment variable for the password. See
-[client/README.md](client/README.md) for all options.
-
-#### docker
-
-```sh
-docker run trev.zip/llc/stack/client:latest
-```
-
-#### nix
-
-```sh
-nix run git+https://trev.zip/template/stack#client
-```
-
-#### download
-
-https://trev.zip/template/stack/releases
+- [server](server/README.md): serves the API and the web app
+- [web](web/README.md): SolidJS web app served by the server
+- [client](client/README.md): command-line client for the API
 
 ## contributing
 

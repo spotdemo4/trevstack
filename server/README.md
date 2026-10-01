@@ -10,6 +10,24 @@ JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
   server --port 8080
 ```
 
+### docker
+
+```sh
+docker run -P \
+  -e JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+  trev.zip/llc/stack/server:latest
+```
+
+### nix
+
+```sh
+nix run git+https://trev.zip/template/stack#server
+```
+
+### download
+
+https://trev.zip/template/stack/releases
+
 ### options
 
 | flag                | environment | default | description                                          |

@@ -663,17 +663,19 @@ readme_badges=("$check_badge" "$vulnerable_badge" "$nixpkgs_badge" "$go_badge" "
 if $keep_client; then
   readme_badges+=("$rust_badge")
 else
-  readme_sections=$(printf '%s\n' "$readme_sections" | sed '/^### client$/,/^## contributing$/{/^## contributing$/!d;}')
+  readme_sections=$(printf '%s\n' "$readme_sections" | sed '/^- \[client\](client\/README\.md)/d')
 fi
-readme_image=$(printf '%s\n' "$readme_sections" | sed -n 's/^docker run -P \([^[:space:]]*\)$/\1/p')
-[[ -n $readme_image ]] || fail 'Unable to find the README server image.'
+# Container images share a registry path, so rewrite the prefix in every component README.
+readme_image_base=$(sed -n 's|^[[:space:]]*\([^[:space:]]*\)/server:latest$|\1|p' server/README.md)
+[[ -n $readme_image_base ]] || fail 'Unable to find the server README image.'
 image_path=$(printf '%s' "$origin_repo_path" | tr '[:upper:]' '[:lower:]')
 if $origin_is_github; then
-  image="ghcr.io/${image_path}/server:latest"
+  image_base="ghcr.io/${image_path}"
 else
-  image="${origin_host}/${image_path}/server:latest"
+  image_base="${origin_host}/${image_path}"
 fi
-readme_sections=${readme_sections//"$readme_image"/"$image"}
+image="${image_base}/server:latest"
+replace_literal "$readme_image_base/" "$image_base/" server/README.md client/README.md
 
 {
   printf '# %s\n\n' "$title"
@@ -750,11 +752,12 @@ assert_contains README.md "# $title"
 assert_contains README.md "$description"
 assert_contains README.md '## using'
 assert_contains README.md '[CONTRIBUTING.md](CONTRIBUTING.md)'
-assert_contains README.md "docker run -P $image"
+assert_contains server/README.md "  $image"
 assert_contains README.md "$nixpkgs_badge"
 assert_contains flake.nix "description = \"$nix_description\";"
 if $keep_client; then
   assert_contains README.md "$rust_badge"
+  assert_contains client/README.md "docker run ${image_base}/client:latest"
   assert_contains client/Cargo.toml "name = \"${slug}-client\""
   assert_contains client/Cargo.toml "version = \"$version\""
   assert_contains client/Cargo.toml "description = \"$json_description\""

@@ -13,6 +13,22 @@ STACK_PASSWORD=example-password \
 The client logs in, sends `alice` and `10` to `NumberService.Add`, then prints the sum of every
 number stored on the server.
 
+### docker
+
+```sh
+docker run trev.zip/llc/stack/client:latest
+```
+
+### nix
+
+```sh
+nix run git+https://trev.zip/template/stack#client
+```
+
+### download
+
+https://trev.zip/template/stack/releases
+
 ### arguments
 
 | argument | description                             |
