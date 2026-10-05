@@ -4,9 +4,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --spacing-viewport: 100dvh;
   --spacing-header: calc(var(--spacing) * 12);
   --spacing-footer: calc(var(--spacing) * 8);
-  --spacing-body: calc(100dvh - var(--spacing-header) - var(--spacing-footer));
+  --spacing-body: calc(var(--spacing-viewport) - var(--spacing-header) - var(--spacing-footer));
 }
 
 :root {
@@ -15,6 +16,14 @@
 
 :root.dark {
   color-scheme: dark;
+}
+
+/* Installed Chrome apps can size dvh larger than the window on load until the
+   viewport resizes. They have no browser UI, so svh is the full window height. */
+@media (display-mode: standalone) {
+  :root {
+    --spacing-viewport: 100svh;
+  }
 }
 
 body {

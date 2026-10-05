@@ -6,7 +6,7 @@
 
   inset: 0;
   width: 100vw;
-  height: 100dvh;
+  height: var(--spacing-viewport);
   max-width: none;
   max-height: none;
   margin: 0;
@@ -78,7 +78,7 @@
   --drawer-drag-y: calc(var(--drawer-drag-offset, 0px) * var(--drawer-axis-y));
 
   width: 100%;
-  max-height: calc(100dvh - 3rem);
+  max-height: calc(var(--spacing-viewport) - 3rem);
   flex-direction: column;
   border-top-width: 1px;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;

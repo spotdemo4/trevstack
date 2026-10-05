@@ -126,7 +126,7 @@ export const Layout: Component<LayoutProps> = (props) => {
   const isDesktop = createMediaQuery("(min-width: 900px)");
 
   return (
-    <div class="flex min-h-dvh flex-col">
+    <div class="flex min-h-viewport flex-col">
       <header class="z-30 flex h-header border-b border-ctp-surface1 bg-ctp-crust min-[900px]:sticky min-[900px]:top-0">
         <Show
           when={isDesktop()}

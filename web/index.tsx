@@ -56,7 +56,7 @@ const App: Component<{ children?: JSX.Element }> = (props) => {
           </Show>
         }
       >
-        <main class="min-h-dvh" style={{ "--spacing-body": "100dvh" }}>
+        <main class="min-h-viewport" style={{ "--spacing-body": "var(--spacing-viewport)" }}>
           <Loading fallback={<PageLoading />}>{props.children}</Loading>
         </main>
       </Show>
