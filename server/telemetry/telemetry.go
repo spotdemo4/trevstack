@@ -10,7 +10,6 @@ import (
 	"go.opentelemetry.io/contrib/exporters/autoexport"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
@@ -103,7 +102,7 @@ func Setup(ctx context.Context, version string) (func(context.Context) error, er
 				sdklog.WithResource(res),
 			)
 			shutdowns = append(shutdowns, provider.Shutdown)
-			global.SetLoggerProvider(provider)
+			otel.SetLoggerProvider(provider)
 		}
 	}
 

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/log/global"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -120,7 +119,7 @@ func TestSetupDisabledByDefault(t *testing.T) {
 	if _, ok := otel.GetMeterProvider().(*sdkmetric.MeterProvider); ok {
 		t.Error("expected no SDK meter provider")
 	}
-	if _, ok := global.GetLoggerProvider().(*sdklog.LoggerProvider); ok {
+	if _, ok := otel.GetLoggerProvider().(*sdklog.LoggerProvider); ok {
 		t.Error("expected no SDK logger provider")
 	}
 }
@@ -174,7 +173,7 @@ func TestSetupConsole(t *testing.T) {
 	if _, ok := otel.GetMeterProvider().(*sdkmetric.MeterProvider); !ok {
 		t.Error("expected SDK meter provider")
 	}
-	if _, ok := global.GetLoggerProvider().(*sdklog.LoggerProvider); !ok {
+	if _, ok := otel.GetLoggerProvider().(*sdklog.LoggerProvider); !ok {
 		t.Error("expected SDK logger provider")
 	}
 
