@@ -10,8 +10,8 @@ import (
 
 func TestHandler(t *testing.T) {
 	docs := fstest.MapFS{
-		"index.html":           &fstest.MapFile{Data: []byte("<h1>API Reference</h1>")},
-		"assets/app.js":        &fstest.MapFile{Data: []byte("console.log('docs')")},
+		"index.html":          &fstest.MapFile{Data: []byte("<h1>API Reference</h1>")},
+		"assets/app.js":       &fstest.MapFile{Data: []byte("console.log('docs')")},
 		"assets/openapi.yaml": &fstest.MapFile{Data: []byte("openapi: 3.1.0")},
 	}
 

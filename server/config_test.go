@@ -14,10 +14,10 @@ const testJWTSecret = "01234567890123456789012345678901"
 
 func TestParseConfig(t *testing.T) {
 	tests := []struct {
-		name             string
-		args             []string
-		logLevel         string
-		port             string
+		name                  string
+		args                  []string
+		logLevel              string
+		port                  string
 		jwtSecret             string
 		authCookieSecure      string
 		proxyProtocol         string
@@ -51,11 +51,11 @@ func TestParseConfig(t *testing.T) {
 			wantCookieSecure: true,
 		},
 		{
-			name:                 "trusted proxy environment",
-			jwtSecret:            testJWTSecret,
-			trustedProxyCIDRs:    "10.0.0.1/8, 2001:db8::1/32",
-			wantLogLevel:         defaultLogLevel,
-			wantPort:             defaultPort,
+			name:              "trusted proxy environment",
+			jwtSecret:         testJWTSecret,
+			trustedProxyCIDRs: "10.0.0.1/8, 2001:db8::1/32",
+			wantLogLevel:      defaultLogLevel,
+			wantPort:          defaultPort,
 			wantTrustedProxyCIDRs: []netip.Prefix{
 				netip.MustParsePrefix("10.0.0.0/8"),
 				netip.MustParsePrefix("2001:db8::/32"),

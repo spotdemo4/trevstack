@@ -90,11 +90,11 @@ func TestRateLimitInterceptorBypassesUnconfiguredProcedures(t *testing.T) {
 
 func TestRateLimitInterceptorClientIP(t *testing.T) {
 	tests := []struct {
-		name             string
-		trustedProxies   []netip.Prefix
-		peer             string
-		xForwardedFor    string
-		want             string
+		name           string
+		trustedProxies []netip.Prefix
+		peer           string
+		xForwardedFor  string
+		want           string
 	}{
 		{
 			name:          "direct peer by default",
@@ -139,9 +139,9 @@ func TestRateLimitInterceptorClientIP(t *testing.T) {
 				netip.MustParsePrefix("10.0.0.0/8"),
 				netip.MustParsePrefix("198.51.100.0/24"),
 			},
-			peer:           "10.0.0.2:1000",
-			xForwardedFor:  strings.Repeat("198.51.100.1,", maxForwardedForHops) + "198.51.100.1",
-			want:           "198.51.100.1",
+			peer:          "10.0.0.2:1000",
+			xForwardedFor: strings.Repeat("198.51.100.1,", maxForwardedForHops) + "198.51.100.1",
+			want:          "198.51.100.1",
 		},
 		{
 			name: "all forwarded hops trusted",
