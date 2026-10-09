@@ -40,7 +40,7 @@
     {
       "matchManagers": ["gomod"],
       "addLabels": ["go"],
-      "postUpdateOptions": ["gomodTidy"],
+      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"],
       "postUpgradeTasks": {
         "commands": ["fix-hash .#packages.x86_64-linux.server"],
         "executionMode": "branch"
