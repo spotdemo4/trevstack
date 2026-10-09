@@ -68,13 +68,13 @@ export const Metrics: Component = () => {
         form={form}
         class="flex flex-row flex-wrap items-end justify-center gap-2 md:justify-start"
       >
-        <DateField field={form.field("start")} label="Start" class="bg-ctp-mantle" />
-        <DateField field={form.field("end")} label="End" class="bg-ctp-mantle" />
+        <DateField field={form.field("start")} label="Start" class="bg-surface" />
+        <DateField field={form.field("end")} label="End" class="bg-surface" />
         <SubmitButton form={form} />
         <ResetButton form={form} />
       </Form>
 
-      <Errored fallback={<div class="text-sm text-ctp-red">Failed to load summary.</div>}>
+      <Errored fallback={<div class="text-sm text-danger">Failed to load summary.</div>}>
         <Loading fallback={<SummaryCards data={undefined} loading={true} />}>
           <SummaryCards data={summary()} loading={isPending(summary)} />
         </Loading>
@@ -82,7 +82,7 @@ export const Metrics: Component = () => {
 
       <Card class="p-4">
         <div class="mb-3 flex items-center justify-between gap-2">
-          <h2 class="font-semibold text-ctp-text">Activity over time</h2>
+          <h2 class="font-semibold text-foreground">Activity over time</h2>
           <div class="w-36">
             <SelectInput
               items={intervalOptions.map((opt) => ({
@@ -101,14 +101,14 @@ export const Metrics: Component = () => {
         </div>
         <Errored
           fallback={
-            <div class="flex h-70 items-center justify-center text-sm text-ctp-red">
+            <div class="flex h-70 items-center justify-center text-sm text-danger">
               Failed to load activity.
             </div>
           }
         >
           <Loading
             fallback={
-              <div class="flex h-70 items-center justify-center text-sm text-ctp-subtext0">
+              <div class="flex h-70 items-center justify-center text-sm text-foreground-subtle">
                 Loading...
               </div>
             }
@@ -121,7 +121,7 @@ export const Metrics: Component = () => {
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card class="p-4">
           <div class="mb-3 flex items-center justify-between gap-2">
-            <h2 class="font-semibold text-ctp-text">Number distribution</h2>
+            <h2 class="font-semibold text-foreground">Number distribution</h2>
             <div class="w-32">
               <NumberInput
                 min={1}
@@ -141,14 +141,14 @@ export const Metrics: Component = () => {
           </div>
           <Errored
             fallback={
-              <div class="flex h-65 items-center justify-center text-sm text-ctp-red">
+              <div class="flex h-65 items-center justify-center text-sm text-danger">
                 Failed to load distribution.
               </div>
             }
           >
             <Loading
               fallback={
-                <div class="flex h-65 items-center justify-center text-sm text-ctp-subtext0">
+                <div class="flex h-65 items-center justify-center text-sm text-foreground-subtle">
                   Loading...
                 </div>
               }
@@ -160,7 +160,7 @@ export const Metrics: Component = () => {
 
         <Card class="p-4">
           <div class="mb-3 flex items-center justify-between gap-2">
-            <h2 class="font-semibold text-ctp-text">Top names</h2>
+            <h2 class="font-semibold text-foreground">Top names</h2>
             <div class="w-32">
               <NumberInput
                 min={1}
@@ -180,14 +180,14 @@ export const Metrics: Component = () => {
           </div>
           <Errored
             fallback={
-              <div class="flex h-65 items-center justify-center text-sm text-ctp-red">
+              <div class="flex h-65 items-center justify-center text-sm text-danger">
                 Failed to load top names.
               </div>
             }
           >
             <Loading
               fallback={
-                <div class="flex h-65 items-center justify-center text-sm text-ctp-subtext0">
+                <div class="flex h-65 items-center justify-center text-sm text-foreground-subtle">
                   Loading...
                 </div>
               }

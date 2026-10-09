@@ -1,24 +1,24 @@
 .toastRoot {
-  --app-toast-accent: var(--catppuccin-color-sky);
+  --app-toast-accent: var(--color-primary);
 
   border-color: color-mix(in oklab, var(--app-toast-accent) 35%, transparent);
-  background: var(--catppuccin-color-mantle);
+  background: var(--color-surface);
 }
 
 .toastRoot[data-type="success"] {
-  --app-toast-accent: var(--catppuccin-color-green);
+  --app-toast-accent: var(--color-success);
 }
 
 .toastRoot[data-type="error"] {
-  --app-toast-accent: var(--catppuccin-color-red);
+  --app-toast-accent: var(--color-danger);
 }
 
 .toastRoot[data-type="warning"] {
-  --app-toast-accent: var(--catppuccin-color-yellow);
+  --app-toast-accent: var(--color-warning);
 }
 
 .toastRoot[data-type="loading"] {
-  --app-toast-accent: var(--catppuccin-color-blue);
+  --app-toast-accent: var(--color-info);
 }
 
 .toastProgress {

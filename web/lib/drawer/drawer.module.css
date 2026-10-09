@@ -52,7 +52,7 @@
 }
 
 .dialog::backdrop {
-  background: color-mix(in srgb, var(--catppuccin-color-crust) 60%, transparent);
+  background: color-mix(in srgb, var(--color-shadow) 60%, transparent);
   animation: drawer-backdrop-in 200ms ease-out;
 }
 

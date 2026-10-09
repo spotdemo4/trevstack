@@ -89,7 +89,7 @@ export const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
 
       g.append("g")
         .attr("transform", `translate(0,${innerH})`)
-        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .attr("class", `${styles.Axis} text-foreground-subtle`)
         .call(
           axisBottom(x)
             .ticks(Math.max(2, Math.floor(innerW / 90)))
@@ -97,12 +97,12 @@ export const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
         );
 
       g.append("g")
-        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .attr("class", `${styles.Axis} text-foreground-subtle`)
         .call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
       // Subtle horizontal grid lines.
       g.append("g")
-        .attr("class", `${styles.Grid} text-ctp-surface1`)
+        .attr("class", `${styles.Grid} text-line`)
         .selectAll("line")
         .data(y.ticks(5))
         .enter()
@@ -127,12 +127,12 @@ export const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
 
       g.append("path")
         .datum(data)
-        .attr("class", `${styles.Area} fill-ctp-blue/20`)
+        .attr("class", `${styles.Area} fill-chart-1/20`)
         .attr("d", areaGen);
 
       g.append("path")
         .datum(data)
-        .attr("class", `${styles.Line} stroke-ctp-blue`)
+        .attr("class", `${styles.Line} stroke-chart-1`)
         .attr("fill", "none")
         .attr("pathLength", 1)
         .attr("stroke-width", 2)
@@ -143,7 +143,7 @@ export const TimeSeriesChart: Component<TimeSeriesChartProps> = (props) => {
         .data(data)
         .enter()
         .append("circle")
-        .attr("class", `${styles.Point} fill-ctp-blue`)
+        .attr("class", `${styles.Point} fill-chart-1`)
         .attr("cx", (d) => x(d.date))
         .attr("cy", (d) => y(d.count))
         .attr("r", 3)

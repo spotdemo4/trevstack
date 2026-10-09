@@ -10,9 +10,9 @@ export const AppToaster: Component = () => (
   <Toaster
     gap={12}
     classes={{
-      toast: `${styles.toastRoot} flex items-start gap-3 overflow-hidden rounded-lg border p-3 text-ctp-text shadow-lg shadow-ctp-crust/35`,
+      toast: `${styles.toastRoot} flex items-start gap-3 overflow-hidden rounded-lg border p-3 text-foreground shadow-lg shadow-shadow/35`,
       content: "flex min-w-0 flex-1 items-start gap-3",
-      dismiss: `${styles.toastDismiss} mt-0.5 ml-1 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-ctp-subtext0 transition-colors hover:bg-ctp-surface0/75 hover:text-ctp-text focus-visible:ring-2 focus-visible:ring-ctp-sky/40`,
+      dismiss: `${styles.toastDismiss} mt-0.5 ml-1 inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-foreground-subtle transition-colors hover:bg-fill-subtle/75 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40`,
     }}
     dismissContent={<X size={14} />}
     renderToast={(toast, { remainingPercent, runAction }) => (
@@ -33,13 +33,13 @@ export const AppToaster: Component = () => (
             {toast.title ?? "Notification"}
           </div>
           <Show when={toast.description}>
-            <div class="mt-1 text-sm leading-5 text-ctp-subtext1">{toast.description}</div>
+            <div class="mt-1 text-sm leading-5 text-foreground-muted">{toast.description}</div>
           </Show>
           <Show when={toast.action}>
             {(action) => (
               <button
                 type="button"
-                class="mt-2 inline-flex h-7 cursor-pointer items-center rounded-md bg-ctp-sky px-3 text-sm font-semibold text-ctp-base transition-colors hover:bg-ctp-sapphire focus-visible:ring-2 focus-visible:ring-ctp-sky/50 focus-visible:outline-none"
+                class="mt-2 inline-flex h-7 cursor-pointer items-center rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                 onClick={runAction}
               >
                 {action().label}

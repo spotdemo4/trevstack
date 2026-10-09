@@ -6,5 +6,5 @@ type SkeletonProps = {
 };
 
 export const Skeleton: Component<SkeletonProps> = (props) => (
-  <div class={twMerge("h-4 animate-pulse rounded bg-ctp-surface2", props.class)} />
+  <div class={twMerge("h-4 animate-pulse rounded bg-fill-strong", props.class)} />
 );

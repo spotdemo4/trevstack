@@ -200,7 +200,7 @@ export const Trigger: Component<TriggerProps> = (props) => {
       ref={drawer.setTrigger}
       type={props.type ?? "button"}
       class={twMerge(
-        "m-2 inline-flex cursor-pointer items-center gap-2 self-start rounded-md bg-ctp-surface0 px-3 py-1.5 text-sm font-medium text-ctp-text hover:bg-ctp-surface1",
+        "m-2 inline-flex cursor-pointer items-center gap-2 self-start rounded-md bg-fill-subtle px-3 py-1.5 text-sm font-medium text-foreground hover:bg-fill",
         props.class,
       )}
       onClick={(event) => {
@@ -286,7 +286,7 @@ export const Content: Component<ContentProps> = (props) => {
         {...contentProps}
         ref={setContent}
         class={twMerge(
-          `${styles.content} flex overflow-hidden border-ctp-surface0 bg-ctp-mantle shadow-xl`,
+          `${styles.content} flex overflow-hidden border-line-subtle bg-surface shadow-xl`,
           props.class,
         )}
       >
@@ -328,7 +328,7 @@ export const Content: Component<ContentProps> = (props) => {
           }}
           onPointerCancel={settle}
         >
-          <div class={`${styles.grip} rounded-full bg-ctp-surface2`} />
+          <div class={`${styles.grip} rounded-full bg-fill-strong`} />
         </div>
         <div
           class={`${styles.body} flex min-h-0 min-w-0 flex-col gap-4 overflow-y-auto overscroll-contain`}
@@ -366,7 +366,7 @@ export const CloseTrigger: Component<CloseTriggerProps> = (props) => {
       {...rest}
       type={props.type ?? "button"}
       class={twMerge(
-        "cursor-pointer rounded-md p-1 text-ctp-subtext0 hover:bg-ctp-surface0 hover:text-ctp-text",
+        "cursor-pointer rounded-md p-1 text-foreground-subtle hover:bg-fill-subtle hover:text-foreground",
         props.class,
       )}
       onClick={(event) => {

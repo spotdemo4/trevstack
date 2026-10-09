@@ -89,14 +89,14 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
         .range([0, innerW]);
 
       g.append("g")
-        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .attr("class", `${styles.Axis} text-foreground-subtle`)
         .call(axisLeft(y).tickSizeOuter(0))
         .selectAll("text")
         .attr("class", "truncate");
 
       g.append("g")
         .attr("transform", `translate(0,${innerH})`)
-        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .attr("class", `${styles.Axis} text-foreground-subtle`)
         .call(
           axisBottom(x)
             .ticks(Math.max(2, Math.floor(innerW / 80)))
@@ -108,7 +108,7 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
         .data(data)
         .enter()
         .append("rect")
-        .attr("class", `${styles.HorizontalBar} fill-ctp-peach`)
+        .attr("class", `${styles.HorizontalBar} fill-chart-3`)
         .attr("x", 0)
         .attr("y", (d) => y(d.name) ?? 0)
         .attr("width", (d) => x(d.count))
@@ -116,8 +116,8 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
         .attr("rx", 2)
         .on("pointerenter", (event: PointerEvent, d) => {
           select(event.currentTarget as SVGRectElement)
-            .classed("fill-ctp-peach", false)
-            .classed("fill-ctp-yellow", true);
+            .classed("fill-chart-3", false)
+            .classed("fill-chart-3-hover", true);
           showTooltip(event, d);
         })
         .on("pointermove", (event: PointerEvent, d) => {
@@ -125,8 +125,8 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
         })
         .on("pointerleave", (event: PointerEvent) => {
           select(event.currentTarget as SVGRectElement)
-            .classed("fill-ctp-yellow", false)
-            .classed("fill-ctp-peach", true);
+            .classed("fill-chart-3-hover", false)
+            .classed("fill-chart-3", true);
           hideTooltip();
         });
 
@@ -137,7 +137,7 @@ export const TopNamesChart: Component<TopNamesChartProps> = (props) => {
         .append("text")
         .attr(
           "class",
-          `${styles.ValueLabel} pointer-events-none fill-ctp-text font-mono text-xs tabular-nums`,
+          `${styles.ValueLabel} pointer-events-none fill-foreground font-mono text-xs tabular-nums`,
         )
         .attr("x", (d) => x(d.count) + 6)
         .attr("y", (d) => (y(d.name) ?? 0) + y.bandwidth() / 2)

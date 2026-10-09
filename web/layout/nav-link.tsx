@@ -22,8 +22,8 @@ type NavLinkAsAnchorProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
 type NavLinkProps = NavLinkAsRouterProps | NavLinkAsAnchorProps;
 
 const baseClass =
-  "inline-flex px-1 text-sm text-ctp-subtext0 transition-colors hover:text-ctp-text";
-const activeClass = "text-ctp-text";
+  "inline-flex px-1 text-sm text-foreground-subtle transition-colors hover:text-foreground";
+const activeClass = "text-foreground";
 const Anchor = dynamic(() => "a");
 
 export const NavLink = (props: NavLinkProps) => {

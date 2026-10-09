@@ -38,7 +38,7 @@ export const NumberInput: Component<NumberInputProps> = (props) => {
       aria-invalid={props.invalid ? "true" : undefined}
       onInput={emitValue}
       class={twMerge(
-        "h-9.5 w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors placeholder:text-ctp-overlay0 hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none aria-invalid:border-ctp-red aria-invalid:focus:ring-ctp-red/40",
+        "h-9.5 w-full rounded-md border border-line bg-background px-3 py-2 text-sm text-foreground transition-colors placeholder:text-foreground-faint hover:border-line-strong focus:border-ring focus:ring-2 focus:ring-ring/40 focus:outline-none aria-invalid:border-danger aria-invalid:focus:ring-danger/40",
         props.class,
       )}
     />

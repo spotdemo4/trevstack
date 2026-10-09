@@ -72,7 +72,7 @@ export const UserMenu: Component<UserMenuProps> = (props) => {
         class={styles.Panel}
         onToggle={(event) => setIsOpen(event.newState === "open")}
       >
-        <p class="truncate px-3 py-2 text-sm text-ctp-subtext0" title={subject()}>
+        <p class="truncate px-3 py-2 text-sm text-foreground-subtle" title={subject()}>
           {subject()}
         </p>
         <button type="button" class={styles.Action} disabled={isLoggingOut()} onClick={logout}>

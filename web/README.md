@@ -2,8 +2,7 @@
 
 The TrevStack web app is a [SolidJS](https://www.solidjs.com/) single-page app that talks to the
 server's ConnectRPC API. It is built with [Vite](https://vite.dev/), styled with
-[Tailwind CSS](https://tailwindcss.com/) and [Catppuccin](https://catppuccin.com/), and installable
-as a progressive web app.
+[Tailwind CSS](https://tailwindcss.com/), and installable as a progressive web app.
 
 The production build is embedded in and served by the [server](../server/README.md), so there is
 nothing to deploy separately.
@@ -38,6 +37,14 @@ A service worker caches the app shell for offline use; `/grpc` and `/docs` are n
 The app checks for a new version every 15 minutes and whenever it comes back into view,
 then offers the update in a toast instead of reloading, so unsaved input is never lost.
 
+## theme
+
+Colors come from semantic tokens in [`theme.css`](theme.css), such as `background`, `surface`,
+`foreground-muted`, `line`, `primary`, and `danger`, which Tailwind exposes as utilities like
+`bg-surface` and as `var(--color-surface)` in CSS. The defaults are [Catppuccin](https://catppuccin.com/)
+Latte for the light theme and Mocha for the dark theme; change the values there to retheme the app.
+The web app manifest and the colors shown before the stylesheet loads are read from the same file.
+
 ## development
 
 Start the server in another terminal (see [server development](../server/README.md#development)),
@@ -66,7 +73,8 @@ Formatting and linting use [oxfmt](https://oxc.rs/docs/guide/usage/formatter) an
 | path        | description                                                  |
 | ----------- | ------------------------------------------------------------ |
 | `index.tsx` | entry point, routes, and session gating                      |
-| `index.css` | Tailwind and theme setup                                     |
+| `index.css` | Tailwind setup                                               |
+| `theme.css` | theme colors                                                 |
 | `routes/`   | one directory per page                                       |
 | `layout/`   | navigation bar, user menu, theme switch, and network status  |
 | `lib/`      | shared components, auth, Connect clients, and Effect helpers |

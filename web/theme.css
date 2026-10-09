@@ -1,0 +1,93 @@
+/* App color theme. Every color the app uses comes from these tokens, which
+   Tailwind exposes as utilities (bg-surface, text-foreground-muted, ...) and
+   CSS as var(--color-*). Edit the values here to retheme the app; the
+   defaults are Catppuccin Latte (light) and Mocha (dark).
+
+   vite.config.ts also reads --color-background and --color-primary from both
+   blocks for the web app manifest and the pre-paint page colors, so keep those
+   as plain declarations. */
+
+@theme static {
+  /* Layers, from the page up */
+  --color-background: #eff1f5; /* base */
+  --color-surface: #e6e9ef; /* mantle */
+  --color-sunken: #dce0e8; /* crust */
+  --color-shadow: #dce0e8; /* crust */
+
+  /* Text */
+  --color-foreground: #4c4f69; /* text */
+  --color-foreground-muted: #5c5f77; /* subtext1 */
+  --color-foreground-subtle: #6c6f85; /* subtext0 */
+  --color-foreground-faint: #9ca0b0; /* overlay0 */
+
+  /* Neutral fills for hover, selected, and secondary controls */
+  --color-fill-subtle: #ccd0da; /* surface0 */
+  --color-fill: #bcc0cc; /* surface1 */
+  --color-fill-strong: #acb0be; /* surface2 */
+
+  /* Borders and dividers */
+  --color-line-subtle: #ccd0da; /* surface0 */
+  --color-line: #bcc0cc; /* surface1 */
+  --color-line-strong: #acb0be; /* surface2 */
+
+  /* Accents */
+  --color-primary: #04a5e5; /* sky */
+  --color-primary-hover: #209fb5; /* sapphire */
+  --color-primary-foreground: #eff1f5; /* base */
+  --color-ring: #04a5e5; /* sky */
+  --color-link: #1e66f5; /* blue */
+
+  /* Status */
+  --color-info: #1e66f5; /* blue */
+  --color-success: #40a02b; /* green */
+  --color-warning: #df8e1d; /* yellow */
+  --color-danger: #d20f39; /* red */
+
+  /* Chart series */
+  --color-chart-1: #1e66f5; /* blue */
+  --color-chart-1-hover: #7287fd; /* lavender */
+  --color-chart-2: #8839ef; /* mauve */
+  --color-chart-2-hover: #ea76cb; /* pink */
+  --color-chart-3: #fe640b; /* peach */
+  --color-chart-3-hover: #df8e1d; /* yellow */
+}
+
+@layer theme {
+  :root.dark {
+    --color-background: #1e1e2e; /* base */
+    --color-surface: #181825; /* mantle */
+    --color-sunken: #11111b; /* crust */
+    --color-shadow: #11111b; /* crust */
+
+    --color-foreground: #cdd6f4; /* text */
+    --color-foreground-muted: #bac2de; /* subtext1 */
+    --color-foreground-subtle: #a6adc8; /* subtext0 */
+    --color-foreground-faint: #6c7086; /* overlay0 */
+
+    --color-fill-subtle: #313244; /* surface0 */
+    --color-fill: #45475a; /* surface1 */
+    --color-fill-strong: #585b70; /* surface2 */
+
+    --color-line-subtle: #313244; /* surface0 */
+    --color-line: #45475a; /* surface1 */
+    --color-line-strong: #585b70; /* surface2 */
+
+    --color-primary: #89dceb; /* sky */
+    --color-primary-hover: #74c7ec; /* sapphire */
+    --color-primary-foreground: #1e1e2e; /* base */
+    --color-ring: #89dceb; /* sky */
+    --color-link: #89b4fa; /* blue */
+
+    --color-info: #89b4fa; /* blue */
+    --color-success: #a6e3a1; /* green */
+    --color-warning: #f9e2af; /* yellow */
+    --color-danger: #f38ba8; /* red */
+
+    --color-chart-1: #89b4fa; /* blue */
+    --color-chart-1-hover: #b4befe; /* lavender */
+    --color-chart-2: #cba6f7; /* mauve */
+    --color-chart-2-hover: #f5c2e7; /* pink */
+    --color-chart-3: #fab387; /* peach */
+    --color-chart-3-hover: #f9e2af; /* yellow */
+  }
+}

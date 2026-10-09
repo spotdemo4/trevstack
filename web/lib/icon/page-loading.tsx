@@ -38,7 +38,7 @@ export const PageLoading: Component = () => {
 
   return (
     <div class="flex h-body items-center justify-center" role="status" aria-label="Loading">
-      <span ref={(element) => (indicator = element)} class="inline-flex text-ctp-subtext0">
+      <span ref={(element) => (indicator = element)} class="inline-flex text-foreground-subtle">
         <LoaderCircle class="animate-spin motion-reduce:animate-none" />
       </span>
     </div>

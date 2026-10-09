@@ -218,11 +218,11 @@ const Table: Component<TableProps> = (props) => {
         ref={(node) => (parentRef = node)}
         class={twMerge(
           scrollMode() === "element" ? "h-full overflow-auto" : "overflow-visible",
-          "bg-ctp-base",
+          "bg-background",
           props.class,
         )}
       >
-        <table class="block w-full border-separate border-spacing-0 text-ctp-text [&_td]:truncate [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
+        <table class="block w-full border-separate border-spacing-0 text-foreground [&_td]:truncate [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
           {props.children}
         </table>
       </div>
@@ -234,11 +234,11 @@ const Header: Component<HeaderProps> = (props) => {
   const table = useTableContext("Table.Header");
 
   return (
-    <thead class="sticky top-0 z-10 block bg-ctp-mantle/95 backdrop-blur supports-backdrop-filter:bg-ctp-mantle/75">
+    <thead class="sticky top-0 z-10 block bg-surface/95 backdrop-blur supports-backdrop-filter:bg-surface/75">
       <tr
         class={twMerge(
-          "text-left text-xs font-semibold tracking-wider text-ctp-subtext1 uppercase",
-          "[&>th]:border-b [&>th]:border-ctp-surface0",
+          "text-left text-xs font-semibold tracking-wider text-foreground-muted uppercase",
+          "[&>th]:border-b [&>th]:border-line-subtle",
           props.class,
         )}
         style={{ display: "grid", "grid-template-columns": table.columns().join(" ") }}
@@ -294,7 +294,7 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
         when={props.loading || props.items.length > 0}
         fallback={
           <tr class={twMerge("text-sm", styles.emptyState, props.class)}>
-            <td colspan={table.columns().length} class="px-3 text-center text-ctp-subtext0">
+            <td colspan={table.columns().length} class="px-3 text-center text-foreground-subtle">
               {props.emptyMessage ?? "No items found."}
             </td>
           </tr>
@@ -305,9 +305,9 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
             <tr
               data-index={index}
               class={twMerge(
-                "border-b border-ctp-surface0/60 text-sm transition-colors",
-                "hover:bg-ctp-surface0/40",
-                index % 2 === 0 ? "bg-ctp-base" : "bg-ctp-mantle/40",
+                "border-b border-line-subtle/60 text-sm transition-colors",
+                "hover:bg-fill-subtle/40",
+                index % 2 === 0 ? "bg-background" : "bg-surface/40",
                 "[&>td]:flex [&>td]:items-center",
                 styles.fadeIn,
                 props.class,

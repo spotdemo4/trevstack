@@ -23,7 +23,7 @@ export const TextField: Component<TextFieldProps> = (props) => {
       <Show when={props.label}>
         <label
           for={id}
-          class="text-sm font-medium text-ctp-subtext1 aria-invalid:text-ctp-red"
+          class="text-sm font-medium text-foreground-muted aria-invalid:text-danger"
           aria-invalid={props.field.invalid() ? "true" : undefined}
         >
           {props.label}
@@ -43,7 +43,7 @@ export const TextField: Component<TextFieldProps> = (props) => {
       <Show when={props.field.invalid()}>
         <div id={errorId}>
           <For each={props.field.errors()}>
-            {(error) => <span class="block text-xs text-ctp-red">{error}</span>}
+            {(error) => <span class="block text-xs text-danger">{error}</span>}
           </For>
         </div>
       </Show>

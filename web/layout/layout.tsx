@@ -27,7 +27,7 @@ const NavigationLinks: Component<NavigationProps> = (props) => (
       href="/"
       onClick={props.onNavigate}
       class={props.mobile ? "rounded-lg px-3 py-3" : undefined}
-      activeClass={props.mobile ? "bg-ctp-surface0" : undefined}
+      activeClass={props.mobile ? "bg-fill-subtle" : undefined}
     >
       Home
     </NavLink>
@@ -35,7 +35,7 @@ const NavigationLinks: Component<NavigationProps> = (props) => (
       href="/numbers"
       onClick={props.onNavigate}
       class={props.mobile ? "rounded-lg px-3 py-3" : undefined}
-      activeClass={props.mobile ? "bg-ctp-surface0" : undefined}
+      activeClass={props.mobile ? "bg-fill-subtle" : undefined}
     >
       Numbers
     </NavLink>
@@ -43,7 +43,7 @@ const NavigationLinks: Component<NavigationProps> = (props) => (
       href="/metrics"
       onClick={props.onNavigate}
       class={props.mobile ? "rounded-lg px-3 py-3" : undefined}
-      activeClass={props.mobile ? "bg-ctp-surface0" : undefined}
+      activeClass={props.mobile ? "bg-fill-subtle" : undefined}
     >
       Metrics
     </NavLink>
@@ -84,7 +84,7 @@ const MobileActions: Component = () => {
   const drawer = useDrawer();
 
   return (
-    <div class="flex items-center gap-2 border-t border-ctp-surface1 pt-4">
+    <div class="flex items-center gap-2 border-t border-line pt-4">
       <ThemeSwitch />
       <UserMenu onBeforeNavigate={() => drawer.close({ immediate: true })} />
       <Button.Icon
@@ -106,7 +106,7 @@ const MobileMenu: Component = () => (
     <Drawer.Trigger
       aria-label="Open navigation menu"
       aria-haspopup="dialog"
-      class="m-0 mr-2 h-10 w-10 justify-center self-center rounded-md bg-transparent p-0 text-ctp-text hover:bg-ctp-surface0"
+      class="m-0 mr-2 h-10 w-10 justify-center self-center rounded-md bg-transparent p-0 text-foreground hover:bg-fill-subtle"
     >
       <Menu />
     </Drawer.Trigger>
@@ -127,7 +127,7 @@ export const Layout: Component<LayoutProps> = (props) => {
 
   return (
     <div class="flex min-h-viewport flex-col">
-      <header class="z-30 flex h-header border-b border-ctp-surface1 bg-ctp-crust min-[900px]:sticky min-[900px]:top-0">
+      <header class="z-30 flex h-header border-b border-line bg-sunken min-[900px]:sticky min-[900px]:top-0">
         <Show
           when={isDesktop()}
           fallback={
@@ -148,7 +148,7 @@ export const Layout: Component<LayoutProps> = (props) => {
               </Navbar>
             </div>
             <div class="flex shrink-0 items-center gap-2 pr-2 md:pr-4">
-              <div class="hidden h-6 w-px bg-ctp-surface1 md:block" />
+              <div class="hidden h-6 w-px bg-line md:block" />
               <div class="hidden items-center gap-2 md:flex">
                 <ThemeSwitch />
                 <Button.Icon
@@ -167,7 +167,7 @@ export const Layout: Component<LayoutProps> = (props) => {
         </Show>
       </header>
       <main class="grow">{resolved()}</main>
-      <footer class="flex h-footer shrink-0 items-center justify-center border-t border-ctp-surface1 bg-ctp-crust px-4 text-xs text-ctp-subtext0">
+      <footer class="flex h-footer shrink-0 items-center justify-center border-t border-line bg-sunken px-4 text-xs text-foreground-subtle">
         v{version}
       </footer>
     </div>

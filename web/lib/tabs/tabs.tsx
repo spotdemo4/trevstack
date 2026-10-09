@@ -112,7 +112,7 @@ export const List: Component<ListProps> = (props) => {
       ref={setList}
       role="tablist"
       aria-orientation="horizontal"
-      class={twMerge("relative inline-flex w-fit rounded-lg bg-ctp-crust p-1", props.class)}
+      class={twMerge("relative inline-flex w-fit rounded-lg bg-sunken p-1", props.class)}
       onKeyDown={(event) => {
         if (typeof props.onKeyDown === "function") props.onKeyDown(event);
         if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -145,7 +145,7 @@ export const List: Component<ListProps> = (props) => {
         aria-hidden="true"
         data-tabs-indicator=""
         hidden={!indicator()}
-        class={`${styles.indicator} pointer-events-none absolute top-0 left-0 rounded-md bg-ctp-surface0 shadow-sm`}
+        class={`${styles.indicator} pointer-events-none absolute top-0 left-0 rounded-md bg-fill-subtle shadow-sm`}
         style={{
           transform: `translate3d(${indicator()?.x ?? 0}px, ${indicator()?.y ?? 0}px, 0)`,
           width: `${indicator()?.width ?? 0}px`,
@@ -178,7 +178,7 @@ export const Trigger: Component<TriggerProps> = (props) => {
       tabindex={active() && !props.disabled ? 0 : -1}
       data-state={active() ? "active" : "inactive"}
       class={twMerge(
-        "relative inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-ctp-subtext0 transition-colors hover:text-ctp-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ctp-sky disabled:pointer-events-none disabled:opacity-50 data-[state=active]:font-semibold data-[state=active]:text-ctp-text",
+        "relative inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-foreground-subtle transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:font-semibold data-[state=active]:text-foreground",
         props.class,
       )}
       onClick={(event) => {
@@ -215,7 +215,7 @@ export const Content: Component<ContentProps> = (props) => {
       data-state={active() ? "active" : "inactive"}
       class={twMerge(
         animate() && styles.content,
-        "min-w-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ctp-sky [[hidden]]:hidden",
+        "min-w-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [[hidden]]:hidden",
         props.class,
       )}
     >

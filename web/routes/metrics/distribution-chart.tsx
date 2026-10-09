@@ -91,7 +91,7 @@ export const DistributionChart: Component<DistributionChartProps> = (props) => {
 
       g.append("g")
         .attr("transform", `translate(0,${innerH})`)
-        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .attr("class", `${styles.Axis} text-foreground-subtle`)
         .call(
           axisBottom(x)
             .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
@@ -104,7 +104,7 @@ export const DistributionChart: Component<DistributionChartProps> = (props) => {
         .style("text-anchor", "end");
 
       g.append("g")
-        .attr("class", `${styles.Axis} text-ctp-subtext0`)
+        .attr("class", `${styles.Axis} text-foreground-subtle`)
         .call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
       g.append("g")
@@ -112,7 +112,7 @@ export const DistributionChart: Component<DistributionChartProps> = (props) => {
         .data(data)
         .enter()
         .append("rect")
-        .attr("class", `${styles.VerticalBar} fill-ctp-mauve`)
+        .attr("class", `${styles.VerticalBar} fill-chart-2`)
         .attr("x", (d) => x(d.key) ?? 0)
         .attr("y", (d) => y(d.count))
         .attr("width", x.bandwidth())
@@ -120,8 +120,8 @@ export const DistributionChart: Component<DistributionChartProps> = (props) => {
         .attr("rx", 2)
         .on("pointerenter", (event: PointerEvent, d) => {
           select(event.currentTarget as SVGRectElement)
-            .classed("fill-ctp-mauve", false)
-            .classed("fill-ctp-pink", true);
+            .classed("fill-chart-2", false)
+            .classed("fill-chart-2-hover", true);
           showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
         })
         .on("pointermove", (event: PointerEvent, d) => {
@@ -129,8 +129,8 @@ export const DistributionChart: Component<DistributionChartProps> = (props) => {
         })
         .on("pointerleave", (event: PointerEvent) => {
           select(event.currentTarget as SVGRectElement)
-            .classed("fill-ctp-pink", false)
-            .classed("fill-ctp-mauve", true);
+            .classed("fill-chart-2-hover", false)
+            .classed("fill-chart-2", true);
           hideTooltip();
         });
 

@@ -11,7 +11,7 @@ export const Card: Component<CardProps> = (props) => {
   return (
     <div
       class={twMerge(
-        "rounded-xl border border-ctp-surface0 bg-ctp-mantle p-6 shadow-lg shadow-ctp-crust/40",
+        "rounded-xl border border-line-subtle bg-surface p-6 shadow-lg shadow-shadow/40",
         props.class,
       )}
     >

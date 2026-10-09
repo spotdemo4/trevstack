@@ -23,7 +23,7 @@ export const Form: Component<FormProps> = (props) => (
   >
     {props.children}
     <For each={props.form.errors()}>
-      {(error) => <span class="text-xs text-ctp-red">{error}</span>}
+      {(error) => <span class="text-xs text-danger">{error}</span>}
     </For>
   </form>
 );

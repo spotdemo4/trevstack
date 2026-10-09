@@ -5,19 +5,14 @@ import { createSignal } from "solid-js";
 import styles from "./theme-switch.module.css";
 
 function toggleTheme(dark: boolean) {
-  if (dark) {
-    document.querySelector("#theme-color")?.setAttribute("content", "#89dceb");
-    document.documentElement.classList.add("dark");
-    document.documentElement.classList.add("mocha");
-    document.documentElement.classList.remove("light");
-    document.documentElement.classList.remove("latte");
-  } else {
-    document.querySelector("#theme-color")?.setAttribute("content", "#04a5e5");
-    document.documentElement.classList.add("light");
-    document.documentElement.classList.add("latte");
-    document.documentElement.classList.remove("dark");
-    document.documentElement.classList.remove("mocha");
-  }
+  document.documentElement.classList.toggle("dark", dark);
+  document.documentElement.classList.toggle("light", !dark);
+  document
+    .querySelector("#theme-color")
+    ?.setAttribute(
+      "content",
+      getComputedStyle(document.documentElement).getPropertyValue("--color-primary").trim(),
+    );
 
   try {
     localStorage.setItem("theme", dark ? "dark" : "light");

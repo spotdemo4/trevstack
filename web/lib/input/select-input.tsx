@@ -47,7 +47,7 @@ export const SelectInput: Component<SelectInputProps> = (props) => {
   return (
     <div class="flex flex-col gap-1.5">
       <Show when={props.label}>
-        <label for={selectId()} class="text-sm font-medium text-ctp-subtext1">
+        <label for={selectId()} class="text-sm font-medium text-foreground-muted">
           {props.label}
         </label>
       </Show>
@@ -58,7 +58,7 @@ export const SelectInput: Component<SelectInputProps> = (props) => {
           value={isMulti() ? undefined : singleValue()}
           aria-invalid={props.invalid ? "true" : undefined}
           class={twMerge(
-            "w-full rounded-md border border-ctp-surface1 bg-ctp-base px-3 py-2 text-sm text-ctp-text transition-colors hover:border-ctp-surface2 focus:border-ctp-sky focus:ring-2 focus:ring-ctp-sky/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-ctp-red aria-invalid:focus:ring-ctp-red/40",
+            "w-full rounded-md border border-line bg-background px-3 py-2 text-sm text-foreground transition-colors hover:border-line-strong focus:border-ring focus:ring-2 focus:ring-ring/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger aria-invalid:focus:ring-danger/40",
             isMulti() ? "" : "appearance-none pr-8",
           )}
           onChange={(event) => {
@@ -101,7 +101,7 @@ export const SelectInput: Component<SelectInputProps> = (props) => {
         <Show when={!isMulti()}>
           <ChevronDown
             size={16}
-            class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ctp-subtext0"
+            class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-foreground-subtle"
           />
         </Show>
       </div>

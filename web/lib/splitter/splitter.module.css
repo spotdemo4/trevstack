@@ -9,8 +9,8 @@
   cursor: col-resize;
   touch-action: none;
 
-  --splitter-border-color: var(--catppuccin-color-surface1);
-  --splitter-thumb-color: var(--catppuccin-color-surface2);
+  --splitter-border-color: var(--color-line);
+  --splitter-thumb-color: var(--color-fill-strong);
 
   &[data-orientation="horizontal"] {
     min-width: 0.5rem;
@@ -25,18 +25,18 @@
   }
 
   &:hover {
-    --splitter-border-color: var(--catppuccin-color-surface2);
-    --splitter-thumb-color: var(--catppuccin-color-overlay0);
+    --splitter-border-color: var(--color-line-strong);
+    --splitter-thumb-color: var(--color-foreground-faint);
   }
 
   &:focus-visible {
-    --splitter-border-color: var(--catppuccin-color-sky);
-    --splitter-thumb-color: var(--catppuccin-color-sky);
+    --splitter-border-color: var(--color-ring);
+    --splitter-thumb-color: var(--color-ring);
   }
 
   &[data-dragging] {
-    --splitter-border-color: var(--catppuccin-color-sky);
-    --splitter-thumb-color: var(--catppuccin-color-sky);
+    --splitter-border-color: var(--color-ring);
+    --splitter-thumb-color: var(--color-ring);
   }
 
   &[data-disabled] {
@@ -69,8 +69,8 @@
   position: relative;
   border-radius: 9999px;
   background: var(--splitter-thumb-color);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--catppuccin-color-crust) 45%, transparent);
-  border: 1px solid var(--catppuccin-color-surface0);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-shadow) 45%, transparent);
+  border: 1px solid var(--color-line-subtle);
   z-index: 1;
   @apply transition-colors duration-200;
 
@@ -85,7 +85,7 @@
   }
 
   .ResizeTrigger:focus-visible & {
-    outline: 2px solid var(--catppuccin-color-sky);
+    outline: 2px solid var(--color-ring);
     outline-offset: 2px;
   }
 

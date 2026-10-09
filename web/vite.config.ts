@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import solidPlugin from "@solidjs/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -11,9 +13,40 @@ declare module "vite-plugin-pwa" {
   }
 }
 
+// The manifest and the pre-paint styles in index.html need literal colors
+// before any CSS loads, so they are read from the theme instead of repeated.
+const theme = readFileSync(new URL("theme.css", import.meta.url), "utf8");
+const [lightTheme = "", darkTheme = ""] = theme.split(":root.dark");
+
+function themeColor(block: string, name: string) {
+  const value = block.match(new RegExp(`--color-${name}:\\s*([^;]+);`))?.[1]?.trim();
+  if (!value) throw new Error(`theme.css does not set --color-${name} for every theme`);
+  return value;
+}
+
+const themeColors = {
+  THEME_LIGHT_BACKGROUND: themeColor(lightTheme, "background"),
+  THEME_LIGHT_PRIMARY: themeColor(lightTheme, "primary"),
+  THEME_DARK_BACKGROUND: themeColor(darkTheme, "background"),
+  THEME_DARK_PRIMARY: themeColor(darkTheme, "primary"),
+};
+
 export default defineConfig({
   plugins: [
     solidPlugin(),
+    {
+      name: "theme-colors",
+      transformIndexHtml: {
+        order: "pre",
+        handler: (html) =>
+          html.replace(/%(THEME_\w+)%/g, (_, key: string) => {
+            if (!Object.hasOwn(themeColors, key)) {
+              throw new Error(`index.html uses unknown theme color ${key}`);
+            }
+            return themeColors[key as keyof typeof themeColors];
+          }),
+      },
+    },
     tailwindcss(),
     VitePWA({
       // lib/pwa registers the service worker and asks before updating, so an
@@ -24,11 +57,11 @@ export default defineConfig({
         name: "TrevStack",
         short_name: "TrevStack",
         description: "TrevStack web client",
-        theme_color: "#04a5e5",
-        background_color: "#eff1f5",
+        theme_color: themeColors.THEME_LIGHT_PRIMARY,
+        background_color: themeColors.THEME_LIGHT_BACKGROUND,
         color_scheme_dark: {
-          theme_color: "#89dceb",
-          background_color: "#1e1e2e",
+          theme_color: themeColors.THEME_DARK_PRIMARY,
+          background_color: themeColors.THEME_DARK_BACKGROUND,
         },
         display: "standalone",
         start_url: "/",

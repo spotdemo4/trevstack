@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta id="theme-color" name="theme-color" content="#04a5e5" />
+    <meta id="theme-color" name="theme-color" content="%THEME_LIGHT_PRIMARY%" />
     <script>
       let theme = null;
       try {
@@ -15,21 +15,19 @@
         (theme === null && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
       if (dark) {
-        document.querySelector("#theme-color")?.setAttribute("content", "#89dceb");
+        document.querySelector("#theme-color")?.setAttribute("content", "%THEME_DARK_PRIMARY%");
         document.documentElement.classList.add("dark");
-        document.documentElement.classList.add("mocha");
       } else {
-        document.querySelector("#theme-color")?.setAttribute("content", "#04a5e5");
+        document.querySelector("#theme-color")?.setAttribute("content", "%THEME_LIGHT_PRIMARY%");
         document.documentElement.classList.add("light");
-        document.documentElement.classList.add("latte");
       }
     </script>
     <style>
       html {
-        background-color: #eff1f5;
+        background-color: %THEME_LIGHT_BACKGROUND%;
       }
       html.dark {
-        background-color: #1e1e2e;
+        background-color: %THEME_DARK_BACKGROUND%;
       }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -39,7 +37,7 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="app" class="bg-ctp-base"></div>
+    <div id="app" class="bg-background"></div>
     <script src="/index.tsx" type="module"></script>
   </body>
 </html>

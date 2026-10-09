@@ -37,7 +37,7 @@ const NavbarRoot: Component<NavbarProps> = (props) => {
     }
 
     const activeLink = navRef.querySelector<HTMLAnchorElement>(
-      'a[aria-current="page"], a.text-ctp-text',
+      'a[aria-current="page"], a.text-foreground',
     );
     if (!activeLink) {
       setIndicatorStyle((prevStyle) => ({
@@ -103,7 +103,7 @@ const Indicator: Component = () => {
   return (
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-ctp-sky transition-[transform,width,opacity] duration-300 ease-out"
+      class="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-primary transition-[transform,width,opacity] duration-300 ease-out"
       style={context.indicatorStyle()}
     />
   );

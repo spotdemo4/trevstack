@@ -56,7 +56,7 @@ export const Numbers: Component = () => {
       <Table.Body items={stream.items} loading={stream.loading()}>
         {(item) => (
           <>
-            <td class="text-sm text-ctp-subtext0 tabular-nums">
+            <td class="text-sm text-foreground-subtle tabular-nums">
               {timestampDate(item.timestamp!).toLocaleString()}
             </td>
             <td class="truncate font-medium">{item.name}</td>
@@ -90,11 +90,11 @@ export const Numbers: Component = () => {
     >
       <div class="h-body">
         <Splitter.Root
-          class="h-full bg-ctp-mantle"
+          class="h-full bg-surface"
           defaultSize={[15, 50]}
           panels={[{ id: "a", minSize: 20, maxSize: 50 }, { id: "b" }]}
         >
-          <Splitter.Panel id="a" class="bg-ctp-mantle p-4">
+          <Splitter.Panel id="a" class="bg-surface p-4">
             <FormContent />
           </Splitter.Panel>
           <Splitter.ResizeTrigger id="a:b" />

@@ -49,10 +49,10 @@ export const SummaryCards: Component<SummaryCardsProps> = (props) => {
                   <Show when={stat()}>
                     {(s) => (
                       <div class={styles.ValueLayer} aria-hidden={pending() ? "true" : "false"}>
-                        <div class="text-xs tracking-wide text-ctp-subtext0 uppercase">
+                        <div class="text-xs tracking-wide text-foreground-subtle uppercase">
                           {s().label}
                         </div>
-                        <div class="mt-1 font-mono text-2xl text-ctp-text tabular-nums">
+                        <div class="mt-1 font-mono text-2xl text-foreground tabular-nums">
                           {s().value}
                         </div>
                       </div>

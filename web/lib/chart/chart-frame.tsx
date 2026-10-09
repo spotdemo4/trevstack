@@ -15,7 +15,7 @@ type ChartFrameProps = {
 };
 
 const tooltipClass =
-  "pointer-events-none absolute z-10 max-w-56 rounded-md border border-ctp-surface1 bg-ctp-base/95 px-2 py-1 text-xs font-medium whitespace-pre text-ctp-text opacity-0 shadow-lg transition-opacity";
+  "pointer-events-none absolute z-10 max-w-56 rounded-md border border-line bg-background/95 px-2 py-1 text-xs font-medium whitespace-pre text-foreground opacity-0 shadow-lg transition-opacity";
 
 export const ChartFrame: Component<ChartFrameProps> = (props) => {
   return (
@@ -29,7 +29,7 @@ export const ChartFrame: Component<ChartFrameProps> = (props) => {
       <div ref={props.tooltipRef} class={tooltipClass} />
       <Show when={props.isEmpty}>
         <div
-          class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-ctp-subtext0`}
+          class={`${styles.EmptyState} absolute inset-0 flex items-center justify-center text-sm text-foreground-subtle`}
         >
           {props.emptyLabel ?? "No data"}
         </div>
