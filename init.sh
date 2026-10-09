@@ -578,6 +578,7 @@ if ! $keep_docs; then
   sed_inplace \
     -e '/^              protoc-gen-connect-openapi$/d' \
     -e '/^              cd docs && npm install && cd \.\.$/d' \
+    -e '/^              npm audit fix --audit-level=none --prefix docs$/d' \
     -e '/^          docs = pkgs\.buildPackages\.callPackage \.\/docs { };$/d' \
     -e 's/^          server = pkgs\.callPackage \.\/server { inherit docs web; };$/          server = pkgs.callPackage .\/server { inherit web; };/' \
     -e '/^            docs$/d' \
@@ -586,14 +587,13 @@ if ! $keep_docs; then
   remove_block server/embed.go '//go:embed all:docs'
   sed_inplace '/^[[:space:]]*DocsFS = mustSub(docsfs, "docs")$/d' server/embed.go
   docs_var_line=$(grep -n -m 1 -E '^[[:space:]]+DocsFS[[:space:]]+fs\.FS$' server/main.go | cut -d: -f1 || true)
-  if [[ -z $docs_var_line || $(sed -n "$((docs_var_line - 1))p;$((docs_var_line + 2))p" server/main.go) != $'var (\n)' ]]; then
+  if [[ -z $docs_var_line ]] || ! sed -n "$((docs_var_line + 1))p" server/main.go | grep -qE '^[[:space:]]+WebFS[[:space:]]+fs\.FS$'; then
     fail 'Unable to find the DocsFS variable in server/main.go.'
   fi
-  # Collapse the var block around the remaining WebFS declaration.
+  # Drop DocsFS and realign the remaining WebFS declaration as gofmt would.
   sed_inplace \
-    -e "$((docs_var_line - 1)),${docs_var_line}d" \
-    -e "$((docs_var_line + 1))s/.*/var WebFS fs.FS/" \
-    -e "$((docs_var_line + 2))d" \
+    -e "${docs_var_line}d" \
+    -e "$((docs_var_line + 1))s/^\([[:space:]]*\)WebFS[[:space:]]*fs\.FS$/\1WebFS fs.FS/" \
     -e '/^[[:space:]]*docshandler "/d' \
     -e '/^[[:space:]]*mux\.Handle("\/docs\/", docshandler\.New(DocsFS))$/d' \
     server/main.go
@@ -731,7 +731,7 @@ rm "$script_path" || fail 'Unable to remove init.sh.'
 mv "$new_git_dir" "$root/.git" || fail 'Unable to activate the new Git repository.'
 
 # Configure only after the new root repository is active; rollback restores the original repository on failure.
-(cd "$root" && nix run .#configure)
+(cd "$root" && nix run .#configure && nix fmt)
 
 # Include generated and formatted files in the same fresh root commit.
 git -C "$root" add -A
