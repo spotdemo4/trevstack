@@ -63,11 +63,11 @@
       "enabled": false
     },
     {
-      "matchPackageNames": ["solid-js", "@solidjs/web", "@solidjs/router", "@solidjs/vite-plugin"],
+      "matchPackageNames": ["solid-js", "@solidjs/**"],
       "groupName": "solidjs"
     },
     {
-      "matchPackageNames": ["@connectrpc/connect", "@connectrpc/connect-web"],
+      "matchPackageNames": ["@connectrpc/**", "connectrpc.com/**"],
       "groupName": "connectrpc"
     }
   ]
