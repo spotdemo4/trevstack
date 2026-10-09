@@ -6,7 +6,7 @@ import (
 	_ "embed"
 	"errors"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 	"golang.org/x/crypto/bcrypt"
 	"trev.zip/template/stack/server/auth"
 	authv1 "trev.zip/template/stack/server/connect/auth/v1"
@@ -33,7 +33,7 @@ func (h *Handler) Login(
 		return nil, invalidCredentialsError()
 	}
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, errors.New("could not load user"))
+		return nil, connect.NewError(connect.CodeInternal, "could not load user")
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.GetPassword())); err != nil {
 		return nil, invalidCredentialsError()
@@ -41,10 +41,10 @@ func (h *Handler) Login(
 
 	token, expires, err := h.auth.Issue(username)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, errors.New("could not create session"))
+		return nil, connect.NewError(connect.CodeInternal, "could not create session")
 	}
 	if err := auth.SetResponseCookie(ctx, h.auth.Cookie(token, expires)); err != nil {
-		return nil, connect.NewError(connect.CodeInternal, errors.New("could not set session cookie"))
+		return nil, connect.NewError(connect.CodeInternal, "could not set session cookie")
 	}
 
 	response := &authv1.LoginResponse{}
@@ -55,5 +55,5 @@ func (h *Handler) Login(
 }
 
 func invalidCredentialsError() error {
-	return connect.NewError(connect.CodeUnauthenticated, errors.New("invalid credentials"))
+	return connect.NewError(connect.CodeUnauthenticated, "invalid credentials")
 }

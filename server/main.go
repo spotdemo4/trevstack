@@ -15,7 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
+	"connectrpc.com/connect/v2/connecthttp"
 	"connectrpc.com/otelconnect"
 	"connectrpc.com/validate"
 	"github.com/XSAM/otelsql"
@@ -110,7 +111,7 @@ func run(cfg config, log *slog.Logger) error {
 
 	// Remote trace context is not trusted by default since the API is public.
 	// Spans from clients are linked to the server's root span instead.
-	oi, err := otelconnect.NewInterceptor()
+	oi, err := otelconnect.NewServerInterceptor()
 	if err != nil {
 		return fmt.Errorf("could not create telemetry interceptor: %w", err)
 	}
@@ -131,11 +132,14 @@ func run(cfg config, log *slog.Logger) error {
 		},
 		cfg.trustedProxyCIDRs,
 	)
-	vi := validate.NewInterceptor()
+	vi := validate.NewServerInterceptor()
+
+	rpc := connect.NewServer(oi, rli.WrapServer, li.WrapServer, ai.WrapServer, vi)
+	authv1handler.Register(rpc, sessionManager)
+	numberv1handler.Register(rpc)
 
 	api := http.NewServeMux()
-	api.Handle(authv1handler.New(sessionManager, connect.WithInterceptors(oi, rli, li, ai, vi)))
-	api.Handle(numberv1handler.New(connect.WithInterceptors(oi, li, ai, vi)))
+	connecthttp.Mount(api, rpc)
 
 	mux := http.NewServeMux()
 	mux.Handle("/", webhandler.New(WebFS))

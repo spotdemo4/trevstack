@@ -9,7 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
+	"connectrpc.com/connect/v2/connecthttp"
+	"connectrpc.com/connect/v2/connectinprocess"
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/mattn/go-sqlite3"
 	domainauth "trev.zip/template/stack/server/auth"
@@ -21,19 +23,43 @@ import (
 
 const interceptorTestSecret = "01234567890123456789012345678901"
 
-type fakeStreamingConn struct {
-	spec           connect.Spec
-	header         http.Header
-	responseHeader http.Header
+type addHandler struct {
+	numberv1connect.UnimplementedNumberServiceHandler
+	add func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error)
 }
 
-func (c *fakeStreamingConn) Spec() connect.Spec           { return c.spec }
-func (c *fakeStreamingConn) Peer() connect.Peer           { return connect.Peer{} }
-func (c *fakeStreamingConn) Receive(any) error            { return nil }
-func (c *fakeStreamingConn) RequestHeader() http.Header   { return c.header }
-func (c *fakeStreamingConn) Send(any) error               { return nil }
-func (c *fakeStreamingConn) ResponseHeader() http.Header  { return c.responseHeader }
-func (c *fakeStreamingConn) ResponseTrailer() http.Header { return make(http.Header) }
+func (h addHandler) Add(ctx context.Context, req *numberv1.AddRequest) (*numberv1.AddResponse, error) {
+	return h.add(ctx, req)
+}
+
+func newAddTest(
+	manager *domainauth.Manager,
+	add func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error),
+) numberv1connect.NumberServiceClient {
+	server := connect.NewServer(NewAuthInterceptor(manager).WrapServer)
+	numberv1connect.RegisterNumberServiceHandler(server, addHandler{add: add})
+	return numberv1connect.NewNumberServiceClient(connect.NewClient(connectinprocess.New(server)))
+}
+
+// callStreaming dispatches a server-streaming procedure through interceptor to
+// next, with header as the request header.
+func callStreaming(
+	interceptor *AuthInterceptor,
+	procedure string,
+	header http.Header,
+	next connect.ServerFunc,
+) (*connect.CallInfo, error) {
+	server := connect.NewServer(interceptor.WrapServer)
+	server.Register(connect.Method{
+		Spec:    connect.Spec{Procedure: procedure, StreamType: connect.StreamTypeServer},
+		Handler: next,
+	})
+	info := &connect.CallInfo{}
+	for key, values := range header {
+		info.RequestHeader().SetValues(key, values)
+	}
+	return info, server.Call(context.Background(), procedure, info, nil)
+}
 
 func TestIsPublicAuthProcedure(t *testing.T) {
 	for _, procedure := range []string{
@@ -59,18 +85,10 @@ func TestIsPublicAuthProcedure(t *testing.T) {
 func TestAuthInterceptorSyntheticUnary(t *testing.T) {
 	manager := domainauth.NewManager(interceptorTestSecret, false)
 	called := false
-	mux := http.NewServeMux()
-	mux.Handle(numberv1connect.NumberServiceAddProcedure, connect.NewUnaryHandlerSimple[numberv1.AddRequest, numberv1.AddResponse](
-		numberv1connect.NumberServiceAddProcedure,
-		func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error) {
-			called = true
-			return &numberv1.AddResponse{}, nil
-		},
-		connect.WithInterceptors(NewAuthInterceptor(manager)),
-	))
-	srv := httptest.NewServer(mux)
-	t.Cleanup(srv.Close)
-	client := numberv1connect.NewNumberServiceClient(http.DefaultClient, srv.URL)
+	client := newAddTest(manager, func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error) {
+		called = true
+		return &numberv1.AddResponse{}, nil
+	})
 
 	_, err := client.Add(context.Background(), (&numberv1.AddRequest_builder{
 		Name: new("security-test"), Number: new(uint32(1)),
@@ -106,18 +124,10 @@ func TestAuthInterceptorUnaryHandlerReceivesClaims(t *testing.T) {
 	}
 
 	var gotClaims *domainauth.Claims
-	mux := http.NewServeMux()
-	mux.Handle(numberv1connect.NumberServiceAddProcedure, connect.NewUnaryHandlerSimple[numberv1.AddRequest, numberv1.AddResponse](
-		numberv1connect.NumberServiceAddProcedure,
-		func(ctx context.Context, _ *numberv1.AddRequest) (*numberv1.AddResponse, error) {
-			gotClaims, _ = domainauth.ClaimsFromContext(ctx)
-			return &numberv1.AddResponse{}, nil
-		},
-		connect.WithInterceptors(NewAuthInterceptor(manager)),
-	))
-	srv := httptest.NewServer(mux)
-	t.Cleanup(srv.Close)
-	client := numberv1connect.NewNumberServiceClient(http.DefaultClient, srv.URL)
+	client := newAddTest(manager, func(ctx context.Context, _ *numberv1.AddRequest) (*numberv1.AddResponse, error) {
+		gotClaims, _ = domainauth.ClaimsFromContext(ctx)
+		return &numberv1.AddResponse{}, nil
+	})
 
 	ctx, info := connect.NewClientContext(context.Background())
 	info.RequestHeader().Set("Cookie", (&http.Cookie{Name: domainauth.CookieName, Value: token}).String())
@@ -140,18 +150,10 @@ func TestAuthInterceptorUnaryHandlerReceivesClaims(t *testing.T) {
 func TestAuthInterceptorRejectedCredentialsDoNotReachUnaryHandler(t *testing.T) {
 	manager := domainauth.NewManager(interceptorTestSecret, false)
 	called := false
-	mux := http.NewServeMux()
-	mux.Handle(numberv1connect.NumberServiceAddProcedure, connect.NewUnaryHandlerSimple[numberv1.AddRequest, numberv1.AddResponse](
-		numberv1connect.NumberServiceAddProcedure,
-		func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error) {
-			called = true
-			return &numberv1.AddResponse{}, nil
-		},
-		connect.WithInterceptors(NewAuthInterceptor(manager)),
-	))
-	srv := httptest.NewServer(mux)
-	t.Cleanup(srv.Close)
-	client := numberv1connect.NewNumberServiceClient(http.DefaultClient, srv.URL)
+	client := newAddTest(manager, func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error) {
+		called = true
+		return &numberv1.AddResponse{}, nil
+	})
 
 	ctx, info := connect.NewClientContext(context.Background())
 	info.RequestHeader().Set("Cookie", domainauth.CookieName)
@@ -222,17 +224,12 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			called := false
 			var handlerContext context.Context
-			next := func(ctx context.Context, _ connect.StreamingHandlerConn) error {
+			next := func(ctx context.Context, _ connect.Spec, _ connect.ServerStream) error {
 				called = true
 				handlerContext = ctx
 				return nil
 			}
-			conn := &fakeStreamingConn{
-				spec:           connect.Spec{Procedure: test.procedure},
-				header:         test.header,
-				responseHeader: make(http.Header),
-			}
-			err := interceptor.WrapStreamingHandler(next)(context.Background(), conn)
+			_, err := callStreaming(interceptor, test.procedure, test.header, next)
 			if !test.wantErr {
 				if err != nil {
 					t.Errorf("error = %v, want nil", err)
@@ -273,23 +270,19 @@ func TestAuthInterceptorStreamingHandlerClearsExpiredCookie(t *testing.T) {
 			Issuer:    "stack/session/v2",
 		},
 	}, interceptorTestSecret)
-	conn := &fakeStreamingConn{
-		spec: connect.Spec{Procedure: "/number.v1.NumberService/Stream"},
-		header: http.Header{
-			"Cookie": []string{(&http.Cookie{Name: domainauth.CookieName, Value: token}).String()},
-		},
-		responseHeader: make(http.Header),
+	header := http.Header{
+		"Cookie": []string{(&http.Cookie{Name: domainauth.CookieName, Value: token}).String()},
 	}
 
-	err := interceptor.WrapStreamingHandler(func(context.Context, connect.StreamingHandlerConn) error {
+	info, err := callStreaming(interceptor, "/number.v1.NumberService/Stream", header, func(context.Context, connect.Spec, connect.ServerStream) error {
 		t.Fatal("next handler called for expired token")
 		return nil
-	})(context.Background(), conn)
+	})
 	if got := connect.CodeOf(err); got != connect.CodeUnauthenticated {
 		t.Fatalf("code = %v, want Unauthenticated (error %v)", got, err)
 	}
 
-	response := &http.Response{Header: conn.responseHeader}
+	response := &http.Response{Header: http.Header{"Set-Cookie": info.ResponseHeader().Values("Set-Cookie")}}
 	cookies := response.Cookies()
 	if len(cookies) != 1 || cookies[0].Name != domainauth.CookieName || cookies[0].MaxAge != -1 {
 		t.Errorf("deletion cookies = %v", cookies)
@@ -399,8 +392,10 @@ func newProtectedTest(t *testing.T) (numberv1connect.NumberServiceClient, *recor
 		t.Fatalf("migrate: %v", err)
 	}
 	manager := domainauth.NewManager(interceptorTestSecret, false)
+	server := connect.NewServer(NewAuthInterceptor(manager).WrapServer)
+	numberhandler.Register(server)
 	mux := http.NewServeMux()
-	mux.Handle(numberhandler.New(connect.WithInterceptors(NewAuthInterceptor(manager))))
+	connecthttp.Mount(mux, server)
 	srv := httptest.NewUnstartedServer(mux)
 	srv.Config.BaseContext = func(_ net.Listener) context.Context {
 		return database.WithDatabase(context.Background(), db)
@@ -408,7 +403,7 @@ func newProtectedTest(t *testing.T) (numberv1connect.NumberServiceClient, *recor
 	srv.Start()
 	t.Cleanup(srv.Close)
 	transport := &recordingTransport{base: http.DefaultTransport}
-	return numberv1connect.NewNumberServiceClient(&http.Client{Transport: transport}, srv.URL), transport
+	return numberv1connect.NewNumberServiceClient(connect.NewClient(connecthttp.NewTransport(&http.Client{Transport: transport}, srv.URL))), transport
 }
 
 func signInterceptorClaims(t *testing.T, claims domainauth.Claims, secret string) string {

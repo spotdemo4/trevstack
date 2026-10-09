@@ -6,7 +6,7 @@ import (
 	"errors"
 	"strings"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 	"github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 	authv1 "trev.zip/template/stack/server/connect/auth/v1"
@@ -22,7 +22,7 @@ func (h *Handler) Signup(
 ) (*authv1.SignupResponse, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword()), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, errors.New("could not hash password"))
+		return nil, connect.NewError(connect.CodeInternal, "could not hash password")
 	}
 
 	db := database.FromContext(ctx)
@@ -30,9 +30,9 @@ func (h *Handler) Signup(
 	if err != nil {
 		var sqliteErr sqlite3.Error
 		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
-			return nil, connect.NewError(connect.CodeAlreadyExists, errors.New("username already exists"))
+			return nil, connect.NewError(connect.CodeAlreadyExists, "username already exists")
 		}
-		return nil, connect.NewError(connect.CodeInternal, errors.New("could not create user"))
+		return nil, connect.NewError(connect.CodeInternal, "could not create user")
 	}
 
 	return &authv1.SignupResponse{}, nil

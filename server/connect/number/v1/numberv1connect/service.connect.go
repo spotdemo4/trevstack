@@ -5,48 +5,82 @@
 package numberv1connect
 
 import (
-	connect "connectrpc.com/connect"
+	connect "connectrpc.com/connect/v2"
 	context "context"
-	errors "errors"
-	http "net/http"
-	strings "strings"
+	sync "sync"
 	v1 "trev.zip/template/stack/server/connect/number/v1"
 )
-
-// This is a compile-time assertion to ensure that this generated file and the connect package are
-// compatible. If you get a compiler error that this constant is not defined, this code was
-// generated with a version of connect newer than the one compiled into your binary. You can fix the
-// problem by either regenerating this code with an older version of connect or updating the connect
-// version compiled into your binary.
-const _ = connect.IsAtLeastVersion1_13_0
 
 const (
 	// NumberServiceName is the fully-qualified name of the NumberService service.
 	NumberServiceName = "number.v1.NumberService"
 )
 
-// These constants are the fully-qualified names of the RPCs defined in this package. They're
-// exposed at runtime as Spec.Procedure and as the final two segments of the HTTP route.
+// These constants are the procedure names of the RPCs defined in this package. They're exposed at
+// runtime as Spec.Procedure and as the final two segments of the HTTP route.
 //
 // Note that these are different from the fully-qualified method names used by
 // google.golang.org/protobuf/reflect/protoreflect. To convert from these constants to
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// NumberServiceAddProcedure is the fully-qualified name of the NumberService's Add RPC.
+	// NumberServiceAddProcedure is the procedure name of the NumberService's Add RPC.
 	NumberServiceAddProcedure = "/number.v1.NumberService/Add"
-	// NumberServiceListProcedure is the fully-qualified name of the NumberService's List RPC.
+	// NumberServiceListProcedure is the procedure name of the NumberService's List RPC.
 	NumberServiceListProcedure = "/number.v1.NumberService/List"
-	// NumberServiceSummaryProcedure is the fully-qualified name of the NumberService's Summary RPC.
+	// NumberServiceSummaryProcedure is the procedure name of the NumberService's Summary RPC.
 	NumberServiceSummaryProcedure = "/number.v1.NumberService/Summary"
-	// NumberServiceTimeSeriesProcedure is the fully-qualified name of the NumberService's TimeSeries
-	// RPC.
+	// NumberServiceTimeSeriesProcedure is the procedure name of the NumberService's TimeSeries RPC.
 	NumberServiceTimeSeriesProcedure = "/number.v1.NumberService/TimeSeries"
-	// NumberServiceDistributionProcedure is the fully-qualified name of the NumberService's
-	// Distribution RPC.
+	// NumberServiceDistributionProcedure is the procedure name of the NumberService's Distribution RPC.
 	NumberServiceDistributionProcedure = "/number.v1.NumberService/Distribution"
-	// NumberServiceTopNamesProcedure is the fully-qualified name of the NumberService's TopNames RPC.
+	// NumberServiceTopNamesProcedure is the procedure name of the NumberService's TopNames RPC.
 	NumberServiceTopNamesProcedure = "/number.v1.NumberService/TopNames"
+)
+
+var (
+	numberServiceAddSpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeUnary,
+			Schema:     v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods().ByName("Add"),
+			Procedure:  NumberServiceAddProcedure,
+		}
+	})
+	numberServiceListSpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeServer,
+			Schema:     v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods().ByName("List"),
+			Procedure:  NumberServiceListProcedure,
+		}
+	})
+	numberServiceSummarySpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeUnary,
+			Schema:     v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods().ByName("Summary"),
+			Procedure:  NumberServiceSummaryProcedure,
+		}
+	})
+	numberServiceTimeSeriesSpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeUnary,
+			Schema:     v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods().ByName("TimeSeries"),
+			Procedure:  NumberServiceTimeSeriesProcedure,
+		}
+	})
+	numberServiceDistributionSpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeUnary,
+			Schema:     v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods().ByName("Distribution"),
+			Procedure:  NumberServiceDistributionProcedure,
+		}
+	})
+	numberServiceTopNamesSpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeUnary,
+			Schema:     v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods().ByName("TopNames"),
+			Procedure:  NumberServiceTopNamesProcedure,
+		}
+	})
 )
 
 // NumberServiceClient is a client for the number.v1.NumberService service.
@@ -55,7 +89,7 @@ type NumberServiceClient interface {
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
 	// Streams one response per matching item, newest inserted first. An empty result sends no messages.
 	// Name filtering uses a substring match; number and timestamp bounds are inclusive.
-	List(context.Context, *v1.ListRequest) (*connect.ServerStreamForClient[v1.ListResponse], error)
+	List(context.Context, *v1.ListRequest) (NumberServiceListClientStream, error)
 	// Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
 	// All aggregates are zero when no items match.
 	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
@@ -69,114 +103,30 @@ type NumberServiceClient interface {
 	TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error)
 }
 
-// NewNumberServiceClient constructs a client for the number.v1.NumberService service. By default,
-// it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and
-// sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC()
-// or connect.WithGRPCWeb() options.
-//
-// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
-// http://api.acme.com or https://acme.com/grpc).
-func NewNumberServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) NumberServiceClient {
-	baseURL = strings.TrimRight(baseURL, "/")
-	numberServiceMethods := v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods()
-	return &numberServiceClient{
-		add: connect.NewClient[v1.AddRequest, v1.AddResponse](
-			httpClient,
-			baseURL+NumberServiceAddProcedure,
-			connect.WithSchema(numberServiceMethods.ByName("Add")),
-			connect.WithClientOptions(opts...),
-		),
-		list: connect.NewClient[v1.ListRequest, v1.ListResponse](
-			httpClient,
-			baseURL+NumberServiceListProcedure,
-			connect.WithSchema(numberServiceMethods.ByName("List")),
-			connect.WithClientOptions(opts...),
-		),
-		summary: connect.NewClient[v1.SummaryRequest, v1.SummaryResponse](
-			httpClient,
-			baseURL+NumberServiceSummaryProcedure,
-			connect.WithSchema(numberServiceMethods.ByName("Summary")),
-			connect.WithClientOptions(opts...),
-		),
-		timeSeries: connect.NewClient[v1.TimeSeriesRequest, v1.TimeSeriesResponse](
-			httpClient,
-			baseURL+NumberServiceTimeSeriesProcedure,
-			connect.WithSchema(numberServiceMethods.ByName("TimeSeries")),
-			connect.WithClientOptions(opts...),
-		),
-		distribution: connect.NewClient[v1.DistributionRequest, v1.DistributionResponse](
-			httpClient,
-			baseURL+NumberServiceDistributionProcedure,
-			connect.WithSchema(numberServiceMethods.ByName("Distribution")),
-			connect.WithClientOptions(opts...),
-		),
-		topNames: connect.NewClient[v1.TopNamesRequest, v1.TopNamesResponse](
-			httpClient,
-			baseURL+NumberServiceTopNamesProcedure,
-			connect.WithSchema(numberServiceMethods.ByName("TopNames")),
-			connect.WithClientOptions(opts...),
-		),
+// NewNumberServiceClient constructs a client for the number.v1.NumberService service. Multiple
+// service clients may share a single connect.Client.
+func NewNumberServiceClient(client *connect.Client) NumberServiceClient {
+	return &numberServiceClient{client: client}
+}
+
+// NumberServiceListClientStream is the client stream for the NumberService's List RPC.
+type NumberServiceListClientStream struct {
+	stream connect.ClientStream
+}
+
+// Receive returns the next response message from the server.
+func (s NumberServiceListClientStream) Receive() (*v1.ListResponse, error) {
+	var res v1.ListResponse
+	if err := s.stream.Receive(&res); err != nil {
+		return nil, err
 	}
+	return &res, nil
 }
 
-// numberServiceClient implements NumberServiceClient.
-type numberServiceClient struct {
-	add          *connect.Client[v1.AddRequest, v1.AddResponse]
-	list         *connect.Client[v1.ListRequest, v1.ListResponse]
-	summary      *connect.Client[v1.SummaryRequest, v1.SummaryResponse]
-	timeSeries   *connect.Client[v1.TimeSeriesRequest, v1.TimeSeriesResponse]
-	distribution *connect.Client[v1.DistributionRequest, v1.DistributionResponse]
-	topNames     *connect.Client[v1.TopNamesRequest, v1.TopNamesResponse]
-}
-
-// Add calls number.v1.NumberService.Add.
-func (c *numberServiceClient) Add(ctx context.Context, req *v1.AddRequest) (*v1.AddResponse, error) {
-	response, err := c.add.CallUnary(ctx, connect.NewRequest(req))
-	if response != nil {
-		return response.Msg, err
-	}
-	return nil, err
-}
-
-// List calls number.v1.NumberService.List.
-func (c *numberServiceClient) List(ctx context.Context, req *v1.ListRequest) (*connect.ServerStreamForClient[v1.ListResponse], error) {
-	return c.list.CallServerStream(ctx, connect.NewRequest(req))
-}
-
-// Summary calls number.v1.NumberService.Summary.
-func (c *numberServiceClient) Summary(ctx context.Context, req *v1.SummaryRequest) (*v1.SummaryResponse, error) {
-	response, err := c.summary.CallUnary(ctx, connect.NewRequest(req))
-	if response != nil {
-		return response.Msg, err
-	}
-	return nil, err
-}
-
-// TimeSeries calls number.v1.NumberService.TimeSeries.
-func (c *numberServiceClient) TimeSeries(ctx context.Context, req *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error) {
-	response, err := c.timeSeries.CallUnary(ctx, connect.NewRequest(req))
-	if response != nil {
-		return response.Msg, err
-	}
-	return nil, err
-}
-
-// Distribution calls number.v1.NumberService.Distribution.
-func (c *numberServiceClient) Distribution(ctx context.Context, req *v1.DistributionRequest) (*v1.DistributionResponse, error) {
-	response, err := c.distribution.CallUnary(ctx, connect.NewRequest(req))
-	if response != nil {
-		return response.Msg, err
-	}
-	return nil, err
-}
-
-// TopNames calls number.v1.NumberService.TopNames.
-func (c *numberServiceClient) TopNames(ctx context.Context, req *v1.TopNamesRequest) (*v1.TopNamesResponse, error) {
-	response, err := c.topNames.CallUnary(ctx, connect.NewRequest(req))
-	if response != nil {
-		return response.Msg, err
-	}
-	return nil, err
+// Close releases the stream's resources. It is idempotent and is typically deferred to clean up a
+// stream abandoned before io.EOF.
+func (s NumberServiceListClientStream) Close() error {
+	return s.stream.Close()
 }
 
 // NumberServiceHandler is an implementation of the number.v1.NumberService service.
@@ -185,7 +135,7 @@ type NumberServiceHandler interface {
 	Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error)
 	// Streams one response per matching item, newest inserted first. An empty result sends no messages.
 	// Name filtering uses a substring match; number and timestamp bounds are inclusive.
-	List(context.Context, *v1.ListRequest, *connect.ServerStream[v1.ListResponse]) error
+	List(context.Context, *v1.ListRequest, NumberServiceListServerStream) error
 	// Returns count, sum, average, minimum, maximum, and distinct-name count for the selected time range.
 	// All aggregates are zero when no items match.
 	Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error)
@@ -199,92 +149,180 @@ type NumberServiceHandler interface {
 	TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error)
 }
 
-// NewNumberServiceHandler builds an HTTP handler from the service implementation. It returns the
-// path on which to mount the handler and the handler itself.
-//
-// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
-// and JSON codecs. They also support gzip compression.
-func NewNumberServiceHandler(svc NumberServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	numberServiceMethods := v1.File_number_v1_service_proto.Services().ByName("NumberService").Methods()
-	numberServiceAddHandler := connect.NewUnaryHandlerSimple(
-		NumberServiceAddProcedure,
-		svc.Add,
-		connect.WithSchema(numberServiceMethods.ByName("Add")),
-		connect.WithHandlerOptions(opts...),
+// RegisterNumberServiceHandler registers svc as the number.v1.NumberService implementation on
+// server.
+func RegisterNumberServiceHandler(server *connect.Server, svc NumberServiceHandler) {
+	adapter := numberServiceHandler{svc: svc}
+	server.Register(
+		connect.Method{Spec: numberServiceAddSpec(), Handler: adapter.add},
+		connect.Method{Spec: numberServiceListSpec(), Handler: adapter.list},
+		connect.Method{Spec: numberServiceSummarySpec(), Handler: adapter.summary},
+		connect.Method{Spec: numberServiceTimeSeriesSpec(), Handler: adapter.timeSeries},
+		connect.Method{Spec: numberServiceDistributionSpec(), Handler: adapter.distribution},
+		connect.Method{Spec: numberServiceTopNamesSpec(), Handler: adapter.topNames},
 	)
-	numberServiceListHandler := connect.NewServerStreamHandlerSimple(
-		NumberServiceListProcedure,
-		svc.List,
-		connect.WithSchema(numberServiceMethods.ByName("List")),
-		connect.WithHandlerOptions(opts...),
-	)
-	numberServiceSummaryHandler := connect.NewUnaryHandlerSimple(
-		NumberServiceSummaryProcedure,
-		svc.Summary,
-		connect.WithSchema(numberServiceMethods.ByName("Summary")),
-		connect.WithHandlerOptions(opts...),
-	)
-	numberServiceTimeSeriesHandler := connect.NewUnaryHandlerSimple(
-		NumberServiceTimeSeriesProcedure,
-		svc.TimeSeries,
-		connect.WithSchema(numberServiceMethods.ByName("TimeSeries")),
-		connect.WithHandlerOptions(opts...),
-	)
-	numberServiceDistributionHandler := connect.NewUnaryHandlerSimple(
-		NumberServiceDistributionProcedure,
-		svc.Distribution,
-		connect.WithSchema(numberServiceMethods.ByName("Distribution")),
-		connect.WithHandlerOptions(opts...),
-	)
-	numberServiceTopNamesHandler := connect.NewUnaryHandlerSimple(
-		NumberServiceTopNamesProcedure,
-		svc.TopNames,
-		connect.WithSchema(numberServiceMethods.ByName("TopNames")),
-		connect.WithHandlerOptions(opts...),
-	)
-	return "/number.v1.NumberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case NumberServiceAddProcedure:
-			numberServiceAddHandler.ServeHTTP(w, r)
-		case NumberServiceListProcedure:
-			numberServiceListHandler.ServeHTTP(w, r)
-		case NumberServiceSummaryProcedure:
-			numberServiceSummaryHandler.ServeHTTP(w, r)
-		case NumberServiceTimeSeriesProcedure:
-			numberServiceTimeSeriesHandler.ServeHTTP(w, r)
-		case NumberServiceDistributionProcedure:
-			numberServiceDistributionHandler.ServeHTTP(w, r)
-		case NumberServiceTopNamesProcedure:
-			numberServiceTopNamesHandler.ServeHTTP(w, r)
-		default:
-			http.NotFound(w, r)
-		}
-	})
+}
+
+// NumberServiceListServerStream is the server stream for the NumberService's List RPC.
+type NumberServiceListServerStream struct {
+	stream connect.ServerStream
+}
+
+// SendHeaders flushes the response headers without a message. The first Send does this implicitly.
+func (s NumberServiceListServerStream) SendHeaders() error {
+	return s.stream.SendHeaders()
+}
+
+// Send sends a response message to the client.
+func (s NumberServiceListServerStream) Send(res *v1.ListResponse) error {
+	return s.stream.Send(res)
 }
 
 // UnimplementedNumberServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedNumberServiceHandler struct{}
 
 func (UnimplementedNumberServiceHandler) Add(context.Context, *v1.AddRequest) (*v1.AddResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.Add is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, "number.v1.NumberService.Add is not implemented")
 }
 
-func (UnimplementedNumberServiceHandler) List(context.Context, *v1.ListRequest, *connect.ServerStream[v1.ListResponse]) error {
-	return connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.List is not implemented"))
+func (UnimplementedNumberServiceHandler) List(context.Context, *v1.ListRequest, NumberServiceListServerStream) error {
+	return connect.NewError(connect.CodeUnimplemented, "number.v1.NumberService.List is not implemented")
 }
 
 func (UnimplementedNumberServiceHandler) Summary(context.Context, *v1.SummaryRequest) (*v1.SummaryResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.Summary is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, "number.v1.NumberService.Summary is not implemented")
 }
 
 func (UnimplementedNumberServiceHandler) TimeSeries(context.Context, *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.TimeSeries is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, "number.v1.NumberService.TimeSeries is not implemented")
 }
 
 func (UnimplementedNumberServiceHandler) Distribution(context.Context, *v1.DistributionRequest) (*v1.DistributionResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.Distribution is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, "number.v1.NumberService.Distribution is not implemented")
 }
 
 func (UnimplementedNumberServiceHandler) TopNames(context.Context, *v1.TopNamesRequest) (*v1.TopNamesResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("number.v1.NumberService.TopNames is not implemented"))
+	return nil, connect.NewError(connect.CodeUnimplemented, "number.v1.NumberService.TopNames is not implemented")
+}
+
+type numberServiceClient struct {
+	client *connect.Client
+}
+
+func (c *numberServiceClient) Add(ctx context.Context, req *v1.AddRequest) (*v1.AddResponse, error) {
+	var res v1.AddResponse
+	if err := c.client.CallUnary(ctx, numberServiceAddSpec(), req, &res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+func (c *numberServiceClient) List(ctx context.Context, req *v1.ListRequest) (NumberServiceListClientStream, error) {
+	stream, err := c.client.CallServerStream(ctx, numberServiceListSpec(), req)
+	if err != nil {
+		return NumberServiceListClientStream{}, err
+	}
+	return NumberServiceListClientStream{stream: stream}, nil
+}
+
+func (c *numberServiceClient) Summary(ctx context.Context, req *v1.SummaryRequest) (*v1.SummaryResponse, error) {
+	var res v1.SummaryResponse
+	if err := c.client.CallUnary(ctx, numberServiceSummarySpec(), req, &res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+func (c *numberServiceClient) TimeSeries(ctx context.Context, req *v1.TimeSeriesRequest) (*v1.TimeSeriesResponse, error) {
+	var res v1.TimeSeriesResponse
+	if err := c.client.CallUnary(ctx, numberServiceTimeSeriesSpec(), req, &res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+func (c *numberServiceClient) Distribution(ctx context.Context, req *v1.DistributionRequest) (*v1.DistributionResponse, error) {
+	var res v1.DistributionResponse
+	if err := c.client.CallUnary(ctx, numberServiceDistributionSpec(), req, &res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+func (c *numberServiceClient) TopNames(ctx context.Context, req *v1.TopNamesRequest) (*v1.TopNamesResponse, error) {
+	var res v1.TopNamesResponse
+	if err := c.client.CallUnary(ctx, numberServiceTopNamesSpec(), req, &res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+type numberServiceHandler struct{ svc NumberServiceHandler }
+
+func (h numberServiceHandler) add(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.AddRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	res, err := h.svc.Add(ctx, &req)
+	if err != nil {
+		return err
+	}
+	return stream.Send(res)
+}
+
+func (h numberServiceHandler) list(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.ListRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	return h.svc.List(ctx, &req, NumberServiceListServerStream{stream: stream})
+}
+
+func (h numberServiceHandler) summary(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.SummaryRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	res, err := h.svc.Summary(ctx, &req)
+	if err != nil {
+		return err
+	}
+	return stream.Send(res)
+}
+
+func (h numberServiceHandler) timeSeries(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.TimeSeriesRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	res, err := h.svc.TimeSeries(ctx, &req)
+	if err != nil {
+		return err
+	}
+	return stream.Send(res)
+}
+
+func (h numberServiceHandler) distribution(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.DistributionRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	res, err := h.svc.Distribution(ctx, &req)
+	if err != nil {
+		return err
+	}
+	return stream.Send(res)
+}
+
+func (h numberServiceHandler) topNames(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.TopNamesRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	res, err := h.svc.TopNames(ctx, &req)
+	if err != nil {
+		return err
+	}
+	return stream.Send(res)
 }

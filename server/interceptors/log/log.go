@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 )
 
 type LogInterceptor struct {
@@ -17,42 +17,21 @@ func NewLogInterceptor(log *slog.Logger) *LogInterceptor {
 	}
 }
 
-func (i *LogInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
-	return connect.UnaryFunc(func(
+func (i *LogInterceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
+	return func(
 		ctx context.Context,
-		req connect.AnyRequest,
-	) (connect.AnyResponse, error) {
-		i.log.DebugContext(ctx, "request received", "method", req.Spec().Procedure)
+		spec connect.Spec,
+		stream connect.ServerStream,
+	) error {
+		i.log.DebugContext(ctx, "request received", "method", spec.Procedure)
 
-		resp, err := next(ctx, req)
+		err := next(ctx, spec, stream)
 		if err != nil {
 			i.log.ErrorContext(ctx, "request error", "error", err)
 		} else {
-			i.log.DebugContext(ctx, "request completed", "method", req.Spec().Procedure)
+			i.log.DebugContext(ctx, "request completed", "method", spec.Procedure)
 		}
 
-		return resp, err
-	})
-}
-
-func (i *LogInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) connect.StreamingClientFunc {
-	return connect.StreamingClientFunc(func(
-		ctx context.Context,
-		spec connect.Spec,
-	) connect.StreamingClientConn {
-		i.log.DebugContext(ctx, "streaming client started", "method", spec.Procedure)
-
-		return next(ctx, spec)
-	})
-}
-
-func (i *LogInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
-	return connect.StreamingHandlerFunc(func(
-		ctx context.Context,
-		conn connect.StreamingHandlerConn,
-	) error {
-		i.log.DebugContext(ctx, "streaming handler started", "method", conn.Spec().Procedure)
-
-		return next(ctx, conn)
-	})
+		return err
+	}
 }

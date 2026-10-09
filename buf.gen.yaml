@@ -9,11 +9,10 @@ plugins:
       - paths=source_relative
       - default_api_level=API_OPAQUE
 
-  - local: protoc-gen-connect-go
+  - local: ["go", "-C", "server", "tool", "protoc-gen-connect-go"]
     out: server/connect
     opt:
       - paths=source_relative
-      - simple
 
   - local: protoc-gen-connect-openapi
     out: docs

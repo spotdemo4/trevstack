@@ -5,9 +5,9 @@ import (
 	_ "embed"
 	"time"
 
-	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	"trev.zip/template/stack/server/connect/number/v1/numberv1connect"
 	"trev.zip/template/stack/server/database"
 )
 
@@ -17,7 +17,7 @@ var listSQL string
 func (h *Handler) List(
 	ctx context.Context,
 	req *numberv1.ListRequest,
-	stream *connect.ServerStream[numberv1.ListResponse],
+	stream numberv1connect.NumberServiceListServerStream,
 ) error {
 	db := database.FromContext(ctx)
 

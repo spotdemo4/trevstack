@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 	domainauth "trev.zip/template/stack/server/auth"
 	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
 )
@@ -19,81 +19,59 @@ func NewAuthInterceptor(manager *domainauth.Manager) *AuthInterceptor {
 	return &AuthInterceptor{auth: manager}
 }
 
-func (i *AuthInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
-	return connect.UnaryFunc(func(
+func (i *AuthInterceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
+	return func(
 		ctx context.Context,
-		req connect.AnyRequest,
-	) (connect.AnyResponse, error) {
-		setCookie := func(cookie *http.Cookie) error {
-			return domainauth.SetResponseCookie(ctx, cookie)
-		}
-		claims, err := i.authenticate(req.Spec().Procedure, req.Header(), setCookie)
-		if err != nil {
-			return nil, err
-		}
-		if claims != nil {
-			ctx = domainauth.WithClaims(ctx, claims)
-		}
-		return next(ctx, req)
-	})
-}
-
-func (i *AuthInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) connect.StreamingClientFunc {
-	return next
-}
-
-func (i *AuthInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
-	return connect.StreamingHandlerFunc(func(
-		ctx context.Context,
-		conn connect.StreamingHandlerConn,
+		spec connect.Spec,
+		stream connect.ServerStream,
 	) error {
-		setCookie := func(cookie *http.Cookie) error {
-			conn.ResponseHeader().Add("Set-Cookie", cookie.String())
-			return nil
-		}
-		claims, err := i.authenticate(conn.Spec().Procedure, conn.RequestHeader(), setCookie)
+		claims, err := i.authenticate(ctx, spec.Procedure)
 		if err != nil {
 			return err
 		}
 		if claims != nil {
 			ctx = domainauth.WithClaims(ctx, claims)
 		}
-		return next(ctx, conn)
-	})
+		return next(ctx, spec, stream)
+	}
 }
 
 func (i *AuthInterceptor) authenticate(
+	ctx context.Context,
 	procedure string,
-	header http.Header,
-	setCookie func(*http.Cookie) error,
 ) (*domainauth.Claims, error) {
 	if isPublicAuthProcedure(procedure) {
 		return nil, nil
 	}
 
-	cookie, err := sessionCookie(header)
+	info, ok := connect.CallInfoForServerContext(ctx)
+	if !ok {
+		return nil, connect.NewError(connect.CodeInternal, "connect call info unavailable")
+	}
+
+	cookie, err := sessionCookie(info.RequestHeader())
 	if errors.Is(err, http.ErrNoCookie) {
-		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("authentication required"))
+		return nil, connect.NewError(connect.CodeUnauthenticated, "authentication required")
 	}
 	if err != nil {
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("invalid session"))
+		return nil, connect.NewError(connect.CodePermissionDenied, "invalid session")
 	}
 
 	claims, err := i.auth.Parse(cookie.Value)
 	if err != nil {
 		if domainauth.IsExpiredOnly(err) {
-			if cookieErr := setCookie(i.auth.DeleteCookie()); cookieErr != nil {
-				return nil, connect.NewError(connect.CodeInternal, errors.New("could not clear expired session"))
+			if cookieErr := domainauth.SetResponseCookie(ctx, i.auth.DeleteCookie()); cookieErr != nil {
+				return nil, connect.NewError(connect.CodeInternal, "could not clear expired session")
 			}
-			return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("session expired"))
+			return nil, connect.NewError(connect.CodeUnauthenticated, "session expired")
 		}
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("invalid session"))
+		return nil, connect.NewError(connect.CodePermissionDenied, "invalid session")
 	}
 
 	return claims, nil
 }
 
-func sessionCookie(header http.Header) (*http.Cookie, error) {
+func sessionCookie(header *connect.Header) (*http.Cookie, error) {
 	var session *http.Cookie
 	for _, line := range header.Values("Cookie") {
 		for part := range strings.SplitSeq(line, ";") {

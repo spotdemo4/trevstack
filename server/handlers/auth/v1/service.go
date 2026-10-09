@@ -1,9 +1,7 @@
 package v1
 
 import (
-	"net/http"
-
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 	"golang.org/x/crypto/bcrypt"
 	"trev.zip/template/stack/server/auth"
 	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
@@ -21,9 +19,6 @@ type Handler struct {
 	auth *auth.Manager
 }
 
-func New(manager *auth.Manager, opt ...connect.HandlerOption) (string, http.Handler) {
-	return authv1connect.NewAuthServiceHandler(
-		&Handler{auth: manager},
-		opt...,
-	)
+func Register(server *connect.Server, manager *auth.Manager) {
+	authv1connect.RegisterAuthServiceHandler(server, &Handler{auth: manager})
 }

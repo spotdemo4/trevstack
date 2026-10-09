@@ -59,7 +59,6 @@
               buf
               protoc-gen-go
               protoc-gen-es
-              protoc-gen-connect-go
               protoc-gen-connect-openapi
               protoc-gen-prost
               protoc-gen-tonic

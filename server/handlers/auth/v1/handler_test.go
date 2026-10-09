@@ -9,7 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
+	"connectrpc.com/connect/v2/connecthttp"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 	"trev.zip/template/stack/server/auth"
@@ -38,7 +39,7 @@ func (t *recordingTransport) RoundTrip(req *http.Request) (*http.Response, error
 func newAuthTest(
 	t *testing.T,
 	secure bool,
-	opts ...connect.HandlerOption,
+	interceptors ...connect.ServerInterceptor,
 ) (authv1connect.AuthServiceClient, *sql.DB, *recordingTransport, *auth.Manager) {
 	t.Helper()
 
@@ -53,8 +54,10 @@ func newAuthTest(
 	}
 
 	manager := auth.NewManager(handlerTestSecret, secure)
+	server := connect.NewServer(interceptors...)
+	authhandler.Register(server, manager)
 	mux := http.NewServeMux()
-	mux.Handle(authhandler.New(manager, opts...))
+	connecthttp.Mount(mux, server)
 	srv := httptest.NewUnstartedServer(mux)
 	srv.Config.BaseContext = func(_ net.Listener) context.Context {
 		return database.WithDatabase(context.Background(), db)
@@ -64,7 +67,7 @@ func newAuthTest(
 
 	transport := &recordingTransport{base: http.DefaultTransport}
 	client := &http.Client{Transport: transport}
-	return authv1connect.NewAuthServiceClient(client, srv.URL), db, transport, manager
+	return authv1connect.NewAuthServiceClient(connect.NewClient(connecthttp.NewTransport(client, srv.URL))), db, transport, manager
 }
 
 func TestSignupCreatesNormalizedUser(t *testing.T) {
@@ -202,7 +205,7 @@ func TestAuthRateLimitReturnsResourceExhausted(t *testing.T) {
 	client, _, transport, _ := newAuthTest(
 		t,
 		false,
-		connect.WithInterceptors(limiter),
+		limiter.WrapServer,
 	)
 	request := authv1.LoginRequest_builder{
 		Username: new("missing"),
@@ -212,15 +215,12 @@ func TestAuthRateLimitReturnsResourceExhausted(t *testing.T) {
 	if _, err := client.Login(context.Background(), request); connect.CodeOf(err) != connect.CodeUnauthenticated {
 		t.Fatalf("first Login() code = %v, want Unauthenticated", connect.CodeOf(err))
 	}
-	_, err := client.Login(context.Background(), request)
+	ctx, info := connect.NewClientContext(context.Background())
+	_, err := client.Login(ctx, request)
 	if got := connect.CodeOf(err); got != connect.CodeResourceExhausted {
 		t.Fatalf("second Login() code = %v, want ResourceExhausted", got)
 	}
-	connectErr, ok := err.(*connect.Error)
-	if !ok {
-		t.Fatalf("second Login() error type = %T, want *connect.Error", err)
-	}
-	if got := connectErr.Meta().Get("Retry-After"); got == "" {
+	if got := info.ResponseHeader().Get("Retry-After"); got == "" {
 		t.Error("second Login() Retry-After is empty")
 	}
 	if transport.last == nil || transport.last.StatusCode != http.StatusTooManyRequests {
@@ -236,7 +236,7 @@ func TestAuthRateLimitUsesIndependentProcedureBuckets(t *testing.T) {
 	client, _, _, _ := newAuthTest(
 		t,
 		false,
-		connect.WithInterceptors(limiter),
+		limiter.WrapServer,
 	)
 	password := "correct horse battery staple"
 

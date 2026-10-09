@@ -9,7 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
+	"connectrpc.com/connect/v2/connecthttp"
 	"connectrpc.com/validate"
 	_ "github.com/mattn/go-sqlite3"
 	"trev.zip/template/stack/server/connect/number/v1/numberv1connect"
@@ -37,8 +38,10 @@ func newTest(t *testing.T) (numberv1connect.NumberServiceClient, *sql.DB) {
 		t.Fatalf("migrate: %v", err)
 	}
 
+	server := connect.NewServer(validate.NewServerInterceptor())
+	numberv1handler.Register(server)
 	mux := http.NewServeMux()
-	mux.Handle(numberv1handler.New(connect.WithInterceptors(validate.NewInterceptor())))
+	connecthttp.Mount(mux, server)
 
 	srv := httptest.NewUnstartedServer(mux)
 	srv.Config.BaseContext = func(net.Listener) context.Context {
@@ -47,7 +50,7 @@ func newTest(t *testing.T) (numberv1connect.NumberServiceClient, *sql.DB) {
 	srv.Start()
 	t.Cleanup(srv.Close)
 
-	return numberv1connect.NewNumberServiceClient(srv.Client(), srv.URL), db
+	return numberv1connect.NewNumberServiceClient(connect.NewClient(connecthttp.NewTransport(srv.Client(), srv.URL))), db
 }
 
 // seed inserts a single row with an explicit timestamp.

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -138,7 +138,7 @@ func (m *Manager) DeleteCookie() *http.Cookie {
 }
 
 func SetResponseCookie(ctx context.Context, cookie *http.Cookie) error {
-	info, ok := connect.CallInfoForHandlerContext(ctx)
+	info, ok := connect.CallInfoForServerContext(ctx)
 	if !ok {
 		return errors.New("connect call info unavailable")
 	}

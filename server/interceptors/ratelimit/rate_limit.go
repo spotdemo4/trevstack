@@ -3,17 +3,15 @@ package ratelimit
 import (
 	"container/list"
 	"context"
-	"errors"
 	"math"
 	"net"
-	"net/http"
 	"net/netip"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 )
 
 const (
@@ -92,46 +90,33 @@ func NewRateLimitInterceptor(
 	}
 }
 
-func (i *RateLimitInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
-	return connect.UnaryFunc(func(
+func (i *RateLimitInterceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
+	return func(
 		ctx context.Context,
-		req connect.AnyRequest,
-	) (connect.AnyResponse, error) {
-		if retryAfter, allowed := i.allow(
-			req.Spec().Procedure,
-			req.Peer().Addr,
-			req.Header(),
-		); !allowed {
-			return nil, rateLimitError(retryAfter)
-		}
-		return next(ctx, req)
-	})
-}
-
-func (i *RateLimitInterceptor) WrapStreamingClient(next connect.StreamingClientFunc) connect.StreamingClientFunc {
-	return next
-}
-
-func (i *RateLimitInterceptor) WrapStreamingHandler(next connect.StreamingHandlerFunc) connect.StreamingHandlerFunc {
-	return connect.StreamingHandlerFunc(func(
-		ctx context.Context,
-		conn connect.StreamingHandlerConn,
+		spec connect.Spec,
+		stream connect.ServerStream,
 	) error {
-		if retryAfter, allowed := i.allow(
-			conn.Spec().Procedure,
-			conn.Peer().Addr,
-			conn.RequestHeader(),
-		); !allowed {
-			return rateLimitError(retryAfter)
+		info, ok := connect.CallInfoForServerContext(ctx)
+		if !ok {
+			return connect.NewError(connect.CodeInternal, "connect call info unavailable")
 		}
-		return next(ctx, conn)
-	})
+		if retryAfter, allowed := i.allow(
+			spec.Procedure,
+			info.PeerAddr,
+			info.RequestHeader(),
+		); !allowed {
+			seconds := max(int64(math.Ceil(retryAfter.Seconds())), 1)
+			info.ResponseHeader().Set("Retry-After", strconv.FormatInt(seconds, 10))
+			return connect.NewError(connect.CodeResourceExhausted, "rate limit exceeded")
+		}
+		return next(ctx, spec, stream)
+	}
 }
 
 func (i *RateLimitInterceptor) allow(
 	procedure string,
 	peerAddr string,
-	header http.Header,
+	header *connect.Header,
 ) (time.Duration, bool) {
 	policy, ok := i.policies[procedure]
 	if !ok {
@@ -195,7 +180,7 @@ func (i *RateLimitInterceptor) cleanup(now time.Time) {
 	i.lastCleanup = now
 }
 
-func (i *RateLimitInterceptor) clientIP(peerAddr string, header http.Header) string {
+func (i *RateLimitInterceptor) clientIP(peerAddr string, header *connect.Header) string {
 	direct, ok := parsePeerIP(peerAddr)
 	if !ok {
 		return "unknown"
@@ -272,11 +257,4 @@ func parsePeerIP(peerAddr string) (netip.Addr, bool) {
 		return netip.Addr{}, false
 	}
 	return addr.Unmap(), true
-}
-
-func rateLimitError(retryAfter time.Duration) error {
-	err := connect.NewError(connect.CodeResourceExhausted, errors.New("rate limit exceeded"))
-	seconds := max(int64(math.Ceil(retryAfter.Seconds())), 1)
-	err.Meta().Set("Retry-After", strconv.FormatInt(seconds, 10))
-	return err
 }

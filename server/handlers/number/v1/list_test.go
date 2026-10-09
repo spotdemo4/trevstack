@@ -2,33 +2,39 @@ package v1_test
 
 import (
 	"context"
+	"errors"
+	"io"
 	"strings"
 	"testing"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	"trev.zip/template/stack/server/connect/number/v1/numberv1connect"
 )
 
 func collectListItems(
 	t *testing.T,
-	stream *connect.ServerStreamForClient[numberv1.ListResponse],
+	stream numberv1connect.NumberServiceListClientStream,
 ) []*numberv1.Item {
 	t.Helper()
 
 	var items []*numberv1.Item
-	for stream.Receive() {
-		item := stream.Msg().GetItem()
+	for {
+		res, err := stream.Receive()
+		if errors.Is(err, io.EOF) {
+			return items
+		}
+		if err != nil {
+			t.Fatalf("List stream: %v", err)
+		}
+		item := res.GetItem()
 		if item == nil {
 			t.Fatal("List yielded response without item")
 		}
 		items = append(items, item)
 	}
-	if err := stream.Err(); err != nil {
-		t.Fatalf("List stream: %v", err)
-	}
-	return items
 }
 
 func TestList(t *testing.T) {
@@ -136,11 +142,11 @@ func TestList(t *testing.T) {
 				}
 				return
 			}
-			if stream.Receive() {
+			_, err = stream.Receive()
+			if err == nil {
 				t.Fatal("expected validation error, got stream item")
 			}
-			err = stream.Err()
-			if err == nil {
+			if errors.Is(err, io.EOF) {
 				t.Fatal("expected validation error, got nil")
 			}
 			if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {

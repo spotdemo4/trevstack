@@ -2,7 +2,6 @@ package ratelimit
 
 import (
 	"context"
-	"net/http"
 	"net/netip"
 	"strings"
 	"sync"
@@ -10,26 +9,13 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 )
 
 const (
 	testLoginProcedure  = "/auth.v1.AuthService/Login"
 	testSignupProcedure = "/auth.v1.AuthService/Signup"
 )
-
-type rateLimitStreamingConn struct {
-	spec connect.Spec
-	peer connect.Peer
-}
-
-func (c *rateLimitStreamingConn) Spec() connect.Spec           { return c.spec }
-func (c *rateLimitStreamingConn) Peer() connect.Peer           { return c.peer }
-func (c *rateLimitStreamingConn) Receive(any) error            { return nil }
-func (c *rateLimitStreamingConn) RequestHeader() http.Header   { return make(http.Header) }
-func (c *rateLimitStreamingConn) Send(any) error               { return nil }
-func (c *rateLimitStreamingConn) ResponseHeader() http.Header  { return make(http.Header) }
-func (c *rateLimitStreamingConn) ResponseTrailer() http.Header { return make(http.Header) }
 
 func TestRateLimitInterceptorBurstAndRefill(t *testing.T) {
 	now := time.Date(2026, time.September, 16, 12, 0, 0, 0, time.UTC)
@@ -168,7 +154,7 @@ func TestRateLimitInterceptorClientIP(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			interceptor := NewRateLimitInterceptor(nil, test.trustedProxies)
-			header := make(http.Header)
+			header := new(connect.Header)
 			if test.xForwardedFor != "" {
 				header.Set("X-Forwarded-For", test.xForwardedFor)
 			}
@@ -244,49 +230,45 @@ func TestRateLimitInterceptorConcurrentRequests(t *testing.T) {
 }
 
 func TestRateLimitInterceptorStreamingHandler(t *testing.T) {
+	now := time.Date(2026, time.September, 16, 12, 0, 0, 0, time.UTC)
 	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
-		testLoginProcedure: {Requests: 1, Window: time.Minute},
+		testLoginProcedure: {Requests: 1, Window: 1500 * time.Millisecond},
 	}, nil)
-	conn := &rateLimitStreamingConn{
-		spec: connect.Spec{Procedure: testLoginProcedure},
-		peer: connect.Peer{Addr: "192.0.2.1:1000"},
-	}
+	interceptor.now = func() time.Time { return now }
 	called := 0
-	wrapped := interceptor.WrapStreamingHandler(func(context.Context, connect.StreamingHandlerConn) error {
-		called++
-		return nil
-	})
+	server := connect.NewServer(interceptor.WrapServer)
+	for _, procedure := range []string{testLoginProcedure, "/auth.v1.AuthService/Logout"} {
+		server.Register(connect.Method{
+			Spec: connect.Spec{Procedure: procedure, StreamType: connect.StreamTypeServer},
+			Handler: func(context.Context, connect.Spec, connect.ServerStream) error {
+				called++
+				return nil
+			},
+		})
+	}
+	call := func(procedure string) (*connect.CallInfo, error) {
+		info := &connect.CallInfo{PeerAddr: "192.0.2.1:1000"}
+		return info, server.Call(context.Background(), procedure, info, nil)
+	}
 
-	if err := wrapped(context.Background(), conn); err != nil {
+	if _, err := call(testLoginProcedure); err != nil {
 		t.Fatalf("first streaming call error = %v", err)
 	}
-	err := wrapped(context.Background(), conn)
+	info, err := call(testLoginProcedure)
 	if got := connect.CodeOf(err); got != connect.CodeResourceExhausted {
 		t.Fatalf("second streaming call code = %v, want ResourceExhausted", got)
+	}
+	if got := info.ResponseHeader().Get("Retry-After"); got != "2" {
+		t.Errorf("Retry-After = %q, want 2", got)
 	}
 	if called != 1 {
 		t.Errorf("next called = %d times, want 1", called)
 	}
 
-	conn.spec.Procedure = "/auth.v1.AuthService/Logout"
-	if err := wrapped(context.Background(), conn); err != nil {
+	if _, err := call("/auth.v1.AuthService/Logout"); err != nil {
 		t.Fatalf("unconfigured streaming call error = %v", err)
 	}
 	if called != 2 {
 		t.Errorf("next called = %d times after bypass, want 2", called)
-	}
-}
-
-func TestRateLimitError(t *testing.T) {
-	err := rateLimitError(1500 * time.Millisecond)
-	if got := connect.CodeOf(err); got != connect.CodeResourceExhausted {
-		t.Errorf("code = %v, want ResourceExhausted", got)
-	}
-	connectErr, ok := err.(*connect.Error)
-	if !ok {
-		t.Fatalf("error type = %T, want *connect.Error", err)
-	}
-	if got := connectErr.Meta().Get("Retry-After"); got != "2" {
-		t.Errorf("Retry-After = %q, want 2", got)
 	}
 }

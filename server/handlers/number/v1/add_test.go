@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
 	numberv1 "trev.zip/template/stack/server/connect/number/v1"
 )
 
