@@ -1,9 +1,10 @@
 import { Button } from "$lib/button";
 import { Drawer, useDrawer } from "$lib/drawer";
-import { ExternalLink, GitBranch, Menu } from "$lib/icon";
+import { ExternalLink, GitBranch, Layers, Menu } from "$lib/icon";
 import { createMediaQuery } from "$lib/media-query";
 import type { JSX } from "@solidjs/web";
-import { children, type Component, Show } from "solid-js";
+import { children, type Component, type ComponentProps, Show } from "solid-js";
+import { twMerge } from "tailwind-merge";
 
 import { version } from "../package.json";
 import { NavLink } from "./nav-link";
@@ -19,6 +20,16 @@ type NavigationProps = {
   mobile?: boolean;
   onNavigate?: JSX.EventHandlerUnion<HTMLAnchorElement, MouseEvent>;
 };
+
+const Logo: Component<ComponentProps<typeof Layers>> = (props) => (
+  <Layers
+    {...props}
+    class={twMerge(
+      "text-foreground-muted drop-shadow-[0.8px_1.2px_1.2px_rgb(0_0_0/0.35)] dark:drop-shadow-[0.8px_1.2px_1.2px_rgb(0_0_0/0.9)]",
+      props.class,
+    )}
+  />
+);
 
 const NavigationLinks: Component<NavigationProps> = (props) => (
   <>
@@ -132,13 +143,13 @@ export const Layout: Component<LayoutProps> = (props) => {
           when={isDesktop()}
           fallback={
             <div class="flex h-full w-full items-center justify-between">
-              <img src="/icons/icon.svg" class="ml-4 h-6" alt="TrevStack" />
+              <Logo role="img" aria-label="TrevStack" class="ml-4" />
               <MobileMenu />
             </div>
           }
         >
           <h1 class="hidden shrink-0 cursor-default items-center gap-2 px-4 font-mono text-lg font-semibold md:flex">
-            TrevStack <img src="/icons/icon.svg" class="h-6" alt="logo" />
+            TrevStack <Logo />
           </h1>
           <div class="flex h-full min-w-0 flex-1 items-center">
             <div class="h-full min-w-0 flex-1 overflow-x-auto px-4">

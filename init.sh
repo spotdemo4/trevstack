@@ -221,7 +221,7 @@ source_base=${source_module%/server}
 if [[ -z $source_base || $source_base == "$source_module" ]]; then
   source_base=${origin_host}/${origin_repo_path}
 fi
-source_display=$(sed -n 's/^#[[:space:]]\+//p' README.md 2>/dev/null | head -n 1 || true)
+source_display=$(sed -En 's/^#[[:space:]]+(<img[^>]*>[[:space:]]*)?//p' README.md 2>/dev/null | head -n 1 || true)
 [[ -n $source_display ]] || source_display=$(sed -n 's/^        name: "\([^"]*\)".*/\1/p' web/vite.config.ts 2>/dev/null | head -n 1 || true)
 source_slug=$(sed -n 's/^  "name":[[:space:]]*"\([^"]*\)-web".*/\1/p' web/package.json 2>/dev/null | head -n 1 || true)
 [[ -n $source_slug ]] || source_slug=$(sed -n 's/^[[:space:]]*pname = "\([^"]*\)-web";.*/\1/p' web/default.nix 2>/dev/null | head -n 1 || true)
@@ -677,8 +677,9 @@ fi
 image="${image_base}/server:latest"
 replace_literal "$readme_image_base/" "$image_base/" server/README.md client/README.md
 
+readme_heading="# <img src=\"web/public/icons/icon.svg\" alt=\"\" height=\"32\"> $title"
 {
-  printf '# %s\n\n' "$title"
+  printf '%s\n\n' "$readme_heading"
   printf '%s\n' "${readme_badges[@]}"
   printf '\n%s\n\n%s\n' "$description" "$readme_sections"
 } >README.md
@@ -748,7 +749,7 @@ assert_contains() {
   [[ -f $file ]] || fail "Expected metadata file is missing: $file"
   grep -qF -- "$expected" "$file" || fail "Replacement validation failed in $file."
 }
-assert_contains README.md "# $title"
+assert_contains README.md "$readme_heading"
 assert_contains README.md "$description"
 assert_contains README.md '## using'
 assert_contains README.md '[CONTRIBUTING.md](CONTRIBUTING.md)'

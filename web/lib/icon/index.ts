@@ -9,6 +9,7 @@ export {
   ExternalLink,
   GitBranch,
   Info,
+  Layers,
   LoaderCircle,
   Menu,
   Moon,

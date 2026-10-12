@@ -1,4 +1,4 @@
-# TrevStack
+# <img src="web/public/icons/icon.svg" alt="" height="32"> TrevStack
 
 [![check](https://trev.zip/template/stack/actions/workflows/check.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=check&labelColor=%23313244)](https://trev.zip/template/stack/actions?workflow=check.yaml)
 [![vulnerable](https://trev.zip/template/stack/actions/workflows/vulnerable.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](https://trev.zip/template/stack/actions?workflow=vulnerable.yaml)
