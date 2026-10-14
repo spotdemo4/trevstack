@@ -6,7 +6,7 @@ toolchain go1.27.2
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2
-	connectrpc.com/connect/v2 v2.0.0
+	connectrpc.com/connect/v2 v2.0.1
 	connectrpc.com/cors v0.1.0
 	connectrpc.com/otelconnect v0.12.0
 	connectrpc.com/validate v0.9.0

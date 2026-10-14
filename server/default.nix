@@ -10,7 +10,7 @@ mkGoModule (final: {
 
   src = ./.;
   goSum = ./go.sum;
-  vendorHash = "sha256-X0Ar5F3lM/a5KFNi8TrnSDlh90XrywXuTvC7wo0m9xc=";
+  vendorHash = "sha256-VVlB1Yj0tGbG2pGh57rskUS/cdg/WVbMfWYVszstDyg=";
 
   ldflags = [ "-X main.version=${final.version}" ];
 
