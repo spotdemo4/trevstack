@@ -7,6 +7,7 @@ description = "full-stack template"
 license = "MIT"
 homepage = "https://trev.zip/template/stack"
 repository = "https://trev.zip/template/stack"
+publish = false
 
 [[bin]]
 name = "client"
