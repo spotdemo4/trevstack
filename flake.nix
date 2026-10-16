@@ -32,6 +32,7 @@
           default = pkgs.mkShell {
             shellHook = pkgs.shellhook.ref;
             env = {
+              GOTOOLCHAIN = "local";
               RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
               PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
               PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
