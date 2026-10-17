@@ -23,7 +23,7 @@ nix flake init -t git+https://trev.zip/template/stack
 bash init.sh "Title" "Description"
 ```
 
-part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
+part of [trev.zip/template](https://trev.zip/template)
 
 ## using
 
