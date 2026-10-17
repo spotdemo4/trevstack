@@ -111,12 +111,11 @@
 
           vulnerable = pkgs.mkShell {
             packages = with pkgs; [
-              # go
-              go
-              govulncheck
-
+              go # for govluncheck
+              govulncheck # govulncheck ./...
+              cargo-audit # cargo-audit audit
               nodejs_24 # npm audit
-              flake-checker # nix flake
+              flake-checker # flake-checker -f
               zizmor # actions
             ];
           };

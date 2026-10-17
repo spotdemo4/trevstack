@@ -20,7 +20,22 @@ jobs:
           shell: vulnerable
 
       - name: Run govulncheck
-        run: cd server && govulncheck ./...
+        working-directory: server
+        run: govulncheck ./...
+
+  rust:
+    runs-on: ubuntu-26.04
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@a09ea83c7aa7f99a6832771f7b7cb3a764ade52f # v1.71.0
+        with:
+          shell: vulnerable
+
+      - name: Run cargo audit
+        working-directory: client
+        run: cargo-audit audit
 
   npm:
     runs-on: ubuntu-26.04
@@ -32,10 +47,13 @@ jobs:
         with:
           shell: vulnerable
 
-      - name: Run npm audit
-        run: |
-          npm audit --prefix docs --audit-level moderate
-          npm audit --prefix web --audit-level moderate
+      - name: Run npm audit (web)
+        working-directory: web
+        run: npm audit --audit-level moderate
+
+      - name: Run npm audit (docs)
+        working-directory: docs
+        run: npm audit --audit-level moderate
 
   nix:
     runs-on: ubuntu-26.04
@@ -61,4 +79,4 @@ jobs:
           shell: vulnerable
 
       - name: Run zizmor
-        run: zizmor .github
+        run: zizmor $(find .github/workflows -name "*.yaml")

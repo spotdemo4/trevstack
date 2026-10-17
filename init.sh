@@ -531,6 +531,7 @@ if ! $keep_client; then
     -e '/^              protoc-gen-prost$/d' \
     -e '/^              protoc-gen-tonic$/d' \
     -e '/^              cargo # cargo update$/d' \
+    -e '/^              cargo-audit # cargo-audit audit$/d' \
     -e '/^            rustfmt$/d' \
     -e '/^            ruff$/d' \
     -e '/^          client = pkgs\.callPackage \.\/client { };$/d' \
@@ -556,6 +557,7 @@ if ! $keep_client; then
     [[ -d $provider_directory ]] || continue
     replace_literal ', "client/v*"' '' "$provider_directory/workflows/release.yaml"
     remove_block "$provider_directory/workflows/release.yaml" '  client:' '            images.x86_64-linux.client.armv7l-unknown-linux-gnueabihf'
+    remove_block "$provider_directory/workflows/vulnerable.yaml" '  rust:' '        run: cargo-audit audit'
     remove_block "$provider_directory/labeler.yaml" 'python:'
     remove_block "$provider_directory/labeler.yaml" 'rust:'
     cargo_rule_line=$(grep -n -m 1 -F '"matchManagers": ["cargo"],' "$provider_directory/renovate.json" | cut -d: -f1 || true)
@@ -622,7 +624,8 @@ if ! $keep_docs; then
   sed_inplace '/^      "\/docs": {$/,/^      },$/d' web/vite.config.ts
   for provider_directory in .github .forgejo; do
     [[ -d $provider_directory ]] || continue
-    sed_inplace '/--prefix docs/d' "$provider_directory/renovate.json" "$provider_directory/workflows/vulnerable.yaml"
+    sed_inplace '/--prefix docs/d' "$provider_directory/renovate.json"
+    remove_block "$provider_directory/workflows/vulnerable.yaml" '      - name: Run npm audit (docs)'
   done
 fi
 
