@@ -15,7 +15,7 @@ JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
 ```sh
 docker run -P \
   -e JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-  trev.zip/llc/stack/server:latest
+  trev.zip/template/stack/server:latest
 ```
 
 ### nix

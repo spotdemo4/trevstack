@@ -16,7 +16,7 @@ number stored on the server.
 ### docker
 
 ```sh
-docker run trev.zip/llc/stack/client:latest
+docker run trev.zip/template/stack/client:latest
 ```
 
 ### nix
