@@ -145,6 +145,25 @@
           };
         };
 
+        # nix flake init -t git+https://trev.zip/template/stack
+        templates = {
+          default = {
+            path = ./.;
+            description = "full-stack template";
+            welcomeText = ''
+              # full-stack template
+
+              `init.sh` requires a git repository with an `origin` remote:
+
+              ```sh
+              git init
+              git remote add origin <url>
+              bash init.sh "Title" "Description"
+              ```
+            '';
+          };
+        };
+
         formatter = pkgs.treefmt.withConfig {
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [

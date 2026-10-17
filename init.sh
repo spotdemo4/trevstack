@@ -69,11 +69,6 @@ if [[ $worktree_count -ne 1 ]]; then
   fail 'Linked worktrees are not supported.'
 fi
 
-worktree_status=$(git status --porcelain=v1 --untracked-files=all) || fail 'Unable to inspect the Git worktree.'
-if [[ -n $worktree_status ]]; then
-  fail 'Commit or discard all existing worktree changes before running the initializer.'
-fi
-
 git_name=$(git config user.name || true)
 git_email=$(git config user.email || true)
 if [[ -z $git_name || -z $git_email ]]; then
@@ -81,6 +76,23 @@ if [[ -z $git_name || -z $git_email ]]; then
 fi
 if [[ $git_name =~ [[:cntrl:]] || $git_email =~ [[:cntrl:]] ]]; then
   fail 'Git user.name and user.email cannot contain control characters.'
+fi
+
+# Repositories set up with nix flake init have no commits yet. Commit the
+# template so a failed run can be rolled back; the new repository replaces it.
+if ! git rev-parse --verify --quiet HEAD >/dev/null; then
+  git add -A
+  env \
+    GIT_AUTHOR_NAME="$git_name" \
+    GIT_AUTHOR_EMAIL="$git_email" \
+    GIT_COMMITTER_NAME="$git_name" \
+    GIT_COMMITTER_EMAIL="$git_email" \
+    git -c commit.gpgsign=false -c core.hooksPath=/dev/null commit --quiet --message 'chore: add template'
+fi
+
+worktree_status=$(git status --porcelain=v1 --untracked-files=all) || fail 'Unable to inspect the Git worktree.'
+if [[ -n $worktree_status ]]; then
+  fail 'Commit or discard all existing worktree changes before running the initializer.'
 fi
 
 slug=$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
@@ -353,6 +365,8 @@ if [[ -e $new_git_dir || -e $old_git_dir ]]; then
 fi
 script_backup=$(mktemp)
 cp "$script_path" "$script_backup"
+script_executable=false
+[[ -x $script_path ]] && script_executable=true
 
 if ! git init --bare --quiet --initial-branch=main "$new_git_dir"; then
   rm -rf "$new_git_dir" "$script_backup"
@@ -371,12 +385,16 @@ cleanup() {
     git -C "$root" restore --source=HEAD --staged --worktree -- . 2>/dev/null || true
     git -C "$root" clean -fd 2>/dev/null || true
     cp "$script_backup" "$script_path" 2>/dev/null || true
-    chmod +x "$script_path" 2>/dev/null || true
+    if $script_executable; then
+      chmod +x "$script_path" 2>/dev/null || true
+    fi
   elif $changes_started; then
     git -C "$root" restore --source=HEAD --staged --worktree -- . 2>/dev/null || true
     git -C "$root" clean -fd 2>/dev/null || true
     cp "$script_backup" "$script_path" 2>/dev/null || true
-    chmod +x "$script_path" 2>/dev/null || true
+    if $script_executable; then
+      chmod +x "$script_path" 2>/dev/null || true
+    fi
   fi
   rm -rf "$new_git_dir" "$old_git_dir" "$script_backup"
   exit "$status"
@@ -386,7 +404,31 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 trap 'exit 129' HUP
 
+template_url=https://trev.zip/template/stack
+
+# Find the template commit this project started from. Repositories created with
+# "use this template" have a new commit, but its tree matches the template's.
+template_commit=
+if GIT_TERMINAL_PROMPT=0 git fetch --quiet --no-tags "$template_url" main 2>/dev/null; then
+  # Keep the newest commit for each tree.
+  template_trees=$(git log --format='%T %H' FETCH_HEAD | awk '!seen[$1]++')
+  while IFS= read -r tree; do
+    # nix flake init drops the executable bit from init.sh
+    tree=$(git ls-tree "$tree" | awk -F '\t' '$2 == "init.sh" { sub(/^100644 /, "100755 ") } 1' | git mktree --missing)
+    template_commit=$(printf '%s\n' "$template_trees" | awk -v tree="$tree" '$1 == tree { print $2 }')
+    [[ -z $template_commit ]] || break
+  done < <(git log --format='%T' HEAD)
+fi
+
 changes_started=true
+rm template.schema.json
+sed_inplace '/^        # nix flake init /,/^        };$/d' flake.nix
+if [[ -n $template_commit ]]; then
+  printf '{ "$schema": "%s", "url": "%s", "commit": "%s" }\n' \
+    "$template_url/raw/branch/main/template.schema.json" "$template_url" "$template_commit" >.template.json
+else
+  printf 'Warning: unable to find the template commit; .template.json was not created.\n' >&2
+fi
 for directory in "${delete_directories[@]}"; do
   rm -rf "$directory"
 done
@@ -800,6 +842,8 @@ fi
 if [[ -n $source_base && $source_base != "$target_base" ]]; then
   while IFS= read -r -d '' file; do
     [[ -f $file && ! -L $file ]] || continue
+    # .template.json records the template URL on purpose.
+    [[ $file != .template.json ]] || continue
     grep -qF -- "$source_base" "$file" && fail "Replacement validation found stale repository path in $file."
   done < <(git ls-files -z)
 fi
