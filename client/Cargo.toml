@@ -2,7 +2,7 @@
 name = "trevstack-client"
 version = "2.2.1"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.98"
 description = "full-stack template"
 license = "MIT"
 homepage = "https://trev.zip/template/stack"
