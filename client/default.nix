@@ -17,7 +17,7 @@ mkRustPackage (final: {
     runHook postCheck
   '';
 
-  # also check the dependencies for clippy, the lints run in the clippy flake check
+  # also check the dependencies for clippy, the lints run in the client-lint flake check
   cargoArtifactsArgs = {
     nativeCheckInputs = [ clippy ];
     checkPhase = ''

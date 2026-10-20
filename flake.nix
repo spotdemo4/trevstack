@@ -139,7 +139,7 @@
               buf generate
               npm audit fix --audit-level=none --prefix docs
               npm audit fix --audit-level=none --prefix web
-              fix-hash .#checks.${system}.protobuf
+              fix-hash .#checks.${system}.protobuf-lint
               fix-hash .#packages.${system}.server
             '';
           };
@@ -208,7 +208,7 @@
             server
             ;
 
-          go = {
+          server-lint = {
             src = self.packages.${system}.server;
             packages = with pkgs; [ go-tools ];
             script = ''
@@ -222,7 +222,7 @@
             '';
           };
 
-          rust = {
+          client-lint = {
             src = self.packages.${system}.client;
             packages = with pkgs; [
               rustfmt
@@ -234,7 +234,7 @@
             '';
           };
 
-          typescript = {
+          web-lint = {
             src = self.packages.${system}.web;
             packages = with pkgs; [
               oxfmt
@@ -265,7 +265,7 @@
             __darwinAllowLocalNetworking = true;
           };
 
-          sql = {
+          sql-lint = {
             root = ./.;
             filter = file: file.hasExt "sql";
             include = [ ./.sqlfluff ];
@@ -284,7 +284,7 @@
             '';
           };
 
-          python = {
+          python-lint = {
             root = ./.;
             filter = file: file.hasExt "py";
             include = [ ./pyproject.toml ];
@@ -300,7 +300,7 @@
             '';
           };
 
-          protobuf = {
+          protobuf-lint = {
             root = ./.;
             filter = file: file.hasExt "proto";
             include = [
