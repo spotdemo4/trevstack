@@ -2,8 +2,6 @@
   buildNpmPackage,
   importNpmLock,
   nodejs_24,
-  oxfmt,
-  oxlint,
 }:
 buildNpmPackage (final: {
   pname = "trevstack-docs";
@@ -15,17 +13,6 @@ buildNpmPackage (final: {
   npmDeps = importNpmLock {
     npmRoot = final.src;
   };
-
-  nativeCheckInputs = [
-    oxfmt
-    oxlint
-  ];
-  checkPhase = ''
-    runHook preCheck
-    oxfmt --check
-    oxlint --deny-warnings
-    runHook postCheck
-  '';
 
   installPhase = ''
     runHook preInstall

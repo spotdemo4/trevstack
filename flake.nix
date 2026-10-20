@@ -246,6 +246,18 @@
             '';
           };
 
+          docs-lint = {
+            src = self.packages.${system}.docs;
+            packages = with pkgs; [
+              oxfmt
+              oxlint
+            ];
+            script = ''
+              oxfmt --check
+              oxlint --deny-warnings
+            '';
+          };
+
           integration = {
             root = ./test;
             packages = with pkgs; [ (python3.withPackages (ps: [ ps.playwright ])) ];
