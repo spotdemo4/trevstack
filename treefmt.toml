@@ -12,9 +12,9 @@ excludes = [
   "docs/openapi.yaml",
 ]
 
-[formatter.gofmt]
-command = "gofmt"
-options = ["-w"]
+[formatter.golangci-lint]
+command = "golangci-lint"
+options = ["fmt"]
 includes = ["*.go"]
 
 [formatter.oxfmt]

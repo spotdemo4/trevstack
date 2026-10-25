@@ -16,6 +16,7 @@ import (
 //go:embed select_user.sql
 var selectUserSQL string
 
+// Login verifies a user's credentials and sets their session cookie.
 func (h *Handler) Login(
 	ctx context.Context,
 	req *authv1.LoginRequest,

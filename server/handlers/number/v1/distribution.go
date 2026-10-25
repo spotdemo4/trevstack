@@ -14,6 +14,7 @@ var distributionBoundsSQL string
 //go:embed distribution_buckets.sql
 var distributionBucketsSQL string
 
+// Distribution returns a histogram of the recorded numbers.
 func (h *Handler) Distribution(
 	ctx context.Context,
 	req *numberv1.DistributionRequest,
@@ -66,7 +67,7 @@ func (h *Handler) Distribution(
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	counts := make(map[uint32]int64, n)
 	for rows.Next() {

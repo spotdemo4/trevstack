@@ -79,7 +79,7 @@ func TestManagerIssueAndParse(t *testing.T) {
 	if claims.Subject != "trev" || claims.Issuer != issuer {
 		t.Errorf("claims = %#v, want subject trev, issuer %q", claims, issuer)
 	}
-	if !claims.ExpiresAt.Time.Equal(expires) {
+	if !claims.ExpiresAt.Equal(expires) {
 		t.Errorf("ExpiresAt = %v, want %v", claims.ExpiresAt.Time, expires)
 	}
 	payload, err := base64.RawURLEncoding.DecodeString(strings.Split(value, ".")[1])

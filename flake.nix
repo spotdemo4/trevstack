@@ -42,7 +42,7 @@
               go
               gopls
               gotools
-              go-tools
+              golangci-lint
               govulncheck
 
               # solid
@@ -167,7 +167,7 @@
         formatter = pkgs.treefmt.withConfig {
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
-            go
+            golangci-lint
             oxfmt
             buf
             sqlfluff
@@ -210,15 +210,10 @@
 
           server-lint = {
             src = self.packages.${system}.server;
-            packages = with pkgs; [ go-tools ];
+            packages = with pkgs; [ golangci-lint ];
             script = ''
-              test -z "$(go fmt ./... | tee /dev/stderr)"
-              go vet ./...
-              go vet -tags=dev ./...
-              staticcheck ./...
-              staticcheck -tags=dev ./...
-              go fix -diff ./...
-              go fix -diff -tags=dev ./...
+              golangci-lint run ./...
+              golangci-lint run --build-tags=dev ./...
             '';
           };
 

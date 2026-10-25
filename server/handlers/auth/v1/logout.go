@@ -8,6 +8,7 @@ import (
 	authv1 "trev.zip/template/stack/server/connect/auth/v1"
 )
 
+// Logout clears the session cookie.
 func (h *Handler) Logout(
 	ctx context.Context,
 	_ *authv1.LogoutRequest,

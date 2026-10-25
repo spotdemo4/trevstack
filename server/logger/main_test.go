@@ -49,7 +49,7 @@ func TestContext(t *testing.T) {
 	if got := FromContext(context.Background()); got == nil {
 		t.Fatal("expected fallback logger for context without logger")
 	}
-	//lint:ignore SA1012 FromContext explicitly supports nil contexts.
+	//nolint:staticcheck // FromContext explicitly supports nil contexts.
 	if got := FromContext(nil); got == nil {
 		t.Fatal("expected fallback logger for nil context")
 	}

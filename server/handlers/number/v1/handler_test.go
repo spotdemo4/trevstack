@@ -56,7 +56,7 @@ func newTest(t *testing.T) (numberv1connect.NumberServiceClient, *sql.DB) {
 // seed inserts a single row with an explicit timestamp.
 func seed(t *testing.T, db *sql.DB, name string, number uint32, ts time.Time) {
 	t.Helper()
-	if _, err := db.Exec(`INSERT INTO numbers (name, number, timestamp) VALUES (?, ?, ?)`, name, number, ts); err != nil {
+	if _, err := db.ExecContext(t.Context(), `INSERT INTO numbers (name, number, timestamp) VALUES (?, ?, ?)`, name, number, ts); err != nil {
 		t.Fatalf("seed: %v", err)
 	}
 }

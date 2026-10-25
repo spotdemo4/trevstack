@@ -19,7 +19,7 @@ const (
 
 func TestRateLimitInterceptorBurstAndRefill(t *testing.T) {
 	now := time.Date(2026, time.September, 16, 12, 0, 0, 0, time.UTC)
-	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
+	interceptor := New(map[string]Policy{
 		testLoginProcedure: {Requests: 2, Window: 10 * time.Second},
 	}, nil)
 	interceptor.now = func() time.Time { return now }
@@ -40,7 +40,7 @@ func TestRateLimitInterceptorBurstAndRefill(t *testing.T) {
 }
 
 func TestRateLimitInterceptorIsolatesProceduresAndPeers(t *testing.T) {
-	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
+	interceptor := New(map[string]Policy{
 		testLoginProcedure:  {Requests: 1, Window: time.Minute},
 		testSignupProcedure: {Requests: 1, Window: time.Minute},
 	}, nil)
@@ -60,7 +60,7 @@ func TestRateLimitInterceptorIsolatesProceduresAndPeers(t *testing.T) {
 }
 
 func TestRateLimitInterceptorBypassesUnconfiguredProcedures(t *testing.T) {
-	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
+	interceptor := New(map[string]Policy{
 		testLoginProcedure: {Requests: 1, Window: time.Minute},
 	}, nil)
 
@@ -153,7 +153,7 @@ func TestRateLimitInterceptorClientIP(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			interceptor := NewRateLimitInterceptor(nil, test.trustedProxies)
+			interceptor := New(nil, test.trustedProxies)
 			header := new(connect.Header)
 			if test.xForwardedFor != "" {
 				header.Set("X-Forwarded-For", test.xForwardedFor)
@@ -167,7 +167,7 @@ func TestRateLimitInterceptorClientIP(t *testing.T) {
 
 func TestRateLimitInterceptorEvictsStaleBuckets(t *testing.T) {
 	now := time.Date(2026, time.September, 16, 12, 0, 0, 0, time.UTC)
-	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
+	interceptor := New(map[string]Policy{
 		testLoginProcedure: {Requests: 1, Window: 10 * time.Second},
 	}, nil)
 	interceptor.now = func() time.Time { return now }
@@ -187,7 +187,7 @@ func TestRateLimitInterceptorEvictsStaleBuckets(t *testing.T) {
 }
 
 func TestRateLimitInterceptorBoundsBuckets(t *testing.T) {
-	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
+	interceptor := New(map[string]Policy{
 		testLoginProcedure: {Requests: 1, Window: time.Hour},
 	}, nil)
 	interceptor.maxBuckets = 2
@@ -209,7 +209,7 @@ func TestRateLimitInterceptorBoundsBuckets(t *testing.T) {
 
 func TestRateLimitInterceptorConcurrentRequests(t *testing.T) {
 	const burst = 10
-	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
+	interceptor := New(map[string]Policy{
 		testLoginProcedure: {Requests: burst, Window: time.Minute},
 	}, nil)
 
@@ -231,7 +231,7 @@ func TestRateLimitInterceptorConcurrentRequests(t *testing.T) {
 
 func TestRateLimitInterceptorStreamingHandler(t *testing.T) {
 	now := time.Date(2026, time.September, 16, 12, 0, 0, 0, time.UTC)
-	interceptor := NewRateLimitInterceptor(map[string]RateLimitPolicy{
+	interceptor := New(map[string]Policy{
 		testLoginProcedure: {Requests: 1, Window: 1500 * time.Millisecond},
 	}, nil)
 	interceptor.now = func() time.Time { return now }

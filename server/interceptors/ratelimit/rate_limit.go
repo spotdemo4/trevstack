@@ -1,3 +1,4 @@
+// Package ratelimit limits the rate of Connect calls per client.
 package ratelimit
 
 import (
@@ -6,6 +7,7 @@ import (
 	"math"
 	"net"
 	"net/netip"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -21,7 +23,8 @@ const (
 	maxRateLimitCleanupInterval = time.Minute
 )
 
-type RateLimitPolicy struct {
+// Policy allows Requests calls per Window.
+type Policy struct {
 	Requests int
 	Window   time.Duration
 }
@@ -37,9 +40,10 @@ type rateLimitBucket struct {
 	element    *list.Element
 }
 
-type RateLimitInterceptor struct {
+// Interceptor limits calls per procedure and client IP with token buckets.
+type Interceptor struct {
 	mu              sync.Mutex
-	policies        map[string]RateLimitPolicy
+	policies        map[string]Policy
 	buckets         map[rateLimitKey]*rateLimitBucket
 	bucketOrder     *list.List
 	maxBuckets      int
@@ -49,11 +53,14 @@ type RateLimitInterceptor struct {
 	cleanupInterval time.Duration
 }
 
-func NewRateLimitInterceptor(
-	policies map[string]RateLimitPolicy,
+// New returns an Interceptor that applies policies by procedure. Clients in
+// trustedProxies may set X-Forwarded-For. It panics on an invalid policy or
+// prefix.
+func New(
+	policies map[string]Policy,
 	trustedProxies []netip.Prefix,
-) *RateLimitInterceptor {
-	copiedPolicies := make(map[string]RateLimitPolicy, len(policies))
+) *Interceptor {
+	copiedPolicies := make(map[string]Policy, len(policies))
 	cleanupInterval := maxRateLimitCleanupInterval
 	for procedure, policy := range policies {
 		if procedure == "" {
@@ -79,7 +86,7 @@ func NewRateLimitInterceptor(
 		copiedProxies[index] = prefix.Masked()
 	}
 
-	return &RateLimitInterceptor{
+	return &Interceptor{
 		policies:        copiedPolicies,
 		buckets:         make(map[rateLimitKey]*rateLimitBucket),
 		bucketOrder:     list.New(),
@@ -90,7 +97,9 @@ func NewRateLimitInterceptor(
 	}
 }
 
-func (i *RateLimitInterceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
+// WrapServer rejects calls over their procedure's limit with
+// CodeResourceExhausted and a Retry-After header.
+func (i *Interceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
 	return func(
 		ctx context.Context,
 		spec connect.Spec,
@@ -113,7 +122,7 @@ func (i *RateLimitInterceptor) WrapServer(next connect.ServerFunc) connect.Serve
 	}
 }
 
-func (i *RateLimitInterceptor) allow(
+func (i *Interceptor) allow(
 	procedure string,
 	peerAddr string,
 	header *connect.Header,
@@ -167,7 +176,7 @@ func (i *RateLimitInterceptor) allow(
 	return max(retryAfter, time.Nanosecond), false
 }
 
-func (i *RateLimitInterceptor) cleanup(now time.Time) {
+func (i *Interceptor) cleanup(now time.Time) {
 	if !i.lastCleanup.IsZero() && now.Sub(i.lastCleanup) < i.cleanupInterval {
 		return
 	}
@@ -180,7 +189,7 @@ func (i *RateLimitInterceptor) cleanup(now time.Time) {
 	i.lastCleanup = now
 }
 
-func (i *RateLimitInterceptor) clientIP(peerAddr string, header *connect.Header) string {
+func (i *Interceptor) clientIP(peerAddr string, header *connect.Header) string {
 	direct, ok := parsePeerIP(peerAddr)
 	if !ok {
 		return "unknown"
@@ -197,8 +206,7 @@ func (i *RateLimitInterceptor) clientIP(peerAddr string, header *connect.Header)
 	remainingBytes := maxForwardedForBytes
 	hops := 0
 	var candidate netip.Addr
-	for valueIndex := len(values) - 1; valueIndex >= 0; valueIndex-- {
-		value := values[valueIndex]
+	for _, value := range slices.Backward(values) {
 		for value != "" {
 			if hops >= maxForwardedForHops || remainingBytes <= 0 {
 				return candidateOrDirect(candidate, direct)
@@ -238,7 +246,7 @@ func candidateOrDirect(candidate, direct netip.Addr) string {
 	return direct.String()
 }
 
-func (i *RateLimitInterceptor) isTrustedProxy(addr netip.Addr) bool {
+func (i *Interceptor) isTrustedProxy(addr netip.Addr) bool {
 	for _, prefix := range i.trustedProxies {
 		if prefix.Contains(addr) {
 			return true

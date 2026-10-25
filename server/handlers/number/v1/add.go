@@ -14,6 +14,7 @@ var addSQL string
 //go:embed sum.sql
 var sumSQL string
 
+// Add records a number and returns the sum of all recorded numbers.
 func (h *Handler) Add(
 	ctx context.Context,
 	req *numberv1.AddRequest,

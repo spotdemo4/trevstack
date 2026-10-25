@@ -11,6 +11,7 @@ import (
 //go:embed topnames.sql
 var topnamesSQL string
 
+// TopNames returns the names with the most recorded numbers.
 func (h *Handler) TopNames(
 	ctx context.Context,
 	req *numberv1.TopNamesRequest,
@@ -33,7 +34,7 @@ func (h *Handler) TopNames(
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	names := []*numberv1.TopName{}
 	for rows.Next() {

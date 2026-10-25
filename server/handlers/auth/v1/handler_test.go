@@ -82,7 +82,7 @@ func TestSignupCreatesNormalizedUser(t *testing.T) {
 	}
 
 	var username, passwordHash string
-	if err := db.QueryRow("SELECT username, password_hash FROM users").Scan(&username, &passwordHash); err != nil {
+	if err := db.QueryRowContext(t.Context(), "SELECT username, password_hash FROM users").Scan(&username, &passwordHash); err != nil {
 		t.Fatalf("query user: %v", err)
 	}
 	if username != "alice" {
@@ -118,7 +118,7 @@ func TestLoginIssuesJWTAndSecureCookie(t *testing.T) {
 	if err != nil {
 		t.Fatalf("hash password: %v", err)
 	}
-	if _, err := db.Exec("INSERT INTO users (username, password_hash) VALUES (?, ?)", "alice", hash); err != nil {
+	if _, err := db.ExecContext(t.Context(), "INSERT INTO users (username, password_hash) VALUES (?, ?)", "alice", hash); err != nil {
 		t.Fatalf("seed user: %v", err)
 	}
 
@@ -139,8 +139,8 @@ func TestLoginIssuesJWTAndSecureCookie(t *testing.T) {
 	if claims.Subject != "alice" || response.GetSub() != "alice" {
 		t.Errorf("subject = (%q, %q), want normalized alice", claims.Subject, response.GetSub())
 	}
-	if response.GetExp() != claims.ExpiresAt.Time.Unix() {
-		t.Errorf("response Exp = %d, want token expiration %d", response.GetExp(), claims.ExpiresAt.Time.Unix())
+	if response.GetExp() != claims.ExpiresAt.Unix() {
+		t.Errorf("response Exp = %d, want token expiration %d", response.GetExp(), claims.ExpiresAt.Unix())
 	}
 
 	if transport.last == nil {
@@ -168,7 +168,7 @@ func TestLoginRejectsInvalidCredentials(t *testing.T) {
 	if err != nil {
 		t.Fatalf("hash password: %v", err)
 	}
-	if _, err := db.Exec("INSERT INTO users (username, password_hash) VALUES (?, ?)", "alice", hash); err != nil {
+	if _, err := db.ExecContext(t.Context(), "INSERT INTO users (username, password_hash) VALUES (?, ?)", "alice", hash); err != nil {
 		t.Fatalf("seed user: %v", err)
 	}
 
@@ -199,7 +199,7 @@ func TestLoginRejectsInvalidCredentials(t *testing.T) {
 }
 
 func TestAuthRateLimitReturnsResourceExhausted(t *testing.T) {
-	limiter := ratelimitinterceptor.NewRateLimitInterceptor(map[string]ratelimitinterceptor.RateLimitPolicy{
+	limiter := ratelimitinterceptor.New(map[string]ratelimitinterceptor.Policy{
 		authv1connect.AuthServiceLoginProcedure: {Requests: 1, Window: time.Hour},
 	}, nil)
 	client, _, transport, _ := newAuthTest(
@@ -229,7 +229,7 @@ func TestAuthRateLimitReturnsResourceExhausted(t *testing.T) {
 }
 
 func TestAuthRateLimitUsesIndependentProcedureBuckets(t *testing.T) {
-	limiter := ratelimitinterceptor.NewRateLimitInterceptor(map[string]ratelimitinterceptor.RateLimitPolicy{
+	limiter := ratelimitinterceptor.New(map[string]ratelimitinterceptor.Policy{
 		authv1connect.AuthServiceLoginProcedure:  {Requests: 1, Window: time.Hour},
 		authv1connect.AuthServiceSignupProcedure: {Requests: 1, Window: time.Hour},
 	}, nil)

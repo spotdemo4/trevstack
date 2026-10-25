@@ -1,3 +1,4 @@
+// Package cors allows cross-origin Connect requests.
 package cors
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/rs/cors"
 )
 
+// WithCORS wraps h to allow Connect requests from any origin.
 func WithCORS(h http.Handler) http.Handler {
 	middleware := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},

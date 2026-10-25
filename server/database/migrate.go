@@ -16,6 +16,7 @@ import (
 var migrations embed.FS
 var sqlre = regexp.MustCompile(`[\n\t\r]+\s*`)
 
+// Migrate applies the embedded migrations to db.
 func Migrate(ctx context.Context, db *sql.DB) error {
 	log := logger.FromContext(ctx)
 

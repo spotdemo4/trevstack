@@ -117,10 +117,10 @@ func run(cfg config, log *slog.Logger) error {
 	}
 
 	sessionManager := auth.NewManager(cfg.jwtSecret, cfg.authCookieSecure)
-	ai := authinterceptor.NewAuthInterceptor(sessionManager)
-	li := loginterceptor.NewLogInterceptor(log)
-	rli := ratelimitinterceptor.NewRateLimitInterceptor(
-		map[string]ratelimitinterceptor.RateLimitPolicy{
+	ai := authinterceptor.New(sessionManager)
+	li := loginterceptor.New(log)
+	rli := ratelimitinterceptor.New(
+		map[string]ratelimitinterceptor.Policy{
 			authv1connect.AuthServiceLoginProcedure: {
 				Requests: loginRateLimitRequests,
 				Window:   loginRateLimitWindow,
@@ -162,7 +162,7 @@ func run(cfg config, log *slog.Logger) error {
 
 	// Bind synchronously so a bad or taken port fails startup instead of
 	// leaving the process running without a listener.
-	listener, err := listen(server.Addr, cfg.proxyProtocol, cfg.trustedProxyCIDRs)
+	listener, err := listen(ctx, server.Addr, cfg.proxyProtocol, cfg.trustedProxyCIDRs)
 	if err != nil {
 		return fmt.Errorf("could not listen: %w", err)
 	}
@@ -180,7 +180,9 @@ func run(cfg config, log *slog.Logger) error {
 
 	<-ctx.Done()
 	log.InfoContext(ctx, "shutting down")
-	server.Shutdown(context.Background())
+	if err := server.Shutdown(context.Background()); err != nil {
+		log.ErrorContext(ctx, "could not shut down", "error", err)
+	}
 
 	wg.Wait()
 	return serveErr

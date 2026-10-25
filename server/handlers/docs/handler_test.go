@@ -67,7 +67,7 @@ func TestHandler(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			request := httptest.NewRequest(http.MethodGet, test.path, nil)
+			request := httptest.NewRequestWithContext(t.Context(), http.MethodGet, test.path, nil)
 			response := httptest.NewRecorder()
 
 			mux.ServeHTTP(response, request)
@@ -92,7 +92,7 @@ func TestHandlerRejectsInvalidPath(t *testing.T) {
 	handler := New(fstest.MapFS{
 		"index.html": &fstest.MapFile{Data: []byte("index")},
 	})
-	request := httptest.NewRequest(http.MethodGet, "/docs/secret", nil)
+	request := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/docs/secret", nil)
 	request.URL.Path = "/docs/../secret"
 	response := httptest.NewRecorder()
 
@@ -104,7 +104,7 @@ func TestHandlerRejectsInvalidPath(t *testing.T) {
 }
 
 func TestHandlerWithoutFilesystem(t *testing.T) {
-	request := httptest.NewRequest(http.MethodGet, "/docs/", nil)
+	request := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/docs/", nil)
 	response := httptest.NewRecorder()
 
 	New(nil).ServeHTTP(response, request)

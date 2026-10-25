@@ -66,7 +66,7 @@ func TestHandler(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			request := httptest.NewRequest(http.MethodGet, test.path, nil)
+			request := httptest.NewRequestWithContext(t.Context(), http.MethodGet, test.path, nil)
 			response := httptest.NewRecorder()
 
 			New(web).ServeHTTP(response, request)
@@ -88,7 +88,7 @@ func TestHandler(t *testing.T) {
 }
 
 func TestHandlerWithoutFilesystem(t *testing.T) {
-	request := httptest.NewRequest(http.MethodGet, "/", nil)
+	request := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/", nil)
 	response := httptest.NewRecorder()
 
 	New(nil).ServeHTTP(response, request)

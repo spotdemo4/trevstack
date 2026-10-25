@@ -14,6 +14,7 @@ import (
 //go:embed list.sql
 var listSQL string
 
+// List streams the recorded numbers.
 func (h *Handler) List(
 	ctx context.Context,
 	req *numberv1.ListRequest,
@@ -48,7 +49,7 @@ func (h *Handler) List(
 	if err != nil {
 		return err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	for rows.Next() {
 		var ts time.Time

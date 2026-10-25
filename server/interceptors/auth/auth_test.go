@@ -36,7 +36,7 @@ func newAddTest(
 	manager *domainauth.Manager,
 	add func(context.Context, *numberv1.AddRequest) (*numberv1.AddResponse, error),
 ) numberv1connect.NumberServiceClient {
-	server := connect.NewServer(NewAuthInterceptor(manager).WrapServer)
+	server := connect.NewServer(New(manager).WrapServer)
 	numberv1connect.RegisterNumberServiceHandler(server, addHandler{add: add})
 	return numberv1connect.NewNumberServiceClient(connect.NewClient(connectinprocess.New(server)))
 }
@@ -44,7 +44,7 @@ func newAddTest(
 // callStreaming dispatches a server-streaming procedure through interceptor to
 // next, with header as the request header.
 func callStreaming(
-	interceptor *AuthInterceptor,
+	interceptor *Interceptor,
 	procedure string,
 	header http.Header,
 	next connect.ServerFunc,
@@ -142,7 +142,7 @@ func TestAuthInterceptorUnaryHandlerReceivesClaims(t *testing.T) {
 	if gotClaims.Subject != "trev" {
 		t.Errorf("claims subject = %q, want trev", gotClaims.Subject)
 	}
-	if gotClaims.ExpiresAt == nil || gotClaims.ExpiresAt.Time.Unix() != expires.Unix() {
+	if gotClaims.ExpiresAt == nil || gotClaims.ExpiresAt.Unix() != expires.Unix() {
 		t.Errorf("claims expiration = %v, want %v", gotClaims.ExpiresAt, expires)
 	}
 }
@@ -173,7 +173,7 @@ func TestAuthInterceptorRejectedCredentialsDoNotReachUnaryHandler(t *testing.T) 
 
 func TestAuthInterceptorStreamingHandler(t *testing.T) {
 	manager := domainauth.NewManager(interceptorTestSecret, false)
-	interceptor := NewAuthInterceptor(manager)
+	interceptor := New(manager)
 
 	tests := []struct {
 		name        string
@@ -248,7 +248,7 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 				if claims.Subject != "trev" {
 					t.Errorf("claims subject = %q, want trev", claims.Subject)
 				}
-				if claims.ExpiresAt == nil || claims.ExpiresAt.Time.Unix() != test.wantExpires.Unix() {
+				if claims.ExpiresAt == nil || claims.ExpiresAt.Unix() != test.wantExpires.Unix() {
 					t.Errorf("claims expiration = %v, want %v", claims.ExpiresAt, test.wantExpires)
 				}
 			} else if ok || claims != nil {
@@ -260,7 +260,7 @@ func TestAuthInterceptorStreamingHandler(t *testing.T) {
 
 func TestAuthInterceptorStreamingHandlerClearsExpiredCookie(t *testing.T) {
 	manager := domainauth.NewManager(interceptorTestSecret, false)
-	interceptor := NewAuthInterceptor(manager)
+	interceptor := New(manager)
 	now := time.Now().UTC()
 	token := signInterceptorClaims(t, domainauth.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -392,7 +392,7 @@ func newProtectedTest(t *testing.T) (numberv1connect.NumberServiceClient, *recor
 		t.Fatalf("migrate: %v", err)
 	}
 	manager := domainauth.NewManager(interceptorTestSecret, false)
-	server := connect.NewServer(NewAuthInterceptor(manager).WrapServer)
+	server := connect.NewServer(New(manager).WrapServer)
 	numberhandler.Register(server)
 	mux := http.NewServeMux()
 	connecthttp.Mount(mux, server)

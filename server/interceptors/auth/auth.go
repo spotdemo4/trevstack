@@ -1,3 +1,4 @@
+// Package auth rejects Connect calls without a valid session.
 package auth
 
 import (
@@ -11,15 +12,19 @@ import (
 	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
 )
 
-type AuthInterceptor struct {
+// Interceptor authenticates Connect calls with the session cookie.
+type Interceptor struct {
 	auth *domainauth.Manager
 }
 
-func NewAuthInterceptor(manager *domainauth.Manager) *AuthInterceptor {
-	return &AuthInterceptor{auth: manager}
+// New returns an Interceptor that verifies sessions with manager.
+func New(manager *domainauth.Manager) *Interceptor {
+	return &Interceptor{auth: manager}
 }
 
-func (i *AuthInterceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
+// WrapServer rejects calls to protected procedures without a valid session
+// and adds the session's claims to the context of the rest.
+func (i *Interceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
 	return func(
 		ctx context.Context,
 		spec connect.Spec,
@@ -36,7 +41,7 @@ func (i *AuthInterceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc
 	}
 }
 
-func (i *AuthInterceptor) authenticate(
+func (i *Interceptor) authenticate(
 	ctx context.Context,
 	procedure string,
 ) (*domainauth.Claims, error) {

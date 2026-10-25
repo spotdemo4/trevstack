@@ -1,3 +1,4 @@
+// Package web serves the web app.
 package web
 
 import (
@@ -9,6 +10,8 @@ import (
 // assetsDir holds the build's content-hashed files, which never change.
 const assetsDir = "assets/"
 
+// New returns a handler that serves web, falling back to index.html for
+// paths the frontend router handles.
 func New(web fs.FS) http.Handler {
 	if web == nil {
 		return http.NotFoundHandler()

@@ -87,8 +87,8 @@ func TestList(t *testing.T) {
 		seed(t, db, "b", 50, now)
 		seed(t, db, "c", 500, now)
 
-		min, max := uint32(10), uint32(100)
-		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Minimum: &min, Maximum: &max}.Build())
+		minimum, maximum := uint32(10), uint32(100)
+		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Minimum: &minimum, Maximum: &maximum}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}

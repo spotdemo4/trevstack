@@ -16,6 +16,29 @@ const (
 	supportedLogLevels = "debug, info, warn, error"
 )
 
+const usage = `Usage: server [--log-level LEVEL] [--port PORT]
+
+Options:
+  -h, --help          Show this help menu.
+  --log-level LEVEL   Minimum log level (%s).
+  --port PORT         Port to listen on.
+
+Environment:
+  AUTH_COOKIE_SECURE  Mark the auth cookie Secure (default: false).
+  JWT_SECRET          JWT signing secret (required, at least 32 bytes).
+  LOG_LEVEL           Fallback log level (default: %s).
+  PORT                Fallback port (default: %s).
+  PROXY_PROTOCOL      Accept PROXY protocol headers from trusted proxies
+                      (default: false; requires TRUSTED_PROXY_CIDRS).
+  TRUSTED_PROXY_CIDRS Comma-separated proxy CIDRs allowed to set X-Forwarded-For
+                      and send PROXY protocol headers.
+  OTEL_*              OpenTelemetry SDK settings; signals export only when an
+                      OTLP endpoint or OTEL_{TRACES,METRICS,LOGS}_EXPORTER is set.
+
+Precedence: --log-level, LOG_LEVEL, then info.
+            --port, PORT, then 8080.
+`
+
 type config struct {
 	authCookieSecure  bool
 	jwtSecret         string
@@ -42,27 +65,7 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 	flags.StringVar(&cfg.logLevel, "log-level", cfg.logLevel, "minimum log level")
 	flags.StringVar(&cfg.port, "port", cfg.port, "port to listen on")
 	flags.Usage = func() {
-		fmt.Fprintln(output, "Usage: server [--log-level LEVEL] [--port PORT]")
-		fmt.Fprintln(output)
-		fmt.Fprintln(output, "Options:")
-		fmt.Fprintln(output, "  -h, --help          Show this help menu.")
-		fmt.Fprintf(output, "  --log-level LEVEL   Minimum log level (%s).\n", supportedLogLevels)
-		fmt.Fprintln(output, "  --port PORT         Port to listen on.")
-		fmt.Fprintln(output)
-		fmt.Fprintln(output, "Environment:")
-		fmt.Fprintln(output, "  AUTH_COOKIE_SECURE  Mark the auth cookie Secure (default: false).")
-		fmt.Fprintln(output, "  JWT_SECRET          JWT signing secret (required, at least 32 bytes).")
-		fmt.Fprintf(output, "  LOG_LEVEL           Fallback log level (default: %s).\n", defaultLogLevel)
-		fmt.Fprintf(output, "  PORT                Fallback port (default: %s).\n", defaultPort)
-		fmt.Fprintln(output, "  PROXY_PROTOCOL      Accept PROXY protocol headers from trusted proxies")
-		fmt.Fprintln(output, "                      (default: false; requires TRUSTED_PROXY_CIDRS).")
-		fmt.Fprintln(output, "  TRUSTED_PROXY_CIDRS Comma-separated proxy CIDRs allowed to set X-Forwarded-For")
-		fmt.Fprintln(output, "                      and send PROXY protocol headers.")
-		fmt.Fprintln(output, "  OTEL_*              OpenTelemetry SDK settings; signals export only when an")
-		fmt.Fprintln(output, "                      OTLP endpoint or OTEL_{TRACES,METRICS,LOGS}_EXPORTER is set.")
-		fmt.Fprintln(output)
-		fmt.Fprintln(output, "Precedence: --log-level, LOG_LEVEL, then info.")
-		fmt.Fprintln(output, "            --port, PORT, then 8080.")
+		_, _ = fmt.Fprintf(output, usage, supportedLogLevels, defaultLogLevel, defaultPort)
 	}
 
 	if err := flags.Parse(args); err != nil {
@@ -91,22 +94,22 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 	}
 	if cfg.proxyProtocol && len(cfg.trustedProxyCIDRs) == 0 {
 		err := fmt.Errorf("PROXY_PROTOCOL requires TRUSTED_PROXY_CIDRS")
-		fmt.Fprintln(output, err)
+		_, _ = fmt.Fprintln(output, err)
 		return config{}, err
 	}
 	if !isSupportedLogLevel(cfg.logLevel) {
 		err := fmt.Errorf("unsupported log level %q (supported: %s)", cfg.logLevel, supportedLogLevels)
-		fmt.Fprintln(output, err)
+		_, _ = fmt.Fprintln(output, err)
 		return config{}, err
 	}
 	if cfg.jwtSecret == "" {
 		err := fmt.Errorf("JWT_SECRET is required")
-		fmt.Fprintln(output, err)
+		_, _ = fmt.Fprintln(output, err)
 		return config{}, err
 	}
 	if len(cfg.jwtSecret) < minJWTSecretLength {
 		err := fmt.Errorf("JWT_SECRET must be at least %d bytes", minJWTSecretLength)
-		fmt.Fprintln(output, err)
+		_, _ = fmt.Fprintln(output, err)
 		return config{}, err
 	}
 

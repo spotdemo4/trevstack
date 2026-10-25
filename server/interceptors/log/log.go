@@ -1,3 +1,4 @@
+// Package log logs Connect calls.
 package log
 
 import (
@@ -7,17 +8,20 @@ import (
 	"connectrpc.com/connect/v2"
 )
 
-type LogInterceptor struct {
+// Interceptor logs Connect calls and their errors.
+type Interceptor struct {
 	log *slog.Logger
 }
 
-func NewLogInterceptor(log *slog.Logger) *LogInterceptor {
-	return &LogInterceptor{
+// New returns an Interceptor that logs to log.
+func New(log *slog.Logger) *Interceptor {
+	return &Interceptor{
 		log: log,
 	}
 }
 
-func (i *LogInterceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
+// WrapServer logs each call and any error it returns.
+func (i *Interceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
 	return func(
 		ctx context.Context,
 		spec connect.Spec,

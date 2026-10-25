@@ -1,3 +1,4 @@
+// Package database opens and migrates the SQLite database.
 package database
 
 import (
@@ -9,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/XSAM/otelsql"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" // registers the sqlite3 driver
 	semconv "go.opentelemetry.io/otel/semconv/v1.43.0"
 )
 
@@ -52,6 +53,7 @@ var options = []string{
 	"_cache_size=-32768", // -32768 means 32 MiB of cache.
 }
 
+// New opens the database in the user config directory.
 func New(ctx context.Context) (*sql.DB, error) {
 	userConfigDir, err := os.UserConfigDir()
 	if err != nil {
@@ -80,7 +82,7 @@ func New(ctx context.Context) (*sql.DB, error) {
 		return nil, err
 	}
 
-	if err := db.Ping(); err != nil {
+	if err := db.PingContext(ctx); err != nil {
 		_ = db.Close()
 		return nil, err
 	}

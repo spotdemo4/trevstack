@@ -32,6 +32,7 @@ func bucketExpr(interval numberv1.TimeInterval) (string, bool) {
 	}
 }
 
+// TimeSeries returns the recorded numbers grouped into time buckets.
 func (h *Handler) TimeSeries(
 	ctx context.Context,
 	req *numberv1.TimeSeriesRequest,
@@ -59,7 +60,7 @@ func (h *Handler) TimeSeries(
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	points := []*numberv1.TimeSeriesPoint{}
 	for rows.Next() {

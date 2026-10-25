@@ -1,3 +1,4 @@
+// Package docs serves the API reference.
 package docs
 
 import (
@@ -6,6 +7,7 @@ import (
 	"strings"
 )
 
+// New returns a handler that serves docs under /docs/.
 func New(docs fs.FS) http.Handler {
 	if docs == nil {
 		return http.NotFoundHandler()

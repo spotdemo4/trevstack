@@ -12,7 +12,7 @@ func TestCORSExposesRetryAfter(t *testing.T) {
 		w.Header().Set("Retry-After", "60")
 		w.WriteHeader(http.StatusTooManyRequests)
 	}))
-	request := httptest.NewRequest(http.MethodPost, "/", nil)
+	request := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/", nil)
 	request.Header.Set("Origin", "https://example.com")
 	response := httptest.NewRecorder()
 

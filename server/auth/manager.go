@@ -1,3 +1,4 @@
+// Package auth issues and verifies JWT session cookies.
 package auth
 
 import (
@@ -12,15 +13,18 @@ import (
 )
 
 const (
+	// CookieName is the name of the session cookie.
 	CookieName = "stack_session"
 	issuer     = "stack/session/v2"
 	tokenTTL   = 24 * time.Hour
 )
 
+// Claims are the JWT claims of a session token.
 type Claims struct {
 	jwt.RegisteredClaims
 }
 
+// Validate requires the subject and issued-at claims.
 func (c Claims) Validate() error {
 	var errs []error
 	if c.Subject == "" {
@@ -32,12 +36,15 @@ func (c Claims) Validate() error {
 	return errors.Join(errs...)
 }
 
+// Manager issues and parses session tokens and builds their cookies.
 type Manager struct {
 	now    func() time.Time
 	secret []byte
 	secure bool
 }
 
+// NewManager returns a Manager that signs tokens with secret. When secure is
+// true, cookies are only sent over HTTPS.
 func NewManager(secret string, secure bool) *Manager {
 	return &Manager{
 		now:    time.Now,
@@ -46,6 +53,7 @@ func NewManager(secret string, secure bool) *Manager {
 	}
 }
 
+// Issue signs a token for username and returns it with its expiry.
 func (m *Manager) Issue(username string) (string, time.Time, error) {
 	now := m.now()
 	expires := jwt.NewNumericDate(now.Add(tokenTTL))
@@ -66,6 +74,7 @@ func (m *Manager) Issue(username string) (string, time.Time, error) {
 	return signed, expires.Time, nil
 }
 
+// Parse verifies a signed token and returns its claims.
 func (m *Manager) Parse(value string) (*Claims, error) {
 	claims := &Claims{}
 	_, err := jwt.ParseWithClaims(
@@ -84,6 +93,8 @@ func (m *Manager) Parse(value string) (*Claims, error) {
 	return claims, nil
 }
 
+// IsExpiredOnly reports whether err from Parse means the token is valid
+// except for having expired.
 func IsExpiredOnly(err error) bool {
 	if !errors.Is(err, jwt.ErrTokenExpired) {
 		return false
@@ -112,6 +123,7 @@ func IsExpiredOnly(err error) bool {
 	return true
 }
 
+// Cookie returns the session cookie for a token.
 func (m *Manager) Cookie(value string, expires time.Time) *http.Cookie {
 	return &http.Cookie{
 		Name:     CookieName,
@@ -125,6 +137,7 @@ func (m *Manager) Cookie(value string, expires time.Time) *http.Cookie {
 	}
 }
 
+// DeleteCookie returns a cookie that clears the session cookie.
 func (m *Manager) DeleteCookie() *http.Cookie {
 	return &http.Cookie{
 		Name:     CookieName,
@@ -137,6 +150,7 @@ func (m *Manager) DeleteCookie() *http.Cookie {
 	}
 }
 
+// SetResponseCookie adds cookie to the response of the Connect call in ctx.
 func SetResponseCookie(ctx context.Context, cookie *http.Cookie) error {
 	info, ok := connect.CallInfoForServerContext(ctx)
 	if !ok {

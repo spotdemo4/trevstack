@@ -1,3 +1,4 @@
+// Package telemetry sets up OpenTelemetry tracing, metrics and logs.
 package telemetry
 
 import (

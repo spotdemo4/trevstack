@@ -11,6 +11,7 @@ import (
 //go:embed summary.sql
 var summarySQL string
 
+// Summary returns aggregate statistics of the recorded numbers.
 func (h *Handler) Summary(
 	ctx context.Context,
 	req *numberv1.SummaryRequest,
@@ -28,7 +29,7 @@ func (h *Handler) Summary(
 	var totalCount int64
 	var totalSum uint64
 	var average float64
-	var min, max, distinctNames uint32
+	var minimum, maximum, distinctNames uint32
 
 	err := db.QueryRowContext(ctx, summarySQL,
 		startArg, startArg,
@@ -37,8 +38,8 @@ func (h *Handler) Summary(
 		&totalCount,
 		&totalSum,
 		&average,
-		&min,
-		&max,
+		&minimum,
+		&maximum,
 		&distinctNames,
 	)
 	if err != nil {
@@ -49,8 +50,8 @@ func (h *Handler) Summary(
 	resp.SetTotalCount(totalCount)
 	resp.SetTotalSum(totalSum)
 	resp.SetAverage(average)
-	resp.SetMin(min)
-	resp.SetMax(max)
+	resp.SetMin(minimum)
+	resp.SetMax(maximum)
 	resp.SetDistinctNames(distinctNames)
 
 	return resp, nil

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/netip"
@@ -12,8 +13,8 @@ import (
 // trustedProxies may send a PROXY protocol (v1 or v2) header, whose source
 // address then becomes the connection's remote address. Headers from any other
 // peer are rejected so clients cannot spoof their address.
-func listen(addr string, proxyProtocol bool, trustedProxies []netip.Prefix) (net.Listener, error) {
-	listener, err := net.Listen("tcp", addr)
+func listen(ctx context.Context, addr string, proxyProtocol bool, trustedProxies []netip.Prefix) (net.Listener, error) {
+	listener, err := new(net.ListenConfig).Listen(ctx, "tcp", addr)
 	if err != nil {
 		return nil, err
 	}

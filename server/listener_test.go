@@ -70,21 +70,21 @@ func TestListenProxyProtocol(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			listener, err := listen("127.0.0.1:0", test.proxyProtocol, test.trustedProxies)
+			listener, err := listen(t.Context(), "127.0.0.1:0", test.proxyProtocol, test.trustedProxies)
 			if err != nil {
 				t.Fatalf("listen() error = %v", err)
 			}
 			server := &http.Server{Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				io.WriteString(w, r.RemoteAddr)
+				_, _ = io.WriteString(w, r.RemoteAddr)
 			})}
-			go server.Serve(listener)
-			t.Cleanup(func() { server.Close() })
+			go func() { _ = server.Serve(listener) }()
+			t.Cleanup(func() { _ = server.Close() })
 
-			conn, err := net.Dial("tcp", listener.Addr().String())
+			conn, err := new(net.Dialer).DialContext(t.Context(), "tcp", listener.Addr().String())
 			if err != nil {
 				t.Fatalf("Dial() error = %v", err)
 			}
-			defer conn.Close()
+			defer func() { _ = conn.Close() }()
 
 			if test.headerVersion != 0 {
 				header := proxyproto.HeaderProxyFromAddrs(test.headerVersion, source, conn.RemoteAddr())
@@ -92,12 +92,14 @@ func TestListenProxyProtocol(t *testing.T) {
 					t.Fatalf("WriteTo() error = %v", err)
 				}
 			}
-			fmt.Fprint(conn, "GET / HTTP/1.1\r\nHost: test\r\nConnection: close\r\n\r\n")
+			if _, err := fmt.Fprint(conn, "GET / HTTP/1.1\r\nHost: test\r\nConnection: close\r\n\r\n"); err != nil {
+				t.Fatalf("Fprint() error = %v", err)
+			}
 
 			response, err := http.ReadResponse(bufio.NewReader(conn), nil)
 			if test.wantErr {
 				if err == nil {
-					response.Body.Close()
+					_ = response.Body.Close()
 					if response.StatusCode == http.StatusOK {
 						t.Fatalf("status = %d, want a failed request", response.StatusCode)
 					}
@@ -107,7 +109,7 @@ func TestListenProxyProtocol(t *testing.T) {
 			if err != nil {
 				t.Fatalf("ReadResponse() error = %v", err)
 			}
-			defer response.Body.Close()
+			defer func() { _ = response.Body.Close() }()
 			body, err := io.ReadAll(response.Body)
 			if err != nil {
 				t.Fatalf("ReadAll() error = %v", err)

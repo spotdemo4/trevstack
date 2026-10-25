@@ -16,6 +16,7 @@ import (
 //go:embed insert_user.sql
 var insertUserSQL string
 
+// Signup creates a user.
 func (h *Handler) Signup(
 	ctx context.Context,
 	req *authv1.SignupRequest,

@@ -1,3 +1,4 @@
+// Package logger builds the server's structured logger.
 package logger
 
 import (
@@ -12,6 +13,8 @@ import (
 // scope is the instrumentation scope name for logs bridged to OpenTelemetry.
 const scope = "trev.zip/template/stack/server"
 
+// New returns a logger that writes records at level and above to stdout
+// and OpenTelemetry.
 func New(level string) *slog.Logger {
 	var loglevel slog.Level
 
@@ -55,10 +58,13 @@ func (h *levelHandler) WithGroup(name string) slog.Handler {
 
 type key struct{}
 
+// WithLog returns a copy of ctx that carries logger.
 func WithLog(ctx context.Context, logger *slog.Logger) context.Context {
 	return context.WithValue(ctx, key{}, logger)
 }
 
+// FromContext returns the logger stored in ctx by WithLog, or a new one at
+// info level if there is none.
 func FromContext(ctx context.Context) *slog.Logger {
 	if ctx == nil {
 		return New("info")
