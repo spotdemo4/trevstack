@@ -28,6 +28,8 @@
     }:
     trevpkgs.libs.mkFlake (
       system: pkgs: {
+
+        # nix develop [#...]
         devShells = {
           default = pkgs.mkShell {
             shellHook = pkgs.shellhook.ref;
@@ -121,6 +123,7 @@
           };
         };
 
+        # nix run [#...]
         apps = pkgs.mkApps {
           configure = {
             inputsFrom = [ self.devShells.${system}.default ];
@@ -164,6 +167,7 @@
           };
         };
 
+        # nix fmt
         formatter = pkgs.treefmt.withConfig {
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
@@ -177,6 +181,7 @@
           ];
         };
 
+        # nix build [#...]
         packages = rec {
           default = server;
           client = pkgs.callPackage ./client { };
@@ -185,6 +190,7 @@
           server = pkgs.callPackage ./server { inherit docs web; };
         };
 
+        # nix build #images.[...]
         images = rec {
           default = server;
           client = pkgs.mkImage {
@@ -200,6 +206,7 @@
           };
         };
 
+        # nix flake check
         checks = pkgs.mkChecks {
           inherit (self.packages.${system})
             client
