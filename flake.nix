@@ -126,9 +126,9 @@
             inputsFrom = [ self.devShells.${system}.default ];
             script = ''
               buf generate
-              cd server && go mod tidy && cd ..
-              cd docs && npm install && cd ..
-              cd web && npm install && cd ..
+              go -C server mod tidy
+              npm install --prefix docs
+              npm install --prefix web
             '';
           };
 
