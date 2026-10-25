@@ -25,6 +25,28 @@
       "executionMode": "branch"
     }
   },
+  "customManagers": [
+    {
+      // track the go in nixpkgs-unstable, which builds this project
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)go\\.mod$/"],
+      "matchStrings": ["toolchain\\s+go(?<currentValue>\\S+)"],
+      "depNameTemplate": "go",
+      "packageNameTemplate": "nix_unstable/go",
+      "datasourceTemplate": "repology",
+      "versioningTemplate": "semver"
+    },
+    {
+      // track the rustc in nixpkgs-unstable, which builds this project
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)Cargo\\.toml$/"],
+      "matchStrings": ["rust-version\\s*=\\s*\"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "rust",
+      "packageNameTemplate": "nix_unstable/rustc",
+      "datasourceTemplate": "repology",
+      "versioningTemplate": "semver"
+    }
+  ],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
@@ -48,6 +70,17 @@
       }
     },
     {
+      // replaced by the nixpkgs-unstable custom manager
+      "matchManagers": ["gomod"],
+      "matchDepTypes": ["toolchain"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["go"],
+      "addLabels": ["go"]
+    },
+    {
       "matchManagers": ["npm"],
       "addLabels": ["node"],
       "rangeStrategy": "bump",
@@ -55,6 +88,11 @@
     },
     {
       "matchManagers": ["cargo"],
+      "addLabels": ["rust"]
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["rust"],
       "addLabels": ["rust"]
     },
     {
