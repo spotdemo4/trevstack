@@ -33,7 +33,9 @@ mkGoModule (final: {
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
     homepage = "https://trev.zip/template/stack";
-    changelog = "https://trev.zip/template/stack/releases";
-    downloadPage = "https://trev.zip/template/stack/releases/tag/v${final.version}";
+    downloadPage = "https://trev.zip/template/stack/releases";
+    changelog = "https://trev.zip/template/stack/releases/tag/server/v${final.version}";
+    sourceProvenance = [ lib.sourceTypes.fromSource ];
+    maintainers = [ lib.maintainers.spotdemo4 ];
   };
 })
