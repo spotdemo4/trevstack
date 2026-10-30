@@ -249,10 +249,10 @@ source_license_year=$(sed -n 's/^Copyright (c) \([0-9][0-9][0-9][0-9]\) .*/\1/p'
 [[ -n $source_slug ]] || fail 'Unable to find the project package name.'
 [[ -n $source_description ]] || fail 'Unable to find the project description.'
 grep -qE '^Copyright \(c\) [0-9]{4} ' LICENSE || fail 'Unable to find the license identity metadata.'
-source_github_repository=$(sed -n 's/^[[:space:]]*"repositories":[[:space:]]*\["\([^"]*\)"\].*/\1/p' .github/renovate.json 2>/dev/null | head -n 1 || true)
+source_github_repository=$(sed -n 's/^[[:space:]]*"repositories":[[:space:]]*\["\([^"]*\)"\].*/\1/p' .github/renovate.jsonc 2>/dev/null | head -n 1 || true)
 source_github_owner=${source_github_repository%%/*}
-source_forgejo_repository=$(sed -n 's/^[[:space:]]*"repositories":[[:space:]]*\["\([^"]*\)"\].*/\1/p' .forgejo/renovate.json 2>/dev/null | head -n 1 || true)
-source_forgejo_endpoint=$(sed -n 's/^[[:space:]]*"endpoint":[[:space:]]*"\([^"]*\)".*/\1/p' .forgejo/renovate.json 2>/dev/null | head -n 1 || true)
+source_forgejo_repository=$(sed -n 's/^[[:space:]]*"repositories":[[:space:]]*\["\([^"]*\)"\].*/\1/p' .forgejo/renovate.jsonc 2>/dev/null | head -n 1 || true)
+source_forgejo_endpoint=$(sed -n 's/^[[:space:]]*"endpoint":[[:space:]]*"\([^"]*\)".*/\1/p' .forgejo/renovate.jsonc 2>/dev/null | head -n 1 || true)
 source_registry=$(grep -hE '^[[:space:]]*REGISTRY:[[:space:]]*[^[:space:]]+' .forgejo/workflows/*.yaml 2>/dev/null | sed -n 's/.*REGISTRY:[[:space:]]*//p' | head -n 1 || true)
 
 secondary_remote=
@@ -501,13 +501,13 @@ if $keep_docs; then
 fi
 
 # Provider-specific metadata and workflow paths.
-if [[ -f .github/renovate.json ]]; then
-  [[ -n $github_repo_path && -n $source_github_repository ]] && replace_literal "$source_github_repository" "$github_repo_path" .github/renovate.json
-  [[ -n $github_repo_path && -n $source_github_owner && -n $slug ]] && replace_literal "${source_github_owner}/${slug}" "$github_repo_path" .github/renovate.json
+if [[ -f .github/renovate.jsonc ]]; then
+  [[ -n $github_repo_path && -n $source_github_repository ]] && replace_literal "$source_github_repository" "$github_repo_path" .github/renovate.jsonc
+  [[ -n $github_repo_path && -n $source_github_owner && -n $slug ]] && replace_literal "${source_github_owner}/${slug}" "$github_repo_path" .github/renovate.jsonc
 fi
-if [[ -f .forgejo/renovate.json ]]; then
-  [[ -n $forgejo_repo_path && -n $source_forgejo_repository ]] && replace_literal "$source_forgejo_repository" "$forgejo_repo_path" .forgejo/renovate.json
-  [[ -n $forgejo_host && -n $source_forgejo_endpoint ]] && replace_literal "$source_forgejo_endpoint" "https://${forgejo_host}/api/v1" .forgejo/renovate.json
+if [[ -f .forgejo/renovate.jsonc ]]; then
+  [[ -n $forgejo_repo_path && -n $source_forgejo_repository ]] && replace_literal "$source_forgejo_repository" "$forgejo_repo_path" .forgejo/renovate.jsonc
+  [[ -n $forgejo_host && -n $source_forgejo_endpoint ]] && replace_literal "$source_forgejo_endpoint" "https://${forgejo_host}/api/v1" .forgejo/renovate.jsonc
 fi
 if [[ -d .forgejo && -n $forgejo_host ]]; then
   [[ -n $source_registry ]] && replace_tracked_text "REGISTRY: $source_registry" "REGISTRY: $forgejo_host"
@@ -602,11 +602,11 @@ if ! $keep_client; then
     remove_block "$provider_directory/workflows/vulnerable.yaml" '  rust:' '        run: cargo-audit audit'
     remove_block "$provider_directory/labeler.yaml" 'python:'
     remove_block "$provider_directory/labeler.yaml" 'rust:'
-    cargo_rule_line=$(grep -n -m 1 -F '"matchManagers": ["cargo"],' "$provider_directory/renovate.json" | cut -d: -f1 || true)
-    if [[ -z $cargo_rule_line || $(sed -n "$((cargo_rule_line - 1))p;$((cargo_rule_line + 2))p" "$provider_directory/renovate.json") != $'    {\n    },' ]]; then
-      fail "Unable to find the cargo rule in $provider_directory/renovate.json."
+    cargo_rule_line=$(grep -n -m 1 -F '"matchManagers": ["cargo"],' "$provider_directory/renovate.jsonc" | cut -d: -f1 || true)
+    if [[ -z $cargo_rule_line || $(sed -n "$((cargo_rule_line - 1))p;$((cargo_rule_line + 2))p" "$provider_directory/renovate.jsonc") != $'    {\n    },' ]]; then
+      fail "Unable to find the cargo rule in $provider_directory/renovate.jsonc."
     fi
-    sed_inplace "$((cargo_rule_line - 1)),$((cargo_rule_line + 2))d" "$provider_directory/renovate.json"
+    sed_inplace "$((cargo_rule_line - 1)),$((cargo_rule_line + 2))d" "$provider_directory/renovate.jsonc"
   done
   if [[ -d .zed ]]; then
     sed_inplace '/^    "Python": {$/,/^    },$/d' .zed/settings.json
@@ -666,7 +666,7 @@ if ! $keep_docs; then
   sed_inplace '/^      "\/docs": {$/,/^      },$/d' web/vite.config.ts
   for provider_directory in .github .forgejo; do
     [[ -d $provider_directory ]] || continue
-    sed_inplace '/--prefix docs/d' "$provider_directory/renovate.json"
+    sed_inplace '/--prefix docs/d' "$provider_directory/renovate.jsonc"
     remove_block "$provider_directory/workflows/vulnerable.yaml" '      - name: Run npm audit (docs)'
   done
 fi
