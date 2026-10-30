@@ -20,6 +20,7 @@ mkRustPackage (final: {
   # also check the dependencies for clippy, the lints run in the client-lint flake check
   cargoArtifactsArgs = {
     nativeCheckInputs = [ clippy ];
+    doCheck = true;
     checkPhase = ''
       runHook preCheck
       cargo test --offline

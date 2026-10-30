@@ -14,6 +14,7 @@ buildNpmPackage (final: {
     npmRoot = final.src;
   };
 
+  doCheck = true;
   checkPhase = ''
     runHook preCheck
     CI=true NO_COLOR=1 npm test
