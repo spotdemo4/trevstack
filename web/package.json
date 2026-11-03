@@ -22,7 +22,7 @@
     "@solidjs/web": "^2.0.0-rc.20",
     "@trev.zip/solid-toast": "^1.2.8",
     "d3-array": "^3.2.5",
-    "d3-axis": "^3.0.0",
+    "d3-axis": "^3.0.1",
     "d3-format": "^3.1.2",
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
