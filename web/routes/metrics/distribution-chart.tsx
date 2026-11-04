@@ -1,4 +1,4 @@
-import type { DistributionBucket } from "$connect/number/v1/metrics_pb";
+import type { DistributionBucket } from "$gen/number/v1/service.trevrpc";
 import {
   ChartFrame,
   getChartInnerSize,

@@ -2,61 +2,28 @@ syntax = "proto3";
 
 package number.v1;
 
-import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
 message Item {
   google.protobuf.Timestamp timestamp = 1;
-  string name = 2 [(buf.validate.field).string = {
-    min_len: 1
-    max_len: 50
-  }];
-  uint32 number = 3 [(buf.validate.field).uint32 = {
-    gte: 0
-    lte: 1000000
-  }];
+  string name = 2;
+  uint32 number = 3;
 }
 
-// Optional filters for the item stream. Timestamps use RFC 3339 strings in protobuf JSON.
-//
-// Example (protobuf JSON):
-// ```json
-// {"name": "visits", "minimum": 1, "maximum": 100, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
-// ```
+// Optional filters for the item stream.
 message ListRequest {
-  optional string name = 1 [(buf.validate.field).string = {
-    min_len: 0
-    max_len: 50
-  }];
-  optional uint32 minimum = 2 [(buf.validate.field).uint32 = {
-    gte: 0
-    lte: 1000000
-  }];
-  optional uint32 maximum = 3 [(buf.validate.field).uint32 = {
-    gte: 0
-    lte: 1000000
-  }];
+  // At most 50 characters.
+  optional string name = 1;
+  // 0 to 1000000, and less than maximum.
+  optional uint32 minimum = 2;
+  // 0 to 1000000, and greater than minimum.
+  optional uint32 maximum = 3;
   google.protobuf.Timestamp start = 4;
+  // After start.
   google.protobuf.Timestamp end = 5;
-
-  option (buf.validate.message).cel = {
-    id: "end_after_start"
-    message: "End must be after start"
-    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
-  };
-  option (buf.validate.message).cel = {
-    id: "minimum_less_than_maximum"
-    message: "Minimum must be less than maximum"
-    expression: "!has(this.minimum) || !has(this.maximum) || this.minimum < this.maximum"
-  };
 }
 
 // One matching item in the server stream, not an array of results.
-//
-// Example (protobuf JSON):
-// ```json
-// {"item": {"timestamp": "2026-09-20T12:00:00Z", "name": "visits", "number": 7}}
-// ```
 message ListResponse {
   Item item = 1;
 }

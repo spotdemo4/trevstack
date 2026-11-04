@@ -4,8 +4,8 @@ import (
 	"context"
 	_ "embed"
 
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
-	"trev.zip/template/stack/server/database"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
+	"trev.zip/template/stack/server/validation"
 )
 
 //go:embed summary.sql
@@ -16,7 +16,9 @@ func (h *Handler) Summary(
 	ctx context.Context,
 	req *numberv1.SummaryRequest,
 ) (*numberv1.SummaryResponse, error) {
-	db := database.FromContext(ctx)
+	if err := validation.TimeRange(req.GetStart(), req.GetEnd()); err != nil {
+		return nil, err
+	}
 
 	var startArg, endArg any
 	if start := req.GetStart(); start != nil {
@@ -31,7 +33,7 @@ func (h *Handler) Summary(
 	var average float64
 	var minimum, maximum, distinctNames uint32
 
-	err := db.QueryRowContext(ctx, summarySQL,
+	err := h.db.QueryRowContext(ctx, summarySQL,
 		startArg, startArg,
 		endArg, endArg,
 	).Scan(

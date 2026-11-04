@@ -2,10 +2,12 @@
 package v1
 
 import (
-	"connectrpc.com/connect/v2"
+	"database/sql"
+
 	"golang.org/x/crypto/bcrypt"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	"trev.zip/template/stack/server/auth"
-	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
+	authv1 "trev.zip/template/stack/server/gen/auth/v1"
 )
 
 var dummyPasswordHash = func() []byte {
@@ -16,12 +18,19 @@ var dummyPasswordHash = func() []byte {
 	return hash
 }()
 
-// Handler implements authv1connect.AuthServiceHandler.
+// Handler implements authv1.AuthServiceServer.
 type Handler struct {
+	db   *sql.DB
 	auth *auth.Manager
 }
 
+// New returns a Handler that stores users in db and issues sessions with
+// manager.
+func New(db *sql.DB, manager *auth.Manager) *Handler {
+	return &Handler{db: db, auth: manager}
+}
+
 // Register registers the AuthService on server.
-func Register(server *connect.Server, manager *auth.Manager) {
-	authv1connect.RegisterAuthServiceHandler(server, &Handler{auth: manager})
+func Register(server *trevrpc.Server, db *sql.DB, manager *auth.Manager) {
+	authv1.RegisterAuthServiceServer(server, New(db, manager))
 }

@@ -1,19 +1,27 @@
+use std::path::PathBuf;
+
 use clap::Parser;
 use thiserror::Error;
 
 use crate::client::{Credentials, ServiceUrl, ServiceUrlError};
 
-const DEFAULT_URL: &str = "http://127.0.0.1:8080/grpc";
+const DEFAULT_URL: &str = "https://localhost:8080";
 const URL_ENV: &str = "STACK_URL";
+const CA_CERT_ENV: &str = "STACK_CA_CERT";
 const USERNAME_ENV: &str = "STACK_USERNAME";
 const PASSWORD_ENV: &str = "STACK_PASSWORD";
 
 #[derive(Debug, Parser)]
 #[command(version, about = "Send a name and number to the Number service")]
 pub struct Cli {
-    /// Number service base URL [env: STACK_URL]
+    /// Server URL [env: STACK_URL]
     #[arg(long)]
     url: Option<String>,
+
+    /// PEM file with certificates to trust in addition to the bundled roots
+    /// [env: STACK_CA_CERT]
+    #[arg(long)]
+    ca_cert: Option<PathBuf>,
 
     /// Account username [env: STACK_USERNAME]
     #[arg(long)]
@@ -34,6 +42,7 @@ pub struct Cli {
 #[derive(Debug)]
 pub struct Config {
     pub url: ServiceUrl,
+    pub ca_cert: Option<PathBuf>,
     pub credentials: Credentials,
     pub name: String,
     pub number: u32,
@@ -58,6 +67,9 @@ impl Cli {
             .url
             .or_else(|| get_env(URL_ENV))
             .unwrap_or_else(|| DEFAULT_URL.to_owned());
+        let ca_cert = self
+            .ca_cert
+            .or_else(|| get_env(CA_CERT_ENV).map(PathBuf::from));
         let username = self
             .username
             .or_else(|| get_env(USERNAME_ENV))
@@ -69,6 +81,7 @@ impl Cli {
 
         Ok(Config {
             url: url.parse()?,
+            ca_cert,
             credentials: Credentials { username, password },
             name: self.name,
             number: self.number,
@@ -80,7 +93,9 @@ impl Cli {
 mod tests {
     use clap::Parser;
 
-    use super::{Cli, ConfigError, DEFAULT_URL, PASSWORD_ENV, URL_ENV, USERNAME_ENV};
+    use std::path::Path;
+
+    use super::{CA_CERT_ENV, Cli, ConfigError, DEFAULT_URL, PASSWORD_ENV, URL_ENV, USERNAME_ENV};
 
     fn credentials_env(name: &str) -> Option<String> {
         match name {
@@ -98,6 +113,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(config.url.to_string(), DEFAULT_URL);
+        assert_eq!(config.ca_cert, None);
         assert_eq!(config.name, "alice");
         assert_eq!(config.number, 7);
     }
@@ -107,31 +123,47 @@ mod tests {
         let config = Cli::try_parse_from(["client", "alice", "7"])
             .unwrap()
             .into_config(|name| match name {
-                URL_ENV => Some("http://localhost:9000/rpc".to_owned()),
+                URL_ENV => Some("https://localhost:9000".to_owned()),
                 _ => credentials_env(name),
             })
             .unwrap();
 
-        assert_eq!(config.url.to_string(), "http://localhost:9000/rpc");
+        assert_eq!(config.url.to_string(), "https://localhost:9000");
     }
 
     #[test]
     fn option_overrides_environment() {
-        let config = Cli::try_parse_from([
-            "client",
-            "--url",
-            "http://localhost:7000/grpc",
-            "alice",
-            "7",
-        ])
-        .unwrap()
-        .into_config(|name| match name {
-            URL_ENV => Some("http://localhost:9000/rpc".to_owned()),
-            _ => credentials_env(name),
-        })
-        .unwrap();
+        let config =
+            Cli::try_parse_from(["client", "--url", "https://localhost:7000", "alice", "7"])
+                .unwrap()
+                .into_config(|name| match name {
+                    URL_ENV => Some("https://localhost:9000".to_owned()),
+                    _ => credentials_env(name),
+                })
+                .unwrap();
 
-        assert_eq!(config.url.to_string(), "http://localhost:7000/grpc");
+        assert_eq!(config.url.to_string(), "https://localhost:7000");
+    }
+
+    #[test]
+    fn reads_ca_cert_from_environment_and_option() {
+        let from_env = Cli::try_parse_from(["client", "alice", "7"])
+            .unwrap()
+            .into_config(|name| match name {
+                CA_CERT_ENV => Some("env.pem".to_owned()),
+                _ => credentials_env(name),
+            })
+            .unwrap();
+        assert_eq!(from_env.ca_cert.as_deref(), Some(Path::new("env.pem")));
+
+        let from_option = Cli::try_parse_from(["client", "--ca-cert", "cli.pem", "alice", "7"])
+            .unwrap()
+            .into_config(|name| match name {
+                CA_CERT_ENV => Some("env.pem".to_owned()),
+                _ => credentials_env(name),
+            })
+            .unwrap();
+        assert_eq!(from_option.ca_cert.as_deref(), Some(Path::new("cli.pem")));
     }
 
     #[test]

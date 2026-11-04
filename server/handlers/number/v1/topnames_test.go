@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 func TestTopNames(t *testing.T) {
 	t.Run("returns names ranked by count then sum", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "a", 1, now)
 		seed(t, db, "a", 1, now)
@@ -21,7 +21,7 @@ func TestTopNames(t *testing.T) {
 		seed(t, db, "b", 5, now)
 		seed(t, db, "c", 100, now)
 
-		resp, err := client.TopNames(context.Background(), numberv1.TopNamesRequest_builder{
+		resp, err := handler.TopNames(context.Background(), numberv1.TopNamesRequest_builder{
 			Limit: new(uint32(2)),
 		}.Build())
 		if err != nil {
@@ -52,12 +52,12 @@ func TestTopNames(t *testing.T) {
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
-			client, _ := newTest(t)
-			_, err := client.TopNames(context.Background(), tc.req)
+			handler, _ := newTest(t)
+			_, err := handler.TopNames(context.Background(), tc.req)
 			if err == nil {
 				t.Fatal("expected validation error, got nil")
 			}
-			if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+			if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 				t.Errorf("code = %v, want InvalidArgument", got)
 			}
 		})

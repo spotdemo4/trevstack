@@ -3,13 +3,13 @@
 import harness
 
 USERNAME = "demo_user"
-PASSWORD = "example-password"
+PASSWORD = harness.PASSWORD
 
 
 class AddTest(harness.IntegrationTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.server.signup(USERNAME, PASSWORD)
+        self.server.signup(USERNAME)
 
     def test_adds_number(self) -> None:
         result = self.run_client(USERNAME, PASSWORD, "visits", 7)

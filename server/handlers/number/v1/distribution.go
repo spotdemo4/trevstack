@@ -4,8 +4,7 @@ import (
 	"context"
 	_ "embed"
 
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
-	"trev.zip/template/stack/server/database"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 //go:embed distribution_bounds.sql
@@ -19,7 +18,9 @@ func (h *Handler) Distribution(
 	ctx context.Context,
 	req *numberv1.DistributionRequest,
 ) (*numberv1.DistributionResponse, error) {
-	db := database.FromContext(ctx)
+	if err := validateDistributionRequest(req); err != nil {
+		return nil, err
+	}
 
 	var startArg, endArg any
 	if start := req.GetStart(); start != nil {
@@ -31,7 +32,7 @@ func (h *Handler) Distribution(
 
 	var lo, hi uint32
 	var total int64
-	err := db.QueryRowContext(ctx, distributionBoundsSQL,
+	err := h.db.QueryRowContext(ctx, distributionBoundsSQL,
 		startArg, startArg,
 		endArg, endArg,
 	).Scan(&lo, &hi, &total)
@@ -59,7 +60,7 @@ func (h *Handler) Distribution(
 
 	span := uint64(hi-lo) + 1
 
-	rows, err := db.QueryContext(ctx, distributionBucketsSQL,
+	rows, err := h.db.QueryContext(ctx, distributionBucketsSQL,
 		n-1, lo, n, span,
 		startArg, startArg,
 		endArg, endArg,

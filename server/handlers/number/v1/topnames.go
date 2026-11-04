@@ -4,8 +4,7 @@ import (
 	"context"
 	_ "embed"
 
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
-	"trev.zip/template/stack/server/database"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 //go:embed topnames.sql
@@ -16,7 +15,9 @@ func (h *Handler) TopNames(
 	ctx context.Context,
 	req *numberv1.TopNamesRequest,
 ) (*numberv1.TopNamesResponse, error) {
-	db := database.FromContext(ctx)
+	if err := validateTopNamesRequest(req); err != nil {
+		return nil, err
+	}
 
 	var startArg, endArg any
 	if start := req.GetStart(); start != nil {
@@ -26,7 +27,7 @@ func (h *Handler) TopNames(
 		endArg = end.AsTime()
 	}
 
-	rows, err := db.QueryContext(ctx, topnamesSQL,
+	rows, err := h.db.QueryContext(ctx, topnamesSQL,
 		startArg, startArg,
 		endArg, endArg,
 		req.GetLimit(),

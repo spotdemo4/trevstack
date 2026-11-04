@@ -8,7 +8,7 @@
 [![solidjs](https://img.shields.io/badge/dynamic/json?url=https://trev.zip/template/stack/raw/branch/main/web/package.json&query=%24.dependencies.solid-js&logo=solid&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%232C4F7C)](https://www.solidjs.com/)
 [![rust](https://img.shields.io/badge/dynamic/toml?url=https://trev.zip/template/stack/raw/branch/main/client/Cargo.toml&query=%24.package.rust-version&logo=rust&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23D34516)](https://releases.rs/)
 
-TrevStack is a template for full-stack applications built with Go, Rust, SolidJS, and ConnectRPC
+TrevStack is a template for full-stack applications built with Go, Rust, SolidJS, and TrevRPC
 
 to initialize a new project, create a repository from this template and run:
 

@@ -6,7 +6,7 @@ import harness
 from playwright.sync_api import expect
 
 USERNAME = "demo_user"
-PASSWORD = "example-password"
+PASSWORD = harness.PASSWORD
 
 
 class WebTest(harness.BrowserTestCase):

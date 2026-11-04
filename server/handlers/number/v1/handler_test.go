@@ -3,26 +3,18 @@ package v1_test
 import (
 	"context"
 	"database/sql"
-	"net"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 
-	"connectrpc.com/connect/v2"
-	"connectrpc.com/connect/v2/connecthttp"
-	"connectrpc.com/validate"
 	_ "github.com/mattn/go-sqlite3"
-	"trev.zip/template/stack/server/connect/number/v1/numberv1connect"
 	"trev.zip/template/stack/server/database"
 	numberv1handler "trev.zip/template/stack/server/handlers/number/v1"
 )
 
-// newTest spins up an in-memory SQLite DB, runs migrations, and starts an
-// httptest server wired to the real handler + validate interceptor. The
-// returned *sql.DB is the same instance the handler sees via context, so
-// callers can seed rows or assert state directly.
-func newTest(t *testing.T) (numberv1connect.NumberServiceClient, *sql.DB) {
+// newTest opens an in-memory SQLite DB, runs migrations, and returns a
+// handler that uses it. The returned *sql.DB is the same instance the handler
+// uses, so callers can seed rows or assert state directly.
+func newTest(t *testing.T) (*numberv1handler.Handler, *sql.DB) {
 	t.Helper()
 
 	db, err := sql.Open("sqlite3", "file::memory:?_foreign_keys=true")
@@ -38,19 +30,7 @@ func newTest(t *testing.T) (numberv1connect.NumberServiceClient, *sql.DB) {
 		t.Fatalf("migrate: %v", err)
 	}
 
-	server := connect.NewServer(validate.NewServerInterceptor())
-	numberv1handler.Register(server)
-	mux := http.NewServeMux()
-	connecthttp.Mount(mux, server)
-
-	srv := httptest.NewUnstartedServer(mux)
-	srv.Config.BaseContext = func(net.Listener) context.Context {
-		return database.WithDatabase(context.Background(), db)
-	}
-	srv.Start()
-	t.Cleanup(srv.Close)
-
-	return numberv1connect.NewNumberServiceClient(connect.NewClient(connecthttp.NewTransport(srv.Client(), srv.URL))), db
+	return numberv1handler.New(db), db
 }
 
 // seed inserts a single row with an explicit timestamp.

@@ -7,8 +7,7 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
-	"trev.zip/template/stack/server/database"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 //go:embed timeseries.sql
@@ -37,7 +36,9 @@ func (h *Handler) TimeSeries(
 	ctx context.Context,
 	req *numberv1.TimeSeriesRequest,
 ) (*numberv1.TimeSeriesResponse, error) {
-	db := database.FromContext(ctx)
+	if err := validateTimeSeriesRequest(req); err != nil {
+		return nil, err
+	}
 
 	interval := req.GetInterval()
 	expr, ok := bucketExpr(interval)
@@ -53,7 +54,7 @@ func (h *Handler) TimeSeries(
 		endArg = end.AsTime()
 	}
 
-	rows, err := db.QueryContext(ctx, fmt.Sprintf(timeseriesSQL, expr),
+	rows, err := h.db.QueryContext(ctx, fmt.Sprintf(timeseriesSQL, expr),
 		startArg, startArg,
 		endArg, endArg,
 	)

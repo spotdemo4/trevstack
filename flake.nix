@@ -18,12 +18,19 @@
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    trevrpc = {
+      url = "git+https://trev.zip/llc/TrevRPC.git";
+      inputs.systems.follows = "systems";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.trevpkgs.follows = "trevpkgs";
+    };
   };
 
   outputs =
     {
       self,
       trevpkgs,
+      trevrpc,
       ...
     }:
     trevpkgs.libs.mkFlake (
@@ -61,10 +68,10 @@
               # proto
               buf
               protoc-gen-go
-              protoc-gen-es
-              protoc-gen-connect-openapi
               protoc-gen-prost
-              protoc-gen-tonic
+              trevrpc.packages.${system}.trevrpc-go
+              trevrpc.packages.${system}.trevrpc-js
+              trevrpc.packages.${system}.trevrpc-rust
 
               # python
               (python3.withPackages (ps: [ ps.playwright ]))
@@ -130,7 +137,6 @@
             script = ''
               buf generate
               go -C server mod tidy
-              npm install --prefix docs
               npm install --prefix web
             '';
           };
@@ -140,7 +146,6 @@
             script = ''
               buf dep update
               buf generate
-              npm audit fix --audit-level=none --prefix docs
               npm audit fix --audit-level=none --prefix web
               fix-hash .#checks.${system}.protobuf-lint
               fix-hash .#packages.${system}.server
@@ -185,9 +190,8 @@
         packages = rec {
           default = server;
           client = pkgs.callPackage ./client { };
-          docs = pkgs.buildPackages.callPackage ./docs { };
           web = pkgs.buildPackages.callPackage ./web { };
-          server = pkgs.callPackage ./server { inherit docs web; };
+          server = pkgs.callPackage ./server { inherit web; };
         };
 
         # nix build #images.[...]
@@ -200,8 +204,10 @@
           server = pkgs.mkImage {
             src = self.packages.${system}.default;
             contents = with pkgs; [ dockerTools.caCertificates ];
+            # QUIC, HTTP/3 and WebTransport use UDP; their fallbacks use TCP
             config.ExposedPorts = {
               "8080/tcp" = { };
+              "8080/udp" = { };
             };
           };
         };
@@ -210,7 +216,6 @@
         checks = pkgs.mkChecks {
           inherit (self.packages.${system})
             client
-            docs
             web
             server
             ;
@@ -238,18 +243,6 @@
 
           web-lint = {
             src = self.packages.${system}.web;
-            packages = with pkgs; [
-              oxfmt
-              oxlint
-            ];
-            script = ''
-              oxfmt --check
-              oxlint --deny-warnings
-            '';
-          };
-
-          docs-lint = {
-            src = self.packages.${system}.docs;
             packages = with pkgs; [
               oxfmt
               oxlint
@@ -339,7 +332,7 @@
             bufDeps = pkgs.bufFetchDeps {
               src = ./.;
               pname = "trevstack-proto-deps";
-              hash = "sha256-s5M6rNWUTsIz0+5cqB0KyUhJSQ9wQmP+hdsrr6Hf23Y=";
+              hash = "sha256-lWDCbygRXkfoDLF3EkJG+FIPWMyJXS/fbr1Oxx4ewU8=";
             };
             packages = with pkgs; [
               bufHook

@@ -4,49 +4,34 @@ version: v2
 
 plugins:
   - local: protoc-gen-go
-    out: server/connect
+    out: server/gen
     opt:
       - paths=source_relative
       - default_api_level=API_OPAQUE
 
-  - local: ["go", "-C", "server", "tool", "protoc-gen-connect-go"]
-    out: server/connect
+  - local: protoc-gen-trevrpc-go
+    out: server/gen
     opt:
       - paths=source_relative
 
-  - local: protoc-gen-connect-openapi
-    out: docs
-    strategy: all
-    opt:
-      - base=docs/openapi.base.yaml
-      - path=openapi.yaml
-      - features=connectrpc;protovalidate;gnostic
-
-  - local: protoc-gen-es
-    out: web/connect
-    opt: target=ts
-    include_imports: true
+  - local: protoc-gen-trevrpc-js
+    out: web/gen
 
   - local: protoc-gen-prost
-    out: client/src/connect
+    out: client/src/gen
     strategy: all
     opt:
       - flat_output_dir
 
-  - local: protoc-gen-tonic
-    out: client/src/connect
+  - local: protoc-gen-trevrpc-rust
+    out: client/src/gen
     strategy: all
-    opt:
-      - flat_output_dir
-      - no_server
 
 managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: trev.zip/template/stack/server/connect
+      value: trev.zip/template/stack/server/gen
   disable:
-    - file_option: go_package
-      module: buf.build/bufbuild/protovalidate
-    - file_option: go_package
-      module: buf.build/gnostic/gnostic
+    - file_option: go_package_prefix
+      module: buf.build/trevrpc/trevrpc

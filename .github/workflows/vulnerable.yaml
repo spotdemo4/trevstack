@@ -51,10 +51,6 @@ jobs:
         working-directory: web
         run: npm audit --audit-level moderate
 
-      - name: Run npm audit (docs)
-        working-directory: docs
-        run: npm audit --audit-level moderate
-
   nix:
     runs-on: ubuntu-26.04
     permissions:

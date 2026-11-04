@@ -2,34 +2,16 @@ syntax = "proto3";
 
 package number.v1;
 
-import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
 // Scalar summary metrics across all items, suitable for stat cards.
-//
-// Example (protobuf JSON):
-// ```json
-// {"start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
-// ```
 message SummaryRequest {
   // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 1;
-  // Inclusive upper timestamp bound; omit for no upper bound.
+  // Inclusive upper timestamp bound, after start; omit for no upper bound.
   google.protobuf.Timestamp end = 2;
-
-  option (buf.validate.message).cel = {
-    id: "end_after_start"
-    message: "End must be after start"
-    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
-  };
 }
 
-// Counts and sums use decimal strings for 64-bit integers in protobuf JSON.
-//
-// Example (protobuf JSON):
-// ```json
-// {"totalCount": "3", "totalSum": "42", "average": 14, "min": 7, "max": 21, "distinctNames": 2}
-// ```
 message SummaryResponse {
   int64 total_count = 1;
   uint64 total_sum = 2;
@@ -49,29 +31,13 @@ enum TimeInterval {
 }
 
 // Selects the UTC bucket interval and optional time range.
-//
-// Example (protobuf JSON):
-// ```json
-// {"interval": "TIME_INTERVAL_DAY", "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
-// ```
 message TimeSeriesRequest {
-  optional TimeInterval interval = 1 [
-    (buf.validate.field).required = true,
-    (buf.validate.field).enum = {
-      defined_only: true
-      not_in: [0]
-    }
-  ];
+  // Required. Any interval except TIME_INTERVAL_UNSPECIFIED.
+  optional TimeInterval interval = 1;
   // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 2;
-  // Inclusive upper timestamp bound; omit for no upper bound.
+  // Inclusive upper timestamp bound, after start; omit for no upper bound.
   google.protobuf.Timestamp end = 3;
-
-  option (buf.validate.message).cel = {
-    id: "end_after_start"
-    message: "End must be after start"
-    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
-  };
 }
 
 message TimeSeriesPoint {
@@ -86,29 +52,13 @@ message TimeSeriesResponse {
 }
 
 // Histogram of `number` values across approximately equal-width buckets, suitable for bar charts.
-//
-// Example (protobuf JSON):
-// ```json
-// {"bucketCount": 10, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
-// ```
 message DistributionRequest {
-  optional uint32 bucket_count = 1 [
-    (buf.validate.field).required = true,
-    (buf.validate.field).uint32 = {
-      gte: 1
-      lte: 100
-    }
-  ];
+  // Required. 1 to 100.
+  optional uint32 bucket_count = 1;
   // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 2;
-  // Inclusive upper timestamp bound; omit for no upper bound.
+  // Inclusive upper timestamp bound, after start; omit for no upper bound.
   google.protobuf.Timestamp end = 3;
-
-  option (buf.validate.message).cel = {
-    id: "end_after_start"
-    message: "End must be after start"
-    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
-  };
 }
 
 message DistributionBucket {
@@ -122,29 +72,13 @@ message DistributionResponse {
 }
 
 // Top N names by frequency and total value, suitable for bar/pie charts.
-//
-// Example (protobuf JSON):
-// ```json
-// {"limit": 5, "start": "2026-09-01T00:00:00Z", "end": "2026-10-01T00:00:00Z"}
-// ```
 message TopNamesRequest {
-  optional uint32 limit = 1 [
-    (buf.validate.field).required = true,
-    (buf.validate.field).uint32 = {
-      gte: 1
-      lte: 100
-    }
-  ];
+  // Required. 1 to 100.
+  optional uint32 limit = 1;
   // Inclusive lower timestamp bound; omit for no lower bound.
   google.protobuf.Timestamp start = 2;
-  // Inclusive upper timestamp bound; omit for no upper bound.
+  // Inclusive upper timestamp bound, after start; omit for no upper bound.
   google.protobuf.Timestamp end = 3;
-
-  option (buf.validate.message).cel = {
-    id: "end_after_start"
-    message: "End must be after start"
-    expression: "!has(this.end) || !has(this.start) || this.end > this.start"
-  };
 }
 
 message TopName {

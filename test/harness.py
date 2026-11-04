@@ -6,24 +6,25 @@ arguments are paths to the client and server executables.
 
 import argparse
 import contextlib
-import json
 import os
 import signal
 import socket
 import sqlite3
+import ssl
 import subprocess
 import sys
 import tempfile
 import time
 import unittest
-import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from playwright.sync_api import Browser, Page, Playwright, sync_playwright
 
 JWT_SECRET = "integration-test-secret-that-is-long-enough"
+PASSWORD = "example-password"
+# A bcrypt hash of PASSWORD, so users can be created without the API.
+PASSWORD_HASH = "$2y$10$L3wFWn4QMErfVV9g.bhqbu1NmubtoyVhDiK2mySGQaft2RSooXRQS"
 READY_TIMEOUT = 10.0
 STOP_TIMEOUT = 10.0
 CLIENT_TIMEOUT = 30.0
@@ -59,13 +60,25 @@ def main() -> None:
 
 
 def free_port() -> int:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.bind(("127.0.0.1", 0))
-        return sock.getsockname()[1]
+    """Return a port that is free for both TCP and UDP, which the server listens on together."""
+    while True:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcp:
+            tcp.bind(("127.0.0.1", 0))
+            port = tcp.getsockname()[1]
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp:
+                try:
+                    udp.bind(("127.0.0.1", port))
+                except OSError:
+                    continue
+            return port
 
 
 class Server:
-    """A server process with its own home directory, and therefore its own database."""
+    """A server process with its own home directory, and therefore its own database.
+
+    The server generates a self-signed certificate, which the browser trusts for
+    WebTransport by the hash the server publishes, and the client by its file.
+    """
 
     def __init__(self, binary: Path, home: Path) -> None:
         self.home = home
@@ -82,11 +95,11 @@ class Server:
 
     @property
     def origin(self) -> str:
-        return f"http://127.0.0.1:{self.port}"
+        return f"https://127.0.0.1:{self.port}"
 
     @property
-    def url(self) -> str:
-        return f"{self.origin}/grpc"
+    def certificate(self) -> Path:
+        return self.home / "certificate.pem"
 
     @property
     def database(self) -> Path:
@@ -99,7 +112,8 @@ class Server:
             if (code := self.process.poll()) is not None:
                 raise RuntimeError(f"server exited with code {code} before it was ready")
             with contextlib.suppress(OSError):
-                socket.create_connection(("127.0.0.1", self.port), timeout=1).close()
+                certificate = ssl.get_server_certificate(("127.0.0.1", self.port), timeout=1)
+                self.certificate.write_text(certificate)
                 return
             time.sleep(0.05)
         raise TimeoutError(f"server was not ready within {READY_TIMEOUT}s")
@@ -114,19 +128,13 @@ class Server:
             self.process.kill()
             self.process.wait()
 
-    def call(self, procedure: str, message: dict[str, Any]) -> Any:
-        """Call a unary RPC using the Connect protocol with JSON encoding."""
-        request = urllib.request.Request(
-            f"{self.url}/{procedure}",
-            data=json.dumps(message).encode(),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        with urllib.request.urlopen(request, timeout=10) as response:
-            return json.load(response)
-
-    def signup(self, username: str, password: str) -> None:
-        self.call("auth.v1.AuthService/Signup", {"username": username, "password": password})
+    def signup(self, username: str) -> None:
+        """Create a user with PASSWORD directly in the database."""
+        with contextlib.closing(sqlite3.connect(self.database)) as db, db:
+            db.execute(
+                "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+                (username.lower(), PASSWORD_HASH),
+            )
 
     def numbers(self) -> list[tuple[str, int]]:
         with contextlib.closing(sqlite3.connect(self.database)) as db:
@@ -152,7 +160,8 @@ class IntegrationTestCase(unittest.TestCase):
             [binaries().client, name, str(number)],
             env={
                 "PATH": os.environ.get("PATH", ""),
-                "STACK_URL": self.server.url,
+                "STACK_URL": self.server.origin,
+                "STACK_CA_CERT": str(self.server.certificate),
                 "STACK_USERNAME": username,
                 "STACK_PASSWORD": password,
             },
@@ -180,7 +189,10 @@ class BrowserTestCase(IntegrationTestCase):
     def setUp(self) -> None:
         super().setUp()
         # A service worker would serve cached assets and hide what the server returns.
-        context = self.browser.new_context(base_url=self.server.origin, service_workers="block")
+        # WebTransport ignores ignore_https_errors and trusts the certificate by its hash.
+        context = self.browser.new_context(
+            base_url=self.server.origin, service_workers="block", ignore_https_errors=True
+        )
         self.addCleanup(context.close)
         context.set_default_timeout(BROWSER_TIMEOUT)
         self.page = context.new_page()

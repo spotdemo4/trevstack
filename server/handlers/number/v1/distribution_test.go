@@ -5,15 +5,15 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 func TestDistribution(t *testing.T) {
 	t.Run("empty table returns no buckets", func(t *testing.T) {
-		client, _ := newTest(t)
-		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
+		handler, _ := newTest(t)
+		resp, err := handler.Distribution(context.Background(), numberv1.DistributionRequest_builder{
 			BucketCount: new(uint32(5)),
 		}.Build())
 		if err != nil {
@@ -25,13 +25,13 @@ func TestDistribution(t *testing.T) {
 	})
 
 	t.Run("all identical values collapse to one bucket", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "a", 7, now)
 		seed(t, db, "b", 7, now)
 		seed(t, db, "c", 7, now)
 
-		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
+		resp, err := handler.Distribution(context.Background(), numberv1.DistributionRequest_builder{
 			BucketCount: new(uint32(5)),
 		}.Build())
 		if err != nil {
@@ -47,13 +47,13 @@ func TestDistribution(t *testing.T) {
 	})
 
 	t.Run("splits range into requested bucket count", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		for _, n := range []uint32{1, 2, 3, 8, 9, 10} {
 			seed(t, db, "x", n, now)
 		}
 
-		resp, err := client.Distribution(context.Background(), numberv1.DistributionRequest_builder{
+		resp, err := handler.Distribution(context.Background(), numberv1.DistributionRequest_builder{
 			BucketCount: new(uint32(2)),
 		}.Build())
 		if err != nil {
@@ -86,12 +86,12 @@ func TestDistribution(t *testing.T) {
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
-			client, _ := newTest(t)
-			_, err := client.Distribution(context.Background(), tc.req)
+			handler, _ := newTest(t)
+			_, err := handler.Distribution(context.Background(), tc.req)
 			if err == nil {
 				t.Fatal("expected validation error, got nil")
 			}
-			if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+			if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 				t.Errorf("code = %v, want InvalidArgument", got)
 			}
 		})

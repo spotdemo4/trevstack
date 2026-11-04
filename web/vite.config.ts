@@ -68,21 +68,24 @@ export default defineConfig({
         icons: [{ src: "/icons/icon.svg", sizes: "any", type: "image/svg+xml" }],
       },
       workbox: {
-        navigateFallbackDenylist: [/^\/grpc/, /^\/docs/],
+        navigateFallbackDenylist: [/^\/trevrpc/, /^\/certificate-hashes/],
       },
     }),
   ],
   server: {
     host: true,
+    // The server's dev build admits this port's pages, so fail rather than
+    // move to another one when it is taken.
     port: 3000,
+    strictPort: true,
     proxy: {
-      "/grpc": {
-        target: "http://localhost:8080",
+      // RPCs go straight to the server at VITE_RPC_URL; WebTransport cannot be
+      // proxied. The page fetches the hashes of the server's development
+      // certificate from here to trust it for WebTransport.
+      "/certificate-hashes": {
+        target: "https://localhost:8080",
         changeOrigin: true,
-      },
-      "/docs": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
+        secure: false,
       },
     },
   },

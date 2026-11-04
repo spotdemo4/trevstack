@@ -22,7 +22,7 @@
 
     // Paths
     "paths": {
-      "$connect/*": ["./connect/*"],
+      "$gen/*": ["./gen/*"],
       "$lib/*": ["./lib/*"]
     }
   }

@@ -1,4 +1,4 @@
-import type { TopName } from "$connect/number/v1/metrics_pb";
+import type { TopName } from "$gen/number/v1/service.trevrpc";
 import {
   ChartFrame,
   getChartInnerSize,

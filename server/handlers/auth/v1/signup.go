@@ -6,11 +6,10 @@ import (
 	"errors"
 	"strings"
 
-	"connectrpc.com/connect/v2"
 	"github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
-	authv1 "trev.zip/template/stack/server/connect/auth/v1"
-	"trev.zip/template/stack/server/database"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	authv1 "trev.zip/template/stack/server/gen/auth/v1"
 )
 
 //go:embed insert_user.sql
@@ -21,19 +20,22 @@ func (h *Handler) Signup(
 	ctx context.Context,
 	req *authv1.SignupRequest,
 ) (*authv1.SignupResponse, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword()), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, "could not hash password")
+	if err := validateCredentials(req); err != nil {
+		return nil, err
 	}
 
-	db := database.FromContext(ctx)
-	_, err = db.ExecContext(ctx, insertUserSQL, normalizeUsername(req.GetUsername()), string(hash))
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword()), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, trevrpc.Internal("could not hash password")
+	}
+
+	_, err = h.db.ExecContext(ctx, insertUserSQL, normalizeUsername(req.GetUsername()), string(hash))
 	if err != nil {
 		var sqliteErr sqlite3.Error
 		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
-			return nil, connect.NewError(connect.CodeAlreadyExists, "username already exists")
+			return nil, trevrpc.AlreadyExists("username already exists")
 		}
-		return nil, connect.NewError(connect.CodeInternal, "could not create user")
+		return nil, trevrpc.Internal("could not create user")
 	}
 
 	return &authv1.SignupResponse{}, nil

@@ -1,14 +1,17 @@
+import type { LoginResponse } from "$gen/auth/v1/service.trevrpc";
 import { createSignal } from "solid-js";
 
 export type SessionClaims = {
   sub: string;
   exp: number;
+  /** The session token sent with every call. */
+  token: string;
 };
 
 export const SESSION_STORAGE_KEY = "trevstack.session";
 
 const MAX_TIMEOUT_DELAY = 2_147_483_647;
-const CLAIM_KEYS = ["sub", "exp"] as const;
+const CLAIM_KEYS = ["sub", "exp", "token"] as const;
 
 type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 type BrowserWindow = Pick<Window, "addEventListener" | "removeEventListener"> & {
@@ -112,7 +115,9 @@ function validateClaims(value: unknown): SessionClaims | null {
     record.sub.length === 0 ||
     typeof record.exp !== "number" ||
     !Number.isSafeInteger(record.exp) ||
-    record.exp <= nowInSeconds()
+    record.exp <= nowInSeconds() ||
+    typeof record.token !== "string" ||
+    record.token.length === 0
   ) {
     return null;
   }
@@ -120,14 +125,15 @@ function validateClaims(value: unknown): SessionClaims | null {
   return Object.freeze({
     sub: record.sub,
     exp: record.exp,
+    token: record.token,
   });
 }
 
-function claimsFromLogin(metadata: { sub: string; exp: bigint }): SessionClaims {
-  if (typeof metadata !== "object" || metadata === null || Array.isArray(metadata)) {
+function claimsFromLogin(response: LoginResponse): SessionClaims {
+  if (typeof response !== "object" || response === null || Array.isArray(response)) {
     throw new Error("Session metadata is invalid");
   }
-  const value = metadata as unknown as Record<string, unknown>;
+  const value = response as unknown as Record<string, unknown>;
   if (typeof value.sub !== "string" || typeof value.exp !== "bigint") {
     throw new Error("Session metadata is invalid");
   }
@@ -135,13 +141,13 @@ function claimsFromLogin(metadata: { sub: string; exp: bigint }): SessionClaims 
     throw new Error("Session metadata expiration is invalid");
   }
 
-  const claims = validateClaims({ sub: value.sub, exp: Number(value.exp) });
+  const claims = validateClaims({ sub: value.sub, exp: Number(value.exp), token: value.jwt });
   if (!claims) throw new Error("Session metadata is invalid");
   return claims;
 }
 
 function sameClaims(left: SessionClaims | null, right: SessionClaims | null) {
-  return left?.sub === right?.sub && left?.exp === right?.exp;
+  return left?.sub === right?.sub && left?.exp === right?.exp && left?.token === right?.token;
 }
 
 function cancelExpiryTimer() {
@@ -275,8 +281,13 @@ export const session = {
     changeSignal();
     return currentRevision;
   },
-  setFromLogin(metadata: { sub: string; exp: bigint }) {
-    const claims = claimsFromLogin(metadata);
+  /**
+   * The current session for imperative code, such as RPC interceptors. It is
+   * read without tracking, so effects do not subscribe to it.
+   */
+  peek: () => ({ claims: currentClaims, revision: currentRevision }),
+  setFromLogin(response: LoginResponse) {
+    const claims = claimsFromLogin(response);
     try {
       storage()?.setItem(SESSION_STORAGE_KEY, JSON.stringify(claims));
     } catch {

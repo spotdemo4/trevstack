@@ -1,3 +1,4 @@
+import type { LoginResponse } from "$gen/auth/v1/service.trevrpc";
 import { createRoot, onCleanup, untrack } from "solid-js";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
@@ -37,12 +38,13 @@ function validClaims(overrides: Partial<SessionClaims> = {}): SessionClaims {
   return {
     sub: "user-1",
     exp: nowInSeconds() + 60,
+    token: "header.payload.signature",
     ...overrides,
   };
 }
 
 function loginMetadata(claims: SessionClaims = validClaims()) {
-  return { sub: claims.sub, exp: BigInt(claims.exp) };
+  return { jwt: claims.token, sub: claims.sub, exp: BigInt(claims.exp) };
 }
 
 // Moves the clock without firing timers, like a suspended tab being resumed.
@@ -68,39 +70,40 @@ test("accepts explicit login metadata, persists only the exact allowlist, and ig
   cleanup = session.initialize();
   const response = {
     ...loginMetadata(claims),
-    jwt: "ignored.jwt.value",
     arbitrary: { ignored: true },
   };
   session.setFromLogin(response);
 
   expect(session.claims()).toEqual(claims);
+  expect(session.peek()).toEqual({ claims, revision: session.revision() });
   expect(stored()).toBe(JSON.stringify(claims));
-  expect(Object.keys(JSON.parse(stored()!))).toEqual(["sub", "exp"]);
+  expect(Object.keys(JSON.parse(stored()!))).toEqual(["sub", "exp", "token"]);
 });
 
 test("rejects invalid login metadata before changing the session", () => {
   cleanup = session.initialize();
   const now = Date.now();
+  const jwt = "header.payload.signature";
   const invalidMetadata: unknown[] = [
     null,
     undefined,
     [],
-    { exp: BigInt(now / 1000 + 60) },
-    { sub: "user-1" },
-    { sub: "user-1", exp: "future" },
-    { sub: "user-1", exp: now / 1000 + 60 },
-    { sub: "user-1", exp: BigInt(now / 1000) },
-    { sub: "user-1", exp: BigInt(now / 1000 - 1) },
-    { sub: "", exp: BigInt(nowInSeconds() + 1) },
-    { sub: "user-1", exp: 0n },
-    { sub: "user-1", exp: -1n },
-    { sub: "user-1", exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n },
+    { jwt, exp: BigInt(now / 1000 + 60) },
+    { jwt, sub: "user-1" },
+    { jwt, sub: "user-1", exp: "future" },
+    { jwt, sub: "user-1", exp: now / 1000 + 60 },
+    { jwt, sub: "user-1", exp: BigInt(now / 1000) },
+    { jwt, sub: "user-1", exp: BigInt(now / 1000 - 1) },
+    { jwt, sub: "", exp: BigInt(nowInSeconds() + 1) },
+    { jwt, sub: "user-1", exp: 0n },
+    { jwt, sub: "user-1", exp: -1n },
+    { jwt, sub: "user-1", exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n },
+    { sub: "user-1", exp: BigInt(nowInSeconds() + 60) },
+    { jwt: "", sub: "user-1", exp: BigInt(nowInSeconds() + 60) },
   ];
 
   for (const metadata of invalidMetadata) {
-    expect(() => session.setFromLogin(metadata as { sub: string; exp: bigint })).toThrow(
-      /Session metadata/,
-    );
+    expect(() => session.setFromLogin(metadata as LoginResponse)).toThrow(/Session metadata/);
     expect(session.claims()).toBeNull();
   }
 
@@ -109,6 +112,7 @@ test("rejects invalid login metadata before changing the session", () => {
   const before = stored();
   expect(() =>
     session.setFromLogin({
+      jwt,
       sub: "replacement",
       exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n,
     }),
@@ -121,8 +125,10 @@ test("rejects invalid persisted, fractional, old, unavailable, and expired stora
   const now = Date.now();
   const invalidCachedValues = [
     { sub: "x", username: "y", exp: now / 1000 + 60 },
-    { sub: "x", exp: now / 1000 + 0.5 },
-    { sub: "x", exp: now / 1000 - 1 },
+    { sub: "x", exp: now / 1000 + 60 },
+    { sub: "x", exp: now / 1000 + 60, token: "" },
+    { sub: "x", exp: now / 1000 + 0.5, token: "t" },
+    { sub: "x", exp: now / 1000 - 1, token: "t" },
   ];
   for (const value of invalidCachedValues) {
     store(value);

@@ -5,21 +5,21 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 func TestTimeSeries(t *testing.T) {
 	t.Run("buckets by day", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		day1 := time.Date(2026, 1, 1, 10, 0, 0, 0, time.UTC)
 		day2 := time.Date(2026, 1, 2, 5, 0, 0, 0, time.UTC)
 		seed(t, db, "a", 10, day1)
 		seed(t, db, "b", 20, day1.Add(time.Hour))
 		seed(t, db, "c", 5, day2)
 
-		resp, err := client.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
+		resp, err := handler.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
 			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_DAY),
 		}.Build())
 		if err != nil {
@@ -37,34 +37,34 @@ func TestTimeSeries(t *testing.T) {
 	})
 
 	t.Run("rejects missing interval", func(t *testing.T) {
-		client, _ := newTest(t)
-		_, err := client.TimeSeries(context.Background(), &numberv1.TimeSeriesRequest{})
+		handler, _ := newTest(t)
+		_, err := handler.TimeSeries(context.Background(), &numberv1.TimeSeriesRequest{})
 		if err == nil {
 			t.Fatal("expected validation error, got nil")
 		}
-		if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 			t.Errorf("code = %v, want InvalidArgument", got)
 		}
 	})
 
 	t.Run("rejects unspecified interval", func(t *testing.T) {
-		client, _ := newTest(t)
-		_, err := client.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
+		handler, _ := newTest(t)
+		_, err := handler.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
 			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_UNSPECIFIED),
 		}.Build())
 		if err == nil {
 			t.Fatal("expected validation error, got nil")
 		}
-		if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 			t.Errorf("code = %v, want InvalidArgument", got)
 		}
 	})
 
 	t.Run("rejects end before start (CEL)", func(t *testing.T) {
-		client, _ := newTest(t)
+		handler, _ := newTest(t)
 		earlier := timestamppb.New(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
 		later := timestamppb.New(time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC))
-		_, err := client.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
+		_, err := handler.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
 			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_DAY),
 			Start:    later,
 			End:      earlier,
@@ -72,7 +72,7 @@ func TestTimeSeries(t *testing.T) {
 		if err == nil {
 			t.Fatal("expected validation error, got nil")
 		}
-		if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 			t.Errorf("code = %v, want InvalidArgument", got)
 		}
 	})

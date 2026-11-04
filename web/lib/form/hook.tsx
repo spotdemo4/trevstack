@@ -1,5 +1,4 @@
-import type { DescMessage, MessageInitShape, MessageValidType } from "@bufbuild/protobuf";
-import { createStandardSchemaInit } from "@bufbuild/protovalidate";
+import type { StandardSchemaV1 } from "effect/StandardSchema";
 import { createSignal, onSettled } from "solid-js";
 
 export type StandardSchemaIssue = {
@@ -35,10 +34,6 @@ export type FormController<T extends object> = {
   readonly handleSubmit: () => Promise<boolean>;
 };
 
-export type MessageFormController<Desc extends DescMessage> = FormController<
-  MessageInitShape<Desc>
->;
-
 type ValidationTiming = {
   readonly onMount?: boolean;
   readonly onChange?: boolean;
@@ -49,10 +44,10 @@ type FormOptions<T extends object> = {
   onSubmit: (args: { value: T }) => void | Promise<unknown>;
 };
 
-type MessageFormOptions<Desc extends DescMessage> = {
-  defaultValues?: MessageInitShape<Desc>;
+type SchemaFormOptions<TInput extends object, TOutput> = {
+  defaultValues?: Partial<TInput>;
   validation?: ValidationTiming;
-  onSubmit: (args: { value: MessageValidType<Desc> }) => void | Promise<unknown>;
+  onSubmit: (args: { value: TOutput }) => void | Promise<unknown>;
 };
 
 type OptionsAccessor<T extends object> = T | (() => T);
@@ -99,18 +94,26 @@ function sameValues<T extends object>(a: T, b: T): boolean {
   return [...keys].every((key) => Object.is(a[key as keyof T], b[key as keyof T]));
 }
 
-export function useForm<Desc extends DescMessage>(
-  schema: Desc,
-  options: OptionsAccessor<MessageFormOptions<Desc>>,
-): MessageFormController<Desc>;
+/**
+ * Creates a form whose values are validated by a Standard Schema, such as an
+ * Effect schema. Every field starts out optional, so a required one fails
+ * validation until it is filled in.
+ */
+export function useForm<TInput extends object, TOutput>(
+  schema: StandardSchemaV1<TInput, TOutput>,
+  options: OptionsAccessor<SchemaFormOptions<TInput, TOutput>>,
+): FormController<Partial<TInput>>;
 export function useForm<T extends object>(
   options: OptionsAccessor<FormOptions<T>>,
 ): FormController<T>;
-export function useForm<T extends object, Desc extends DescMessage>(
+export function useForm<T extends object, TInput extends object, TOutput>(
   ...args:
     | [options: OptionsAccessor<FormOptions<T>>]
-    | [schema: Desc, options: OptionsAccessor<MessageFormOptions<Desc>>]
-): FormController<T> | MessageFormController<Desc> {
+    | [
+        schema: StandardSchemaV1<TInput, TOutput>,
+        options: OptionsAccessor<SchemaFormOptions<TInput, TOutput>>,
+      ]
+): FormController<T> | FormController<Partial<TInput>> {
   if (args.length === 1) {
     const config = resolveOptions(args[0]);
     return createForm({
@@ -123,8 +126,7 @@ export function useForm<T extends object, Desc extends DescMessage>(
 
   const [schema, options] = args;
   const config = resolveOptions(options);
-  const validator = createStandardSchemaInit(schema);
-  const defaultValues = (config.defaultValues ?? {}) as MessageInitShape<Desc>;
+  const defaultValues: Partial<TInput> = config.defaultValues ?? {};
 
   return createForm({
     defaultValues,
@@ -133,7 +135,7 @@ export function useForm<T extends object, Desc extends DescMessage>(
       onMount: config.validation?.onMount ?? false,
       onChange: config.validation?.onChange ?? false,
     },
-    validate: (value) => validator["~standard"].validate(value),
+    validate: (value) => schema["~standard"].validate(value),
     onSubmit: config.onSubmit,
   });
 }

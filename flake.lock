@@ -1,5 +1,48 @@
 {
   "nodes": {
+    "flake-utils": {
+      "inputs": {
+        "systems": [
+          "trevrpc",
+          "systems"
+        ]
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "gomod2nix": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "trevrpc",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770585520,
+        "narHash": "sha256-yBz9Ozd5Wb56i3e3cHZ8WcbzCQ9RlVaiW18qDYA/AzA=",
+        "owner": "nix-community",
+        "repo": "gomod2nix",
+        "rev": "1201ddd1279c35497754f016ef33d5e060f3da8d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "gomod2nix",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1793494649,
@@ -20,7 +63,8 @@
       "inputs": {
         "nixpkgs": "nixpkgs",
         "systems": "systems",
-        "trevpkgs": "trevpkgs"
+        "trevpkgs": "trevpkgs",
+        "trevrpc": "trevrpc"
       }
     },
     "schema": {
@@ -75,6 +119,33 @@
         "owner": "spotdemo4",
         "repo": "trevpkgs",
         "type": "github"
+      }
+    },
+    "trevrpc": {
+      "inputs": {
+        "gomod2nix": "gomod2nix",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "systems": [
+          "systems"
+        ],
+        "trevpkgs": [
+          "trevpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793791082,
+        "narHash": "sha256-e2QzFemsPsuHNbl01FTpNMiA5V6y8WEERIUCg8Ixxfo=",
+        "ref": "refs/heads/main",
+        "rev": "b89daa043f56e9313310d074abd013d95a290645",
+        "revCount": 886,
+        "type": "git",
+        "url": "https://trev.zip/llc/TrevRPC.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://trev.zip/llc/TrevRPC.git"
       }
     }
   },

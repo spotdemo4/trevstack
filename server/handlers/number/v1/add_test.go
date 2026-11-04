@@ -5,16 +5,16 @@ import (
 	"strings"
 	"testing"
 
-	"connectrpc.com/connect/v2"
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 func TestAdd(t *testing.T) {
 	t.Run("inserts row and returns running sum", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		ctx := context.Background()
 
-		resp, err := client.Add(ctx, numberv1.AddRequest_builder{
+		resp, err := handler.Add(ctx, numberv1.AddRequest_builder{
 			Name:   new("foo"),
 			Number: new(uint32(10)),
 		}.Build())
@@ -25,7 +25,7 @@ func TestAdd(t *testing.T) {
 			t.Errorf("Sum = %d, want 10", resp.GetSum())
 		}
 
-		resp, err = client.Add(ctx, numberv1.AddRequest_builder{
+		resp, err = handler.Add(ctx, numberv1.AddRequest_builder{
 			Name:   new("bar"),
 			Number: new(uint32(5)),
 		}.Build())
@@ -58,13 +58,13 @@ func TestAdd(t *testing.T) {
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
-			client, _ := newTest(t)
+			handler, _ := newTest(t)
 
-			_, err := client.Add(context.Background(), tc.req)
+			_, err := handler.Add(context.Background(), tc.req)
 			if err == nil {
 				t.Fatal("expected validation error, got nil")
 			}
-			if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+			if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 				t.Errorf("code = %v, want InvalidArgument", got)
 			}
 		})

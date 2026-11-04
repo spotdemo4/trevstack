@@ -8,6 +8,11 @@ use client::ClientError;
 pub async fn run(config: Config) -> Result<u64, ClientError> {
     config
         .url
-        .add(config.credentials, config.name, config.number)
+        .add(
+            config.ca_cert.as_deref(),
+            config.credentials,
+            config.name,
+            config.number,
+        )
         .await
 }

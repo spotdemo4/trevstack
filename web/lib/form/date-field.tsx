@@ -1,21 +1,11 @@
 import { DateInput } from "$lib/input";
-import { create, type MessageInitShape } from "@bufbuild/protobuf";
-import {
-  TimestampSchema,
-  type Timestamp,
-  timestampDate,
-  timestampFromDate,
-} from "@bufbuild/protobuf/wkt";
+import { type Timestamp, timestampDate, timestampFromDate } from "@trevrpc/trevrpc-js";
 import { For, Show, type Component, createUniqueId } from "solid-js";
 
 import type { FieldController } from "./hook";
 
-type TimestampInput = MessageInitShape<typeof TimestampSchema>;
-
-function timestampToDateString(timestamp: TimestampInput | undefined): string {
-  return timestamp
-    ? timestampDate(create(TimestampSchema, timestamp)).toISOString().slice(0, 10)
-    : "";
+function timestampToDateString(timestamp: Timestamp | undefined): string {
+  return timestamp ? timestampDate(timestamp).toISOString().slice(0, 10) : "";
 }
 
 function dateStringToTimestamp(value: string): Timestamp | undefined {
@@ -26,7 +16,7 @@ function dateStringToTimestamp(value: string): Timestamp | undefined {
 
 type DateFieldProps = {
   class?: string;
-  field: FieldController<Timestamp | undefined> | FieldController<TimestampInput | undefined>;
+  field: FieldController<Timestamp | undefined>;
   label?: string;
 };
 

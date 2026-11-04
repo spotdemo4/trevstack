@@ -23,10 +23,6 @@ __pycache__
 # client
 /client/target/
 
-# docs
-/docs/node_modules/
-/docs/dist/
-
 # web
 /web/node_modules/
 /web/dist/

@@ -2,14 +2,23 @@
 package v1
 
 import (
-	"connectrpc.com/connect/v2"
-	"trev.zip/template/stack/server/connect/number/v1/numberv1connect"
+	"database/sql"
+
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
-// Handler implements numberv1connect.NumberServiceHandler.
-type Handler struct{}
+// Handler implements numberv1.NumberServiceServer.
+type Handler struct {
+	db *sql.DB
+}
+
+// New returns a Handler that stores numbers in db.
+func New(db *sql.DB) *Handler {
+	return &Handler{db: db}
+}
 
 // Register registers the NumberService on server.
-func Register(server *connect.Server) {
-	numberv1connect.RegisterNumberServiceHandler(server, &Handler{})
+func Register(server *trevrpc.Server, db *sql.DB) {
+	numberv1.RegisterNumberServiceServer(server, New(db))
 }

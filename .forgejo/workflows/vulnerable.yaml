@@ -54,10 +54,6 @@ jobs:
         working-directory: web
         run: npm audit --audit-level moderate
 
-      - name: Run npm audit (docs)
-        working-directory: docs
-        run: npm audit --audit-level moderate
-
   nix:
     # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-26.04

@@ -3,7 +3,7 @@
 import harness
 
 USERNAME = "demo_user"
-PASSWORD = "example-password"
+PASSWORD = harness.PASSWORD
 
 
 class AuthTest(harness.IntegrationTestCase):
@@ -15,7 +15,7 @@ class AuthTest(harness.IntegrationTestCase):
         self.assertEqual(self.server.numbers(), [])
 
     def test_rejects_wrong_password(self) -> None:
-        self.server.signup(USERNAME, PASSWORD)
+        self.server.signup(USERNAME)
 
         result = self.run_client(USERNAME, "wrong-password", "visits", 7)
 

@@ -1,22 +1,17 @@
-// Package auth issues and verifies JWT session cookies.
+// Package auth issues and verifies JWT session tokens.
 package auth
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"time"
 
-	"connectrpc.com/connect/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 const (
-	// CookieName is the name of the session cookie.
-	CookieName = "stack_session"
-	issuer     = "stack/session/v2"
-	tokenTTL   = 24 * time.Hour
+	issuer   = "stack/session/v2"
+	tokenTTL = 24 * time.Hour
 )
 
 // Claims are the JWT claims of a session token.
@@ -36,20 +31,17 @@ func (c Claims) Validate() error {
 	return errors.Join(errs...)
 }
 
-// Manager issues and parses session tokens and builds their cookies.
+// Manager issues and parses session tokens.
 type Manager struct {
 	now    func() time.Time
 	secret []byte
-	secure bool
 }
 
-// NewManager returns a Manager that signs tokens with secret. When secure is
-// true, cookies are only sent over HTTPS.
-func NewManager(secret string, secure bool) *Manager {
+// NewManager returns a Manager that signs tokens with secret.
+func NewManager(secret string) *Manager {
 	return &Manager{
 		now:    time.Now,
 		secret: []byte(secret),
-		secure: secure,
 	}
 }
 
@@ -121,41 +113,4 @@ func IsExpiredOnly(err error) bool {
 	}
 
 	return true
-}
-
-// Cookie returns the session cookie for a token.
-func (m *Manager) Cookie(value string, expires time.Time) *http.Cookie {
-	return &http.Cookie{
-		Name:     CookieName,
-		Value:    value,
-		Path:     "/",
-		Expires:  expires,
-		MaxAge:   int(tokenTTL.Seconds()),
-		HttpOnly: true,
-		Secure:   m.secure,
-		SameSite: http.SameSiteLaxMode,
-	}
-}
-
-// DeleteCookie returns a cookie that clears the session cookie.
-func (m *Manager) DeleteCookie() *http.Cookie {
-	return &http.Cookie{
-		Name:     CookieName,
-		Path:     "/",
-		Expires:  time.Unix(1, 0),
-		MaxAge:   -1,
-		HttpOnly: true,
-		Secure:   m.secure,
-		SameSite: http.SameSiteLaxMode,
-	}
-}
-
-// SetResponseCookie adds cookie to the response of the Connect call in ctx.
-func SetResponseCookie(ctx context.Context, cookie *http.Cookie) error {
-	info, ok := connect.CallInfoForServerContext(ctx)
-	if !ok {
-		return errors.New("connect call info unavailable")
-	}
-	info.ResponseHeader().Add("Set-Cookie", cookie.String())
-	return nil
 }

@@ -4,8 +4,7 @@ version: v2
 modules:
   - path: proto
 deps:
-  - buf.build/bufbuild/protovalidate
-  - buf.build/gnostic/gnostic
+  - buf.build/trevrpc/trevrpc
 lint:
   use:
     - STANDARD

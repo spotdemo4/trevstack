@@ -1,10 +1,10 @@
-import { ConnectError } from "@connectrpc/connect";
 import { toaster } from "@trev.zip/solid-toast";
+import { TrevRpcError } from "@trevrpc/trevrpc-js";
 import { Effect } from "effect";
 
-const errorDescription = (err: unknown) => {
-  if (err instanceof ConnectError) {
-    return err.rawMessage || err.message;
+export const errorDescription = (err: unknown) => {
+  if (err instanceof TrevRpcError) {
+    return err.statusMessage || err.message;
   }
 
   if (err instanceof Error) {

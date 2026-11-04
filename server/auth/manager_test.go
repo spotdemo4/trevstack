@@ -3,7 +3,6 @@ package auth
 import (
 	"encoding/base64"
 	"errors"
-	"net/http"
 	"strings"
 	"testing"
 	"time"
@@ -61,7 +60,7 @@ func TestClaimsValidate(t *testing.T) {
 
 func TestManagerIssueAndParse(t *testing.T) {
 	now := time.Date(2026, time.January, 2, 3, 4, 5, 0, time.UTC)
-	manager := NewManager(managerTestSecret, true)
+	manager := NewManager(managerTestSecret)
 	manager.now = func() time.Time { return now }
 
 	value, expires, err := manager.Issue("trev")
@@ -92,7 +91,7 @@ func TestManagerIssueAndParse(t *testing.T) {
 }
 
 func TestManagerIssueNumericLookingUsername(t *testing.T) {
-	manager := NewManager(managerTestSecret, false)
+	manager := NewManager(managerTestSecret)
 	value, _, err := manager.Issue("42")
 	if err != nil {
 		t.Fatalf("Issue() error = %v", err)
@@ -107,7 +106,7 @@ func TestManagerIssueNumericLookingUsername(t *testing.T) {
 }
 
 func TestManagerParseRejectsInvalidTokens(t *testing.T) {
-	manager := NewManager(managerTestSecret, false)
+	manager := NewManager(managerTestSecret)
 	now := time.Now().UTC()
 	validClaims := Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -158,7 +157,7 @@ func TestManagerParseRejectsInvalidTokens(t *testing.T) {
 }
 
 func TestIsExpiredOnly(t *testing.T) {
-	manager := NewManager(managerTestSecret, false)
+	manager := NewManager(managerTestSecret)
 	now := time.Now().UTC()
 	expired := Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -200,30 +199,6 @@ func TestIsExpiredOnly(t *testing.T) {
 				t.Errorf("IsExpiredOnly(%v) = true, want false", testErr)
 			}
 		})
-	}
-}
-
-func TestManagerCookies(t *testing.T) {
-	expires := time.Date(2026, time.January, 3, 4, 5, 6, 0, time.UTC)
-	manager := NewManager(managerTestSecret, true)
-
-	cookie := manager.Cookie("token", expires)
-	if cookie.Name != CookieName || cookie.Value != "token" || cookie.Path != "/" {
-		t.Errorf("session cookie identity = %#v", cookie)
-	}
-	if !cookie.Secure || !cookie.HttpOnly || cookie.SameSite != http.SameSiteLaxMode || cookie.MaxAge != int(tokenTTL.Seconds()) {
-		t.Errorf("session cookie security/expiry = %#v", cookie)
-	}
-	if !cookie.Expires.Equal(expires) {
-		t.Errorf("session cookie Expires = %v, want %v", cookie.Expires, expires)
-	}
-
-	deleted := manager.DeleteCookie()
-	if deleted.Name != CookieName || deleted.Path != "/" || deleted.Value != "" {
-		t.Errorf("deletion cookie identity = %#v", deleted)
-	}
-	if deleted.MaxAge != -1 || !deleted.Expires.Equal(time.Unix(1, 0)) || !deleted.Secure || !deleted.HttpOnly || deleted.SameSite != http.SameSiteLaxMode {
-		t.Errorf("deletion cookie = %#v", deleted)
 	}
 }
 

@@ -4,8 +4,7 @@ import (
 	"context"
 	_ "embed"
 
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
-	"trev.zip/template/stack/server/database"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 //go:embed add.sql
@@ -19,17 +18,19 @@ func (h *Handler) Add(
 	ctx context.Context,
 	req *numberv1.AddRequest,
 ) (*numberv1.AddResponse, error) {
-	db := database.FromContext(ctx)
+	if err := validateAddRequest(req); err != nil {
+		return nil, err
+	}
 
 	// Add the number to the database.
-	_, err := db.ExecContext(ctx, addSQL, req.GetName(), req.GetNumber())
+	_, err := h.db.ExecContext(ctx, addSQL, req.GetName(), req.GetNumber())
 	if err != nil {
 		return nil, err
 	}
 
 	// Calculate the sum of all numbers in the database.
 	var sum uint64
-	err = db.QueryRowContext(ctx, sumSQL).Scan(&sum)
+	err = h.db.QueryRowContext(ctx, sumSQL).Scan(&sum)
 	if err != nil {
 		return nil, err
 	}

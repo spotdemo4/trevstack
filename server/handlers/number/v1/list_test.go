@@ -8,21 +8,20 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
-	"trev.zip/template/stack/server/connect/number/v1/numberv1connect"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 func collectListItems(
 	t *testing.T,
-	stream numberv1connect.NumberServiceListClientStream,
+	stream trevrpc.MessageStream[*numberv1.ListResponse],
 ) []*numberv1.Item {
 	t.Helper()
 
 	var items []*numberv1.Item
 	for {
-		res, err := stream.Receive()
+		res, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
 			return items
 		}
@@ -39,13 +38,13 @@ func collectListItems(
 
 func TestList(t *testing.T) {
 	t.Run("returns rows newest first", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		base := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "alice", 10, base)
 		seed(t, db, "bob", 20, base.Add(time.Hour))
 		seed(t, db, "carol", 30, base.Add(2*time.Hour))
 
-		stream, err := client.List(context.Background(), &numberv1.ListRequest{})
+		stream, err := handler.List(context.Background(), &numberv1.ListRequest{})
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
@@ -63,14 +62,14 @@ func TestList(t *testing.T) {
 	})
 
 	t.Run("filters by name substring", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "alice", 1, now)
 		seed(t, db, "alex", 2, now)
 		seed(t, db, "bob", 3, now)
 
 		needle := "al"
-		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Name: &needle}.Build())
+		stream, err := handler.List(context.Background(), numberv1.ListRequest_builder{Name: &needle}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
@@ -81,14 +80,14 @@ func TestList(t *testing.T) {
 	})
 
 	t.Run("filters by min/max range", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "a", 5, now)
 		seed(t, db, "b", 50, now)
 		seed(t, db, "c", 500, now)
 
 		minimum, maximum := uint32(10), uint32(100)
-		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Minimum: &minimum, Maximum: &maximum}.Build())
+		stream, err := handler.List(context.Background(), numberv1.ListRequest_builder{Minimum: &minimum, Maximum: &maximum}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
@@ -102,12 +101,12 @@ func TestList(t *testing.T) {
 	})
 
 	t.Run("preserves an explicitly present zero maximum", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "a", 5, now)
 
 		maximum := uint32(0)
-		stream, err := client.List(context.Background(), numberv1.ListRequest_builder{Maximum: &maximum}.Build())
+		stream, err := handler.List(context.Background(), numberv1.ListRequest_builder{Maximum: &maximum}.Build())
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
@@ -129,27 +128,18 @@ func TestList(t *testing.T) {
 		{"name too long", numberv1.ListRequest_builder{Name: &tooLong}.Build()},
 		{"minimum above max value", numberv1.ListRequest_builder{Minimum: &huge}.Build()},
 		{"maximum above max value", numberv1.ListRequest_builder{Maximum: &huge}.Build()},
-		{"minimum greater than maximum (CEL)", numberv1.ListRequest_builder{Minimum: &lo, Maximum: &hi}.Build()},
-		{"end before start (CEL)", numberv1.ListRequest_builder{Start: later, End: earlier}.Build()},
+		{"minimum greater than maximum", numberv1.ListRequest_builder{Minimum: &lo, Maximum: &hi}.Build()},
+		{"end before start", numberv1.ListRequest_builder{Start: later, End: earlier}.Build()},
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
-			client, _ := newTest(t)
-			stream, err := client.List(context.Background(), tc.req)
-			if err != nil {
-				if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
-					t.Errorf("code = %v, want InvalidArgument", got)
-				}
-				return
-			}
-			_, err = stream.Receive()
+			handler, _ := newTest(t)
+			stream, err := handler.List(context.Background(), tc.req)
 			if err == nil {
-				t.Fatal("expected validation error, got stream item")
+				_ = stream.Close()
+				t.Fatal("List() error = nil, want validation error")
 			}
-			if errors.Is(err, io.EOF) {
-				t.Fatal("expected validation error, got nil")
-			}
-			if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+			if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 				t.Errorf("code = %v, want InvalidArgument", got)
 			}
 		})

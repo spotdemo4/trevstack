@@ -1,6 +1,6 @@
 import { Button } from "$lib/button";
 import { Drawer, useDrawer } from "$lib/drawer";
-import { ExternalLink, GitBranch, Layers, Menu } from "$lib/icon";
+import { GitBranch, Layers, Menu } from "$lib/icon";
 import { createMediaQuery } from "$lib/media-query";
 import type { JSX } from "@solidjs/web";
 import { children, type Component, type ComponentProps, Show } from "solid-js";
@@ -57,15 +57,6 @@ const NavigationLinks: Component<NavigationProps> = (props) => (
       activeClass={props.mobile ? "bg-fill-subtle" : undefined}
     >
       Metrics
-    </NavLink>
-    <NavLink
-      as="a"
-      href="/docs"
-      target="_blank"
-      onClick={props.onNavigate}
-      class={props.mobile ? "items-center gap-2 rounded-lg px-3 py-3" : "items-center gap-1"}
-    >
-      Docs <ExternalLink size={16} />
     </NavLink>
   </>
 );

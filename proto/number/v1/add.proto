@@ -2,42 +2,15 @@ syntax = "proto3";
 
 package number.v1;
 
-import "buf/validate/validate.proto";
-import "gnostic/openapi/v3/annotations.proto";
-
 // A named positive value to record.
-//
-// Example (protobuf JSON):
-// ```json
-// {"name": "visits", "number": 7}
-// ```
 message AddRequest {
-  optional string name = 1 [
-    (buf.validate.field).required = true,
-    (buf.validate.field).string = {
-      min_len: 1
-      max_len: 50
-    },
-    (gnostic.openapi.v3.property) = {
-      example: {yaml: "visits"}
-    }
-  ];
-  optional uint32 number = 2 [
-    (buf.validate.field).required = true,
-    (buf.validate.field).uint32 = {
-      gte: 1
-      lte: 1000000
-    }
-  ];
+  // Required. 1 to 50 characters.
+  optional string name = 1;
+  // Required. 1 to 1000000.
+  optional uint32 number = 2;
 }
 
-// Example (protobuf JSON):
-// ```json
-// {"sum": "42"}
-// ```
 message AddResponse {
-  // Sum of all stored numbers after this addition, encoded as a decimal string in protobuf JSON.
-  uint64 sum = 1 [(gnostic.openapi.v3.property) = {
-    example: {yaml: "\"42\""}
-  }];
+  // Sum of all stored numbers after this addition.
+  uint64 sum = 1;
 }

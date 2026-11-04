@@ -2,8 +2,8 @@
 
 package main
 
-import "os"
-
+// The web app's development server serves it instead of this build, so its
+// pages may call the API.
 func init() {
-	DocsFS = os.DirFS("../docs/dist")
+	devOrigins = []string{"http://localhost:3000", "http://127.0.0.1:3000"}
 }

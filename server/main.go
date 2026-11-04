@@ -8,27 +8,21 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
+	"slices"
 	"time"
 
-	"connectrpc.com/connect/v2"
-	"connectrpc.com/connect/v2/connecthttp"
-	"connectrpc.com/otelconnect"
-	"connectrpc.com/validate"
 	"github.com/XSAM/otelsql"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	"trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc"
 	"trev.zip/template/stack/server/auth"
-	"trev.zip/template/stack/server/connect/auth/v1/authv1connect"
 	"trev.zip/template/stack/server/database"
+	authv1 "trev.zip/template/stack/server/gen/auth/v1"
 	authv1handler "trev.zip/template/stack/server/handlers/auth/v1"
-	docshandler "trev.zip/template/stack/server/handlers/docs"
 	numberv1handler "trev.zip/template/stack/server/handlers/number/v1"
 	webhandler "trev.zip/template/stack/server/handlers/web"
-	authinterceptor "trev.zip/template/stack/server/interceptors/auth"
-	corsinterceptor "trev.zip/template/stack/server/interceptors/cors"
 	loginterceptor "trev.zip/template/stack/server/interceptors/log"
 	ratelimitinterceptor "trev.zip/template/stack/server/interceptors/ratelimit"
 	"trev.zip/template/stack/server/logger"
@@ -38,6 +32,10 @@ import (
 const (
 	telemetryShutdownTimeout = 5 * time.Second
 
+	// certificateHashesPath publishes the hashes of the development
+	// certificate, which browsers trust it by.
+	certificateHashesPath = "/certificate-hashes"
+
 	loginRateLimitRequests  = 5
 	loginRateLimitWindow    = time.Minute
 	signupRateLimitRequests = 3
@@ -45,8 +43,11 @@ const (
 )
 
 var (
-	DocsFS fs.FS
-	WebFS  fs.FS
+	WebFS fs.FS
+
+	// devOrigins are admitted along with ALLOWED_ORIGINS. Builds with the dev
+	// tag admit the web app's development server.
+	devOrigins []string
 
 	// version is set at build time with -ldflags "-X main.version=...".
 	version = "dev"
@@ -97,7 +98,6 @@ func run(cfg config, log *slog.Logger) error {
 	if err != nil {
 		return fmt.Errorf("could not initialize database: %w", err)
 	}
-	ctx = database.WithDatabase(ctx, db)
 
 	_, err = otelsql.RegisterDBStatsMetrics(db)
 	if err != nil {
@@ -109,81 +109,74 @@ func run(cfg config, log *slog.Logger) error {
 		return fmt.Errorf("could not migrate database: %w", err)
 	}
 
-	// Remote trace context is not trusted by default since the API is public.
-	// Spans from clients are linked to the server's root span instead.
-	oi, err := otelconnect.NewServerInterceptor()
+	tlsConfig, development, err := loadTLSConfig(cfg.tlsCert, cfg.tlsKey)
 	if err != nil {
-		return fmt.Errorf("could not create telemetry interceptor: %w", err)
+		return err
 	}
-
-	sessionManager := auth.NewManager(cfg.jwtSecret, cfg.authCookieSecure)
-	ai := authinterceptor.New(sessionManager)
-	li := loginterceptor.New(log)
-	rli := ratelimitinterceptor.New(
-		map[string]ratelimitinterceptor.Policy{
-			authv1connect.AuthServiceLoginProcedure: {
-				Requests: loginRateLimitRequests,
-				Window:   loginRateLimitWindow,
-			},
-			authv1connect.AuthServiceSignupProcedure: {
-				Requests: signupRateLimitRequests,
-				Window:   signupRateLimitWindow,
-			},
-		},
-		cfg.trustedProxyCIDRs,
-	)
-	vi := validate.NewServerInterceptor()
-
-	rpc := connect.NewServer(oi, rli.WrapServer, li.WrapServer, ai.WrapServer, vi)
-	authv1handler.Register(rpc, sessionManager)
-	numberv1handler.Register(rpc)
-
-	api := http.NewServeMux()
-	connecthttp.Mount(api, rpc)
 
 	mux := http.NewServeMux()
 	mux.Handle("/", webhandler.New(WebFS))
-	mux.Handle("/docs/", docshandler.New(DocsFS))
-	mux.Handle("/grpc/", http.StripPrefix("/grpc", api))
-
-	p := new(http.Protocols)
-	p.SetHTTP1(true)
-	p.SetUnencryptedHTTP2(true) // Use h2c so we can serve HTTP/2 without TLS.
-
-	server := &http.Server{
-		Addr:      fmt.Sprintf(":%s", cfg.port),
-		Handler:   corsinterceptor.WithCORS(mux),
-		Protocols: p,
-		BaseContext: func(_ net.Listener) context.Context {
-			return ctx
-		},
-		ReadHeaderTimeout: 10 * time.Second,
+	if development != nil {
+		log.WarnContext(ctx, "using a generated development certificate; set TLS_CERT and TLS_KEY in production")
+		mux.Handle("GET "+certificateHashesPath, development)
+	} else {
+		// Without this, the web handler would answer with index.html.
+		mux.Handle(certificateHashesPath, http.NotFoundHandler())
 	}
 
-	// Bind synchronously so a bad or taken port fails startup instead of
-	// leaving the process running without a listener.
-	listener, err := listen(ctx, server.Addr, cfg.proxyProtocol, cfg.trustedProxyCIDRs)
+	rpcMetrics, err := oteltrevrpc.NewMetrics()
+	if err != nil {
+		return fmt.Errorf("could not create telemetry metrics: %w", err)
+	}
+
+	sessionManager := auth.NewManager(cfg.jwtSecret)
+	rateLimiter := ratelimitinterceptor.New(map[string]ratelimitinterceptor.Policy{
+		authv1.AuthService_Login_FullMethodName: {
+			Requests: loginRateLimitRequests,
+			Window:   loginRateLimitWindow,
+		},
+		authv1.AuthService_Signup_FullMethodName: {
+			Requests: signupRateLimitRequests,
+			Window:   signupRateLimitWindow,
+		},
+	})
+
+	server := trevrpc.NewServer()
+	options := server.Options()
+	// Browsers connect over WebTransport, or QMux over WebSocket when UDP is
+	// blocked, at /trevrpc, from pages served by mux, at allowedOrigins, or
+	// at devOrigins. Every other request is served by mux.
+	options.EnableWebTransport = true
+	options.WebTransportAdmission = trevrpc.SameOriginAdmission(slices.Concat(cfg.allowedOrigins, devOrigins)...)
+	options.HTTPFallback = mux
+	server.SetOptions(options)
+	server.SetAuthorizer(auth.NewAuthorizer(sessionManager))
+	// Remote trace context is not trusted since the API is public. Spans from
+	// clients are linked to the server's span instead.
+	server.SetInterceptors(oteltrevrpc.NewInterceptor(), rateLimiter, loginterceptor.New(log))
+	server.SetMetrics(rpcMetrics)
+	server.SetDiagnostics(trevrpc.LogDiagnostics(log))
+	authv1handler.Register(server, db, sessionManager)
+	numberv1handler.Register(server, db)
+
+	// Native QUIC, HTTP/3 and WebTransport share a UDP socket, and their TCP
+	// fallbacks and HTTP/1.1 and HTTP/2 share a TCP socket, on the same port.
+	listener, err := trevrpc.Listen(":"+cfg.port, server, trevrpc.ListenOptions{
+		TLSConfig:      tlsConfig,
+		TrustedProxies: cfg.trustedProxyCIDRs,
+	})
 	if err != nil {
 		return fmt.Errorf("could not listen: %w", err)
 	}
 
-	var serveErr error
-	wg := sync.WaitGroup{}
-	wg.Go((func() {
-		log.InfoContext(ctx, "starting", "port", cfg.port, "version", version)
-		err := server.Serve(listener)
-		if err != nil && err != http.ErrServerClosed {
-			serveErr = fmt.Errorf("could not serve: %w", err)
-			stop()
-		}
-	}))
+	stopLog := context.AfterFunc(ctx, func() {
+		log.InfoContext(context.WithoutCancel(ctx), "shutting down")
+	})
+	defer stopLog()
 
-	<-ctx.Done()
-	log.InfoContext(ctx, "shutting down")
-	if err := server.Shutdown(context.Background()); err != nil {
-		log.ErrorContext(ctx, "could not shut down", "error", err)
+	log.InfoContext(ctx, "starting", "port", cfg.port, "version", version)
+	if err := listener.Serve(ctx); err != nil {
+		return fmt.Errorf("could not serve: %w", err)
 	}
-
-	wg.Wait()
-	return serveErr
+	return nil
 }

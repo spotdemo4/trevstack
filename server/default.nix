@@ -1,6 +1,5 @@
 {
   mkGoModule,
-  docs,
   lib,
   web,
 }:
@@ -10,12 +9,11 @@ mkGoModule (final: {
 
   src = ./.;
   goSum = ./go.sum;
-  vendorHash = "sha256-jUzIgtp+IN9LdeonHrMVdV11nepFk+Bf/9wbtHXwM3Y=";
+  vendorHash = "sha256-fLnTWjGri8DvfNPSUe5yVW5mV4FX7nTfSV/nJ6fwEos=";
 
   ldflags = [ "-X main.version=${final.version}" ];
 
   postConfigure = ''
-    cp -r ${docs} docs
     cp -r ${web} web
   '';
 

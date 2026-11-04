@@ -1,4 +1,4 @@
-import type { SummaryResponse } from "$connect/number/v1/metrics_pb";
+import type { SummaryResponse } from "$gen/number/v1/service.trevrpc";
 import { Card } from "$lib/card";
 import { Skeleton } from "$lib/skeleton";
 import { type Component, For, Show } from "solid-js";

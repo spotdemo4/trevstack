@@ -19,13 +19,15 @@ func TestParseConfig(t *testing.T) {
 		logLevel              string
 		port                  string
 		jwtSecret             string
-		authCookieSecure      string
-		proxyProtocol         string
+		allowedOrigins        string
+		tlsCert               string
+		tlsKey                string
 		trustedProxyCIDRs     string
 		wantLogLevel          string
 		wantPort              string
-		wantCookieSecure      bool
-		wantProxyProtocol     bool
+		wantAllowedOrigins    []string
+		wantTLSCert           string
+		wantTLSKey            string
 		wantTrustedProxyCIDRs []netip.Prefix
 	}{
 		{
@@ -43,12 +45,33 @@ func TestParseConfig(t *testing.T) {
 			wantPort:     "9090",
 		},
 		{
-			name:             "secure cookie environment",
-			jwtSecret:        testJWTSecret,
-			authCookieSecure: "true",
-			wantLogLevel:     defaultLogLevel,
-			wantPort:         defaultPort,
-			wantCookieSecure: true,
+			name:               "allowed origins environment",
+			jwtSecret:          testJWTSecret,
+			allowedOrigins:     "http://localhost:3000, HTTPS://App.Example.com",
+			wantLogLevel:       defaultLogLevel,
+			wantPort:           defaultPort,
+			wantAllowedOrigins: []string{"http://localhost:3000", "https://app.example.com"},
+		},
+		{
+			name:         "tls environment",
+			jwtSecret:    testJWTSecret,
+			tlsCert:      "cert.pem",
+			tlsKey:       "key.pem",
+			wantLogLevel: defaultLogLevel,
+			wantPort:     defaultPort,
+			wantTLSCert:  "cert.pem",
+			wantTLSKey:   "key.pem",
+		},
+		{
+			name:         "tls flags override environment",
+			args:         []string{"--tls-cert", "flag-cert.pem", "--tls-key=flag-key.pem"},
+			jwtSecret:    testJWTSecret,
+			tlsCert:      "cert.pem",
+			tlsKey:       "key.pem",
+			wantLogLevel: defaultLogLevel,
+			wantPort:     defaultPort,
+			wantTLSCert:  "flag-cert.pem",
+			wantTLSKey:   "flag-key.pem",
 		},
 		{
 			name:              "trusted proxy environment",
@@ -59,18 +82,6 @@ func TestParseConfig(t *testing.T) {
 			wantTrustedProxyCIDRs: []netip.Prefix{
 				netip.MustParsePrefix("10.0.0.0/8"),
 				netip.MustParsePrefix("2001:db8::/32"),
-			},
-		},
-		{
-			name:              "proxy protocol environment",
-			jwtSecret:         testJWTSecret,
-			proxyProtocol:     "true",
-			trustedProxyCIDRs: "10.0.0.0/8",
-			wantLogLevel:      defaultLogLevel,
-			wantPort:          defaultPort,
-			wantProxyProtocol: true,
-			wantTrustedProxyCIDRs: []netip.Prefix{
-				netip.MustParsePrefix("10.0.0.0/8"),
 			},
 		},
 		{
@@ -103,16 +114,18 @@ func TestParseConfig(t *testing.T) {
 			var output bytes.Buffer
 			cfg, err := parseConfig(test.args, func(key string) string {
 				switch key {
-				case "AUTH_COOKIE_SECURE":
-					return test.authCookieSecure
+				case "ALLOWED_ORIGINS":
+					return test.allowedOrigins
 				case "JWT_SECRET":
 					return test.jwtSecret
 				case "LOG_LEVEL":
 					return test.logLevel
 				case "PORT":
 					return test.port
-				case "PROXY_PROTOCOL":
-					return test.proxyProtocol
+				case "TLS_CERT":
+					return test.tlsCert
+				case "TLS_KEY":
+					return test.tlsKey
 				case "TRUSTED_PROXY_CIDRS":
 					return test.trustedProxyCIDRs
 				default:
@@ -128,11 +141,11 @@ func TestParseConfig(t *testing.T) {
 			if cfg.port != test.wantPort {
 				t.Errorf("port = %q, want %q", cfg.port, test.wantPort)
 			}
-			if cfg.authCookieSecure != test.wantCookieSecure {
-				t.Errorf("authCookieSecure = %t, want %t", cfg.authCookieSecure, test.wantCookieSecure)
+			if !slices.Equal(cfg.allowedOrigins, test.wantAllowedOrigins) {
+				t.Errorf("allowedOrigins = %v, want %v", cfg.allowedOrigins, test.wantAllowedOrigins)
 			}
-			if cfg.proxyProtocol != test.wantProxyProtocol {
-				t.Errorf("proxyProtocol = %t, want %t", cfg.proxyProtocol, test.wantProxyProtocol)
+			if cfg.tlsCert != test.wantTLSCert || cfg.tlsKey != test.wantTLSKey {
+				t.Errorf("TLS files = (%q, %q), want (%q, %q)", cfg.tlsCert, cfg.tlsKey, test.wantTLSCert, test.wantTLSKey)
 			}
 			if !slices.Equal(cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs) {
 				t.Errorf("trustedProxyCIDRs = %v, want %v", cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs)
@@ -171,19 +184,24 @@ func TestParseConfigRejectsMissingOrShortJWTSecret(t *testing.T) {
 	}
 }
 
-func TestParseConfigRejectsInvalidCookieSecure(t *testing.T) {
-	var output bytes.Buffer
-	_, err := parseConfig(nil, func(key string) string {
-		if key == "AUTH_COOKIE_SECURE" {
-			return "sometimes"
-		}
-		if key == "JWT_SECRET" {
-			return testJWTSecret
-		}
-		return ""
-	}, &output)
-	if err == nil || !strings.Contains(err.Error(), "invalid AUTH_COOKIE_SECURE value") {
-		t.Fatalf("parseConfig() error = %v, want invalid cookie secure error", err)
+func TestParseConfigRejectsInvalidAllowedOrigins(t *testing.T) {
+	for _, value := range []string{"localhost:3000", "http://localhost:3000/", "ftp://example.com", "https://", "http://user@example.com", ""} {
+		t.Run(value, func(t *testing.T) {
+			var output bytes.Buffer
+			_, err := parseConfig(nil, func(key string) string {
+				switch key {
+				case "ALLOWED_ORIGINS":
+					return "http://localhost:3000," + value
+				case "JWT_SECRET":
+					return testJWTSecret
+				default:
+					return ""
+				}
+			}, &output)
+			if err == nil || !strings.Contains(err.Error(), "invalid ALLOWED_ORIGINS value") {
+				t.Fatalf("parseConfig() error = %v, want invalid allowed origins error", err)
+			}
+		})
 	}
 }
 
@@ -203,32 +221,22 @@ func TestParseConfigRejectsInvalidTrustedProxyCIDRs(t *testing.T) {
 	}
 }
 
-func TestParseConfigRejectsInvalidProxyProtocol(t *testing.T) {
-	for _, test := range []struct {
-		name              string
-		proxyProtocol     string
-		trustedProxyCIDRs string
-		want              string
-	}{
-		{name: "invalid", proxyProtocol: "sometimes", trustedProxyCIDRs: "10.0.0.0/8", want: "invalid PROXY_PROTOCOL value"},
-		{name: "untrusted", proxyProtocol: "true", want: "PROXY_PROTOCOL requires TRUSTED_PROXY_CIDRS"},
-	} {
-		t.Run(test.name, func(t *testing.T) {
+func TestParseConfigRejectsPartialTLSFiles(t *testing.T) {
+	for _, args := range [][]string{{"--tls-cert", "cert.pem"}, {"--tls-key", "key.pem"}} {
+		t.Run(args[0], func(t *testing.T) {
 			var output bytes.Buffer
-			_, err := parseConfig(nil, func(key string) string {
-				switch key {
-				case "JWT_SECRET":
+			_, err := parseConfig(args, func(key string) string {
+				if key == "JWT_SECRET" {
 					return testJWTSecret
-				case "PROXY_PROTOCOL":
-					return test.proxyProtocol
-				case "TRUSTED_PROXY_CIDRS":
-					return test.trustedProxyCIDRs
-				default:
-					return ""
 				}
+				return ""
 			}, &output)
-			if err == nil || !strings.Contains(err.Error(), test.want) {
-				t.Fatalf("parseConfig() error = %v, want %q", err, test.want)
+			want := "a TLS certificate and key must be set together"
+			if err == nil || !strings.Contains(err.Error(), want) {
+				t.Fatalf("parseConfig() error = %v, want %q", err, want)
+			}
+			if !strings.Contains(output.String(), want) {
+				t.Errorf("output does not contain %q: %s", want, output.String())
 			}
 		})
 	}
@@ -243,7 +251,7 @@ func TestParseConfigHelp(t *testing.T) {
 				t.Fatalf("parseConfig() error = %v, want %v", err, flag.ErrHelp)
 			}
 
-			for _, want := range []string{"Usage: server", "--log-level", "--port", "--help", "AUTH_COOKIE_SECURE", "JWT_SECRET", "LOG_LEVEL", "PORT", "PROXY_PROTOCOL", "TRUSTED_PROXY_CIDRS", "OTEL_", supportedLogLevels, defaultLogLevel, defaultPort} {
+			for _, want := range []string{"Usage: server", "--log-level", "--port", "--tls-cert", "--tls-key", "--help", "ALLOWED_ORIGINS", "JWT_SECRET", "LOG_LEVEL", "PORT", "TLS_CERT", "TLS_KEY", "TRUSTED_PROXY_CIDRS", "OTEL_", supportedLogLevels, defaultLogLevel, defaultPort} {
 				if !strings.Contains(output.String(), want) {
 					t.Errorf("help output does not contain %q:\n%s", want, output.String())
 				}
@@ -315,12 +323,12 @@ func TestParseConfigHelpIgnoresInvalidEnvironment(t *testing.T) {
 			var output bytes.Buffer
 			_, err := parseConfig([]string{arg}, func(key string) string {
 				switch key {
-				case "AUTH_COOKIE_SECURE":
-					return "not-a-bool"
+				case "ALLOWED_ORIGINS":
+					return "not-an-origin"
 				case "JWT_SECRET":
 					return ""
-				case "PROXY_PROTOCOL":
-					return "not-a-bool"
+				case "TLS_CERT":
+					return "cert-without-key.pem"
 				case "TRUSTED_PROXY_CIDRS":
 					return "not-a-cidr"
 				default:

@@ -5,21 +5,21 @@ import (
 	"testing"
 	"time"
 
-	"connectrpc.com/connect/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	numberv1 "trev.zip/template/stack/server/connect/number/v1"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	numberv1 "trev.zip/template/stack/server/gen/number/v1"
 )
 
 func TestSummary(t *testing.T) {
 	t.Run("aggregates count, sum, average, min, max, distinct names", func(t *testing.T) {
-		client, db := newTest(t)
+		handler, db := newTest(t)
 		now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 		seed(t, db, "a", 10, now)
 		seed(t, db, "b", 20, now)
 		seed(t, db, "a", 30, now)
 		seed(t, db, "c", 40, now)
 
-		resp, err := client.Summary(context.Background(), &numberv1.SummaryRequest{})
+		resp, err := handler.Summary(context.Background(), &numberv1.SummaryRequest{})
 		if err != nil {
 			t.Fatalf("Summary: %v", err)
 		}
@@ -44,8 +44,8 @@ func TestSummary(t *testing.T) {
 	})
 
 	t.Run("empty table returns zeros", func(t *testing.T) {
-		client, _ := newTest(t)
-		resp, err := client.Summary(context.Background(), &numberv1.SummaryRequest{})
+		handler, _ := newTest(t)
+		resp, err := handler.Summary(context.Background(), &numberv1.SummaryRequest{})
 		if err != nil {
 			t.Fatalf("Summary: %v", err)
 		}
@@ -55,14 +55,14 @@ func TestSummary(t *testing.T) {
 	})
 
 	t.Run("rejects end before start (CEL)", func(t *testing.T) {
-		client, _ := newTest(t)
+		handler, _ := newTest(t)
 		earlier := timestamppb.New(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
 		later := timestamppb.New(time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC))
-		_, err := client.Summary(context.Background(), numberv1.SummaryRequest_builder{Start: later, End: earlier}.Build())
+		_, err := handler.Summary(context.Background(), numberv1.SummaryRequest_builder{Start: later, End: earlier}.Build())
 		if err == nil {
 			t.Fatal("expected validation error, got nil")
 		}
-		if got := connect.CodeOf(err); got != connect.CodeInvalidArgument {
+		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
 			t.Errorf("code = %v, want InvalidArgument", got)
 		}
 	})

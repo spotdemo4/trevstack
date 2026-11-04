@@ -109,8 +109,8 @@
       "groupName": "solidjs"
     },
     {
-      "matchPackageNames": ["@connectrpc/**", "connectrpc.com/**"],
-      "groupName": "connectrpc"
+      "matchPackageNames": ["@trevrpc/**", "trev.zip/llc/trevrpc/**", "trevrpc"],
+      "groupName": "trevrpc"
     }
   ]
 }

@@ -6,26 +6,26 @@ import (
 	_ "embed"
 	"errors"
 
-	"connectrpc.com/connect/v2"
 	"golang.org/x/crypto/bcrypt"
-	"trev.zip/template/stack/server/auth"
-	authv1 "trev.zip/template/stack/server/connect/auth/v1"
-	"trev.zip/template/stack/server/database"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	authv1 "trev.zip/template/stack/server/gen/auth/v1"
 )
 
 //go:embed select_user.sql
 var selectUserSQL string
 
-// Login verifies a user's credentials and sets their session cookie.
+// Login verifies a user's credentials and issues a session token.
 func (h *Handler) Login(
 	ctx context.Context,
 	req *authv1.LoginRequest,
 ) (*authv1.LoginResponse, error) {
-	db := database.FromContext(ctx)
+	if err := validateCredentials(req); err != nil {
+		return nil, err
+	}
 
 	var username string
 	var passwordHash string
-	err := db.QueryRowContext(ctx, selectUserSQL, normalizeUsername(req.GetUsername())).Scan(
+	err := h.db.QueryRowContext(ctx, selectUserSQL, normalizeUsername(req.GetUsername())).Scan(
 		&username,
 		&passwordHash,
 	)
@@ -34,7 +34,7 @@ func (h *Handler) Login(
 		return nil, invalidCredentialsError()
 	}
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, "could not load user")
+		return nil, trevrpc.Internal("could not load user")
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.GetPassword())); err != nil {
 		return nil, invalidCredentialsError()
@@ -42,10 +42,7 @@ func (h *Handler) Login(
 
 	token, expires, err := h.auth.Issue(username)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, "could not create session")
-	}
-	if err := auth.SetResponseCookie(ctx, h.auth.Cookie(token, expires)); err != nil {
-		return nil, connect.NewError(connect.CodeInternal, "could not set session cookie")
+		return nil, trevrpc.Internal("could not create session")
 	}
 
 	response := &authv1.LoginResponse{}
@@ -56,5 +53,5 @@ func (h *Handler) Login(
 }
 
 func invalidCredentialsError() error {
-	return connect.NewError(connect.CodeUnauthenticated, "invalid credentials")
+	return trevrpc.Unauthenticated("invalid credentials")
 }

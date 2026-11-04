@@ -1,14 +1,14 @@
-// Package log logs Connect calls.
+// Package log logs TrevRPC calls.
 package log
 
 import (
 	"context"
 	"log/slog"
 
-	"connectrpc.com/connect/v2"
+	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 )
 
-// Interceptor logs Connect calls and their errors.
+// Interceptor logs the calls that reach a handler and their errors.
 type Interceptor struct {
 	log *slog.Logger
 }
@@ -20,22 +20,18 @@ func New(log *slog.Logger) *Interceptor {
 	}
 }
 
-// WrapServer logs each call and any error it returns.
-func (i *Interceptor) WrapServer(next connect.ServerFunc) connect.ServerFunc {
-	return func(
-		ctx context.Context,
-		spec connect.Spec,
-		stream connect.ServerStream,
-	) error {
-		i.log.DebugContext(ctx, "request received", "method", spec.Procedure)
+// Intercept logs each call when it starts, and when it ends with its status.
+func (i *Interceptor) Intercept(
+	ctx context.Context,
+	info trevrpc.HandlerContext,
+) (context.Context, func(trevrpc.RPCFinished), error) {
+	i.log.DebugContext(ctx, "request received", "method", info.FullMethod)
 
-		err := next(ctx, spec, stream)
-		if err != nil {
-			i.log.ErrorContext(ctx, "request error", "error", err)
+	return ctx, func(finished trevrpc.RPCFinished) {
+		if finished.Code != trevrpc.CodeOK {
+			i.log.ErrorContext(ctx, "request error", "method", info.FullMethod, "code", finished.Code.String())
 		} else {
-			i.log.DebugContext(ctx, "request completed", "method", spec.Procedure)
+			i.log.DebugContext(ctx, "request completed", "method", info.FullMethod)
 		}
-
-		return err
-	}
+	}, nil
 }

@@ -174,7 +174,7 @@ assert_initialized() {
   assert_eq "$(git status --porcelain --untracked-files=all)" '' 'worktree status'
   assert_eq "$(jq -r .commit .template.json)" "$upstream_commit" '.template.json commit'
   # The generated code is replaced by buf generate, which the build sandbox can't run
-  assert_eq "$(git grep -n -i -e trevstack -e template/stack -e init.sh -e init.test.sh -- ':!.template.json' ':!AGENTS.md' ':!docs/openapi.yaml' || true)" '' 'template references'
+  assert_eq "$(git grep -n -i -e trevstack -e template/stack -e init.sh -e init.test.sh -- ':!.template.json' ':!AGENTS.md' || true)" '' 'template references'
   assert_contains server/go.mod "module $module/server"
   assert_contains server/default.nix "pname = \"$slug-server\";" 'version = "0.0.1";'
   assert_contains web/default.nix "pname = \"$slug-web\";" 'version = "0.0.1";'
@@ -192,7 +192,7 @@ test_application() (
   git add -A
   git commit --quiet --message 'Initial commit'
   # The build sandbox has no /usr/bin/env for the shebang
-  printf '%s\n' n https://git.example.com/octo/hello-world '' '' '' '' | bash ./init.sh 'Hello World' "$description"
+  printf '%s\n' n https://git.example.com/octo/hello-world '' '' '' | bash ./init.sh 'Hello World' "$description"
 
   assert_initialized github.com/octo/hello-world hello-world 'Says \"hi\" to ${USER} \\o/'
   assert_eq "$(git remote)" $'forgejo\norigin' remotes
@@ -205,17 +205,16 @@ test_application() (
   assert_contains client/README.md 'docker run ghcr.io/octo/hello-world/client:latest'
   assert_contains flake.nix \
     'description = "Says \"hi\" to \${USER} \\o/";' \
-    'client-lint = {' 'docs-lint = {' 'integration = {' 'python-lint = {' \
+    'client-lint = {' 'integration = {' 'python-lint = {' \
     'actions-gh = {' 'actions-fj = {' 'renovate-gh = {' 'renovate-fj = {'
   assert_contains client/Cargo.toml 'name = "hello-world-client"' 'description = "Says \"hi\" to ${USER} \\o/"'
   assert_contains client/Cargo.lock 'name = "hello-world-client"'
   assert_contains client/src/main.rs 'use hello_world_client::'
-  assert_contains docs/openapi.base.yaml 'title: Hello World API' 'description: "Says \"hi\" to ${USER} \\o/"'
   assert_contains .github/renovate.jsonc '"repositories": ["octo/hello-world"]'
   assert_contains .forgejo/renovate.jsonc \
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-world"]'
-  [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d docs && -d test ]] || fail 'application files are missing'
+  [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test ]] || fail 'application files are missing'
 )
 
 test_minimal() (
@@ -224,13 +223,13 @@ test_minimal() (
   cd "$project"
   # nix flake init leaves the template uncommitted and init.sh not executable
   chmod -x init.sh
-  printf '%s\n' y n n n n | bash init.sh 'Hello Min' 'Says hello'
+  printf '%s\n' y n n n | bash init.sh 'Hello Min' 'Says hello'
 
   assert_initialized git.example.com/octo/hello-min hello-min 'Says hello'
   assert_eq "$(git log --format=%s)" 'chore: initialize project' commits
   assert_eq "$(git remote)" origin remotes
   assert_eq "$(git remote get-url origin)" https://git.example.com/octo/hello-min.git 'origin remote'
-  assert_missing .github .zed .vscode client test pyproject.toml docs server/handlers/docs server/embed_dev.go
+  assert_missing .github .zed .vscode client test pyproject.toml
   assert_contains README.md \
     'https://git.example.com/octo/hello-min/actions?workflow=check.yaml' \
     '- [server](server/README.md)'
@@ -240,12 +239,12 @@ test_minimal() (
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-min"]'
   assert_lacks flake.nix \
-    client docs openapi cargo python ruff \
-    'client-lint = {' 'docs-lint = {' 'integration = {' 'python-lint = {' 'actions-gh = {' 'renovate-gh = {'
+    client cargo python ruff trevrpc-rust \
+    'client-lint = {' 'integration = {' 'python-lint = {' 'actions-gh = {' 'renovate-gh = {'
   assert_contains flake.nix 'actions-fj = {' 'renovate-fj = {'
-  assert_lacks .gitattributes Cargo openapi
-  assert_lacks buf.gen.yaml prost tonic openapi
-  assert_lacks server/main.go DocsFS docshandler
+  assert_lacks .gitattributes Cargo client
+  assert_lacks buf.gen.yaml prost trevrpc-rust
+  assert_lacks AGENTS.md client
 )
 
 test_rollback() (
@@ -271,7 +270,7 @@ test_rollback() (
   printf '#!%s\nexit 1\n' "$BASH" >"$tmp/failing/nix"
   chmod +x "$tmp/failing/nix"
   assert_fails '' env PATH="$tmp/failing:$PATH" \
-    bash ./init.sh Rollback Rollback < <(printf '%s\n' n https://git.example.com/octo/rollback '' '' '' '')
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' n https://git.example.com/octo/rollback '' '' '')
 
   assert_eq "$(git rev-parse HEAD)" "$head" HEAD
   assert_eq "$(git status --porcelain --untracked-files=all)" '' 'worktree status'
@@ -298,7 +297,7 @@ case \$* in
     ;;
   'run .#configure')
     base=\$(sed -n 's|^module \(.*\)/server\$|\1|p' server/go.mod)
-    grep -rlF "$template_base" server/connect | xargs sed -i "s|$template_base|\$base|g"
+    grep -rlF "$template_base" server/gen | xargs sed -i "s|$template_base|\$base|g"
     ;;
   *)
     exit 1
