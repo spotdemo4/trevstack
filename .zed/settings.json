@@ -65,6 +65,44 @@
         { "language_server": { "name": "oxfmt" } }
       ]
     },
+    "HTML": {
+      "format_on_save": "on",
+      "language_servers": ["oxfmt", "..."],
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "CSS": {
+      "format_on_save": "on",
+      "language_servers": ["tailwindcss-language-server", "tailwindcss-intellisense-css", "oxfmt"],
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "Proto": {
+      "format_on_save": "on",
+      "language_servers": ["buf"],
+      "formatter": [{ "language_server": { "name": "buf" } }]
+    },
+    "Python": {
+      "format_on_save": "on",
+      "language_servers": ["pyright", "ruff"],
+      "formatter": [
+        { "code_action": "source.organizeImports.ruff" },
+        { "code_action": "source.fixAll.ruff" },
+        { "language_server": { "name": "ruff" } }
+      ]
+    },
+    "SQL": {
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "sqlfluff",
+          "arguments": ["format", "--stdin-filename", "{buffer_path}", "-"]
+        }
+      }
+    },
+    "Nix": {
+      "format_on_save": "on",
+      "language_servers": ["nixd"],
+      "formatter": [{ "language_server": { "name": "nixd" } }]
+    },
     "JSON": {
       "format_on_save": "on",
       "language_servers": ["json-language-server", "oxfmt"],
@@ -85,46 +123,10 @@
       "language_servers": ["tombi", "oxfmt"],
       "formatter": [{ "language_server": { "name": "oxfmt" } }]
     },
-    "Nix": {
-      "format_on_save": "on",
-      "language_servers": ["nixd"],
-      "formatter": [{ "language_server": { "name": "nixd" } }]
-    },
-    "HTML": {
-      "format_on_save": "on",
-      "language_servers": ["oxfmt", "..."],
-      "formatter": [{ "language_server": { "name": "oxfmt" } }]
-    },
-    "CSS": {
-      "format_on_save": "on",
-      "language_servers": ["tailwindcss-language-server", "tailwindcss-intellisense-css", "oxfmt"],
-      "formatter": [{ "language_server": { "name": "oxfmt" } }]
-    },
     "Markdown": {
       "format_on_save": "on",
       "language_servers": ["oxfmt"],
       "formatter": [{ "language_server": { "name": "oxfmt" } }]
-    },
-    "SQL": {
-      "format_on_save": "on",
-      "formatter": {
-        "external": {
-          "command": "sqlfluff",
-          "arguments": ["format", "--stdin-filename", "{buffer_path}", "-"]
-        }
-      }
-    },
-    "Python": {
-      "format_on_save": "on",
-      "language_servers": ["pyright", "ruff"],
-      "formatter": [
-        { "code_action": "source.organizeImports.ruff" },
-        { "code_action": "source.fixAll.ruff" },
-        { "language_server": { "name": "ruff" } }
-      ]
-    },
-    "Proto": {
-      "language_servers": ["buf"]
     }
   }
 }
