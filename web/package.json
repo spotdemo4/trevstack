@@ -15,8 +15,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@solidjs/router": "^2.0.0-next.43",
-    "@solidjs/web": "^2.0.0-rc.20",
+    "@solidjs/router": "^2.0.0-next.44",
+    "@solidjs/web": "^2.0.0-rc.21",
     "@trev.zip/solid-toast": "^1.2.8",
     "@trevrpc/trevrpc-js": "^1.4.0",
     "d3-array": "^3.2.5",
@@ -27,11 +27,11 @@
     "d3-shape": "^3.2.1",
     "effect": "^4.1.2",
     "protobufjs": "^8.8.1",
-    "solid-js": "^2.0.0-rc.20",
+    "solid-js": "^2.0.0-rc.21",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
-    "@solidjs/vite-plugin": "^3.0.0-next.55",
+    "@solidjs/vite-plugin": "^3.0.0-next.56",
     "@tailwindcss/vite": "^4.3.4",
     "@types/d3": "^7.4.3",
     "@types/node": "^24.19.2",
