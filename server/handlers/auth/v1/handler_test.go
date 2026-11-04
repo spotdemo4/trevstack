@@ -9,10 +9,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	"trev.zip/template/stack/server/auth"
-	"trev.zip/template/stack/server/database"
-	authv1 "trev.zip/template/stack/server/gen/auth/v1"
-	authhandler "trev.zip/template/stack/server/handlers/auth/v1"
+	"trev.zip/template/stack/server/v2/auth"
+	"trev.zip/template/stack/server/v2/database"
+	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
+	authhandler "trev.zip/template/stack/server/v2/handlers/auth/v1"
 )
 
 const handlerTestSecret = "01234567890123456789012345678901"

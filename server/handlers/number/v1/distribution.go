@@ -4,7 +4,7 @@ import (
 	"context"
 	_ "embed"
 
-	numberv1 "trev.zip/template/stack/server/gen/number/v1"
+	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
 //go:embed distribution_bounds.sql

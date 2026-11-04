@@ -5,7 +5,7 @@ import (
 	"database/sql"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	numberv1 "trev.zip/template/stack/server/gen/number/v1"
+	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
 // Handler implements numberv1.NumberServiceServer.

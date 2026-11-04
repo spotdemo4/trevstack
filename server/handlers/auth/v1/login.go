@@ -8,7 +8,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	authv1 "trev.zip/template/stack/server/gen/auth/v1"
+	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
 )
 
 //go:embed select_user.sql

@@ -3,7 +3,7 @@ package v1
 import (
 	"regexp"
 
-	"trev.zip/template/stack/server/validation"
+	"trev.zip/template/stack/server/v2/validation"
 )
 
 var usernamePattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_-]*$`)

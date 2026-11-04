@@ -1,4 +1,4 @@
-module trev.zip/template/stack/server
+module trev.zip/template/stack/server/v2
 
 go 1.26.9
 

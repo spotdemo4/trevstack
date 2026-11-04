@@ -4,8 +4,8 @@ import (
 	"context"
 	_ "embed"
 
-	numberv1 "trev.zip/template/stack/server/gen/number/v1"
-	"trev.zip/template/stack/server/validation"
+	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
+	"trev.zip/template/stack/server/v2/validation"
 )
 
 //go:embed summary.sql

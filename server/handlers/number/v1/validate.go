@@ -2,8 +2,8 @@ package v1
 
 import (
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	numberv1 "trev.zip/template/stack/server/gen/number/v1"
-	"trev.zip/template/stack/server/validation"
+	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
+	"trev.zip/template/stack/server/v2/validation"
 )
 
 const (

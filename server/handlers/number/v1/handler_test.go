@@ -7,8 +7,8 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
-	"trev.zip/template/stack/server/database"
-	numberv1handler "trev.zip/template/stack/server/handlers/number/v1"
+	"trev.zip/template/stack/server/v2/database"
+	numberv1handler "trev.zip/template/stack/server/v2/handlers/number/v1"
 )
 
 // newTest opens an in-memory SQLite DB, runs migrations, and returns a

@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	authv1 "trev.zip/template/stack/server/gen/auth/v1"
-	numberv1 "trev.zip/template/stack/server/gen/number/v1"
+	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
+	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
 const authorizerTestSecret = managerTestSecret
