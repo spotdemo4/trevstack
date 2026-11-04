@@ -7,7 +7,11 @@
   "platform": "forgejo",
   "endpoint": "https://trev.zip/api/v1",
   "repositories": ["template/stack"],
-  "allowedCommands": ["^nix run \\.#upgrade$", "^nix run \\.#update-deps$"],
+  "allowedCommands": [
+    "^nix run \\.#update-buf-deps$",
+    "^nix run \\.#update-go-deps$",
+    "^npm audit fix --audit-level=none --prefix web$"
+  ],
 
   // repository
   "extends": ["config:recommended"],
@@ -21,7 +25,7 @@
     "schedule": ["* * * * 0"], // sunday
     "skipInstalls": false,
     "postUpgradeTasks": {
-      "commands": ["nix run .#upgrade"],
+      "commands": ["nix run .#update-buf-deps", "npm audit fix --audit-level=none --prefix web"],
       "executionMode": "branch"
     }
   },
@@ -71,7 +75,7 @@
       "postUpdateOptions": ["gomodUpdateImportPaths"],
       // gomod2nix.toml has an entry per module, so updates do not conflict
       "postUpgradeTasks": {
-        "commands": ["nix run .#update-deps"],
+        "commands": ["nix run .#update-go-deps"],
         "executionMode": "branch"
       }
     },

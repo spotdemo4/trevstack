@@ -61,7 +61,7 @@ nix build .#client
 after changing `server/go.mod`, tidy it and update `server/gomod2nix.toml`:
 
 ```sh
-nix run .#update-deps
+nix run .#update-go-deps
 ```
 
 with [go](https://go.dev/) and [gomod2nix](https://github.com/nix-community/gomod2nix):

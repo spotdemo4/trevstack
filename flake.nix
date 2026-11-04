@@ -147,17 +147,16 @@
             '';
           };
 
-          upgrade = {
+          update-buf-deps = {
             inputsFrom = [ self.devShells.${system}.default ];
             script = ''
               buf dep update
               buf generate
-              npm audit fix --audit-level=none --prefix web
               fix-hash .#checks.${system}.protobuf-lint
             '';
           };
 
-          update-deps = {
+          update-go-deps = {
             packages = with pkgs; [
               go
               gomod2nix.packages.${system}.default
