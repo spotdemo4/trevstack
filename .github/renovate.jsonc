@@ -6,7 +6,7 @@
   "requireConfig": "ignored",
   "platform": "github",
   "repositories": ["spotdemo4/trevstack"],
-  "allowedCommands": ["^nix run \\.#upgrade$", "^fix-hash \\.#packages\\.x86_64-linux\\.server$"],
+  "allowedCommands": ["^nix run \\.#upgrade$", "^nix run \\.#update-deps$"],
 
   // repository
   "extends": ["config:recommended"],
@@ -67,9 +67,10 @@
     {
       "matchManagers": ["gomod"],
       "addLabels": ["go"],
-      "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"],
+      "postUpdateOptions": ["gomodUpdateImportPaths"],
+      // gomod2nix.toml has an entry per module, so updates do not conflict
       "postUpgradeTasks": {
-        "commands": ["fix-hash .#packages.x86_64-linux.server"],
+        "commands": ["nix run .#update-deps"],
         "executionMode": "branch"
       }
     },

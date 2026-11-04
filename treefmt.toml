@@ -18,7 +18,7 @@ includes = ["*.go"]
 
 [formatter.oxfmt]
 command = "oxfmt"
-options = ["--write"]
+options = ["--write", "--no-error-on-unmatched-pattern"]
 includes = ["*.ts", "*.tsx", "*.html", "*.json", "*.jsonc", "*.yaml", "*.toml", "*.md"]
 
 [formatter.rustfmt]

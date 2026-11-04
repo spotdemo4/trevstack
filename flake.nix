@@ -24,6 +24,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.trevpkgs.follows = "trevpkgs";
     };
+    gomod2nix = {
+      url = "github:nix-community/gomod2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.inputs.systems.follows = "systems";
+    };
   };
 
   outputs =
@@ -31,6 +36,7 @@
       self,
       trevpkgs,
       trevrpc,
+      gomod2nix,
       ...
     }:
     trevpkgs.libs.mkFlake (
@@ -93,6 +99,7 @@
               treefmt
               bumper
               fix-hash
+              gomod2nix.packages.${system}.default
             ];
           };
 
@@ -114,7 +121,6 @@
               go # go get
               cargo # cargo update
               nodejs_24 # npm install
-              fix-hash # vendorHash
             ];
           };
 
@@ -148,7 +154,19 @@
               buf generate
               npm audit fix --audit-level=none --prefix web
               fix-hash .#checks.${system}.protobuf-lint
-              fix-hash .#packages.${system}.server
+            '';
+          };
+
+          update-deps = {
+            packages = with pkgs; [
+              go
+              gomod2nix.packages.${system}.default
+            ];
+            script = ''
+              go -C server mod tidy
+              # the dev build doesn't embed web, which only exists in the nix build, and its
+              # packages are a superset of the release build's, which the check phase also builds
+              GOFLAGS=-tags=dev gomod2nix generate --with-deps --dir server
             '';
           };
         };

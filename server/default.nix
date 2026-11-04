@@ -9,7 +9,7 @@ mkGoModule (final: {
 
   src = ./.;
   goSum = ./go.sum;
-  vendorHash = "sha256-fLnTWjGri8DvfNPSUe5yVW5mV4FX7nTfSV/nJ6fwEos=";
+  modules = ./gomod2nix.toml;
 
   ldflags = [ "-X main.version=${final.version}" ];
 

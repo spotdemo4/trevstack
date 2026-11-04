@@ -11,6 +11,8 @@ const CA_CERT_ENV: &str = "STACK_CA_CERT";
 const USERNAME_ENV: &str = "STACK_USERNAME";
 const PASSWORD_ENV: &str = "STACK_PASSWORD";
 
+// the doc comments are the --help text, where backticks would be shown as-is
+#[allow(clippy::doc_markdown)]
 #[derive(Debug, Parser)]
 #[command(version, about = "Send a name and number to the Number service")]
 pub struct Cli {
@@ -59,6 +61,13 @@ pub enum ConfigError {
 }
 
 impl Cli {
+    /// Builds the configuration, falling back to the environment variables
+    /// read by `get_env` for options that weren't passed.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the URL is invalid, or the username or password is
+    /// missing.
     pub fn into_config(
         self,
         get_env: impl Fn(&str) -> Option<String>,

@@ -5,6 +5,11 @@ pub mod proto;
 use cli::Config;
 use client::ClientError;
 
+/// Sends the configured name and number to the server, returning the new sum.
+///
+/// # Errors
+///
+/// Returns the errors of [`ServiceUrl::add`](client::ServiceUrl::add).
 pub async fn run(config: Config) -> Result<u64, ClientError> {
     config
         .url

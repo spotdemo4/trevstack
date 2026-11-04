@@ -7,6 +7,7 @@
 # Linguist: lock files are generated
 flake.lock linguist-generated=true
 go.sum linguist-generated=true
+gomod2nix.toml linguist-generated=true
 Cargo.lock linguist-generated=true
 package-lock.json linguist-generated=true
 

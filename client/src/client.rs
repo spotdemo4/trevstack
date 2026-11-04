@@ -41,6 +41,13 @@ pub struct ServiceUrl {
 }
 
 impl ServiceUrl {
+    /// Logs in with `credentials` and adds `number` under `name`, returning
+    /// the new sum.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the CA certificates can't be read, the connection
+    /// fails, or the server rejects either request.
     pub async fn add(
         &self,
         ca_cert: Option<&Path>,

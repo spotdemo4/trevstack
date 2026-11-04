@@ -56,6 +56,21 @@ nix build .#server
 nix build .#client
 ```
 
+### dependencies
+
+after changing `server/go.mod`, tidy it and update `server/gomod2nix.toml`:
+
+```sh
+nix run .#update-deps
+```
+
+with [go](https://go.dev/) and [gomod2nix](https://github.com/nix-community/gomod2nix):
+
+```sh
+go -C server mod tidy
+GOFLAGS=-tags=dev gomod2nix generate --with-deps --dir server
+```
+
 ### release
 
 with [bumper](https://trev.zip/llc/bumper):
