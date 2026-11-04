@@ -86,11 +86,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1793494649,
-        "narHash": "sha256-Thn0OE71NF80ZfOMGCgJvKtbCcnnz0fToT/qsvb/Gtc=",
+        "lastModified": 1793735720,
+        "narHash": "sha256-smoxPKrzAhdGuFd2LLnG4m8P6IrZuW95DVyzjnlab7w=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d357a2b54f0b6dc4aeb4e993190a52cf151b6f24",
+        "rev": "9d3b8db48266c17be0b5f9c6360c3ecfbac3d1f5",
         "type": "github"
       },
       "original": {
@@ -150,11 +150,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793549778,
-        "narHash": "sha256-jQDWHX+88GAaTVFvxpGYb1kF5gxkSjjAjsOlBR1UYaY=",
+        "lastModified": 1793727407,
+        "narHash": "sha256-M8EjSDnZEURwCLHbomv88hBEpWyiTHJBDDCmoNYcjhY=",
         "owner": "spotdemo4",
         "repo": "trevpkgs",
-        "rev": "393568e2076140cf49b3f193030ecf1a2ef41ca7",
+        "rev": "0e7c52eb7f0a70d5e2e3543e63cfe38b7b77ff4c",
         "type": "github"
       },
       "original": {
@@ -177,11 +177,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793791082,
-        "narHash": "sha256-e2QzFemsPsuHNbl01FTpNMiA5V6y8WEERIUCg8Ixxfo=",
+        "lastModified": 1793799995,
+        "narHash": "sha256-nNJ5Kg/MyltBHAHq1x8tULz8L0HvWx6qs0roKLejLWI=",
         "ref": "refs/heads/main",
-        "rev": "b89daa043f56e9313310d074abd013d95a290645",
-        "revCount": 886,
+        "rev": "8f2b6d706d6467beac72f4d2324028eea7576ac6",
+        "revCount": 887,
         "type": "git",
         "url": "https://trev.zip/llc/TrevRPC.git"
       },
