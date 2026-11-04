@@ -1,4 +1,5 @@
 {
+  lib,
   buildNpmPackage,
   importNpmLock,
   nodejs_24,
@@ -7,11 +8,19 @@ buildNpmPackage (final: {
   pname = "trevstack-web";
   version = "1.6.10";
 
-  src = ./.;
+  # the root oxlint config that ours extends lives outside this directory
+  src = lib.fileset.toSource {
+    root = ../.;
+    fileset = lib.fileset.unions [
+      ../.oxlintrc.json
+      ./.
+    ];
+  };
+  sourceRoot = "${final.src.name}/web";
   nodejs = nodejs_24;
   npmConfigHook = importNpmLock.npmConfigHook;
   npmDeps = importNpmLock {
-    npmRoot = final.src;
+    npmRoot = ./.;
   };
 
   doCheck = true;
