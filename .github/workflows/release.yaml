@@ -31,6 +31,7 @@ jobs:
         run: flake-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DELETE_OLD_RELEASE_ARTIFACTS: 2
           PACKAGES: |
             packages.x86_64-linux.server.x86_64-unknown-linux-musl
             packages.x86_64-linux.server.aarch64-unknown-linux-musl
@@ -59,7 +60,7 @@ jobs:
         run: flake-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DELETE_OLD_RELEASE_ARTIFACTS: 2
           PACKAGES: |
             packages.x86_64-linux.client.x86_64-unknown-linux-musl
             packages.x86_64-linux.client.aarch64-unknown-linux-musl
