@@ -111,6 +111,10 @@
     {
       "matchPackageNames": ["@trevrpc/**", "trev.zip/llc/trevrpc/**", "trevrpc"],
       "groupName": "trevrpc"
+    },
+    {
+      "matchPackageNames": ["d3", "d3-*", "@types/d3", "@types/d3-*"],
+      "groupName": "d3"
     }
   ]
 }
