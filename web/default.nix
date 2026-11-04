@@ -2,7 +2,7 @@
   lib,
   buildNpmPackage,
   importNpmLock,
-  nodejs_24,
+  nodejs_26,
 }:
 buildNpmPackage (final: {
   pname = "trevstack-web";
@@ -17,7 +17,7 @@ buildNpmPackage (final: {
     ];
   };
   sourceRoot = "${final.src.name}/web";
-  nodejs = nodejs_24;
+  nodejs = nodejs_26;
   npmConfigHook = importNpmLock.npmConfigHook;
   npmDeps = importNpmLock {
     npmRoot = ./.;

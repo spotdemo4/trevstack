@@ -61,7 +61,7 @@
               govulncheck
 
               # solid
-              nodejs_24
+              nodejs_26
               oxlint
 
               # rust
@@ -120,7 +120,7 @@
               renovate
               go # go get
               cargo # cargo update
-              nodejs_24 # npm install
+              nodejs_26 # npm install
             ];
           };
 
@@ -129,7 +129,7 @@
               go # for govluncheck
               govulncheck # govulncheck ./...
               cargo-audit # cargo-audit audit
-              nodejs_24 # npm audit
+              nodejs_26 # npm audit
               flake-checker # flake-checker -f
               zizmor # actions
             ];
