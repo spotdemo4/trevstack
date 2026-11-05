@@ -341,7 +341,13 @@ read_template_metadata() {
   [[ -f CONTRIBUTING.md ]] || die 'Required project documentation files are missing.'
 
   source_module=$(sed -n 's/^module[[:space:]]\+//p' server/go.mod | head -n 1 || true)
-  source_base=${source_module%/server}
+  # Go adds a /vN suffix to the module path from major version 2, which new
+  # projects drop because their versions are reset.
+  source_server_module=$source_module
+  if [[ $source_module =~ ^(.+/server)/v[0-9]+$ ]]; then
+    source_server_module=${BASH_REMATCH[1]}
+  fi
+  source_base=${source_server_module%/server}
   if [[ -z $source_base || $source_base == "$source_module" ]]; then
     source_base=${origin_host}/${origin_repo_path}
   fi
@@ -351,7 +357,7 @@ read_template_metadata() {
   [[ -n $source_slug ]] || source_slug=$(sed -n 's/^[[:space:]]*pname = "\([^"]*\)-web";.*/\1/p' web/default.nix | head -n 1 || true)
   source_description=$(sed -n 's/^  description = "\(.*\)";/\1/p' flake.nix | head -n 1 || true)
   [[ $(grep -c '^## using$' README.md) == 1 ]] || die 'README.md must contain exactly one using section.'
-  [[ -n $source_module && $source_module == */server ]] || die 'Unable to find the server module metadata.'
+  [[ -n $source_module && $source_server_module == */server ]] || die 'Unable to find the server module metadata.'
   [[ -n $source_base ]] || die 'Unable to find the source repository identity.'
   [[ -n $source_display ]] || die 'Unable to find the project display name.'
   [[ -n $source_slug ]] || die 'Unable to find the project package name.'
@@ -534,6 +540,7 @@ remove_template_files() {
 # Replaces the template's name and repository with the project's.
 rename_project() {
   local renamed_source_base
+  replace_tracked_text "$source_module" "$source_server_module"
   # Replace template names before inserting URLs that may contain those same names.
   replace_tracked_text "$source_slug" "$slug"
   replace_tracked_text "$source_display" "$title"

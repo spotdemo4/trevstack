@@ -31,7 +31,7 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: trev.zip/template/stack/server/gen
+      value: trev.zip/template/stack/server/v2/gen
   disable:
     - file_option: go_package_prefix
       module: buf.build/trevrpc/trevrpc

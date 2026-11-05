@@ -27,8 +27,8 @@ const file_auth_v1_service_proto_rawDesc = "" +
 	"\x15auth/v1/service.proto\x12\aauth.v1\x1a\x13auth/v1/login.proto\x1a\x14auth/v1/signup.proto2\x80\x01\n" +
 	"\vAuthService\x129\n" +
 	"\x06Signup\x12\x16.auth.v1.SignupRequest\x1a\x17.auth.v1.SignupResponse\x126\n" +
-	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponseB\x8b\x01\n" +
-	"\vcom.auth.v1B\fServiceProtoP\x01Z1trev.zip/template/stack/server/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
+	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponseB\x8e\x01\n" +
+	"\vcom.auth.v1B\fServiceProtoP\x01Z4trev.zip/template/stack/server/v2/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_service_proto_goTypes = []any{
 	(*SignupRequest)(nil),  // 0: auth.v1.SignupRequest

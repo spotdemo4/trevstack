@@ -400,8 +400,8 @@ const file_number_v1_list_proto_rawDesc = "" +
 	"\n" +
 	"\b_maximum\"3\n" +
 	"\fListResponse\x12#\n" +
-	"\x04item\x18\x01 \x01(\v2\x0f.number.v1.ItemR\x04itemB\x96\x01\n" +
-	"\rcom.number.v1B\tListProtoP\x01Z5trev.zip/template/stack/server/gen/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
+	"\x04item\x18\x01 \x01(\v2\x0f.number.v1.ItemR\x04itemB\x99\x01\n" +
+	"\rcom.number.v1B\tListProtoP\x01Z8trev.zip/template/stack/server/v2/gen/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 
 var file_number_v1_list_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

@@ -1211,8 +1211,8 @@ const file_number_v1_metrics_proto_rawDesc = "" +
 	"\x12TIME_INTERVAL_HOUR\x10\x01\x12\x15\n" +
 	"\x11TIME_INTERVAL_DAY\x10\x02\x12\x16\n" +
 	"\x12TIME_INTERVAL_WEEK\x10\x03\x12\x17\n" +
-	"\x13TIME_INTERVAL_MONTH\x10\x04B\x99\x01\n" +
-	"\rcom.number.v1B\fMetricsProtoP\x01Z5trev.zip/template/stack/server/gen/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
+	"\x13TIME_INTERVAL_MONTH\x10\x04B\x9c\x01\n" +
+	"\rcom.number.v1B\fMetricsProtoP\x01Z8trev.zip/template/stack/server/v2/gen/number/v1;numberv1\xa2\x02\x03NXX\xaa\x02\tNumber.V1\xca\x02\tNumber\\V1\xe2\x02\x15Number\\V1\\GPBMetadata\xea\x02\n" +
 	"Number::V1b\x06proto3"
 
 var file_number_v1_metrics_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
