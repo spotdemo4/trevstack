@@ -2,5 +2,5 @@
 version: v2
 deps:
   - name: buf.build/trevrpc/trevrpc
-    commit: 949663514aee493f95bc65e43fb79b90
+    commit: 3ef06ec25f464e1fa2ef022076220c94
     digest: b5:cbc6d0f2f50abded65ecdcdec2bf5f327ed2237fc3c88a45f3284d4976b776fa3526a643fd0ebb0448cd2296a6c8f84ab8bf3dd74d90eb8599d905d897efbd34
