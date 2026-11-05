@@ -26,7 +26,8 @@ RPCs go to the server's `/trevrpc` endpoint over one channel the app shares, whi
 when the app loads: WebTransport, or QMux over WebSocket when WebTransport is unavailable or UDP is
 blocked. Calls made while it connects wait for it.
 Clients for each service are in [`lib/rpc`](lib/rpc) and wrap calls in
-[Effect](https://effect.website/) for typed errors and cancellation. Forms check requests with
+[Effect](https://effect.website/) with [`@trevrpc/effect`](https://www.npmjs.com/package/@trevrpc/effect)
+for typed errors and cancellation. Forms check requests with
 [Effect schemas](https://effect.website/docs/schema/introduction/) that follow the server's rules.
 
 When the server uses its development certificate, the channel reads the certificate's hashes from
