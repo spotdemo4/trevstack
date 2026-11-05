@@ -8,7 +8,7 @@ require (
 	github.com/Marlliton/slogpretty v0.1.3
 	github.com/XSAM/otelsql v0.44.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/mattn/go-sqlite3 v1.14.52
+	github.com/mattn/go-sqlite3 v1.14.53
 	go.opentelemetry.io/contrib/bridges/otelslog v0.21.0
 	go.opentelemetry.io/contrib/exporters/autoexport v0.72.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.72.0

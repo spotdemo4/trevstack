@@ -219,8 +219,8 @@ cachePackages = [
     hash = 'sha256-34ifN/7hw8GbGDEAjOxfYK2ndxkzeQJf4tS/ynJzhXM='
 
   [mod.'github.com/mattn/go-sqlite3']
-    version = 'v1.14.52'
-    hash = 'sha256-lF26iqt4jRHwOXU6FH00qKlTo/t7Q0nvmUqf+QvHo4U='
+    version = 'v1.14.53'
+    hash = 'sha256-wvKCPdhD9f3MHIcJ9zvO6Bs9Rc3BG+aNcC70SjFLBI4='
 
   [mod.'github.com/munnerz/goautoneg']
     version = 'v0.0.0-20191010083416-a7dc8b61c822'
