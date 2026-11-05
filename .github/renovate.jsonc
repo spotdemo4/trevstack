@@ -6,11 +6,7 @@
   "requireConfig": "ignored",
   "platform": "github",
   "repositories": ["spotdemo4/trevstack"],
-  "allowedCommands": [
-    "^nix run \\.#update-buf-deps$",
-    "^nix run \\.#update-go-deps$",
-    "^npm audit fix --audit-level=none --prefix web$"
-  ],
+  "allowedCommands": ["^nix run \\.#update-buf-deps$", "^nix run \\.#update-go-deps$"],
 
   // repository
   "extends": ["config:recommended"],
@@ -18,13 +14,21 @@
   "nix": {
     "enabled": true
   },
+  // fix PRs for vulnerable direct dependencies (and indirect go modules), from osv.dev.
+  // transitive npm vulnerabilities are reported by the vulnerable workflow
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
+  "vulnerabilityAlerts": {
+    "addLabels": ["security"],
+    "automerge": true
+  },
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
     "schedule": ["* * * * 0"], // sunday
     "skipInstalls": false,
     "postUpgradeTasks": {
-      "commands": ["nix run .#update-buf-deps", "npm audit fix --audit-level=none --prefix web"],
+      "commands": ["nix run .#update-buf-deps"],
       "executionMode": "branch"
     }
   },
