@@ -19,7 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     trevrpc = {
-      url = "git+https://trev.zip/llc/TrevRPC.git";
+      url = "git+https://trev.zip/llc/TrevRPC.git?ref=refs/tags/v1.4.0";
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.trevpkgs.follows = "trevpkgs";

@@ -73,10 +73,11 @@
       "matchManagers": ["gomod"],
       "addLabels": ["go"],
       "postUpdateOptions": ["gomodUpdateImportPaths"],
-      // gomod2nix.toml has an entry per module, so updates do not conflict
+      // gomod2nix.toml has an entry per module, so updates do not conflict.
+      // "update" runs it for every go update, even in groups led by another manager
       "postUpgradeTasks": {
         "commands": ["nix run .#update-go-deps"],
-        "executionMode": "branch"
+        "executionMode": "update"
       }
     },
     {
@@ -115,8 +116,24 @@
       "groupName": "solidjs"
     },
     {
-      "matchPackageNames": ["@trevrpc/**", "trev.zip/llc/trevrpc/**", "trevrpc"],
+      // the flake input (packageName is its git url) keeps the protoc plugins in step with the libraries
+      "matchPackageNames": [
+        "@trevrpc/**",
+        "trev.zip/llc/trevrpc/**",
+        "trevrpc",
+        "https://trev.zip/llc/trevrpc{,.git}"
+      ],
       "groupName": "trevrpc"
+    },
+    {
+      // new protoc plugins can change the generated code. a rule of its own, because
+      // postUpgradeTasks from a later rule replace the gomod ones rather than merging
+      "matchManagers": ["nix"],
+      "matchDepNames": ["trevrpc"],
+      "postUpgradeTasks": {
+        "commands": ["nix run .#update-buf-deps"],
+        "executionMode": "update"
+      }
     },
     {
       "matchPackageNames": ["d3", "d3-*", "@types/d3", "@types/d3-*"],
