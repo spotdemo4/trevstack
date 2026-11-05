@@ -68,7 +68,7 @@ with [go](https://go.dev/) and [gomod2nix](https://github.com/nix-community/gomo
 
 ```sh
 go -C server mod tidy
-GOFLAGS=-tags=dev gomod2nix generate --with-deps --dir server
+gomod2nix generate --with-deps --dir server
 ```
 
 ### release

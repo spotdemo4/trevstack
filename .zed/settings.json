@@ -8,11 +8,6 @@
     "TOML": [".sqlfluff"]
   },
   "lsp": {
-    "gopls": {
-      "initialization_options": {
-        "buildFlags": ["-tags=dev"]
-      }
-    },
     "oxlint": {
       "initialization_options": {
         "settings": {

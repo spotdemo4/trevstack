@@ -28,7 +28,7 @@ Options:
 Environment:
   ALLOWED_ORIGINS     Comma-separated origins of other sites whose pages may
                       call the API, such as https://app.example.com. Builds
-                      with the dev tag also admit http://localhost:3000.
+                      without the prod tag also admit http://localhost:3000.
   JWT_SECRET          JWT signing secret (required, at least 32 bytes).
   LOG_LEVEL           Fallback log level (default: %s).
   PORT                Fallback port (default: %s).

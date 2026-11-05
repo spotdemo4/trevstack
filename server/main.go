@@ -45,7 +45,7 @@ const (
 var (
 	WebFS fs.FS
 
-	// devOrigins are admitted along with ALLOWED_ORIGINS. Builds with the dev
+	// devOrigins are admitted along with ALLOWED_ORIGINS. Builds without the prod
 	// tag admit the web app's development server.
 	devOrigins []string
 

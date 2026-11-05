@@ -62,7 +62,7 @@ Browsers connect to `/trevrpc` over WebTransport on the UDP port, or QMux over W
 port, and load the web app over HTTP/3, HTTP/2, or HTTP/1.1. Every connection uses TLS.
 
 Browser sessions are admitted from pages served by the server itself and from `ALLOWED_ORIGINS`,
-and in builds with the `dev` tag from the web development server at `http://localhost:3000`; the
+and in builds without the `prod` tag from the web development server at `http://localhost:3000`; the
 `Origin` check keeps other sites from calling the API with a visitor's browser.
 
 ### services
@@ -183,21 +183,22 @@ or, inside the development shell, from this directory:
 
 ```sh
 JWT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-  go run -tags dev .
+  go run .
 ```
 
-The `dev` build tag enables human-readable logs and does not embed the web app, which is served by
-its own development server instead; see [web development](../web/README.md#development). The tag
-also admits that server's pages, at `http://localhost:3000` and `http://127.0.0.1:3000`, so they can
-call the API.
+This development build writes human-readable logs and does not embed the web app, which is served by
+its own development server instead; see [web development](../web/README.md#development). It also
+admits that server's pages, at `http://localhost:3000` and `http://127.0.0.1:3000`, so they can call
+the API.
 
-Without the tag, the build embeds the web app from `web/`, which the nix build copies from its package.
+The `prod` build tag, which the nix build uses, writes JSON logs, admits no development origins, and
+embeds the web app from `web/`, which the nix build copies from its package.
 
 Test both variants with:
 
 ```sh
 go test ./...
-go test -tags dev ./...
+go test -tags prod ./...
 ```
 
 ### layout

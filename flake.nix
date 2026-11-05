@@ -163,9 +163,8 @@
             ];
             script = ''
               go -C server mod tidy
-              # the dev build doesn't embed web, which only exists in the nix build, and its
-              # packages are a superset of the release build's, which the check phase also builds
-              GOFLAGS=-tags=dev gomod2nix generate --with-deps --dir server
+              # the default (development) build's packages are a superset of the prod build's
+              gomod2nix generate --with-deps --dir server
             '';
           };
         };
@@ -242,7 +241,7 @@
             packages = with pkgs; [ golangci-lint ];
             script = ''
               golangci-lint run ./...
-              golangci-lint run --build-tags=dev ./...
+              golangci-lint run --build-tags=prod ./...
             '';
           };
 

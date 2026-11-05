@@ -11,6 +11,7 @@ mkGoModule (final: {
   goSum = ./go.sum;
   modules = ./gomod2nix.toml;
 
+  tags = [ "prod" ];
   ldflags = [ "-X main.version=${final.version}" ];
 
   postConfigure = ''
@@ -21,7 +22,7 @@ mkGoModule (final: {
   checkPhase = ''
     runHook preCheck
     go test ./...
-    go test -tags=dev ./...
+    go test -tags=prod ./...
     runHook postCheck
   '';
 
