@@ -1,4 +1,4 @@
-import type { ListRequestInit } from "$gen/number/v1/service.trevrpc";
+import type { ListRequestSchema } from "$gen/number/v1/list_pb";
 import { Drawer } from "$lib/drawer";
 import { createStreamingStore } from "$lib/effect";
 import { DateField } from "$lib/form/date-field";
@@ -12,11 +12,16 @@ import { createMediaQuery } from "$lib/media-query";
 import { NumberClient } from "$lib/rpc";
 import { Splitter } from "$lib/splitter";
 import { Table, type TableScrollMode } from "$lib/table";
-import { timestampDate } from "@trevrpc/trevrpc-js";
+import type { MessageInitShape } from "@bufbuild/protobuf";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { Schema } from "effect";
 import { type Component, createSignal, Show } from "solid-js";
 
-const Timestamp = Schema.Struct({ seconds: Schema.BigInt, nanos: Schema.Number });
+const Timestamp = Schema.Struct({
+  $typeName: Schema.Literal("google.protobuf.Timestamp"),
+  seconds: Schema.BigInt,
+  nanos: Schema.Number,
+});
 const Bound = Schema.Number.check(
   Schema.isInt({ message: "Must be a whole number" }),
   Schema.isBetween(
@@ -58,7 +63,7 @@ const listSchema = Schema.toStandardSchemaV1(
 export const Numbers: Component = () => {
   const isDesktop = createMediaQuery("(min-width: 900px)");
 
-  const [request, setRequest] = createSignal<ListRequestInit>({});
+  const [request, setRequest] = createSignal<MessageInitShape<typeof ListRequestSchema>>({});
   const stream = createStreamingStore(
     request,
     (req) => NumberClient.list(req),

@@ -1,4 +1,4 @@
-import type { LoginResponse } from "$gen/auth/v1/service.trevrpc";
+import type { LoginResponse } from "$gen/auth/v1/login_pb";
 import { createSignal } from "solid-js";
 
 export type SessionClaims = {

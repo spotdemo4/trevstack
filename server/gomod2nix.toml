@@ -387,9 +387,9 @@ cachePackages = [
     hash = 'sha256-MKd0AdkWEe2A79mGPzOY5I76nMqTsGJKQNPJOKyOwkQ='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go']
-    version = 'v1.5.0'
-    hash = 'sha256-tKw75WrrY8nHU/tvObRZeue5CmaSxO0fZFwA4sNsH38='
+    version = 'v1.6.0'
+    hash = 'sha256-zL9kskMuSMYDfRwvqGTY7tYXb4RxnbbDvdCKf7Hyh3o='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc']
-    version = 'v1.5.0'
-    hash = 'sha256-7IL8cSEZXgEfZ/2YaqU9vCveek8F2z/jKg74k7QFINY='
+    version = 'v1.6.0'
+    hash = 'sha256-LU+Nd71WyfxlubY6/f3ZCAbh6cJ8X/dkEkPV3X0Zi5Y='

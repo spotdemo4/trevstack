@@ -1,5 +1,5 @@
 import { DateInput } from "$lib/input";
-import { type Timestamp, timestampDate, timestampFromDate } from "@trevrpc/trevrpc-js";
+import { type Timestamp, timestampDate, timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { For, Show, type Component, createUniqueId } from "solid-js";
 
 import type { FieldController } from "./hook";

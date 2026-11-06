@@ -1,4 +1,4 @@
-import type { LoginResponse } from "$gen/auth/v1/service.trevrpc";
+import type { LoginResponse } from "$gen/auth/v1/login_pb";
 import { getReturnPath, session } from "$lib/auth";
 import { Card } from "$lib/card";
 import { errorDescription } from "$lib/effect";

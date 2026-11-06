@@ -1,4 +1,4 @@
-import type { TimeSeriesPoint } from "$gen/number/v1/service.trevrpc";
+import type { TimeSeriesPoint } from "$gen/number/v1/metrics_pb";
 import {
   ChartFrame,
   getChartInnerSize,
@@ -7,7 +7,7 @@ import {
   styles,
   useChartSize,
 } from "$lib/chart";
-import { timestampDate } from "@trevrpc/trevrpc-js";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { extent, max } from "d3-array";
 import { axisBottom, axisLeft } from "d3-axis";
 import { format } from "d3-format";

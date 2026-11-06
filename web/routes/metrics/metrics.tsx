@@ -1,4 +1,4 @@
-import { TimeInterval } from "$gen/number/v1/service.trevrpc";
+import { TimeInterval } from "$gen/number/v1/metrics_pb";
 import { Card } from "$lib/card";
 import { createEffectResource, toastFailure } from "$lib/effect";
 import { DateField } from "$lib/form/date-field";
@@ -8,7 +8,7 @@ import { ResetButton } from "$lib/form/reset-button";
 import { SubmitButton } from "$lib/form/submit-button";
 import { NumberInput, SelectInput } from "$lib/input";
 import { NumberClient } from "$lib/rpc";
-import type { Timestamp } from "@trevrpc/trevrpc-js";
+import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { Errored, isPending, Loading, type Component, createMemo, createSignal } from "solid-js";
 
 import { DistributionChart } from "./distribution-chart";

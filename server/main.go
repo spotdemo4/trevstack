@@ -162,8 +162,8 @@ func run(cfg config, log *slog.Logger) error {
 	// Native QUIC, HTTP/3 and WebTransport share a UDP socket, and their TCP
 	// fallbacks and HTTP/1.1 and HTTP/2 share a TCP socket, on the same port.
 	listener, err := trevrpc.Listen(":"+cfg.port, server, trevrpc.ListenOptions{
-		TLSConfig:      tlsConfig,
-		TrustedProxies: cfg.trustedProxyCIDRs,
+		TLSConfig:         tlsConfig,
+		TrustedTCPProxies: cfg.trustedProxyCIDRs,
 	})
 	if err != nil {
 		return fmt.Errorf("could not listen: %w", err)

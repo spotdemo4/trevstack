@@ -14,8 +14,10 @@ plugins:
     opt:
       - paths=source_relative
 
-  - local: protoc-gen-trevrpc-js
+  - local: protoc-gen-es
     out: web/gen
+    opt:
+      - target=ts
 
   - local: protoc-gen-prost
     out: client/src/gen

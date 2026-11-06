@@ -1,3 +1,5 @@
+import { LoginResponseSchema } from "$gen/auth/v1/login_pb";
+import { create } from "@bufbuild/protobuf";
 import { type CallFinish, Code, type InterceptedCall, TrevRpcError } from "@trevrpc/trevrpc-js";
 import { afterEach, beforeEach, expect, type MockInstance, test, vi } from "vitest";
 
@@ -8,7 +10,11 @@ let redirects: string[];
 let replace: MockInstance<Location["replace"]>;
 
 function loginMetadata(sub = "trev") {
-  return { jwt: `${sub}.token`, sub, exp: BigInt(Math.floor(Date.now() / 1000) + 3600) };
+  return create(LoginResponseSchema, {
+    jwt: `${sub}.token`,
+    sub,
+    exp: BigInt(Math.floor(Date.now() / 1000) + 3600),
+  });
 }
 
 beforeEach(() => {

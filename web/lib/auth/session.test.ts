@@ -1,4 +1,5 @@
-import type { LoginResponse } from "$gen/auth/v1/service.trevrpc";
+import { type LoginResponse, LoginResponseSchema } from "$gen/auth/v1/login_pb";
+import { create } from "@bufbuild/protobuf";
 import { createRoot, onCleanup, untrack } from "solid-js";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 
@@ -44,7 +45,11 @@ function validClaims(overrides: Partial<SessionClaims> = {}): SessionClaims {
 }
 
 function loginMetadata(claims: SessionClaims = validClaims()) {
-  return { jwt: claims.token, sub: claims.sub, exp: BigInt(claims.exp) };
+  return create(LoginResponseSchema, {
+    jwt: claims.token,
+    sub: claims.sub,
+    exp: BigInt(claims.exp),
+  });
 }
 
 // Moves the clock without firing timers, like a suspended tab being resumed.
@@ -111,11 +116,13 @@ test("rejects invalid login metadata before changing the session", () => {
   session.setFromLogin(loginMetadata(claims));
   const before = stored();
   expect(() =>
-    session.setFromLogin({
-      jwt,
-      sub: "replacement",
-      exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n,
-    }),
+    session.setFromLogin(
+      create(LoginResponseSchema, {
+        jwt,
+        sub: "replacement",
+        exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n,
+      }),
+    ),
   ).toThrow(/expiration/);
   expect(session.claims()).toEqual(claims);
   expect(stored()).toBe(before);

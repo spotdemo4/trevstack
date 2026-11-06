@@ -19,7 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     trevrpc = {
-      url = "git+https://trev.zip/llc/TrevRPC.git?ref=refs/tags/v1.5.0";
+      url = "git+https://trev.zip/llc/TrevRPC.git?ref=refs/tags/v1.6.0";
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.trevpkgs.follows = "trevpkgs";
@@ -74,9 +74,9 @@
               # proto
               buf
               protoc-gen-go
+              protoc-gen-es
               protoc-gen-prost
               trevrpc.packages.${system}.trevrpc-go
-              trevrpc.packages.${system}.trevrpc-js
               trevrpc.packages.${system}.trevrpc-rust
 
               # python
