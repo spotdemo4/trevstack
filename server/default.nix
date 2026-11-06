@@ -5,7 +5,7 @@
 }:
 mkGoModule (final: {
   pname = "trevstack-server";
-  version = "2.0.1";
+  version = "2.0.2";
 
   src = ./.;
   goSum = ./go.sum;
