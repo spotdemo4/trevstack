@@ -709,11 +709,11 @@ write_readme() {
   encoded_lock_url="${raw_url}/flake.lock"
   encoded_lock_url=${encoded_lock_url//:/%253A}
   encoded_lock_url=${encoded_lock_url//\//%252F}
-  nixpkgs_badge="[![nixpkgs](https://img.shields.io/endpoint?url=https%3A%2F%2Fnix-shield.trev.zip%2Fbadge%3Furl%3D${encoded_lock_url}%26input%3Dnixpkgs&logoColor=%23bac2de&labelColor=%23313244&color=%235277C3)](https://nixos.org/)"
-  go_badge="[![go](<https://img.shields.io/badge/dynamic/regex?url=${raw_url}/server/go.mod&search=toolchain%20go(.*)&replace=%241&style=flat&logo=go&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%2300ADD8>)](https://go.dev/doc/devel/release)"
-  node_badge="[![node](https://img.shields.io/badge/dynamic/json?url=${raw_url}/web/package.json&query=%24.engines.node&logo=nodedotjs&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23339933)](https://nodejs.org/en/about/previous-releases)"
-  solid_badge="[![solidjs](https://img.shields.io/badge/dynamic/json?url=${raw_url}/web/package.json&query=%24.dependencies.solid-js&logo=solid&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%232C4F7C)](https://www.solidjs.com/)"
-  rust_badge="[![rust](https://img.shields.io/badge/dynamic/toml?url=${raw_url}/client/Cargo.toml&query=%24.package.rust-version&logo=rust&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23D34516)](https://releases.rs/)"
+  nixpkgs_badge="[![nixpkgs](https://shields.trev.zip/endpoint?url=https%3A%2F%2Fnix-shield.trev.zip%2Fbadge%3Furl%3D${encoded_lock_url}%26input%3Dnixpkgs&logoColor=%23bac2de&labelColor=%23313244&color=%235277C3)](https://nixos.org/)"
+  go_badge="[![go](<https://shields.trev.zip/badge/dynamic/regex?url=${raw_url}/server/go.mod&search=toolchain%20go(.*)&replace=%241&style=flat&logo=go&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%2300ADD8>)](https://go.dev/doc/devel/release)"
+  node_badge="[![node](https://shields.trev.zip/badge/dynamic/json?url=${raw_url}/web/package.json&query=%24.engines.node&logo=nodedotjs&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23339933)](https://nodejs.org/en/about/previous-releases)"
+  solid_badge="[![solidjs](https://shields.trev.zip/badge/dynamic/json?url=${raw_url}/web/package.json&query=%24.dependencies.solid-js&logo=solid&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%232C4F7C)](https://www.solidjs.com/)"
+  rust_badge="[![rust](https://shields.trev.zip/badge/dynamic/toml?url=${raw_url}/client/Cargo.toml&query=%24.package.rust-version&logo=rust&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23D34516)](https://releases.rs/)"
 
   readme_sections=$(sed -n '/^## using$/,$p' README.md)
   readme_badges=("$check_badge" "$vulnerable_badge" "$nixpkgs_badge" "$go_badge" "$node_badge" "$solid_badge")
