@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"flag"
 	"fmt"
 	"io"
@@ -29,7 +30,9 @@ Environment:
   ALLOWED_ORIGINS     Comma-separated origins of other sites whose pages may
                       call the API, such as https://app.example.com. Builds
                       without the prod tag also admit http://localhost:3000.
-  JWT_SECRET          JWT signing secret (required, at least 32 bytes).
+  JWT_SECRET          JWT signing secret, at least 32 bytes. Without it, a
+                      secret is generated at startup, so sessions end when
+                      the server restarts.
   LOG_LEVEL           Fallback log level (default: %s).
   PORT                Fallback port (default: %s).
   TLS_CERT            Fallback certificate file.
@@ -46,13 +49,14 @@ Precedence: --log-level, LOG_LEVEL, then info.
 `
 
 type config struct {
-	allowedOrigins    []string
-	jwtSecret         string
-	logLevel          string
-	port              string
-	tlsCert           string
-	tlsKey            string
-	trustedProxyCIDRs []netip.Prefix
+	allowedOrigins     []string
+	jwtSecret          string
+	jwtSecretGenerated bool
+	logLevel           string
+	port               string
+	tlsCert            string
+	tlsKey             string
+	trustedProxyCIDRs  []netip.Prefix
 }
 
 func parseConfig(args []string, getenv func(string) string, output io.Writer) (config, error) {
@@ -107,17 +111,22 @@ func parseConfig(args []string, getenv func(string) string, output io.Writer) (c
 		return config{}, err
 	}
 	if cfg.jwtSecret == "" {
-		err := fmt.Errorf("JWT_SECRET is required")
-		_, _ = fmt.Fprintln(output, err)
-		return config{}, err
-	}
-	if len(cfg.jwtSecret) < minJWTSecretLength {
+		cfg.jwtSecret = generateJWTSecret()
+		cfg.jwtSecretGenerated = true
+	} else if len(cfg.jwtSecret) < minJWTSecretLength {
 		err := fmt.Errorf("JWT_SECRET must be at least %d bytes", minJWTSecretLength)
 		_, _ = fmt.Fprintln(output, err)
 		return config{}, err
 	}
 
 	return cfg, nil
+}
+
+// generateJWTSecret returns minJWTSecretLength random bytes.
+func generateJWTSecret() string {
+	secret := make([]byte, minJWTSecretLength)
+	_, _ = rand.Read(secret) // never returns an error
+	return string(secret)
 }
 
 func parseTrustedProxyCIDRs(value string) ([]netip.Prefix, error) {

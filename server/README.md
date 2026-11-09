@@ -43,7 +43,7 @@ Flags take precedence over environment variables.
 
 | variable              | description                                                                                                |
 | --------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`          | **required**, secret used to sign session tokens; at least 32 bytes                                        |
+| `JWT_SECRET`          | secret used to sign session tokens; at least 32 bytes, see [authentication](#authentication)               |
 | `ALLOWED_ORIGINS`     | comma-separated origins of other sites whose pages may call the API (e.g. `https://app.example.com`)       |
 | `TRUSTED_PROXY_CIDRS` | comma-separated CIDRs of TCP proxies that send PROXY protocol headers, see [rate limiting](#rate-limiting) |
 | `OTEL_*`              | OpenTelemetry SDK settings, see [opentelemetry](#opentelemetry)                                            |
@@ -93,7 +93,9 @@ the web app reads, but not for anything else, so it is for development only.
 metadata on every call that requires a session. Calls with a missing, malformed, or expired token fail
 with `unauthenticated`, and calls with a token that fails verification with `permission_denied`.
 Sessions last 24 hours, and signing out only forgets the token on the client, so rotating
-`JWT_SECRET` is the only way to end every session.
+`JWT_SECRET` is the only way to end every session. Without `JWT_SECRET`, the server generates a secret
+at startup and logs a warning, so every session ends when it restarts and replicas reject each
+other's tokens; set it in production.
 
 ### rate limiting
 

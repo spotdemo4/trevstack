@@ -150,37 +150,50 @@ func TestParseConfig(t *testing.T) {
 			if !slices.Equal(cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs) {
 				t.Errorf("trustedProxyCIDRs = %v, want %v", cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs)
 			}
-			if cfg.jwtSecret != testJWTSecret {
-				t.Errorf("jwtSecret = %q, want test secret", cfg.jwtSecret)
+			if cfg.jwtSecret != testJWTSecret || cfg.jwtSecretGenerated {
+				t.Errorf("jwtSecret = (%q, generated %t), want test secret", cfg.jwtSecret, cfg.jwtSecretGenerated)
 			}
 		})
 	}
 }
 
-func TestParseConfigRejectsMissingOrShortJWTSecret(t *testing.T) {
-	for _, test := range []struct {
-		name   string
-		secret string
-		want   string
-	}{
-		{name: "missing", want: "JWT_SECRET is required"},
-		{name: "short", secret: "too-short", want: "JWT_SECRET must be at least 32 bytes"},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			var output bytes.Buffer
-			_, err := parseConfig(nil, func(key string) string {
-				if key == "JWT_SECRET" {
-					return test.secret
-				}
-				return ""
-			}, &output)
-			if err == nil || !strings.Contains(err.Error(), test.want) {
-				t.Fatalf("parseConfig() error = %v, want %q", err, test.want)
-			}
-			if !strings.Contains(output.String(), test.want) {
-				t.Errorf("output does not contain %q: %s", test.want, output.String())
-			}
-		})
+func TestParseConfigGeneratesMissingJWTSecret(t *testing.T) {
+	parse := func() config {
+		t.Helper()
+		var output bytes.Buffer
+		cfg, err := parseConfig(nil, func(string) string { return "" }, &output)
+		if err != nil {
+			t.Fatalf("parseConfig() error = %v", err)
+		}
+		return cfg
+	}
+
+	first, second := parse(), parse()
+	if !first.jwtSecretGenerated {
+		t.Error("jwtSecretGenerated = false, want true")
+	}
+	if len(first.jwtSecret) != minJWTSecretLength {
+		t.Errorf("len(jwtSecret) = %d, want %d", len(first.jwtSecret), minJWTSecretLength)
+	}
+	if first.jwtSecret == second.jwtSecret {
+		t.Error("generated the same JWT secret twice")
+	}
+}
+
+func TestParseConfigRejectsShortJWTSecret(t *testing.T) {
+	var output bytes.Buffer
+	_, err := parseConfig(nil, func(key string) string {
+		if key == "JWT_SECRET" {
+			return "too-short"
+		}
+		return ""
+	}, &output)
+	want := "JWT_SECRET must be at least 32 bytes"
+	if err == nil || !strings.Contains(err.Error(), want) {
+		t.Fatalf("parseConfig() error = %v, want %q", err, want)
+	}
+	if !strings.Contains(output.String(), want) {
+		t.Errorf("output does not contain %q: %s", want, output.String())
 	}
 }
 
