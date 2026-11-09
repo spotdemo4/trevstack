@@ -136,9 +136,10 @@ configuration directory to persist data in a container.
 ## logging
 
 Logs are written to stdout as JSON. Builds with the `dev` tag print human-readable logs instead.
-RPCs that pass authorization are logged at `debug`, and those that then fail at `error`. TrevRPC's
-server diagnostics are logged as `trevrpc: <phase>` at the level TrevRPC recommends, such as `debug`
-for failed TLS handshakes and `error` for handler panics.
+RPCs that pass authorization are logged at `debug`, and those that then fail at `error`, with their
+`method` and, when the transport knows it, the `client_ip` described in
+[rate limiting](#rate-limiting). TrevRPC's server diagnostics are logged as `trevrpc: <phase>` at the
+level TrevRPC recommends, such as `debug` for failed TLS handshakes and `error` for handler panics.
 
 When the logs signal is enabled, the same records are also exported over OpenTelemetry.
 
