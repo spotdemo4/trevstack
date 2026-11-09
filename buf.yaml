@@ -4,7 +4,7 @@ version: v2
 modules:
   - path: proto
 deps:
-  - buf.build/trevrpc/trevrpc
+  - buf.build/trevrpc/trevrpc:v1.7.0
 lint:
   use:
     - STANDARD

@@ -1538,9 +1538,9 @@ dependencies = [
 
 [[package]]
 name = "trevrpc"
-version = "1.6.0"
+version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9871a7e479a3716ba39f9cbc5fa659a80f96760206fbb9b1602641f0e10ca093"
+checksum = "debc069555e116d5e7672718401d716cea2a4e3605088e4a1f4eb3425485c7fc"
 dependencies = [
  "async-trait",
  "bytes",

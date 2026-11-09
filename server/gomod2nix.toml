@@ -215,8 +215,8 @@ cachePackages = [
     hash = 'sha256-dfOnXLoo7B7ZcaMghr9oZ6TJz6Fj4R6ttwun+c2KeeE='
 
   [mod.'github.com/klauspost/compress']
-    version = 'v1.20.3'
-    hash = 'sha256-34ifN/7hw8GbGDEAjOxfYK2ndxkzeQJf4tS/ynJzhXM='
+    version = 'v1.20.4'
+    hash = 'sha256-KYm39Vrg8cR7bU0aqK2KTdth8UhHnH17Vcl9FB0Hf/E='
 
   [mod.'github.com/mattn/go-sqlite3']
     version = 'v1.14.53'
@@ -387,9 +387,9 @@ cachePackages = [
     hash = 'sha256-MKd0AdkWEe2A79mGPzOY5I76nMqTsGJKQNPJOKyOwkQ='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go']
-    version = 'v1.6.0'
-    hash = 'sha256-zL9kskMuSMYDfRwvqGTY7tYXb4RxnbbDvdCKf7Hyh3o='
+    version = 'v1.7.0'
+    hash = 'sha256-hQ8TkgKz7XTbwCkqkrHULboWnFhQsdXesAYVJBFabIA='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc']
-    version = 'v1.6.0'
-    hash = 'sha256-LU+Nd71WyfxlubY6/f3ZCAbh6cJ8X/dkEkPV3X0Zi5Y='
+    version = 'v1.7.0'
+    hash = 'sha256-E8Dpxz/kIBp2VybilBCdscHELy91QsDpgbQ+5vVhgW4='

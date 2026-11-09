@@ -54,6 +54,17 @@
       "packageNameTemplate": "nix_unstable/rustc",
       "datasourceTemplate": "repology",
       "versioningTemplate": "semver"
+    },
+    {
+      // pin the trevrpc buf module to the release label of the flake input, which
+      // shares its datasource, so both always land in the same trevrpc update
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)buf\\.yaml$/"],
+      "matchStrings": ["buf\\.build/trevrpc/trevrpc:(?<currentValue>v\\S+)"],
+      "depNameTemplate": "buf.build/trevrpc/trevrpc",
+      "packageNameTemplate": "https://trev.zip/llc/TrevRPC.git",
+      "datasourceTemplate": "git-tags",
+      "versioningTemplate": "semver"
     }
   ],
   "packageRules": [
@@ -121,20 +132,24 @@
       "groupName": "solidjs"
     },
     {
-      // the flake input (packageName is its git url) keeps the protoc plugins in step with the libraries
+      // the flake input and buf module (packageName is their git url) keep the protoc
+      // plugins and protos in step with the libraries
       "matchPackageNames": [
         "@trevrpc/**",
         "trev.zip/llc/trevrpc/**",
         "trevrpc",
         "https://trev.zip/llc/trevrpc{,.git}"
       ],
-      "groupName": "trevrpc"
+      "groupName": "trevrpc",
+      // require the release in every manifest, not only the lock files
+      "rangeStrategy": "bump"
     },
     {
-      // new protoc plugins can change the generated code. a rule of its own, because
-      // postUpgradeTasks from a later rule replace the gomod ones rather than merging
-      "matchManagers": ["nix"],
-      "matchDepNames": ["trevrpc"],
+      // new protoc plugins can change the generated code, and a new buf module label
+      // needs buf.lock updated. a rule of its own, because postUpgradeTasks from a later
+      // rule replace the gomod ones rather than merging
+      "matchManagers": ["nix", "custom.regex"],
+      "matchDepNames": ["trevrpc", "buf.build/trevrpc/trevrpc"],
       "postUpgradeTasks": {
         "commands": ["nix run .#update-buf-deps"],
         "executionMode": "update"
