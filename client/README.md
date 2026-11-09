@@ -62,7 +62,8 @@ To trust a server's development certificate, save it with
 
 The account must already exist; create one from the web app or with `AuthService.Signup`. The
 client calls `AuthService.Login` and sends the returned token as `authorization: Bearer <token>`
-metadata on `Add`. The token is not stored between runs.
+metadata on `Add`, then calls `AuthService.Logout` to end the session, since the token is not stored
+between runs.
 
 ### exit status
 

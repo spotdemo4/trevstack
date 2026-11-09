@@ -13,15 +13,21 @@ pub struct LoginRequest {
 /// Session token and metadata returned after successful authentication.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct LoginResponse {
-    /// Signed session token, sent as `authorization: Bearer <jwt>` metadata on authenticated calls.
+    /// Opaque session token, sent as `authorization: Bearer <token>` metadata on authenticated calls.
     #[prost(string, tag="1")]
-    pub jwt: ::prost::alloc::string::String,
+    pub token: ::prost::alloc::string::String,
     /// The canonical username used as the session token's subject.
     #[prost(string, tag="2")]
     pub sub: ::prost::alloc::string::String,
     /// The session token's expiration as Unix seconds.
     #[prost(int64, tag="3")]
     pub exp: i64,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct LogoutRequest {
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct LogoutResponse {
 }
 /// Credentials for a new account.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]

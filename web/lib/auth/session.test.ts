@@ -39,14 +39,14 @@ function validClaims(overrides: Partial<SessionClaims> = {}): SessionClaims {
   return {
     sub: "user-1",
     exp: nowInSeconds() + 60,
-    token: "header.payload.signature",
+    token: "session-token",
     ...overrides,
   };
 }
 
 function loginMetadata(claims: SessionClaims = validClaims()) {
   return create(LoginResponseSchema, {
-    jwt: claims.token,
+    token: claims.token,
     sub: claims.sub,
     exp: BigInt(claims.exp),
   });
@@ -88,23 +88,23 @@ test("accepts explicit login metadata, persists only the exact allowlist, and ig
 test("rejects invalid login metadata before changing the session", () => {
   cleanup = session.initialize();
   const now = Date.now();
-  const jwt = "header.payload.signature";
+  const token = "session-token";
   const invalidMetadata: unknown[] = [
     null,
     undefined,
     [],
-    { jwt, exp: BigInt(now / 1000 + 60) },
-    { jwt, sub: "user-1" },
-    { jwt, sub: "user-1", exp: "future" },
-    { jwt, sub: "user-1", exp: now / 1000 + 60 },
-    { jwt, sub: "user-1", exp: BigInt(now / 1000) },
-    { jwt, sub: "user-1", exp: BigInt(now / 1000 - 1) },
-    { jwt, sub: "", exp: BigInt(nowInSeconds() + 1) },
-    { jwt, sub: "user-1", exp: 0n },
-    { jwt, sub: "user-1", exp: -1n },
-    { jwt, sub: "user-1", exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n },
+    { token, exp: BigInt(now / 1000 + 60) },
+    { token, sub: "user-1" },
+    { token, sub: "user-1", exp: "future" },
+    { token, sub: "user-1", exp: now / 1000 + 60 },
+    { token, sub: "user-1", exp: BigInt(now / 1000) },
+    { token, sub: "user-1", exp: BigInt(now / 1000 - 1) },
+    { token, sub: "", exp: BigInt(nowInSeconds() + 1) },
+    { token, sub: "user-1", exp: 0n },
+    { token, sub: "user-1", exp: -1n },
+    { token, sub: "user-1", exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n },
     { sub: "user-1", exp: BigInt(nowInSeconds() + 60) },
-    { jwt: "", sub: "user-1", exp: BigInt(nowInSeconds() + 60) },
+    { token: "", sub: "user-1", exp: BigInt(nowInSeconds() + 60) },
   ];
 
   for (const metadata of invalidMetadata) {
@@ -118,7 +118,7 @@ test("rejects invalid login metadata before changing the session", () => {
   expect(() =>
     session.setFromLogin(
       create(LoginResponseSchema, {
-        jwt,
+        token,
         sub: "replacement",
         exp: BigInt(Number.MAX_SAFE_INTEGER) + 1n,
       }),

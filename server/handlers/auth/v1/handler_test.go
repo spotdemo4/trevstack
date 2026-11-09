@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"strings"
 	"testing"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
@@ -14,8 +15,6 @@ import (
 	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
 	authhandler "trev.zip/template/stack/server/v2/handlers/auth/v1"
 )
-
-const handlerTestSecret = "01234567890123456789012345678901"
 
 func newAuthTest(t *testing.T) (*authhandler.Handler, *sql.DB, *auth.Manager) {
 	t.Helper()
@@ -30,7 +29,7 @@ func newAuthTest(t *testing.T) (*authhandler.Handler, *sql.DB, *auth.Manager) {
 		t.Fatalf("migrate: %v", err)
 	}
 
-	manager := auth.NewManager(handlerTestSecret)
+	manager := auth.NewManager(db)
 	return authhandler.New(db, manager), db, manager
 }
 
@@ -127,11 +126,12 @@ func TestCredentialsValidation(t *testing.T) {
 	}
 }
 
-func TestLoginIssuesJWT(t *testing.T) {
+func TestLoginIssuesSession(t *testing.T) {
 	handler, db, manager := newAuthTest(t)
 	password := "correct horse battery staple"
 	seedUser(t, db, "alice", password)
 
+	before := time.Now()
 	response, err := handler.Login(context.Background(), authv1.LoginRequest_builder{
 		Username: new("ALICE"),
 		Password: new(password),
@@ -139,18 +139,26 @@ func TestLoginIssuesJWT(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Login() error = %v", err)
 	}
-	if response.GetJwt() == "" {
-		t.Fatal("Login() returned empty JWT")
-	}
-	claims, err := manager.Parse(response.GetJwt())
+	username, err := manager.Verify(t.Context(), response.GetToken())
 	if err != nil {
-		t.Fatalf("parse returned JWT: %v", err)
+		t.Fatalf("Verify(returned token) error = %v", err)
 	}
-	if claims.Subject != "alice" || response.GetSub() != "alice" {
-		t.Errorf("subject = (%q, %q), want normalized alice", claims.Subject, response.GetSub())
+	if username != "alice" || response.GetSub() != "alice" {
+		t.Errorf("username = (%q, %q), want normalized alice", username, response.GetSub())
 	}
-	if response.GetExp() != claims.ExpiresAt.Unix() {
-		t.Errorf("response Exp = %d, want token expiration %d", response.GetExp(), claims.ExpiresAt.Unix())
+	expires := time.Unix(response.GetExp(), 0)
+	if earliest := before.Add(24 * time.Hour).Add(-time.Second); expires.Before(earliest) || expires.After(time.Now().Add(24*time.Hour)) {
+		t.Errorf("Exp = %v, want 24 hours after sign-in", expires)
+	}
+}
+
+func TestLogoutWithoutTokenSucceeds(t *testing.T) {
+	handler, _, _ := newAuthTest(t)
+
+	// Outside a TrevRPC call the context carries no metadata, so there is no
+	// token. The integration tests end a session through a real call.
+	if _, err := handler.Logout(context.Background(), &authv1.LogoutRequest{}); err != nil {
+		t.Errorf("Logout() error = %v, want nil", err)
 	}
 }
 

@@ -11,7 +11,6 @@ cachePackages = [
   'github.com/go-logr/logr',
   'github.com/go-logr/logr/funcr',
   'github.com/go-logr/stdr',
-  'github.com/golang-jwt/jwt/v5',
   'github.com/google/uuid',
   'github.com/grpc-ecosystem/grpc-gateway/v2/runtime',
   'github.com/grpc-ecosystem/grpc-gateway/v2/utilities',
@@ -201,10 +200,6 @@ cachePackages = [
   [mod.'github.com/go-logr/stdr']
     version = 'v1.2.2'
     hash = 'sha256-rRweAP7XIb4egtT1f2gkz4sYOu7LDHmcJ5iNsJUd0sE='
-
-  [mod.'github.com/golang-jwt/jwt/v5']
-    version = 'v5.3.1'
-    hash = 'sha256-h7AszH+3YWL3IV0+miY9vbtU0gM/2RpuASSGAYAgWcA='
 
   [mod.'github.com/google/uuid']
     version = 'v1.6.0'

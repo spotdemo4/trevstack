@@ -11,6 +11,7 @@ import (
 const (
 	AuthService_Signup_FullMethodName = "/auth.v1.AuthService/Signup"
 	AuthService_Login_FullMethodName  = "/auth.v1.AuthService/Login"
+	AuthService_Logout_FullMethodName = "/auth.v1.AuthService/Logout"
 )
 
 // AuthServiceServer handles the AuthService service.
@@ -19,6 +20,8 @@ type AuthServiceServer interface {
 	Signup(context.Context, *SignupRequest) (*SignupResponse, error)
 	// Login handles the Login RPC.
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	// Logout handles the Logout RPC.
+	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 }
 
 // AuthServiceClient calls the AuthService service.
@@ -59,8 +62,14 @@ func (c *AuthServiceClient) Login(ctx context.Context, request *LoginRequest, op
 	return trevrpc_go.Unary[*LoginRequest, *LoginResponse](ctx, c.transport, AuthService_Login_FullMethodName, request, func() *LoginResponse { return &LoginResponse{} }, c.mergedCallOptions(options)...)
 }
 
+// Logout calls the Logout RPC.
+func (c *AuthServiceClient) Logout(ctx context.Context, request *LogoutRequest, options ...trevrpc_go.CallOption) (*LogoutResponse, error) {
+	return trevrpc_go.Unary[*LogoutRequest, *LogoutResponse](ctx, c.transport, AuthService_Logout_FullMethodName, request, func() *LogoutResponse { return &LogoutResponse{} }, c.mergedCallOptions(options)...)
+}
+
 // RegisterAuthServiceServer registers handlers for the AuthService service.
 func RegisterAuthServiceServer(server *trevrpc_go.Server, implementation AuthServiceServer) {
 	trevrpc_go.RegisterUnary[*SignupRequest, *SignupResponse](server, AuthService_Signup_FullMethodName, func() *SignupRequest { return &SignupRequest{} }, implementation.Signup)
 	trevrpc_go.RegisterUnary[*LoginRequest, *LoginResponse](server, AuthService_Login_FullMethodName, func() *LoginRequest { return &LoginRequest{} }, implementation.Login)
+	trevrpc_go.RegisterUnary[*LogoutRequest, *LogoutResponse](server, AuthService_Logout_FullMethodName, func() *LogoutRequest { return &LogoutRequest{} }, implementation.Logout)
 }

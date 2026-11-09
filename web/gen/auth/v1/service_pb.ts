@@ -6,6 +6,8 @@ import type { GenFile, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { LoginRequestSchema, LoginResponseSchema } from "./login_pb";
 import { file_auth_v1_login } from "./login_pb";
+import type { LogoutRequestSchema, LogoutResponseSchema } from "./logout_pb";
+import { file_auth_v1_logout } from "./logout_pb";
 import type { SignupRequestSchema, SignupResponseSchema } from "./signup_pb";
 import { file_auth_v1_signup } from "./signup_pb";
 
@@ -13,10 +15,10 @@ import { file_auth_v1_signup } from "./signup_pb";
  * Describes the file auth/v1/service.proto.
  */
 export const file_auth_v1_service: GenFile = /*@__PURE__*/
-  fileDesc("ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEygAEKC0F1dGhTZXJ2aWNlEjkKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2USNgoFTG9naW4SFS5hdXRoLnYxLkxvZ2luUmVxdWVzdBoWLmF1dGgudjEuTG9naW5SZXNwb25zZUKOAQoLY29tLmF1dGgudjFCDFNlcnZpY2VQcm90b1ABWjR0cmV2LnppcC90ZW1wbGF0ZS9zdGFjay9zZXJ2ZXIvdjIvZ2VuL2F1dGgvdjE7YXV0aHYxogIDQVhYqgIHQXV0aC5WMcoCB0F1dGhcVjHiAhNBdXRoXFYxXEdQQk1ldGFkYXRh6gIIQXV0aDo6VjFiBnByb3RvMw", [file_auth_v1_login, file_auth_v1_signup]);
+  fileDesc("ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEyuwEKC0F1dGhTZXJ2aWNlEjkKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2USNgoFTG9naW4SFS5hdXRoLnYxLkxvZ2luUmVxdWVzdBoWLmF1dGgudjEuTG9naW5SZXNwb25zZRI5CgZMb2dvdXQSFi5hdXRoLnYxLkxvZ291dFJlcXVlc3QaFy5hdXRoLnYxLkxvZ291dFJlc3BvbnNlQo4BCgtjb20uYXV0aC52MUIMU2VydmljZVByb3RvUAFaNHRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci92Mi9nZW4vYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z", [file_auth_v1_login, file_auth_v1_logout, file_auth_v1_signup]);
 
 /**
- * Account registration and session tokens. These operations do not require an existing session.
+ * Account registration and sessions. These operations do not require an existing session.
  *
  * @generated from service auth.v1.AuthService
  */
@@ -41,6 +43,17 @@ export const AuthService: GenService<{
     methodKind: "unary";
     input: typeof LoginRequestSchema;
     output: typeof LoginResponseSchema;
+  },
+  /**
+   * Ends the session whose token the call carries as `authorization: Bearer <token>` metadata.
+   * Succeeds without a token, or with one that names no session, so signing out twice is harmless.
+   *
+   * @generated from rpc auth.v1.AuthService.Logout
+   */
+  logout: {
+    methodKind: "unary";
+    input: typeof LogoutRequestSchema;
+    output: typeof LogoutResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_auth_v1_service, 0);

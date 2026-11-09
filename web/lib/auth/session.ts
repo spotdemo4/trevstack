@@ -142,7 +142,7 @@ function claimsFromLogin(response: LoginResponse): SessionClaims {
     throw new Error("Session metadata expiration is invalid");
   }
 
-  const claims = validateClaims({ sub: value.sub, exp: Number(value.exp), token: value.jwt });
+  const claims = validateClaims({ sub: value.sub, exp: Number(value.exp), token: value.token });
   if (!claims) throw new Error("Session metadata is invalid");
   return claims;
 }

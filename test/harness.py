@@ -21,7 +21,6 @@ from pathlib import Path
 
 from playwright.sync_api import Browser, Page, Playwright, sync_playwright
 
-JWT_SECRET = "integration-test-secret-that-is-long-enough"
 PASSWORD = "example-password"
 # A bcrypt hash of PASSWORD, so users can be created without the API.
 PASSWORD_HASH = "$2y$10$L3wFWn4QMErfVV9g.bhqbu1NmubtoyVhDiK2mySGQaft2RSooXRQS"
@@ -89,7 +88,6 @@ class Server:
                 "PATH": os.environ.get("PATH", ""),
                 "HOME": str(home),
                 "XDG_CONFIG_HOME": str(home / ".config"),
-                "JWT_SECRET": JWT_SECRET,
             },
         )
 
@@ -139,6 +137,11 @@ class Server:
     def numbers(self) -> list[tuple[str, int]]:
         with contextlib.closing(sqlite3.connect(self.database)) as db:
             return db.execute("SELECT name, number FROM numbers ORDER BY id").fetchall()
+
+    def sessions(self) -> int:
+        """Return how many sessions the server keeps, expired or not."""
+        with contextlib.closing(sqlite3.connect(self.database)) as db:
+            return db.execute("SELECT count(*) FROM sessions").fetchone()[0]
 
 
 class IntegrationTestCase(unittest.TestCase):

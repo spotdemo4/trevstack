@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file auth/v1/login.proto.
  */
 export const file_auth_v1_login: GenFile = /*@__PURE__*/
-  fileDesc("ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIlYKDExvZ2luUmVxdWVzdBIVCgh1c2VybmFtZRgBIAEoCUgAiAEBEhUKCHBhc3N3b3JkGAIgASgJSAGIAQFCCwoJX3VzZXJuYW1lQgsKCV9wYXNzd29yZCI2Cg1Mb2dpblJlc3BvbnNlEgsKA2p3dBgBIAEoCRILCgNzdWIYAiABKAkSCwoDZXhwGAMgASgDQowBCgtjb20uYXV0aC52MUIKTG9naW5Qcm90b1ABWjR0cmV2LnppcC90ZW1wbGF0ZS9zdGFjay9zZXJ2ZXIvdjIvZ2VuL2F1dGgvdjE7YXV0aHYxogIDQVhYqgIHQXV0aC5WMcoCB0F1dGhcVjHiAhNBdXRoXFYxXEdQQk1ldGFkYXRh6gIIQXV0aDo6VjFiBnByb3RvMw");
+  fileDesc("ChNhdXRoL3YxL2xvZ2luLnByb3RvEgdhdXRoLnYxIlYKDExvZ2luUmVxdWVzdBIVCgh1c2VybmFtZRgBIAEoCUgAiAEBEhUKCHBhc3N3b3JkGAIgASgJSAGIAQFCCwoJX3VzZXJuYW1lQgsKCV9wYXNzd29yZCI4Cg1Mb2dpblJlc3BvbnNlEg0KBXRva2VuGAEgASgJEgsKA3N1YhgCIAEoCRILCgNleHAYAyABKANCjAEKC2NvbS5hdXRoLnYxQgpMb2dpblByb3RvUAFaNHRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci92Mi9nZW4vYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z");
 
 /**
  * Credentials for an existing account.
@@ -47,11 +47,11 @@ export const LoginRequestSchema: GenMessage<LoginRequest> = /*@__PURE__*/
  */
 export type LoginResponse = Message<"auth.v1.LoginResponse"> & {
   /**
-   * Signed session token, sent as `authorization: Bearer <jwt>` metadata on authenticated calls.
+   * Opaque session token, sent as `authorization: Bearer <token>` metadata on authenticated calls.
    *
-   * @generated from field: string jwt = 1;
+   * @generated from field: string token = 1;
    */
-  jwt: string;
+  token: string;
 
   /**
    * The canonical username used as the session token's subject.

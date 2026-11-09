@@ -9,7 +9,7 @@ use trevrpc::{
 use url::Url;
 
 use crate::proto::{
-    auth::v1::{AuthServiceClient, LoginRequest},
+    auth::v1::{AuthServiceClient, LoginRequest, LogoutRequest},
     number::v1::{AddRequest, NumberServiceClient},
 };
 
@@ -41,8 +41,8 @@ pub struct ServiceUrl {
 }
 
 impl ServiceUrl {
-    /// Logs in with `credentials` and adds `number` under `name`, returning
-    /// the new sum.
+    /// Logs in with `credentials`, adds `number` under `name`, and logs out,
+    /// returning the new sum.
     ///
     /// # Errors
     ///
@@ -84,7 +84,8 @@ fn read_certificates(path: &Path) -> Result<Vec<CertificateDer<'static>>, Client
     Ok(certs)
 }
 
-/// Logs in to obtain a session token, then sends it as a bearer token on `Add`.
+/// Logs in to obtain a session token, sends it as a bearer token on `Add`,
+/// then ends the session, since the token is not kept.
 async fn authenticated_add<T>(
     transport: &T,
     credentials: Credentials,
@@ -102,21 +103,31 @@ where
         .timeout(RPC_TIMEOUT)
         .await
         .map_err(|error| ClientError::Login(error.into_status()))?;
-    if session.jwt.is_empty() {
+    if session.token.is_empty() {
         return Err(ClientError::InvalidSession);
     }
+    let authorization = format!("Bearer {}", session.token);
 
-    let response = NumberServiceClient::new(transport.clone())
+    let result = NumberServiceClient::new(transport.clone())
         .add(&AddRequest {
             name: Some(name),
             number: Some(number),
         })
         .timeout(RPC_TIMEOUT)
-        .metadata(AUTHORIZATION_METADATA, format!("Bearer {}", session.jwt))
+        .metadata(AUTHORIZATION_METADATA, authorization.clone())
         .await
-        .map_err(|error| ClientError::Add(error.into_status()))?;
+        .map(|response| response.sum)
+        .map_err(|error| ClientError::Add(error.into_status()));
 
-    Ok(response.sum)
+    // Without this the session would stay valid until it expires. A failure
+    // only leaves it to expire, so it does not change the result.
+    let _ = AuthServiceClient::new(transport.clone())
+        .logout(&LogoutRequest {})
+        .timeout(RPC_TIMEOUT)
+        .metadata(AUTHORIZATION_METADATA, authorization)
+        .await;
+
+    result
 }
 
 impl FromStr for ServiceUrl {
@@ -204,7 +215,10 @@ mod tests {
     use trevrpc::{Code, ResponseEnvelope, Status, client::RpcTransport, wire::RpcRequest};
 
     use super::{ClientError, Credentials, ServiceUrl, authenticated_add};
-    use crate::proto::{auth::v1::LoginResponse, number::v1::AddResponse};
+    use crate::proto::{
+        auth::v1::{LoginResponse, LogoutResponse},
+        number::v1::AddResponse,
+    };
 
     type SeenRequests = Arc<Mutex<Vec<(String, Option<String>)>>>;
 
@@ -264,16 +278,35 @@ mod tests {
         assert!("localhost:8080".parse::<ServiceUrl>().is_err());
     }
 
+    fn login() -> Vec<u8> {
+        LoginResponse {
+            token: "token".to_owned(),
+            sub: "bob".to_owned(),
+            exp: 1_893_456_000,
+        }
+        .encode_to_vec()
+    }
+
+    fn authenticated_calls() -> [(String, Option<String>); 3] {
+        [
+            ("/auth.v1.AuthService/Login".to_owned(), None),
+            (
+                "/number.v1.NumberService/Add".to_owned(),
+                Some("Bearer token".to_owned()),
+            ),
+            (
+                "/auth.v1.AuthService/Logout".to_owned(),
+                Some("Bearer token".to_owned()),
+            ),
+        ]
+    }
+
     #[tokio::test]
-    async fn logs_in_before_adding_with_bearer_token() {
+    async fn adds_with_bearer_token_between_login_and_logout() {
         let transport = mock_transport(|method| match method {
-            "/auth.v1.AuthService/Login" => Ok(LoginResponse {
-                jwt: "token".to_owned(),
-                sub: "bob".to_owned(),
-                exp: 1_893_456_000,
-            }
-            .encode_to_vec()),
+            "/auth.v1.AuthService/Login" => Ok(login()),
             "/number.v1.NumberService/Add" => Ok(AddResponse { sum: 42 }.encode_to_vec()),
+            "/auth.v1.AuthService/Logout" => Ok(LogoutResponse {}.encode_to_vec()),
             _ => Err(Status::unimplemented("unknown method")),
         });
 
@@ -282,16 +315,41 @@ mod tests {
             .unwrap();
 
         assert_eq!(sum, 42);
-        assert_eq!(
-            *transport.seen.lock().unwrap(),
-            [
-                ("/auth.v1.AuthService/Login".to_owned(), None),
-                (
-                    "/number.v1.NumberService/Add".to_owned(),
-                    Some("Bearer token".to_owned())
-                ),
-            ]
+        assert_eq!(*transport.seen.lock().unwrap(), authenticated_calls());
+    }
+
+    #[tokio::test]
+    async fn logs_out_when_add_fails() {
+        let transport = mock_transport(|method| match method {
+            "/auth.v1.AuthService/Login" => Ok(login()),
+            "/auth.v1.AuthService/Logout" => Ok(LogoutResponse {}.encode_to_vec()),
+            _ => Err(Status::invalid_argument("number out of range")),
+        });
+
+        let error = authenticated_add(&transport, credentials(), "alice".to_owned(), 7)
+            .await
+            .unwrap_err();
+
+        assert!(
+            matches!(error, ClientError::Add(status) if status.code() == Code::InvalidArgument)
         );
+        assert_eq!(*transport.seen.lock().unwrap(), authenticated_calls());
+    }
+
+    #[tokio::test]
+    async fn ignores_logout_failures() {
+        let transport = mock_transport(|method| match method {
+            "/auth.v1.AuthService/Login" => Ok(login()),
+            "/number.v1.NumberService/Add" => Ok(AddResponse { sum: 42 }.encode_to_vec()),
+            _ => Err(Status::unavailable("server went away")),
+        });
+
+        let sum = authenticated_add(&transport, credentials(), "alice".to_owned(), 7)
+            .await
+            .unwrap();
+
+        assert_eq!(sum, 42);
+        assert_eq!(*transport.seen.lock().unwrap(), authenticated_calls());
     }
 
     #[tokio::test]

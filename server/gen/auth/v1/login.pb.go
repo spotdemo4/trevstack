@@ -136,12 +136,12 @@ func (b0 LoginRequest_builder) Build() *LoginRequest {
 
 // Session token and metadata returned after successful authentication.
 type LoginResponse struct {
-	state          protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Jwt string                 `protobuf:"bytes,1,opt,name=jwt,proto3"`
-	xxx_hidden_Sub string                 `protobuf:"bytes,2,opt,name=sub,proto3"`
-	xxx_hidden_Exp int64                  `protobuf:"varint,3,opt,name=exp,proto3"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Token string                 `protobuf:"bytes,1,opt,name=token,proto3"`
+	xxx_hidden_Sub   string                 `protobuf:"bytes,2,opt,name=sub,proto3"`
+	xxx_hidden_Exp   int64                  `protobuf:"varint,3,opt,name=exp,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *LoginResponse) Reset() {
@@ -169,9 +169,9 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *LoginResponse) GetJwt() string {
+func (x *LoginResponse) GetToken() string {
 	if x != nil {
-		return x.xxx_hidden_Jwt
+		return x.xxx_hidden_Token
 	}
 	return ""
 }
@@ -190,8 +190,8 @@ func (x *LoginResponse) GetExp() int64 {
 	return 0
 }
 
-func (x *LoginResponse) SetJwt(v string) {
-	x.xxx_hidden_Jwt = v
+func (x *LoginResponse) SetToken(v string) {
+	x.xxx_hidden_Token = v
 }
 
 func (x *LoginResponse) SetSub(v string) {
@@ -205,8 +205,8 @@ func (x *LoginResponse) SetExp(v int64) {
 type LoginResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	// Signed session token, sent as `authorization: Bearer <jwt>` metadata on authenticated calls.
-	Jwt string
+	// Opaque session token, sent as `authorization: Bearer <token>` metadata on authenticated calls.
+	Token string
 	// The canonical username used as the session token's subject.
 	Sub string
 	// The session token's expiration as Unix seconds.
@@ -217,7 +217,7 @@ func (b0 LoginResponse_builder) Build() *LoginResponse {
 	m0 := &LoginResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Jwt = b.Jwt
+	x.xxx_hidden_Token = b.Token
 	x.xxx_hidden_Sub = b.Sub
 	x.xxx_hidden_Exp = b.Exp
 	return m0
@@ -232,9 +232,9 @@ const file_auth_v1_login_proto_rawDesc = "" +
 	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12\x1f\n" +
 	"\bpassword\x18\x02 \x01(\tH\x01R\bpassword\x88\x01\x01B\v\n" +
 	"\t_usernameB\v\n" +
-	"\t_password\"E\n" +
-	"\rLoginResponse\x12\x10\n" +
-	"\x03jwt\x18\x01 \x01(\tR\x03jwt\x12\x10\n" +
+	"\t_password\"I\n" +
+	"\rLoginResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +
 	"\x03sub\x18\x02 \x01(\tR\x03sub\x12\x10\n" +
 	"\x03exp\x18\x03 \x01(\x03R\x03expB\x8c\x01\n" +
 	"\vcom.auth.v1B\n" +

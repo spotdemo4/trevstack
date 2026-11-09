@@ -3,20 +3,14 @@ package auth
 import (
 	"context"
 	"testing"
-	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
 	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
-const authorizerTestSecret = managerTestSecret
-
-func authorize(t *testing.T, method string, metadata trevrpc.Metadata) error {
-	t.Helper()
-	authorizer := NewAuthorizer(NewManager(authorizerTestSecret))
-	return authorizer.Authorize(context.Background(), trevrpc.HandlerContext{
+func authorize(manager *Manager, method string, metadata trevrpc.Metadata) error {
+	return NewAuthorizer(manager).Authorize(context.Background(), trevrpc.HandlerContext{
 		FullMethod: method,
 		Metadata:   metadata,
 	})
@@ -36,6 +30,7 @@ func TestIsPublicAuthMethod(t *testing.T) {
 		want   bool
 	}{
 		{method: authv1.AuthService_Login_FullMethodName, want: true},
+		{method: authv1.AuthService_Logout_FullMethodName, want: true},
 		{method: authv1.AuthService_Signup_FullMethodName, want: true},
 		{method: numberv1.NumberService_Add_FullMethodName, want: false},
 		{method: "/auth.v1.AuthService/Unknown", want: false},
@@ -47,73 +42,82 @@ func TestIsPublicAuthMethod(t *testing.T) {
 }
 
 func TestAuthorizerAllowsPublicMethodsWithoutToken(t *testing.T) {
-	for _, method := range []string{authv1.AuthService_Login_FullMethodName, authv1.AuthService_Signup_FullMethodName} {
-		if err := authorize(t, method, nil); err != nil {
+	manager, _, _ := newTestManager(t)
+	for _, method := range []string{
+		authv1.AuthService_Login_FullMethodName,
+		authv1.AuthService_Logout_FullMethodName,
+		authv1.AuthService_Signup_FullMethodName,
+	} {
+		if err := authorize(manager, method, nil); err != nil {
 			t.Errorf("Authorize(%s) error = %v, want nil", method, err)
 		}
 	}
 }
 
 func TestAuthorizerAcceptsValidToken(t *testing.T) {
-	token, _, err := NewManager(authorizerTestSecret).Issue("alice")
-	if err != nil {
-		t.Fatalf("Issue() error = %v", err)
-	}
+	manager, db, _ := newTestManager(t)
+	token, _ := issue(t, manager, db, "alice")
 	for _, metadata := range []trevrpc.Metadata{
 		bearer(token),
 		{"authorization": []byte("bearer " + token)},
 	} {
-		if err := authorize(t, numberv1.NumberService_Add_FullMethodName, metadata); err != nil {
+		if err := authorize(manager, numberv1.NumberService_Add_FullMethodName, metadata); err != nil {
 			t.Errorf("Authorize(%q) error = %v, want nil", metadata["authorization"], err)
 		}
 	}
 }
 
 func TestAuthorizerRequiresToken(t *testing.T) {
-	err := authorize(t, numberv1.NumberService_List_FullMethodName, nil)
+	manager, _, _ := newTestManager(t)
+	err := authorize(manager, numberv1.NumberService_List_FullMethodName, nil)
 	if got := codeOf(err); got != trevrpc.CodeUnauthenticated {
 		t.Errorf("code = %v, want Unauthenticated (error %v)", got, err)
 	}
 }
 
 func TestAuthorizerRejectsMalformedMetadata(t *testing.T) {
-	token, _, err := NewManager(authorizerTestSecret).Issue("alice")
-	if err != nil {
-		t.Fatalf("Issue() error = %v", err)
-	}
+	manager, db, _ := newTestManager(t)
+	token, _ := issue(t, manager, db, "alice")
 	for _, value := range []string{"", "Bearer", "Bearer ", "Basic " + token, token, "Bearer " + token + " extra"} {
-		err := authorize(t, numberv1.NumberService_Add_FullMethodName, trevrpc.Metadata{"authorization": []byte(value)})
+		err := authorize(manager, numberv1.NumberService_Add_FullMethodName, trevrpc.Metadata{"authorization": []byte(value)})
 		if got := codeOf(err); got != trevrpc.CodeUnauthenticated {
 			t.Errorf("Authorize(%q) code = %v, want Unauthenticated (error %v)", value, got, err)
 		}
 	}
 }
 
-func TestAuthorizerExpiredTokens(t *testing.T) {
-	now := time.Now().UTC()
-	claims := Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   "42",
-			IssuedAt:  jwt.NewNumericDate(now.Add(-2 * time.Hour)),
-			ExpiresAt: jwt.NewNumericDate(now.Add(-time.Hour)),
-			Issuer:    "stack/session/v2",
-		},
+func TestAuthorizerRejectsEndedSessions(t *testing.T) {
+	manager, db, now := newTestManager(t)
+	expired, expires := issue(t, manager, db, "alice")
+	*now = expires
+	revoked, _ := issue(t, manager, db, "alice")
+	if err := manager.Revoke(t.Context(), revoked); err != nil {
+		t.Fatalf("Revoke() error = %v", err)
 	}
 
-	for _, test := range []struct {
-		name     string
-		token    string
-		wantCode trevrpc.Code
-	}{
-		{name: "valid signature but expired", token: signClaims(t, claims, authorizerTestSecret), wantCode: trevrpc.CodeUnauthenticated},
-		{name: "expired and wrong signature", token: signClaims(t, claims, "wrong-secret"), wantCode: trevrpc.CodePermissionDenied},
-		{name: "not a token", token: "not-a-token", wantCode: trevrpc.CodePermissionDenied},
+	for name, token := range map[string]string{
+		"expired": expired,
+		"revoked": revoked,
+		"unknown": "not-a-session",
+		// A JWT from before sessions were opaque.
+		"legacy JWT": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGljZSJ9.c2lnbmF0dXJl",
 	} {
-		t.Run(test.name, func(t *testing.T) {
-			err := authorize(t, numberv1.NumberService_Add_FullMethodName, bearer(test.token))
-			if got := codeOf(err); got != test.wantCode {
-				t.Errorf("code = %v, want %v (error %v)", got, test.wantCode, err)
+		t.Run(name, func(t *testing.T) {
+			err := authorize(manager, numberv1.NumberService_Add_FullMethodName, bearer(token))
+			if got := codeOf(err); got != trevrpc.CodeUnauthenticated {
+				t.Errorf("code = %v, want Unauthenticated (error %v)", got, err)
 			}
 		})
+	}
+}
+
+func TestAuthorizerFailsInternallyWithoutDatabase(t *testing.T) {
+	manager, db, _ := newTestManager(t)
+	token, _ := issue(t, manager, db, "alice")
+	_ = db.Close()
+
+	err := authorize(manager, numberv1.NumberService_Add_FullMethodName, bearer(token))
+	if got := codeOf(err); got != trevrpc.CodeInternal {
+		t.Errorf("code = %v, want Internal (error %v)", got, err)
 	}
 }

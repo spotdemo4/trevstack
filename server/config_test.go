@@ -10,15 +10,12 @@ import (
 	"testing"
 )
 
-const testJWTSecret = "01234567890123456789012345678901"
-
 func TestParseConfig(t *testing.T) {
 	tests := []struct {
 		name                  string
 		args                  []string
 		logLevel              string
 		port                  string
-		jwtSecret             string
 		allowedOrigins        string
 		tlsCert               string
 		tlsKey                string
@@ -32,7 +29,6 @@ func TestParseConfig(t *testing.T) {
 	}{
 		{
 			name:         "defaults",
-			jwtSecret:    testJWTSecret,
 			wantLogLevel: defaultLogLevel,
 			wantPort:     defaultPort,
 		},
@@ -40,13 +36,11 @@ func TestParseConfig(t *testing.T) {
 			name:         "environment",
 			logLevel:     "warn",
 			port:         "9090",
-			jwtSecret:    testJWTSecret,
 			wantLogLevel: "warn",
 			wantPort:     "9090",
 		},
 		{
 			name:               "allowed origins environment",
-			jwtSecret:          testJWTSecret,
 			allowedOrigins:     "http://localhost:3000, HTTPS://App.Example.com",
 			wantLogLevel:       defaultLogLevel,
 			wantPort:           defaultPort,
@@ -54,7 +48,6 @@ func TestParseConfig(t *testing.T) {
 		},
 		{
 			name:         "tls environment",
-			jwtSecret:    testJWTSecret,
 			tlsCert:      "cert.pem",
 			tlsKey:       "key.pem",
 			wantLogLevel: defaultLogLevel,
@@ -65,7 +58,6 @@ func TestParseConfig(t *testing.T) {
 		{
 			name:         "tls flags override environment",
 			args:         []string{"--tls-cert", "flag-cert.pem", "--tls-key=flag-key.pem"},
-			jwtSecret:    testJWTSecret,
 			tlsCert:      "cert.pem",
 			tlsKey:       "key.pem",
 			wantLogLevel: defaultLogLevel,
@@ -75,7 +67,6 @@ func TestParseConfig(t *testing.T) {
 		},
 		{
 			name:              "trusted proxy environment",
-			jwtSecret:         testJWTSecret,
 			trustedProxyCIDRs: "10.0.0.1/8, 2001:db8::1/32",
 			wantLogLevel:      defaultLogLevel,
 			wantPort:          defaultPort,
@@ -87,14 +78,12 @@ func TestParseConfig(t *testing.T) {
 		{
 			name:         "flags",
 			args:         []string{"--log-level", "debug", "--port", "7070"},
-			jwtSecret:    testJWTSecret,
 			wantLogLevel: "debug",
 			wantPort:     "7070",
 		},
 		{
 			name:         "equals flags",
 			args:         []string{"--log-level=error", "--port=6060"},
-			jwtSecret:    testJWTSecret,
 			wantLogLevel: "error",
 			wantPort:     "6060",
 		},
@@ -103,7 +92,6 @@ func TestParseConfig(t *testing.T) {
 			args:         []string{"--log-level", "debug", "--port", "7070"},
 			logLevel:     "warn",
 			port:         "9090",
-			jwtSecret:    testJWTSecret,
 			wantLogLevel: "debug",
 			wantPort:     "7070",
 		},
@@ -116,8 +104,6 @@ func TestParseConfig(t *testing.T) {
 				switch key {
 				case "ALLOWED_ORIGINS":
 					return test.allowedOrigins
-				case "JWT_SECRET":
-					return test.jwtSecret
 				case "LOG_LEVEL":
 					return test.logLevel
 				case "PORT":
@@ -150,50 +136,7 @@ func TestParseConfig(t *testing.T) {
 			if !slices.Equal(cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs) {
 				t.Errorf("trustedProxyCIDRs = %v, want %v", cfg.trustedProxyCIDRs, test.wantTrustedProxyCIDRs)
 			}
-			if cfg.jwtSecret != testJWTSecret || cfg.jwtSecretGenerated {
-				t.Errorf("jwtSecret = (%q, generated %t), want test secret", cfg.jwtSecret, cfg.jwtSecretGenerated)
-			}
 		})
-	}
-}
-
-func TestParseConfigGeneratesMissingJWTSecret(t *testing.T) {
-	parse := func() config {
-		t.Helper()
-		var output bytes.Buffer
-		cfg, err := parseConfig(nil, func(string) string { return "" }, &output)
-		if err != nil {
-			t.Fatalf("parseConfig() error = %v", err)
-		}
-		return cfg
-	}
-
-	first, second := parse(), parse()
-	if !first.jwtSecretGenerated {
-		t.Error("jwtSecretGenerated = false, want true")
-	}
-	if len(first.jwtSecret) != minJWTSecretLength {
-		t.Errorf("len(jwtSecret) = %d, want %d", len(first.jwtSecret), minJWTSecretLength)
-	}
-	if first.jwtSecret == second.jwtSecret {
-		t.Error("generated the same JWT secret twice")
-	}
-}
-
-func TestParseConfigRejectsShortJWTSecret(t *testing.T) {
-	var output bytes.Buffer
-	_, err := parseConfig(nil, func(key string) string {
-		if key == "JWT_SECRET" {
-			return "too-short"
-		}
-		return ""
-	}, &output)
-	want := "JWT_SECRET must be at least 32 bytes"
-	if err == nil || !strings.Contains(err.Error(), want) {
-		t.Fatalf("parseConfig() error = %v, want %q", err, want)
-	}
-	if !strings.Contains(output.String(), want) {
-		t.Errorf("output does not contain %q: %s", want, output.String())
 	}
 }
 
@@ -205,8 +148,6 @@ func TestParseConfigRejectsInvalidAllowedOrigins(t *testing.T) {
 				switch key {
 				case "ALLOWED_ORIGINS":
 					return "http://localhost:3000," + value
-				case "JWT_SECRET":
-					return testJWTSecret
 				default:
 					return ""
 				}
@@ -221,9 +162,6 @@ func TestParseConfigRejectsInvalidAllowedOrigins(t *testing.T) {
 func TestParseConfigRejectsInvalidTrustedProxyCIDRs(t *testing.T) {
 	var output bytes.Buffer
 	_, err := parseConfig(nil, func(key string) string {
-		if key == "JWT_SECRET" {
-			return testJWTSecret
-		}
 		if key == "TRUSTED_PROXY_CIDRS" {
 			return "10.0.0.0/8,not-a-cidr"
 		}
@@ -238,12 +176,7 @@ func TestParseConfigRejectsPartialTLSFiles(t *testing.T) {
 	for _, args := range [][]string{{"--tls-cert", "cert.pem"}, {"--tls-key", "key.pem"}} {
 		t.Run(args[0], func(t *testing.T) {
 			var output bytes.Buffer
-			_, err := parseConfig(args, func(key string) string {
-				if key == "JWT_SECRET" {
-					return testJWTSecret
-				}
-				return ""
-			}, &output)
+			_, err := parseConfig(args, func(string) string { return "" }, &output)
 			want := "a TLS certificate and key must be set together"
 			if err == nil || !strings.Contains(err.Error(), want) {
 				t.Fatalf("parseConfig() error = %v, want %q", err, want)
@@ -264,7 +197,7 @@ func TestParseConfigHelp(t *testing.T) {
 				t.Fatalf("parseConfig() error = %v, want %v", err, flag.ErrHelp)
 			}
 
-			for _, want := range []string{"Usage: server", "--log-level", "--port", "--tls-cert", "--tls-key", "--help", "ALLOWED_ORIGINS", "JWT_SECRET", "LOG_LEVEL", "PORT", "TLS_CERT", "TLS_KEY", "TRUSTED_PROXY_CIDRS", "OTEL_", supportedLogLevels, defaultLogLevel, defaultPort} {
+			for _, want := range []string{"Usage: server", "--log-level", "--port", "--tls-cert", "--tls-key", "--help", "ALLOWED_ORIGINS", "LOG_LEVEL", "PORT", "TLS_CERT", "TLS_KEY", "TRUSTED_PROXY_CIDRS", "OTEL_", supportedLogLevels, defaultLogLevel, defaultPort} {
 				if !strings.Contains(output.String(), want) {
 					t.Errorf("help output does not contain %q:\n%s", want, output.String())
 				}
@@ -309,8 +242,6 @@ func TestParseConfigRejectsInvalidFlags(t *testing.T) {
 			var output bytes.Buffer
 			_, err := parseConfig(test.args, func(key string) string {
 				switch key {
-				case "JWT_SECRET":
-					return testJWTSecret
 				case "LOG_LEVEL":
 					return test.logLevel
 				default:
@@ -338,8 +269,6 @@ func TestParseConfigHelpIgnoresInvalidEnvironment(t *testing.T) {
 				switch key {
 				case "ALLOWED_ORIGINS":
 					return "not-an-origin"
-				case "JWT_SECRET":
-					return ""
 				case "TLS_CERT":
 					return "cert-without-key.pem"
 				case "TRUSTED_PROXY_CIDRS":

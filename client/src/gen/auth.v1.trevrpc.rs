@@ -6,6 +6,8 @@ pub mod auth_service_paths {
     pub const SIGNUP: &str = "/auth.v1.AuthService/Signup";
     /// Path of the `Login` RPC.
     pub const LOGIN: &str = "/auth.v1.AuthService/Login";
+    /// Path of the `Logout` RPC.
+    pub const LOGOUT: &str = "/auth.v1.AuthService/Logout";
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -15,6 +17,8 @@ pub trait AuthService: Send + Sync + 'static {
     async fn signup(&self, context: ::trevrpc::server::RequestContext, request: SignupRequest) -> ::core::result::Result<SignupResponse, ::trevrpc::Status>;
     /// Handles the `Login` RPC.
     async fn login(&self, context: ::trevrpc::server::RequestContext, request: LoginRequest) -> ::core::result::Result<LoginResponse, ::trevrpc::Status>;
+    /// Handles the `Logout` RPC.
+    async fn logout(&self, context: ::trevrpc::server::RequestContext, request: LogoutRequest) -> ::core::result::Result<LogoutResponse, ::trevrpc::Status>;
 }
 
 #[derive(Clone)]
@@ -69,6 +73,11 @@ where
         ::trevrpc::client::unary(&self.transport, auth_service_paths::LOGIN, request, self.default_options.clone()).message_types("auth.v1.LoginRequest", "auth.v1.LoginResponse")
     }
 
+    /// Calls the `Logout` RPC when the returned call is awaited.
+    pub fn logout(&self, request: &LogoutRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<LogoutRequest, LogoutResponse>> {
+        ::trevrpc::client::unary(&self.transport, auth_service_paths::LOGOUT, request, self.default_options.clone()).message_types("auth.v1.LogoutRequest", "auth.v1.LogoutResponse")
+    }
+
 }
 
 impl<T> AuthServiceClient<T>
@@ -103,6 +112,18 @@ where
             async move {
                 let request = <LoginRequest as ::prost::Message>::decode(body.as_slice())?;
                 let response = service.login(context, request).await?;
+                Ok(::prost::Message::encode_to_vec(&response))
+            }
+        });
+    }
+
+    {
+        let service = ::std::sync::Arc::clone(&service);
+        server.route_with_options(auth_service_paths::LOGOUT, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.LogoutRequest", "auth.v1.LogoutResponse"), move |context, body| {
+            let service = ::std::sync::Arc::clone(&service);
+            async move {
+                let request = <LogoutRequest as ::prost::Message>::decode(body.as_slice())?;
+                let response = service.logout(context, request).await?;
                 Ok(::prost::Message::encode_to_vec(&response))
             }
         });

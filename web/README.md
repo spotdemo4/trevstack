@@ -37,7 +37,8 @@ When the server uses its development certificate, the channel reads the certific
 The channel sends it as connection metadata, which crosses each connection once instead of in every
 request, and its interceptor handles the failures of calls that require a session. The app can tell from local
 storage, without a request, whether to show signed-in pages. It signs out when the session expires
-or when an RPC fails with `unauthenticated`, and syncs sign-in state across tabs.
+or when an RPC fails with `unauthenticated`, and syncs sign-in state across tabs. Logging out forgets
+the token at once and asks the server, with `Logout`, to end the session.
 
 ## progressive web app
 

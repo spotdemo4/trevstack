@@ -129,10 +129,7 @@ func run(cfg config, log *slog.Logger) error {
 		return fmt.Errorf("could not create telemetry metrics: %w", err)
 	}
 
-	if cfg.jwtSecretGenerated {
-		log.WarnContext(ctx, "using a generated JWT secret; sessions end when the server restarts, set JWT_SECRET in production")
-	}
-	sessionManager := auth.NewManager(cfg.jwtSecret)
+	sessionManager := auth.NewManager(db)
 	rateLimiter := ratelimitinterceptor.New(map[string]ratelimitinterceptor.Policy{
 		authv1.AuthService_Login_FullMethodName: {
 			Requests: loginRateLimitRequests,

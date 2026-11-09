@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
@@ -10,18 +11,17 @@ import (
 // Authorizer authenticates calls with the session token in their
 // `authorization: Bearer <token>` metadata.
 type Authorizer struct {
-	auth *Manager
+	sessions *Manager
 }
 
 // NewAuthorizer returns an Authorizer that verifies sessions with manager.
 func NewAuthorizer(manager *Manager) *Authorizer {
-	return &Authorizer{auth: manager}
+	return &Authorizer{sessions: manager}
 }
 
-// Authorize rejects calls to protected methods without a valid session token:
-// a missing, malformed or expired token with Unauthenticated, and a token that
-// fails verification with PermissionDenied.
-func (a *Authorizer) Authorize(_ context.Context, info trevrpc.HandlerContext) error {
+// Authorize rejects calls to protected methods with Unauthenticated unless
+// they carry the token of an unexpired session.
+func (a *Authorizer) Authorize(ctx context.Context, info trevrpc.HandlerContext) error {
 	if isPublicAuthMethod(info.FullMethod) {
 		return nil
 	}
@@ -30,11 +30,11 @@ func (a *Authorizer) Authorize(_ context.Context, info trevrpc.HandlerContext) e
 	if err != nil {
 		return err
 	}
-	if _, err := a.auth.Parse(token); err != nil {
-		if IsExpiredOnly(err) {
-			return trevrpc.Unauthenticated("session expired")
+	if _, err := a.sessions.Verify(ctx, token); err != nil {
+		if errors.Is(err, ErrInvalidSession) {
+			return trevrpc.Unauthenticated("invalid or expired session")
 		}
-		return trevrpc.PermissionDenied("invalid session")
+		return trevrpc.Internal("could not verify session")
 	}
 	return nil
 }
@@ -42,6 +42,7 @@ func (a *Authorizer) Authorize(_ context.Context, info trevrpc.HandlerContext) e
 func isPublicAuthMethod(method string) bool {
 	switch method {
 	case authv1.AuthService_Login_FullMethodName,
+		authv1.AuthService_Logout_FullMethodName,
 		authv1.AuthService_Signup_FullMethodName:
 		return true
 	default:

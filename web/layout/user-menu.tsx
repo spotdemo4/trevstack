@@ -1,6 +1,7 @@
 import { session } from "$lib/auth";
 import { Button } from "$lib/button";
 import { User } from "$lib/icon";
+import { logout as endSession } from "$lib/rpc";
 import { toaster } from "$lib/toast";
 import { useNavigate } from "@solidjs/router";
 import { type Component, Show, createSignal, createUniqueId } from "solid-js";
@@ -19,11 +20,10 @@ export const UserMenu: Component<UserMenuProps> = (props) => {
   const [isOpen, setIsOpen] = createSignal(false);
   let popover: HTMLDivElement | undefined;
 
-  // The session token is only held by the browser, so forgetting it signs out.
   const logout = () => {
     popover?.hidePopover();
     props.onBeforeNavigate?.();
-    session.clear();
+    endSession();
     toaster.success({ title: "Signed out" });
     navigate("/auth", { replace: true });
   };

@@ -23,9 +23,11 @@ func (h *Handler) Login(
 		return nil, err
 	}
 
+	var userID int64
 	var username string
 	var passwordHash string
 	err := h.db.QueryRowContext(ctx, selectUserSQL, normalizeUsername(req.GetUsername())).Scan(
+		&userID,
 		&username,
 		&passwordHash,
 	)
@@ -40,13 +42,13 @@ func (h *Handler) Login(
 		return nil, invalidCredentialsError()
 	}
 
-	token, expires, err := h.auth.Issue(username)
+	token, expires, err := h.auth.Issue(ctx, userID)
 	if err != nil {
 		return nil, trevrpc.Internal("could not create session")
 	}
 
 	response := &authv1.LoginResponse{}
-	response.SetJwt(token)
+	response.SetToken(token)
 	response.SetSub(username)
 	response.SetExp(expires.Unix())
 	return response, nil

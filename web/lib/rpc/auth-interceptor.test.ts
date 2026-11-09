@@ -16,7 +16,7 @@ let replace: MockInstance<Location["replace"]>;
 
 function loginMetadata(sub = "trev") {
   return create(LoginResponseSchema, {
-    jwt: `${sub}.token`,
+    token: `${sub}.token`,
     sub,
     exp: BigInt(Math.floor(Date.now() / 1000) + 3600),
   });
@@ -153,9 +153,10 @@ test("connection metadata carries the session token, or nothing without a sessio
   expect(sessionMetadata(null)).toBeUndefined();
 });
 
-test("only login and signup are public", () => {
+test("only login, logout and signup are public", () => {
   expect(isPublicMethod("auth.v1.AuthService", "Login")).toBe(true);
+  expect(isPublicMethod("auth.v1.AuthService", "Logout")).toBe(true);
   expect(isPublicMethod("auth.v1.AuthService", "Signup")).toBe(true);
   expect(isPublicMethod("number.v1.NumberService", "List")).toBe(false);
-  expect(isPublicMethod("auth.v1.AuthService", "Logout")).toBe(false);
+  expect(isPublicMethod("auth.v1.AuthService", "Unknown")).toBe(false);
 });

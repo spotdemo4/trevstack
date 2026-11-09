@@ -12,8 +12,8 @@ message LoginRequest {
 
 // Session token and metadata returned after successful authentication.
 message LoginResponse {
-  // Signed session token, sent as `authorization: Bearer <jwt>` metadata on authenticated calls.
-  string jwt = 1;
+  // Opaque session token, sent as `authorization: Bearer <token>` metadata on authenticated calls.
+  string token = 1;
   // The canonical username used as the session token's subject.
   string sub = 2;
   // The session token's expiration as Unix seconds.

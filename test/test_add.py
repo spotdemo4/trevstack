@@ -17,6 +17,8 @@ class AddTest(harness.IntegrationTestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout, "7\n")
         self.assertEqual(self.server.numbers(), [("visits", 7)])
+        # The client logs out after adding, so its session does not outlive the run.
+        self.assertEqual(self.server.sessions(), 0)
 
     def test_returns_running_sum(self) -> None:
         first = self.run_client(USERNAME, PASSWORD, "visits", 7)

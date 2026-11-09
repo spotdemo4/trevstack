@@ -1,116 +1,89 @@
-// Package auth issues and verifies JWT session tokens.
+// Package auth issues, verifies and revokes session tokens.
 package auth
 
 import (
+	"context"
+	"crypto/rand"
+	"crypto/sha256"
+	"database/sql"
+	_ "embed"
+	"encoding/base64"
 	"errors"
-	"fmt"
 	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 const (
-	issuer   = "stack/session/v2"
-	tokenTTL = 24 * time.Hour
+	tokenBytes = 32
+	tokenTTL   = 24 * time.Hour
 )
 
-// Claims are the JWT claims of a session token.
-type Claims struct {
-	jwt.RegisteredClaims
-}
+// ErrInvalidSession is returned for a token that names no unexpired session.
+var ErrInvalidSession = errors.New("invalid or expired session")
 
-// Validate requires the subject and issued-at claims.
-func (c Claims) Validate() error {
-	var errs []error
-	if c.Subject == "" {
-		errs = append(errs, fmt.Errorf("%w: sub", jwt.ErrTokenRequiredClaimMissing))
-	}
-	if c.IssuedAt == nil {
-		errs = append(errs, fmt.Errorf("%w: iat", jwt.ErrTokenRequiredClaimMissing))
-	}
-	return errors.Join(errs...)
-}
+var (
+	//go:embed insert_session.sql
+	insertSessionSQL string
+	//go:embed delete_expired_sessions.sql
+	deleteExpiredSessionsSQL string
+	//go:embed select_session.sql
+	selectSessionSQL string
+	//go:embed delete_session.sql
+	deleteSessionSQL string
+)
 
-// Manager issues and parses session tokens.
+// Manager keeps sessions in the database. A session token is random and
+// opaque, and only its SHA-256 hash is stored, so the database alone cannot
+// be used to sign in.
 type Manager struct {
-	now    func() time.Time
-	secret []byte
+	db  *sql.DB
+	now func() time.Time
 }
 
-// NewManager returns a Manager that signs tokens with secret.
-func NewManager(secret string) *Manager {
-	return &Manager{
-		now:    time.Now,
-		secret: []byte(secret),
-	}
+// NewManager returns a Manager that keeps sessions in db.
+func NewManager(db *sql.DB) *Manager {
+	return &Manager{db: db, now: time.Now}
 }
 
-// Issue signs a token for username and returns it with its expiry.
-func (m *Manager) Issue(username string) (string, time.Time, error) {
+// Issue starts a session for the user with userID and returns its token and
+// expiry. It first deletes expired sessions, so they do not pile up.
+func (m *Manager) Issue(ctx context.Context, userID int64) (string, time.Time, error) {
+	secret := make([]byte, tokenBytes)
+	_, _ = rand.Read(secret) // never returns an error
+	token := base64.RawURLEncoding.EncodeToString(secret)
+
 	now := m.now()
-	expires := jwt.NewNumericDate(now.Add(tokenTTL))
-	claims := Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: expires,
-			IssuedAt:  jwt.NewNumericDate(now),
-			Issuer:    issuer,
-			Subject:   username,
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signed, err := token.SignedString(m.secret)
-	if err != nil {
+	expires := now.Add(tokenTTL).Truncate(time.Second)
+	if _, err := m.db.ExecContext(ctx, deleteExpiredSessionsSQL, now.Unix()); err != nil {
 		return "", time.Time{}, err
 	}
-	return signed, expires.Time, nil
+	if _, err := m.db.ExecContext(ctx, insertSessionSQL, hashToken(token), userID, expires.Unix()); err != nil {
+		return "", time.Time{}, err
+	}
+	return token, expires, nil
 }
 
-// Parse verifies a signed token and returns its claims.
-func (m *Manager) Parse(value string) (*Claims, error) {
-	claims := &Claims{}
-	_, err := jwt.ParseWithClaims(
-		value,
-		claims,
-		func(*jwt.Token) (any, error) { return m.secret, nil },
-		jwt.WithExpirationRequired(),
-		jwt.WithIssuedAt(),
-		jwt.WithTimeFunc(m.now),
-		jwt.WithIssuer(issuer),
-		jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
-	)
+// Verify returns the username of the session token names, or
+// ErrInvalidSession if it names none or the session has expired.
+func (m *Manager) Verify(ctx context.Context, token string) (string, error) {
+	var username string
+	err := m.db.QueryRowContext(ctx, selectSessionSQL, hashToken(token), m.now().Unix()).Scan(&username)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", ErrInvalidSession
+	}
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return claims, nil
+	return username, nil
 }
 
-// IsExpiredOnly reports whether err from Parse means the token is valid
-// except for having expired.
-func IsExpiredOnly(err error) bool {
-	if !errors.Is(err, jwt.ErrTokenExpired) {
-		return false
-	}
+// Revoke ends the session token names. A token that names no session is
+// ignored.
+func (m *Manager) Revoke(ctx context.Context, token string) error {
+	_, err := m.db.ExecContext(ctx, deleteSessionSQL, hashToken(token))
+	return err
+}
 
-	for _, other := range []error{
-		jwt.ErrInvalidKey,
-		jwt.ErrInvalidKeyType,
-		jwt.ErrTokenMalformed,
-		jwt.ErrTokenUnverifiable,
-		jwt.ErrTokenSignatureInvalid,
-		jwt.ErrTokenRequiredClaimMissing,
-		jwt.ErrTokenInvalidAudience,
-		jwt.ErrTokenUsedBeforeIssued,
-		jwt.ErrTokenInvalidIssuer,
-		jwt.ErrTokenInvalidSubject,
-		jwt.ErrTokenNotValidYet,
-		jwt.ErrTokenInvalidId,
-		jwt.ErrInvalidType,
-	} {
-		if errors.Is(err, other) {
-			return false
-		}
-	}
-
-	return true
+func hashToken(token string) []byte {
+	hash := sha256.Sum256([]byte(token))
+	return hash[:]
 }

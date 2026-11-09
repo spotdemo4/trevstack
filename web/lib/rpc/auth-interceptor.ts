@@ -3,8 +3,15 @@ import { Code, type CallInterceptor, TrevRpcError } from "@trevrpc/trevrpc-js";
 import { getSignInPath, normalizePath } from "../auth/routing.ts";
 import { session, type SessionClaims } from "../auth/session.ts";
 
-/** Methods that do not need a session, whose failures their forms report. */
-const PUBLIC_METHODS = new Set(["auth.v1.AuthService/Login", "auth.v1.AuthService/Signup"]);
+/**
+ * Methods that do not need a session, whose failures their callers handle:
+ * the forms report sign-in and sign-up failures, and signing out ignores them.
+ */
+const PUBLIC_METHODS = new Set([
+  "auth.v1.AuthService/Login",
+  "auth.v1.AuthService/Logout",
+  "auth.v1.AuthService/Signup",
+]);
 
 export function isPublicMethod(service: string, method: string): boolean {
   return PUBLIC_METHODS.has(`${service}/${method}`);

@@ -1,212 +1,183 @@
 package auth
 
 import (
+	"context"
+	"crypto/sha256"
+	"database/sql"
 	"encoding/base64"
 	"errors"
-	"strings"
 	"testing"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
+	_ "github.com/mattn/go-sqlite3"
+	"trev.zip/template/stack/server/v2/database"
 )
 
-const managerTestSecret = "01234567890123456789012345678901"
+// newTestManager returns a Manager on a migrated in-memory database with the
+// users alice and bob, whose clock reads *now.
+func newTestManager(t *testing.T) (*Manager, *sql.DB, *time.Time) {
+	t.Helper()
 
-func TestClaimsValidate(t *testing.T) {
-	now := jwt.NewNumericDate(time.Now())
-	tests := []struct {
-		name   string
-		claims Claims
-		want   []string
-	}{
-		{
-			name: "valid",
-			claims: Claims{
-				RegisteredClaims: jwt.RegisteredClaims{
-					Subject:  "42",
-					IssuedAt: now,
-				},
-			},
-		},
-		{
-			name: "missing required claims",
-			claims: Claims{
-				RegisteredClaims: jwt.RegisteredClaims{},
-			},
-			want: []string{"sub", "iat"},
-		},
+	db, err := sql.Open("sqlite3", "file::memory:?_foreign_keys=true")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	db.SetMaxOpenConns(1)
+	t.Cleanup(func() { _ = db.Close() })
+	if err := database.Migrate(context.Background(), db); err != nil {
+		t.Fatalf("migrate: %v", err)
+	}
+	for _, username := range []string{"alice", "bob"} {
+		if _, err := db.ExecContext(t.Context(), "INSERT INTO users (username, password_hash) VALUES (?, 'hash')", username); err != nil {
+			t.Fatalf("seed user: %v", err)
+		}
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			err := test.claims.Validate()
-			if len(test.want) == 0 {
-				if err != nil {
-					t.Fatalf("Validate() error = %v, want nil", err)
-				}
-				return
-			}
-			if err == nil {
-				t.Fatal("Validate() error = nil, want required claim errors")
-			}
-			for _, want := range test.want {
-				if !strings.Contains(err.Error(), want) {
-					t.Errorf("Validate() error = %v, want %q", err, want)
-				}
-			}
-		})
+	now := time.Date(2026, time.January, 2, 3, 4, 5, 600, time.UTC)
+	manager := NewManager(db)
+	manager.now = func() time.Time { return now }
+	return manager, db, &now
+}
+
+func userID(t *testing.T, db *sql.DB, username string) int64 {
+	t.Helper()
+	var id int64
+	if err := db.QueryRowContext(t.Context(), "SELECT id FROM users WHERE username = ?", username).Scan(&id); err != nil {
+		t.Fatalf("query user id: %v", err)
+	}
+	return id
+}
+
+func issue(t *testing.T, manager *Manager, db *sql.DB, username string) (string, time.Time) {
+	t.Helper()
+	token, expires, err := manager.Issue(t.Context(), userID(t, db, username))
+	if err != nil {
+		t.Fatalf("Issue() error = %v", err)
+	}
+	return token, expires
+}
+
+func sessionCount(t *testing.T, db *sql.DB) int {
+	t.Helper()
+	var count int
+	if err := db.QueryRowContext(t.Context(), "SELECT count(*) FROM sessions").Scan(&count); err != nil {
+		t.Fatalf("count sessions: %v", err)
+	}
+	return count
+}
+
+func assertSession(t *testing.T, manager *Manager, token, want string) {
+	t.Helper()
+	username, err := manager.Verify(t.Context(), token)
+	if err != nil || username != want {
+		t.Errorf("Verify() = (%q, %v), want (%q, nil)", username, err, want)
 	}
 }
 
-func TestManagerIssueAndParse(t *testing.T) {
-	now := time.Date(2026, time.January, 2, 3, 4, 5, 0, time.UTC)
-	manager := NewManager(managerTestSecret)
-	manager.now = func() time.Time { return now }
+func assertNoSession(t *testing.T, manager *Manager, token string) {
+	t.Helper()
+	if _, err := manager.Verify(t.Context(), token); !errors.Is(err, ErrInvalidSession) {
+		t.Errorf("Verify() error = %v, want ErrInvalidSession", err)
+	}
+}
 
-	value, expires, err := manager.Issue("trev")
-	if err != nil {
-		t.Fatalf("Issue() error = %v", err)
+func TestManagerIssueAndVerify(t *testing.T) {
+	manager, db, now := newTestManager(t)
+
+	token, expires := issue(t, manager, db, "alice")
+	raw, err := base64.RawURLEncoding.DecodeString(token)
+	if err != nil || len(raw) != tokenBytes {
+		t.Errorf("token %q is not %d bytes of unpadded base64url (error %v)", token, tokenBytes, err)
 	}
 	if want := now.Add(tokenTTL).Truncate(time.Second); !expires.Equal(want) {
 		t.Errorf("expires = %v, want %v", expires, want)
 	}
+	assertSession(t, manager, token, "alice")
+}
 
-	claims, err := manager.Parse(value)
-	if err != nil {
-		t.Fatalf("Parse() error = %v", err)
+func TestManagerStoresOnlyTokenHashes(t *testing.T) {
+	manager, db, _ := newTestManager(t)
+	token, _ := issue(t, manager, db, "alice")
+
+	var stored []byte
+	if err := db.QueryRowContext(t.Context(), "SELECT token_hash FROM sessions").Scan(&stored); err != nil {
+		t.Fatalf("query session: %v", err)
 	}
-	if claims.Subject != "trev" || claims.Issuer != issuer {
-		t.Errorf("claims = %#v, want subject trev, issuer %q", claims, issuer)
+	if want := sha256.Sum256([]byte(token)); string(stored) != string(want[:]) {
+		t.Errorf("token_hash = %x, want SHA-256 of the token %x", stored, want)
 	}
-	if !claims.ExpiresAt.Equal(expires) {
-		t.Errorf("ExpiresAt = %v, want %v", claims.ExpiresAt.Time, expires)
+	assertNoSession(t, manager, base64.RawURLEncoding.EncodeToString(stored))
+}
+
+func TestManagerIssuesDistinctTokens(t *testing.T) {
+	manager, db, _ := newTestManager(t)
+	first, _ := issue(t, manager, db, "alice")
+	second, _ := issue(t, manager, db, "alice")
+	if first == second {
+		t.Fatal("Issue() returned the same token twice")
 	}
-	payload, err := base64.RawURLEncoding.DecodeString(strings.Split(value, ".")[1])
-	if err != nil {
-		t.Fatalf("decode JWT payload: %v", err)
-	}
-	if strings.Contains(string(payload), "username") {
-		t.Errorf("JWT payload = %s, must not contain username claim", payload)
+	assertSession(t, manager, first, "alice")
+	assertSession(t, manager, second, "alice")
+}
+
+func TestManagerVerifyRejectsUnknownTokens(t *testing.T) {
+	manager, db, _ := newTestManager(t)
+	issue(t, manager, db, "alice")
+	for _, token := range []string{"", "not-a-token", base64.RawURLEncoding.EncodeToString(make([]byte, tokenBytes))} {
+		assertNoSession(t, manager, token)
 	}
 }
 
-func TestManagerIssueNumericLookingUsername(t *testing.T) {
-	manager := NewManager(managerTestSecret)
-	value, _, err := manager.Issue("42")
-	if err != nil {
-		t.Fatalf("Issue() error = %v", err)
+func TestManagerSessionsExpire(t *testing.T) {
+	manager, db, now := newTestManager(t)
+	token, expires := issue(t, manager, db, "alice")
+
+	*now = expires.Add(-time.Second)
+	assertSession(t, manager, token, "alice")
+	*now = expires
+	assertNoSession(t, manager, token)
+}
+
+func TestManagerIssueDeletesExpiredSessions(t *testing.T) {
+	manager, db, now := newTestManager(t)
+	_, expires := issue(t, manager, db, "alice")
+	issue(t, manager, db, "bob")
+
+	*now = expires
+	current, _ := issue(t, manager, db, "bob")
+	if got := sessionCount(t, db); got != 1 {
+		t.Errorf("sessions = %d, want only the one just issued", got)
 	}
-	claims, err := manager.Parse(value)
-	if err != nil {
-		t.Fatalf("Parse() error = %v", err)
+	assertSession(t, manager, current, "bob")
+}
+
+func TestManagerRevoke(t *testing.T) {
+	manager, db, _ := newTestManager(t)
+	revoked, _ := issue(t, manager, db, "alice")
+	other, _ := issue(t, manager, db, "alice")
+
+	if err := manager.Revoke(t.Context(), revoked); err != nil {
+		t.Fatalf("Revoke() error = %v", err)
 	}
-	if claims.Subject != "42" {
-		t.Errorf("claims.Subject = %q, want numeric-looking username 42", claims.Subject)
+	assertNoSession(t, manager, revoked)
+	assertSession(t, manager, other, "alice")
+
+	for _, token := range []string{revoked, "not-a-token"} {
+		if err := manager.Revoke(t.Context(), token); err != nil {
+			t.Errorf("Revoke(%q) of no session error = %v, want nil", token, err)
+		}
 	}
 }
 
-func TestManagerParseRejectsInvalidTokens(t *testing.T) {
-	manager := NewManager(managerTestSecret)
-	now := time.Now().UTC()
-	validClaims := Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   "42",
-			IssuedAt:  jwt.NewNumericDate(now),
-			ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour)),
-			Issuer:    issuer,
-		},
-	}
+func TestManagerSessionsEndWithTheirUser(t *testing.T) {
+	manager, db, _ := newTestManager(t)
+	token, _ := issue(t, manager, db, "alice")
 
-	tests := []struct {
-		name  string
-		value string
-		want  error
-	}{
-		{
-			name:  "malformed",
-			value: "not-a-jwt",
-			want:  jwt.ErrTokenMalformed,
-		},
-		{
-			name:  "wrong signature",
-			value: signClaims(t, validClaims, "wrong-secret"),
-			want:  jwt.ErrTokenSignatureInvalid,
-		},
-		{
-			name: "legacy issuer",
-			value: signClaims(t, Claims{
-				RegisteredClaims: jwt.RegisteredClaims{
-					Subject:   "42",
-					IssuedAt:  validClaims.IssuedAt,
-					ExpiresAt: validClaims.ExpiresAt,
-					Issuer:    "stack",
-				},
-			}, managerTestSecret),
-			want: jwt.ErrTokenInvalidIssuer,
-		},
+	if _, err := db.ExecContext(t.Context(), "DELETE FROM users WHERE username = 'alice'"); err != nil {
+		t.Fatalf("delete user: %v", err)
 	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			_, err := manager.Parse(test.value)
-			if err == nil || !errors.Is(err, test.want) {
-				t.Errorf("Parse() error = %v, want errors.Is(..., %v)", err, test.want)
-			}
-		})
+	assertNoSession(t, manager, token)
+	if got := sessionCount(t, db); got != 0 {
+		t.Errorf("sessions = %d, want 0 after deleting their user", got)
 	}
-}
-
-func TestIsExpiredOnly(t *testing.T) {
-	manager := NewManager(managerTestSecret)
-	now := time.Now().UTC()
-	expired := Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   "42",
-			IssuedAt:  jwt.NewNumericDate(now.Add(-2 * time.Hour)),
-			ExpiresAt: jwt.NewNumericDate(now.Add(-time.Hour)),
-			Issuer:    issuer,
-		},
-	}
-
-	validExpired, err := jwt.NewWithClaims(jwt.SigningMethodHS256, expired).SignedString([]byte(managerTestSecret))
-	if err != nil {
-		t.Fatalf("sign expired token: %v", err)
-	}
-	_, validExpiredErr := manager.Parse(validExpired)
-	if !IsExpiredOnly(validExpiredErr) {
-		t.Fatalf("IsExpiredOnly(valid expired token error) = false, error = %v", validExpiredErr)
-	}
-
-	wrongSignature := signClaims(t, expired, "wrong-secret")
-	_, wrongSignatureErr := manager.Parse(wrongSignature)
-	if IsExpiredOnly(wrongSignatureErr) {
-		t.Fatalf("IsExpiredOnly(expired wrong-signature error) = true, error = %v", wrongSignatureErr)
-	}
-	if errors.Is(wrongSignatureErr, jwt.ErrTokenExpired) {
-		t.Errorf("wrong-signature error = %v, want no expired component", wrongSignatureErr)
-	}
-	if !errors.Is(wrongSignatureErr, jwt.ErrTokenSignatureInvalid) {
-		t.Errorf("wrong-signature error = %v, want signature-invalid component", wrongSignatureErr)
-	}
-
-	for name, testErr := range map[string]error{
-		"nil":                nil,
-		"signature only":     jwt.ErrTokenSignatureInvalid,
-		"expired and issuer": errors.Join(jwt.ErrTokenExpired, jwt.ErrTokenInvalidIssuer),
-	} {
-		t.Run(name, func(t *testing.T) {
-			if got := IsExpiredOnly(testErr); got {
-				t.Errorf("IsExpiredOnly(%v) = true, want false", testErr)
-			}
-		})
-	}
-}
-
-func signClaims(t *testing.T, claims Claims, secret string) string {
-	t.Helper()
-	value, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))
-	if err != nil {
-		t.Fatalf("sign claims: %v", err)
-	}
-	return value
 }
