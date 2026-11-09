@@ -167,6 +167,7 @@ func run(cfg config, log *slog.Logger) error {
 	listener, err := trevrpc.Listen(":"+cfg.port, server, trevrpc.ListenOptions{
 		TLSConfig:         tlsConfig,
 		TrustedTCPProxies: cfg.trustedProxyCIDRs,
+		TrustedUDPProxies: cfg.trustedProxyCIDRs,
 	})
 	if err != nil {
 		return fmt.Errorf("could not listen: %w", err)

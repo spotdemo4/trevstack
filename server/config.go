@@ -37,8 +37,9 @@ Environment:
   PORT                Fallback port (default: %s).
   TLS_CERT            Fallback certificate file.
   TLS_KEY             Fallback private key file.
-  TRUSTED_PROXY_CIDRS Comma-separated CIDRs of TCP proxies that send a PROXY
-                      protocol header with every connection.
+  TRUSTED_PROXY_CIDRS Comma-separated CIDRs of proxies that send a PROXY
+                      protocol header with every TCP connection and a
+                      version 2 header in front of every UDP datagram.
   OTEL_*              OpenTelemetry SDK settings; signals export only when an
                       OTLP endpoint or OTEL_{TRACES,METRICS,LOGS}_EXPORTER is set.
 

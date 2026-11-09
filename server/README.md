@@ -41,12 +41,12 @@ Flags take precedence over environment variables.
 
 ### environment
 
-| variable              | description                                                                                                |
-| --------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `JWT_SECRET`          | secret used to sign session tokens; at least 32 bytes, see [authentication](#authentication)               |
-| `ALLOWED_ORIGINS`     | comma-separated origins of other sites whose pages may call the API (e.g. `https://app.example.com`)       |
-| `TRUSTED_PROXY_CIDRS` | comma-separated CIDRs of TCP proxies that send PROXY protocol headers, see [rate limiting](#rate-limiting) |
-| `OTEL_*`              | OpenTelemetry SDK settings, see [opentelemetry](#opentelemetry)                                            |
+| variable              | description                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `JWT_SECRET`          | secret used to sign session tokens; at least 32 bytes, see [authentication](#authentication)                       |
+| `ALLOWED_ORIGINS`     | comma-separated origins of other sites whose pages may call the API (e.g. `https://app.example.com`)               |
+| `TRUSTED_PROXY_CIDRS` | comma-separated CIDRs of TCP and UDP proxies that send PROXY protocol headers, see [rate limiting](#rate-limiting) |
+| `OTEL_*`              | OpenTelemetry SDK settings, see [opentelemetry](#opentelemetry)                                                    |
 
 ## routes
 
@@ -103,12 +103,21 @@ other's tokens; set it in production.
 Rejected requests fail with `resource_exhausted` and `retry-after` metadata holding the seconds to
 wait.
 
-The client IP is the source address of the connection. QUIC load balancers must preserve it. TCP
-proxies in `TRUSTED_PROXY_CIDRS` must send a
-[PROXY protocol](https://www.haproxy.org/download/3.0/doc/proxy-protocol.txt) v1 or v2 header with
-every connection, whose source address is used instead; connections from them without a valid header
-are closed, and connections from anywhere else are never read for a header. `X-Forwarded-For` is
-not used, since a proxy that sets it would have to terminate TLS.
+The client IP is the source address of the connection. Proxies that do not preserve it must be in
+`TRUSTED_PROXY_CIDRS` and send a
+[PROXY protocol](https://www.haproxy.org/download/3.0/doc/proxy-protocol.txt) header, whose source
+address is used instead, on both TCP and UDP:
+
+- On TCP, a v1 or v2 header must begin every connection. Connections from a trusted proxy without
+  a valid header are closed.
+- On UDP, a v2 header must precede every datagram. Datagrams from a trusted proxy without a valid
+  header are dropped and logged at most once every 10 seconds, so QUIC through it fails and clients
+  fall back to TCP. The header adds up to 52 bytes to every datagram, plus any extensions, which the
+  path between the proxy and the server must have room for.
+
+A proxy that sends headers on only one protocol cannot be listed; have it preserve the source address
+on both instead. Traffic from anywhere else is never read for a header. `X-Forwarded-For` is not
+used, since a proxy that sets it would have to terminate TLS.
 
 ## database
 
