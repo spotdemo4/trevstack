@@ -15,7 +15,6 @@
   "nix": {
     "enabled": true
   },
-  // fix PRs for vulnerable direct dependencies (and indirect go modules), from osv.dev.
   // transitive npm vulnerabilities are reported by the vulnerable workflow
   "osvVulnerabilityAlerts": true,
   "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
@@ -35,7 +34,7 @@
   },
   "customManagers": [
     {
-      // track the go in nixpkgs-unstable, which builds this project
+      // the go in nixpkgs-unstable, which builds this project
       "customType": "regex",
       "managerFilePatterns": ["/(^|/)go\\.mod$/"],
       "matchStrings": ["toolchain\\s+go(?<currentValue>\\S+)"],
@@ -45,7 +44,7 @@
       "versioningTemplate": "semver"
     },
     {
-      // track the rustc in nixpkgs-unstable, which builds this project
+      // the rustc in nixpkgs-unstable, which builds this project
       "customType": "regex",
       "managerFilePatterns": ["/(^|/)Cargo\\.toml$/"],
       "matchStrings": ["rust-version\\s*=\\s*\"(?<currentValue>[^\"]+)\""],
@@ -55,8 +54,7 @@
       "versioningTemplate": "semver"
     },
     {
-      // pin the trevrpc buf module to the release label of the flake input, which
-      // shares its datasource, so both always land in the same trevrpc update
+      // shares the trevrpc flake input's datasource, so both land in the same update
       "customType": "regex",
       "managerFilePatterns": ["/(^|/)buf\\.yaml$/"],
       "matchStrings": ["buf\\.build/trevrpc/trevrpc:(?<currentValue>v\\S+)"],
@@ -88,7 +86,6 @@
       "matchManagers": ["gomod"],
       "addLabels": ["go"],
       "postUpdateOptions": ["gomodUpdateImportPaths"],
-      // gomod2nix.toml has an entry per module, so updates do not conflict.
       // "update" runs it for every go update, even in groups led by another manager
       "postUpgradeTasks": {
         "commands": ["nix run .#update-go-deps"],
@@ -96,7 +93,7 @@
       }
     },
     {
-      // replaced by the nixpkgs-unstable custom manager
+      // replaced by the go custom manager
       "matchManagers": ["gomod"],
       "matchDepTypes": ["toolchain"],
       "enabled": false
@@ -113,6 +110,11 @@
       "postUpdateOptions": ["npmInstallTwice"]
     },
     {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["engines"],
+      "enabled": false
+    },
+    {
       "matchManagers": ["cargo"],
       "addLabels": ["rust"]
     },
@@ -122,17 +124,14 @@
       "addLabels": ["rust"]
     },
     {
-      "matchManagers": ["npm"],
-      "matchDepTypes": ["engines"],
-      "enabled": false
-    },
-    {
       "matchPackageNames": ["solid-js", "@solidjs/**"],
       "groupName": "solidjs"
     },
     {
-      // the flake input and buf module (packageName is their git url) keep the protoc
-      // plugins and protos in step with the libraries
+      "matchPackageNames": ["d3", "d3-*", "@types/d3", "@types/d3-*"],
+      "groupName": "d3"
+    },
+    {
       "matchPackageNames": [
         "@trevrpc/**",
         "trev.zip/llc/trevrpc/**",
@@ -140,23 +139,17 @@
         "https://trev.zip/llc/trevrpc{,.git}"
       ],
       "groupName": "trevrpc",
-      // require the release in every manifest, not only the lock files
       "rangeStrategy": "bump"
     },
     {
-      // new protoc plugins can change the generated code, and a new buf module label
-      // needs buf.lock updated. a rule of its own, because postUpgradeTasks from a later
-      // rule replace the gomod ones rather than merging
+      // regenerates code and updates buf.lock. kept separate from the trevrpc group,
+      // where it would replace the gomod postUpgradeTasks instead of merging
       "matchManagers": ["nix", "custom.regex"],
       "matchDepNames": ["trevrpc", "buf.build/trevrpc/trevrpc"],
       "postUpgradeTasks": {
         "commands": ["nix run .#update-buf-deps"],
         "executionMode": "update"
       }
-    },
-    {
-      "matchPackageNames": ["d3", "d3-*", "@types/d3", "@types/d3-*"],
-      "groupName": "d3"
     }
   ]
 }
