@@ -32,6 +32,7 @@ type StorageRead =
 const [changeSignal, setChangeSignal] = createSignal(0);
 let currentClaims: SessionClaims | null = null;
 let currentRevision = 0;
+const listeners = new Set<(claims: SessionClaims | null) => void>();
 
 let expiryTimer: ReturnType<typeof setTimeout> | undefined;
 let initialized = false;
@@ -210,6 +211,7 @@ function setCurrentClaims(next: SessionClaims | null, force = false) {
   currentRevision = nextRevision;
   setChangeSignal(nextRevision);
   if (next) armExpiryTimer(next, nextRevision);
+  for (const listener of listeners) listener(next);
 }
 
 function syncFromStorage() {
@@ -286,6 +288,19 @@ export const session = {
    * read without tracking, so effects do not subscribe to it.
    */
   peek: () => ({ claims: currentClaims, revision: currentRevision }),
+  /**
+   * Calls listener with the current session now and synchronously whenever it
+   * changes, for imperative code that must see a change before anything else
+   * runs, such as the channel's connection metadata. Returns a function that
+   * stops the calls.
+   */
+  subscribe(listener: (claims: SessionClaims | null) => void): () => void {
+    listeners.add(listener);
+    listener(currentClaims);
+    return () => {
+      listeners.delete(listener);
+    };
+  },
   setFromLogin(response: LoginResponse) {
     const claims = claimsFromLogin(response);
     try {

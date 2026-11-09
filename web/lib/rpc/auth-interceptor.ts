@@ -1,7 +1,7 @@
 import { Code, type CallInterceptor, TrevRpcError } from "@trevrpc/trevrpc-js";
 
 import { getSignInPath, normalizePath } from "../auth/routing.ts";
-import { session } from "../auth/session.ts";
+import { session, type SessionClaims } from "../auth/session.ts";
 
 /** Methods that do not need a session, whose failures their forms report. */
 const PUBLIC_METHODS = new Set(["auth.v1.AuthService/Login", "auth.v1.AuthService/Signup"]);
@@ -11,15 +11,22 @@ export function isPublicMethod(service: string, method: string): boolean {
 }
 
 /**
- * Sends the session token with every call to a protected method, and handles
- * the call's authentication failure when it ends.
+ * The channel's connection metadata for a session: its token, which every call
+ * carries and which crosses each connection once, or none without a session.
+ */
+export function sessionMetadata(claims: SessionClaims | null): Record<string, string> | undefined {
+  return claims ? { authorization: `Bearer ${claims.token}` } : undefined;
+}
+
+/**
+ * Handles the authentication failure of a call to a protected method when it
+ * ends. The session token comes from the channel's connection metadata.
  */
 export const authInterceptor: CallInterceptor = (call) => {
   if (isPublicMethod(call.service, call.name)) return;
 
   // Calls start inside effects, so read the session without tracking it.
-  const { claims, revision } = session.peek();
-  if (claims) call.metadata.authorization = `Bearer ${claims.token}`;
+  const { revision } = session.peek();
   return ({ error }) => handleAuthError(error, revision);
 };
 

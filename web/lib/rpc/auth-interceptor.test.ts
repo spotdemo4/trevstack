@@ -4,7 +4,12 @@ import { type CallFinish, Code, type InterceptedCall, TrevRpcError } from "@trev
 import { afterEach, beforeEach, expect, type MockInstance, test, vi } from "vitest";
 
 import { session } from "../auth/session.ts";
-import { authInterceptor, handleAuthError, isPublicMethod } from "./auth-interceptor.ts";
+import {
+  authInterceptor,
+  handleAuthError,
+  isPublicMethod,
+  sessionMetadata,
+} from "./auth-interceptor.ts";
 
 let redirects: string[];
 let replace: MockInstance<Location["replace"]>;
@@ -111,11 +116,11 @@ async function intercept(intercepted: InterceptedCall) {
   return (await authInterceptor(intercepted)) as CallFinish | undefined;
 }
 
-test("protected calls carry the session token and handle their authentication failures", async () => {
+test("protected calls handle their authentication failures, leaving the token to the channel", async () => {
   const intercepted = call();
   const finish = await intercept(intercepted);
 
-  expect(intercepted.metadata).toEqual({ authorization: "Bearer trev.token" });
+  expect(intercepted.metadata).toEqual({});
   finish?.({
     code: Code.Unauthenticated,
     error: new TrevRpcError(Code.Unauthenticated, "expired"),
@@ -136,19 +141,16 @@ test("protected calls started under an older session are ignored when they end",
   expect(redirects).toEqual([]);
 });
 
-test("public calls carry no token and leave their failures to the forms", async () => {
+test("public calls leave their failures to the forms", async () => {
   const intercepted = call("auth.v1.AuthService", "Login");
 
   expect(await intercept(intercepted)).toBeUndefined();
   expect(intercepted.metadata).toEqual({});
 });
 
-test("calls without a session carry no token", async () => {
-  session.clear();
-  const intercepted = call();
-  await intercept(intercepted);
-
-  expect(intercepted.metadata).toEqual({});
+test("connection metadata carries the session token, or nothing without a session", () => {
+  expect(sessionMetadata(session.peek().claims)).toEqual({ authorization: "Bearer trev.token" });
+  expect(sessionMetadata(null)).toBeUndefined();
 });
 
 test("only login and signup are public", () => {

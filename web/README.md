@@ -34,7 +34,8 @@ When the server uses its development certificate, the channel reads the certific
 `/certificate-hashes` before each WebTransport attempt and trusts it by them.
 
 `Login` returns a session token, which the app keeps in local storage with the username and expiry.
-A channel interceptor sends it with every call that requires a session. The app can tell from local
+The channel sends it as connection metadata, which crosses each connection once instead of in every
+request, and its interceptor handles the failures of calls that require a session. The app can tell from local
 storage, without a request, whether to show signed-in pages. It signs out when the session expires
 or when an RPC fails with `unauthenticated`, and syncs sign-in state across tabs.
 

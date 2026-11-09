@@ -212,6 +212,37 @@ test("increments revision for meaningful changes and allows same-claims login", 
   expect(session.revision()).toBe(firstLogin + 2);
 });
 
+test("subscribers see the current session at once and every change synchronously", () => {
+  const seen: (string | null)[] = [];
+  const unsubscribe = session.subscribe((claims) => seen.push(claims?.sub ?? null));
+  expect(seen).toEqual([null]);
+
+  cleanup = session.initialize();
+  session.setFromLogin(loginMetadata(validClaims({ sub: "user-1" })));
+  expect(seen).toEqual([null, "user-1"]);
+  session.setFromLogin(loginMetadata(validClaims({ sub: "user-2" })));
+  session.clear();
+  session.clear();
+  expect(seen).toEqual([null, "user-1", "user-2", null]);
+
+  unsubscribe();
+  session.setFromLogin(loginMetadata());
+  expect(seen).toEqual([null, "user-1", "user-2", null]);
+});
+
+test("subscribers see sessions restored from storage and cleared on expiry", () => {
+  const claims = validClaims({ exp: nowInSeconds() + 5 });
+  store(claims);
+  const seen: (SessionClaims | null)[] = [];
+  const unsubscribe = session.subscribe((current) => seen.push(current));
+
+  cleanup = session.initialize();
+  expect(seen).toEqual([null, claims]);
+  vi.advanceTimersByTime(5_000);
+  expect(seen).toEqual([null, claims, null]);
+  unsubscribe();
+});
+
 test("replaces the expiry timer when claims change", () => {
   cleanup = session.initialize();
   session.setFromLogin(loginMetadata(validClaims({ exp: nowInSeconds() + 5 })));
