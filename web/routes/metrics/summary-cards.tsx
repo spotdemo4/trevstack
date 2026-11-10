@@ -3,30 +3,30 @@ import { Card } from "$lib/card";
 import { Skeleton } from "$lib/skeleton";
 import { type Component, For, Show } from "solid-js";
 
+import { formatNumber } from "./format";
+
 import styles from "./summary-cards.module.css";
 
 type SummaryCardsProps = {
-  data: SummaryResponse | undefined;
-  loading: boolean;
+  /** Shows skeletons while undefined. */
+  data?: SummaryResponse;
+  /** Shows skeletons instead of stale data while refetching. */
+  loading?: boolean;
 };
 
 const SUMMARY_CARD_COUNT = 6;
-
-const formatBig = (n: bigint | number): string => Number(n).toLocaleString();
-const formatFloat = (n: number): string =>
-  n.toLocaleString(undefined, { maximumFractionDigits: 2 });
 
 export const SummaryCards: Component<SummaryCardsProps> = (props) => {
   const stats = () => {
     const d = props.data;
     if (!d) return [];
     return [
-      { label: "Items", value: formatBig(d.totalCount) },
-      { label: "Sum", value: formatBig(d.totalSum) },
-      { label: "Average", value: formatFloat(d.average) },
-      { label: "Min", value: formatBig(d.min) },
-      { label: "Max", value: formatBig(d.max) },
-      { label: "Distinct names", value: formatBig(d.distinctNames) },
+      { label: "Items", value: formatNumber(d.totalCount) },
+      { label: "Sum", value: formatNumber(d.totalSum) },
+      { label: "Average", value: formatNumber(d.average) },
+      { label: "Min", value: formatNumber(d.min) },
+      { label: "Max", value: formatNumber(d.max) },
+      { label: "Distinct names", value: formatNumber(d.distinctNames) },
     ];
   };
   const pending = () => props.loading || !props.data;

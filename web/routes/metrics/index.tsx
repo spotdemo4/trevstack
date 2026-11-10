@@ -1,27 +1,20 @@
 import { TimeInterval } from "$gen/number/v1/metrics_pb";
-import { Card } from "$lib/card";
 import { createEffectResource, toastFailure } from "$lib/effect";
 import { DateField } from "$lib/form/date-field";
 import { Form } from "$lib/form/form";
 import { useForm } from "$lib/form/hook";
 import { ResetButton } from "$lib/form/reset-button";
 import { SubmitButton } from "$lib/form/submit-button";
-import { NumberInput, SelectInput } from "$lib/input";
 import { NumberClient } from "$lib/rpc";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
-import { Errored, isPending, Loading, type Component, createMemo, createSignal } from "solid-js";
+import { Errored, isPending, Loading, type Component, createSignal } from "solid-js";
 
+import { ChartCard } from "./chart-card";
+import { CountInput, IntervalSelect } from "./controls";
 import { DistributionChart } from "./distribution-chart";
 import { SummaryCards } from "./summary-cards";
 import { TimeSeriesChart } from "./time-series-chart";
 import { TopNamesChart } from "./top-names-chart";
-
-const intervalOptions: { value: TimeInterval; label: string }[] = [
-  { value: TimeInterval.HOUR, label: "Hour" },
-  { value: TimeInterval.DAY, label: "Day" },
-  { value: TimeInterval.WEEK, label: "Week" },
-  { value: TimeInterval.MONTH, label: "Month" },
-];
 
 type MetricsRange = {
   start?: Timestamp;
@@ -29,37 +22,36 @@ type MetricsRange = {
 };
 
 const Metrics: Component = () => {
-  const [rangeFilter, setRangeFilter] = createSignal<MetricsRange>({});
-  const [interval, setInterval] = createSignal<TimeInterval>(TimeInterval.DAY);
-  const [bucketCount, setBucketCount] = createSignal(10);
-  const [limit, setLimit] = createSignal(8);
+  // Shared by every request; set by the filter form.
+  const [range, setRange] = createSignal<MetricsRange>({});
 
   const form = useForm(() => ({
     defaultValues: {} as MetricsRange,
     onSubmit: async ({ value }) => {
-      setRangeFilter(value);
+      setRange(value);
     },
   }));
-
-  const range = createMemo(() => rangeFilter());
 
   const summary = createEffectResource(range, (req) =>
     toastFailure("Failed to load summary")(NumberClient.summary(req)),
   );
 
-  const timeSeriesArgs = createMemo(() => ({ ...range(), interval: interval() }));
-  const timeSeries = createEffectResource(timeSeriesArgs, (req) =>
-    toastFailure("Failed to load activity over time")(NumberClient.timeSeries(req)),
+  const [interval, setInterval] = createSignal<TimeInterval>(TimeInterval.DAY);
+  const timeSeries = createEffectResource(
+    () => ({ ...range(), interval: interval() }),
+    (req) => toastFailure("Failed to load activity over time")(NumberClient.timeSeries(req)),
   );
 
-  const distributionArgs = createMemo(() => ({ ...range(), bucketCount: bucketCount() }));
-  const distribution = createEffectResource(distributionArgs, (req) =>
-    toastFailure("Failed to load number distribution")(NumberClient.distribution(req)),
+  const [bucketCount, setBucketCount] = createSignal(10);
+  const distribution = createEffectResource(
+    () => ({ ...range(), bucketCount: bucketCount() }),
+    (req) => toastFailure("Failed to load number distribution")(NumberClient.distribution(req)),
   );
 
-  const topNamesArgs = createMemo(() => ({ ...range(), limit: limit() }));
-  const topNames = createEffectResource(topNamesArgs, (req) =>
-    toastFailure("Failed to load top names")(NumberClient.topNames(req)),
+  const [limit, setLimit] = createSignal(8);
+  const topNames = createEffectResource(
+    () => ({ ...range(), limit: limit() }),
+    (req) => toastFailure("Failed to load top names")(NumberClient.topNames(req)),
   );
 
   return (
@@ -75,127 +67,38 @@ const Metrics: Component = () => {
       </Form>
 
       <Errored fallback={<div class="text-sm text-danger">Failed to load summary.</div>}>
-        <Loading fallback={<SummaryCards data={undefined} loading={true} />}>
+        <Loading fallback={<SummaryCards />}>
           <SummaryCards data={summary()} loading={isPending(summary)} />
         </Loading>
       </Errored>
 
-      <Card class="p-4">
-        <div class="mb-3 flex items-center justify-between gap-2">
-          <h2 class="font-semibold text-foreground">Activity over time</h2>
-          <div class="w-36">
-            <SelectInput
-              items={intervalOptions.map((opt) => ({
-                label: opt.label,
-                value: String(opt.value),
-              }))}
-              value={[String(interval())]}
-              onValueChange={(details) => {
-                const first = details.value[0];
-                if (typeof first === "string") {
-                  setInterval(Number(first) as TimeInterval);
-                }
-              }}
-            />
-          </div>
-        </div>
-        <Errored
-          fallback={
-            <div class="flex h-70 items-center justify-center text-sm text-danger">
-              Failed to load activity.
-            </div>
-          }
-        >
-          <Loading
-            fallback={
-              <div class="flex h-70 items-center justify-center text-sm text-foreground-subtle">
-                Loading...
-              </div>
-            }
-          >
-            <TimeSeriesChart points={timeSeries()?.points ?? []} />
-          </Loading>
-        </Errored>
-      </Card>
+      <ChartCard
+        title="Activity over time"
+        height={280}
+        errorLabel="Failed to load activity."
+        controls={<IntervalSelect value={interval()} onChange={setInterval} />}
+      >
+        <TimeSeriesChart points={timeSeries()?.points ?? []} height={280} />
+      </ChartCard>
 
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card class="p-4">
-          <div class="mb-3 flex items-center justify-between gap-2">
-            <h2 class="font-semibold text-foreground">Number distribution</h2>
-            <div class="w-32">
-              <NumberInput
-                min={1}
-                max={100}
-                value={String(bucketCount())}
-                onValueChange={(details) => {
-                  if (
-                    !Number.isNaN(details.valueAsNumber) &&
-                    details.valueAsNumber >= 1 &&
-                    details.valueAsNumber <= 100
-                  ) {
-                    setBucketCount(details.valueAsNumber);
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <Errored
-            fallback={
-              <div class="flex h-65 items-center justify-center text-sm text-danger">
-                Failed to load distribution.
-              </div>
-            }
-          >
-            <Loading
-              fallback={
-                <div class="flex h-65 items-center justify-center text-sm text-foreground-subtle">
-                  Loading...
-                </div>
-              }
-            >
-              <DistributionChart buckets={distribution()?.buckets ?? []} />
-            </Loading>
-          </Errored>
-        </Card>
+        <ChartCard
+          title="Number distribution"
+          height={260}
+          errorLabel="Failed to load distribution."
+          controls={<CountInput value={bucketCount()} onChange={setBucketCount} />}
+        >
+          <DistributionChart buckets={distribution()?.buckets ?? []} height={260} />
+        </ChartCard>
 
-        <Card class="p-4">
-          <div class="mb-3 flex items-center justify-between gap-2">
-            <h2 class="font-semibold text-foreground">Top names</h2>
-            <div class="w-32">
-              <NumberInput
-                min={1}
-                max={100}
-                value={String(limit())}
-                onValueChange={(details) => {
-                  if (
-                    !Number.isNaN(details.valueAsNumber) &&
-                    details.valueAsNumber >= 1 &&
-                    details.valueAsNumber <= 100
-                  ) {
-                    setLimit(details.valueAsNumber);
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <Errored
-            fallback={
-              <div class="flex h-65 items-center justify-center text-sm text-danger">
-                Failed to load top names.
-              </div>
-            }
-          >
-            <Loading
-              fallback={
-                <div class="flex h-65 items-center justify-center text-sm text-foreground-subtle">
-                  Loading...
-                </div>
-              }
-            >
-              <TopNamesChart names={topNames()?.names ?? []} />
-            </Loading>
-          </Errored>
-        </Card>
+        <ChartCard
+          title="Top names"
+          height={260}
+          errorLabel="Failed to load top names."
+          controls={<CountInput value={limit()} onChange={setLimit} />}
+        >
+          <TopNamesChart names={topNames()?.names ?? []} minHeight={260} />
+        </ChartCard>
       </div>
     </div>
   );

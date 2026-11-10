@@ -1,152 +1,81 @@
 import type { DistributionBucket } from "$gen/number/v1/metrics_pb";
-import {
-  ChartFrame,
-  getChartInnerSize,
-  hideChartTooltip,
-  showChartTooltip,
-  styles,
-  useChartSize,
-} from "$lib/chart";
+import { Chart, type ChartDrawContext, styles } from "$lib/chart";
 import { max } from "d3-array";
 import { axisBottom, axisLeft } from "d3-axis";
-import { format } from "d3-format";
 import { scaleBand, scaleLinear } from "d3-scale";
-import { select } from "d3-selection";
-import { type Component, createEffect } from "solid-js";
+import { type Component, createMemo } from "solid-js";
 
-type DistributionChartProps = {
-  buckets: DistributionBucket[];
-};
+import { formatNumber, formatRange, formatRangeShort } from "./format";
+
+type Datum = { key: string; label: string; fullLabel: string; count: number };
 
 const margin = { top: 12, right: 16, bottom: 64, left: 44 };
 
-export const DistributionChart: Component<DistributionChartProps> = (props) => {
-  let containerRef!: HTMLDivElement;
-  let svgRef!: SVGSVGElement;
-  let tooltipRef!: HTMLDivElement;
+const draw = ({ g, width, height, data, tooltip }: ChartDrawContext<Datum>) => {
+  const x = scaleBand<string>()
+    .domain(data.map((d) => d.key))
+    .range([0, width])
+    .padding(0.15);
+  const y = scaleLinear()
+    .domain([0, max(data, (d) => d.count) ?? 1])
+    .nice()
+    .range([height, 0]);
 
-  const { width, height } = useChartSize(() => containerRef, 260);
-  const setContainerRef = (element: HTMLDivElement) => {
-    containerRef = element;
-  };
-  const setSvgRef = (element: SVGSVGElement) => {
-    svgRef = element;
-  };
-  const setTooltipRef = (element: HTMLDivElement) => {
-    tooltipRef = element;
-  };
+  // Label every Nth bar so labels don't collide on narrow widths.
+  const labelEvery = Math.max(1, Math.ceil(data.length / Math.max(1, Math.floor(width / 60))));
+  const labelByKey = new Map(data.map((d) => [d.key, d.label]));
 
-  createEffect(
-    () => ({
-      width: width(),
-      height: height(),
-      data: props.buckets.map((b, i) => ({
-        key: `${i}`,
-        label: (() => {
-          const compactNumber = format("~s");
-          const roundToNearestThousand = (value: number): number =>
-            Math.abs(value) < 1000 ? value : Math.round(value / 1000) * 1000;
-          const shortLower = compactNumber(roundToNearestThousand(b.lower)).replace("G", "B");
-          const shortUpper = compactNumber(roundToNearestThousand(b.upper)).replace("G", "B");
-          return b.lower === b.upper ? shortLower : `${shortLower}-${shortUpper}`;
-        })(),
-        fullLabel: b.lower === b.upper ? `${b.lower}` : `${b.lower}-${b.upper}`,
-        count: Number(b.count),
-      })),
-    }),
-    ({ width: w, height: h, data }) => {
-      const svg = select(svgRef);
-      svg.selectAll("*").remove();
-      hideChartTooltip(tooltipRef);
-      const cleanup = () => {
-        svg.selectAll("*").remove();
-        hideChartTooltip(tooltipRef);
-      };
-      if (w === 0 || data.length === 0) return cleanup;
+  g.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .attr("class", `${styles.Axis} text-foreground-subtle`)
+    .call(
+      axisBottom(x)
+        .tickValues(data.filter((_, i) => i % labelEvery === 0).map((d) => d.key))
+        .tickFormat((key) => labelByKey.get(key) ?? key)
+        .tickSizeOuter(0),
+    )
+    .selectAll("text")
+    .attr("transform", "rotate(-35)")
+    .attr("dy", "0.35em")
+    .style("text-anchor", "end");
 
-      const showTooltip = (event: PointerEvent, text: string) => {
-        showChartTooltip({ event, container: containerRef, tooltip: tooltipRef, text });
-      };
-      const hideTooltip = () => {
-        hideChartTooltip(tooltipRef);
-      };
+  g.append("g")
+    .attr("class", `${styles.Axis} text-foreground-subtle`)
+    .call(axisLeft(y).ticks(5).tickSizeOuter(0));
 
-      const { innerW, innerH } = getChartInnerSize(w, h, margin);
+  const bars = g
+    .append("g")
+    .selectAll("rect")
+    .data(data)
+    .join("rect")
+    .attr("class", `${styles.VerticalBar} fill-chart-2 hover:fill-chart-2-hover`)
+    .attr("x", (d) => x(d.key) ?? 0)
+    .attr("y", (d) => y(d.count))
+    .attr("width", x.bandwidth())
+    .attr("height", (d) => height - y(d.count))
+    .attr("rx", 2);
+  tooltip.attach(bars, (d) => `${d.fullLabel}\nTotal count: ${formatNumber(d.count)}`);
+};
 
-      const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-
-      const x = scaleBand<string>()
-        .domain(data.map((d) => d.key))
-        .range([0, innerW])
-        .padding(0.15);
-      const labelByKey = new Map(data.map((d) => [d.key, d.label]));
-
-      const y = scaleLinear()
-        .domain([0, max(data, (d) => d.count) ?? 1])
-        .nice()
-        .range([innerH, 0]);
-
-      // Show every Nth label so they don't collide on narrow widths.
-      const skip = Math.max(1, Math.ceil(data.length / Math.max(1, Math.floor(innerW / 60))));
-
-      g.append("g")
-        .attr("transform", `translate(0,${innerH})`)
-        .attr("class", `${styles.Axis} text-foreground-subtle`)
-        .call(
-          axisBottom(x)
-            .tickValues(data.filter((_, i) => i % skip === 0).map((d) => d.key))
-            .tickFormat((key) => labelByKey.get(key) ?? key)
-            .tickSizeOuter(0),
-        )
-        .selectAll("text")
-        .attr("transform", "rotate(-35)")
-        .attr("dy", "0.35em")
-        .style("text-anchor", "end");
-
-      g.append("g")
-        .attr("class", `${styles.Axis} text-foreground-subtle`)
-        .call(axisLeft(y).ticks(5).tickSizeOuter(0));
-
-      g.append("g")
-        .selectAll("rect")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("class", `${styles.VerticalBar} fill-chart-2`)
-        .attr("x", (d) => x(d.key) ?? 0)
-        .attr("y", (d) => y(d.count))
-        .attr("width", x.bandwidth())
-        .attr("height", (d) => innerH - y(d.count))
-        .attr("rx", 2)
-        .on("pointerenter", (event: PointerEvent, d) => {
-          select(event.currentTarget as SVGRectElement)
-            .classed("fill-chart-2", false)
-            .classed("fill-chart-2-hover", true);
-          showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
-        })
-        .on("pointermove", (event: PointerEvent, d) => {
-          showTooltip(event, `${d.fullLabel}\nTotal count: ${d.count}`);
-        })
-        .on("pointerleave", (event: PointerEvent) => {
-          select(event.currentTarget as SVGRectElement)
-            .classed("fill-chart-2-hover", false)
-            .classed("fill-chart-2", true);
-          hideTooltip();
-        });
-
-      return cleanup;
-    },
+export const DistributionChart: Component<{ buckets: DistributionBucket[]; height: number }> = (
+  props,
+) => {
+  const data = createMemo(() =>
+    props.buckets.map((b, i) => ({
+      key: `${i}`,
+      label: formatRangeShort(b.lower, b.upper),
+      fullLabel: formatRange(b.lower, b.upper),
+      count: Number(b.count),
+    })),
   );
 
   return (
-    <ChartFrame
-      width={width()}
-      height={height()}
-      isEmpty={props.buckets.length === 0}
+    <Chart
+      data={data()}
+      height={props.height}
+      margin={margin}
+      draw={draw}
       emptyLabel="No data in range"
-      containerRef={setContainerRef}
-      svgRef={setSvgRef}
-      tooltipRef={setTooltipRef}
     />
   );
 };
