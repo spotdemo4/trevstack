@@ -17,15 +17,15 @@ test("valid values become the request message", () => {
   });
 });
 
-test("violations name their field", () => {
+test("violations are reported at their field", () => {
   expect(validate(AddRequestSchema, { name: "a".repeat(51) })).toEqual({
     issues: [
-      { message: "Name must be at most 50 characters", path: ["name"] },
-      { message: "Number is required", path: ["number"] },
+      { message: "must be at most 50 characters", path: ["name"] },
+      { message: "value is required", path: ["number"] },
     ],
   });
   expect(validate(TimeSeriesRequestSchema, {})).toEqual({
-    issues: [{ message: "Interval is required", path: ["interval"] }],
+    issues: [{ message: "value is required", path: ["interval"] }],
   });
 });
 
@@ -34,7 +34,7 @@ test("custom rules keep their messages", () => {
     issues: [
       {
         message:
-          "Username must start with a letter or digit and contain only letters, digits, underscores, and hyphens",
+          "value must start with a letter or digit and contain only letters, digits, underscores, and hyphens",
         path: ["username"],
       },
     ],
@@ -46,16 +46,16 @@ test("passwords are limited in bytes, not characters", () => {
     value: expect.anything(),
   });
   expect(validate(SignupRequestSchema, { username: "alice", password: "é".repeat(37) })).toEqual({
-    issues: [{ message: "Password must be at most 72 bytes", path: ["password"] }],
+    issues: [{ message: "must be at most 72 bytes", path: ["password"] }],
   });
 });
 
 test("numbers must fit their integer field before the rules apply", () => {
   expect(validate(AddRequestSchema, { name: "foo", number: 1.5 })).toEqual({
-    issues: [{ message: "Number must be a whole number", path: ["number"] }],
+    issues: [{ message: "must be a whole number", path: ["number"] }],
   });
   expect(validate(ListRequestSchema, { minimum: -1 })).toEqual({
-    issues: [{ message: "Minimum must not be negative", path: ["minimum"] }],
+    issues: [{ message: "must not be negative", path: ["minimum"] }],
   });
 });
 
@@ -64,8 +64,8 @@ test("rules of the whole message have no field", () => {
   const end = timestampFromDate(new Date("2026-01-01T00:00:00Z"));
   expect(validate(ListRequestSchema, { minimum: 5, maximum: 5, start, end })).toEqual({
     issues: [
-      { message: "Minimum must be less than maximum" },
-      { message: "End must be after start" },
+      { message: "minimum must be less than maximum" },
+      { message: "end must be after start" },
     ],
   });
 });
