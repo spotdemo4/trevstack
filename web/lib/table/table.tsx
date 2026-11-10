@@ -42,6 +42,11 @@ type TableProps = {
    * value. Example: `["200px", "1fr", "120px"]`.
    */
   columns: string[];
+  /**
+   * Whether the table scrolls in its own element (the default) or with the window. With the window,
+   * the header and body each scroll sideways instead, in step, so that columns wider than the
+   * window stay within the table and the header can still stick to the top of the window.
+   */
   scrollMode?: TableScrollMode;
   onScroll?: (start: number, end: number) => void;
   children?: JSX.Element;
@@ -52,6 +57,10 @@ type TableContextValue = {
   columns: () => string[];
   scrollMode: () => TableScrollMode;
   onScroll?: (start: number, end: number) => void;
+  setHeader: (element: HTMLTableSectionElement) => void;
+  setBody: (element: HTMLTableSectionElement) => void;
+  /** Scrolls the header or body sideways to match the other, which scrolled. */
+  syncScrollLeft: (source: HTMLTableSectionElement) => void;
 };
 
 type FixedRowVirtualizer = {
@@ -203,7 +212,14 @@ const createFixedRowVirtualizer = (options: {
 
 const Table: Component<TableProps> = (props) => {
   let parentRef: HTMLDivElement | undefined;
+  let headerRef: HTMLTableSectionElement | undefined;
+  let bodyRef: HTMLTableSectionElement | undefined;
   const scrollMode = () => props.scrollMode ?? "element";
+
+  const syncScrollLeft = (source: HTMLTableSectionElement) => {
+    const target = source === headerRef ? bodyRef : headerRef;
+    if (target && target.scrollLeft !== source.scrollLeft) target.scrollLeft = source.scrollLeft;
+  };
 
   return (
     <TableContext
@@ -212,6 +228,9 @@ const Table: Component<TableProps> = (props) => {
         columns: () => props.columns,
         scrollMode,
         onScroll: props.onScroll,
+        setHeader: (element) => (headerRef = element),
+        setBody: (element) => (bodyRef = element),
+        syncScrollLeft,
       }}
     >
       <div
@@ -234,10 +253,17 @@ const Header: Component<HeaderProps> = (props) => {
   const table = useTableContext("Table.Header");
 
   return (
-    <thead class="sticky top-0 z-10 block bg-surface/95 backdrop-blur supports-backdrop-filter:bg-surface/75">
+    <thead
+      ref={table.setHeader}
+      onScroll={(event) => table.syncScrollLeft(event.currentTarget)}
+      class={twMerge(
+        "sticky top-0 z-10 block bg-surface/95 backdrop-blur supports-backdrop-filter:bg-surface/75",
+        table.scrollMode() === "window" && "scrollbar-none overflow-x-auto",
+      )}
+    >
       <tr
         class={twMerge(
-          "text-left text-xs font-semibold tracking-wider text-foreground-muted uppercase",
+          "min-w-min text-left text-xs font-semibold tracking-wider text-foreground-muted uppercase",
           "[&>th]:border-b [&>th]:border-line-subtle",
           props.class,
         )}
@@ -283,10 +309,16 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
 
   return (
     <tbody
-      ref={(node) => (bodyRef = node)}
+      ref={(node) => {
+        bodyRef = node;
+        table.setBody(node);
+      }}
+      onScroll={(event) => table.syncScrollLeft(event.currentTarget)}
+      class={table.scrollMode() === "window" ? "overflow-x-auto overflow-y-hidden" : undefined}
       style={{
         display: "block",
-        height: `${virtualizer.totalSize()}px`,
+        // Left unset when empty so the empty state, which is not positioned, sets the height.
+        height: virtualizer.totalSize() > 0 ? `${virtualizer.totalSize()}px` : undefined,
         position: "relative",
       }}
     >
@@ -305,7 +337,7 @@ const Body = <T extends unknown>(props: BodyProps<T>): JSX.Element => {
             <tr
               data-index={index}
               class={twMerge(
-                "border-b border-line-subtle/60 text-sm transition-colors",
+                "min-w-min border-b border-line-subtle/60 text-sm transition-colors",
                 "hover:bg-fill-subtle/40",
                 index % 2 === 0 ? "bg-background" : "bg-surface/40",
                 "[&>td]:flex [&>td]:items-center",
