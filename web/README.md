@@ -13,16 +13,16 @@ Each page demonstrates a kind of RPC with the cursor positions of `cursor.v1.Cur
 every signed-in user shares. Positions are fractions of a 16:9 pad's width and height, from its
 top-left corner.
 
-| path              | RPC                                                    | description                                                      |
-| ----------------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
-| `/auth`           | `Login`, `Signup`                                      | sign in and sign up                                              |
-| `/`               |                                                        | an introduction that links to every other page                   |
-| `/forms`          | `Send` (unary)                                         | send one position, typed or picked on a pad                      |
-| `/tables`         | `List`, `ListStreams` (server streaming)               | filter and browse positions and streams as they stream in        |
-| `/metrics`        | `Summary`, `TimeSeries`, `Heatmap`, `TopUsers` (unary) | summary, activity over time, heatmap, and top user charts        |
-| `/server-streams` | `Watch` (server streaming)                             | every cursor, live, with a trail                                 |
-| `/client-streams` | `Track` (client streaming)                             | stream your cursor while tracking, then see the stream's summary |
-| `/bidi-streams`   | `Share` (bidirectional streaming)                      | stream your cursor and see everyone else's over one call         |
+| path       | RPC                                                    | description                                                      |
+| ---------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
+| `/auth`    | `Login`, `Signup`                                      | sign in and sign up                                              |
+| `/`        |                                                        | an introduction that links to every other page                   |
+| `/forms`   | `Send` (unary)                                         | send one position, typed or picked on a pad                      |
+| `/tables`  | `List`, `ListStreams` (server streaming)               | filter and browse positions and streams as they stream in        |
+| `/metrics` | `Summary`, `TimeSeries`, `Heatmap`, `TopUsers` (unary) | summary, activity over time, heatmap, and top user charts        |
+| `/watch`   | `Watch` (server streaming)                             | every cursor, live, with a trail                                 |
+| `/track`   | `Track` (client streaming)                             | stream your cursor while tracking, then see the stream's summary |
+| `/share`   | `Share` (bidirectional streaming)                      | stream your cursor and see everyone else's over one call         |
 
 Every page except `/auth` requires a session; signed-out visitors are redirected to `/auth` and
 returned to the page they asked for after signing in. RPCs that fail with `permission_denied` show

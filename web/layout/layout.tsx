@@ -36,9 +36,9 @@ const links = [
   { href: "/forms", label: "Forms" },
   { href: "/tables", label: "Tables" },
   { href: "/metrics", label: "Metrics" },
-  { href: "/server-streams", label: "Server streams" },
-  { href: "/client-streams", label: "Client streams" },
-  { href: "/bidi-streams", label: "Bidi streams" },
+  { href: "/watch", label: "Watch" },
+  { href: "/track", label: "Track" },
+  { href: "/share", label: "Share" },
 ];
 
 const NavigationLinks: Component<NavigationProps> = (props) => (

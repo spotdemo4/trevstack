@@ -10,7 +10,7 @@ import type { Component } from "solid-js";
 /** The key of your own cursor, which no stream ID can collide with. */
 const OWN_CURSOR = "own";
 
-const BidiStreams: Component = () => {
+const Share: Component = () => {
   const cursors = createCursorStore();
   let requests: PushStream<MessageInitShape<typeof ShareRequestSchema>> | undefined;
 
@@ -32,7 +32,7 @@ const BidiStreams: Component = () => {
   return (
     <div class="mx-auto flex max-w-5xl flex-col gap-4 p-4">
       <PageHeader
-        title="Bidi streams"
+        title="Share"
         kind="Bidirectional streaming"
         rpc="rpc Share(stream ShareRequest) returns (stream ShareResponse)"
       >
@@ -51,4 +51,4 @@ const BidiStreams: Component = () => {
   );
 };
 
-export default BidiStreams;
+export default Share;

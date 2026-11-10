@@ -17,7 +17,7 @@ type TrackState = "idle" | "tracking" | "stopping";
 /** The key of your own cursor. */
 const OWN_CURSOR = "own";
 
-const ClientStreams: Component = () => {
+const Track: Component = () => {
   const cursors = createCursorStore();
   const [state, setState] = createSignal<TrackState>("idle");
   const [sent, setSent] = createSignal(0);
@@ -77,7 +77,7 @@ const ClientStreams: Component = () => {
   return (
     <div class="mx-auto flex max-w-5xl flex-col gap-4 p-4">
       <PageHeader
-        title="Client streams"
+        title="Track"
         kind="Client streaming"
         rpc="rpc Track(stream TrackRequest) returns (TrackResponse)"
       >
@@ -137,4 +137,4 @@ const ClientStreams: Component = () => {
   );
 };
 
-export default ClientStreams;
+export default Track;

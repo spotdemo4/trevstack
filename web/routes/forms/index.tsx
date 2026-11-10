@@ -59,8 +59,7 @@ const Forms: Component = () => {
     <div class="mx-auto flex max-w-5xl flex-col gap-6 p-4">
       <PageHeader title="Forms" kind="Unary" rpc="rpc Send(SendRequest) returns (SendResponse)">
         Pick a point on the pad or type its coordinates, then send it. Coordinates are fractions of
-        the pad's width and height from its top-left corner. Watch it arrive on the server streams
-        page.
+        the pad's width and height from its top-left corner. See it arrive on the Watch page.
       </PageHeader>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-[1fr_16rem]">

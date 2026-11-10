@@ -14,9 +14,9 @@ const Home = lazy(() => import("./routes/home"));
 const Forms = lazy(() => import("./routes/forms"));
 const Tables = lazy(() => import("./routes/tables"));
 const Metrics = lazy(() => import("./routes/metrics"));
-const ServerStreams = lazy(() => import("./routes/server-streams"));
-const ClientStreams = lazy(() => import("./routes/client-streams"));
-const BidiStreams = lazy(() => import("./routes/bidi-streams"));
+const Watch = lazy(() => import("./routes/watch"));
+const Track = lazy(() => import("./routes/track"));
+const Share = lazy(() => import("./routes/share"));
 const Auth = lazy(() => import("./routes/auth"));
 const Forbidden = lazy(() => import("./routes/403"));
 const NotFound = lazy(() => import("./routes/404"));
@@ -27,9 +27,9 @@ const Router = createRouter({
     { path: "/forms", component: Forms },
     { path: "/tables", component: Tables },
     { path: "/metrics", component: Metrics },
-    { path: "/server-streams", component: ServerStreams },
-    { path: "/client-streams", component: ClientStreams },
-    { path: "/bidi-streams", component: BidiStreams },
+    { path: "/watch", component: Watch },
+    { path: "/track", component: Track },
+    { path: "/share", component: Share },
     { path: "/auth", component: Auth },
     { path: "/403", component: Forbidden },
     { path: "*404", component: NotFound },

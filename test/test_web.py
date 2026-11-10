@@ -79,9 +79,9 @@ class WebTest(harness.BrowserTestCase):
             f"unexpected positions: {self.server.cursors()}",
         )
 
-    def test_server_streams_shows_positions_live(self) -> None:
+    def test_watch_shows_positions_live(self) -> None:
         self.server.signup(USERNAME)
-        self.login("/server-streams")
+        self.login("/watch")
 
         # The page may not have started watching yet, so send until the cursor shows.
         cursor = self.page.get_by_label("Live cursors").get_by_text(USERNAME)

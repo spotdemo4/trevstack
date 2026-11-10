@@ -36,24 +36,24 @@ const demos: Demo[] = [
       "Aggregate counts and distances, activity over time, a heatmap of where cursors go, and the most active users.",
   },
   {
-    href: "/server-streams",
-    title: "Server streams",
+    href: "/watch",
+    title: "Watch",
     kind: "Server streaming",
     rpc: "Watch",
     description:
       "Watch every cursor move live, whether it comes from a browser, the command-line client, or a form.",
   },
   {
-    href: "/client-streams",
-    title: "Client streams",
+    href: "/track",
+    title: "Track",
     kind: "Client streaming",
     rpc: "Track",
     description:
       "Stream your cursor to the server, one message per move, then get a summary of the stream when you stop.",
   },
   {
-    href: "/bidi-streams",
-    title: "Bidi streams",
+    href: "/share",
+    title: "Share",
     kind: "Bidirectional streaming",
     rpc: "Share",
     description:

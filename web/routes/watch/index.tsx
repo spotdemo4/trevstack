@@ -4,7 +4,7 @@ import { PageHeader } from "$lib/page-header";
 import { CursorClient } from "$lib/rpc";
 import type { Component } from "solid-js";
 
-const ServerStreams: Component = () => {
+const Watch: Component = () => {
   const cursors = createCursorStore();
   const watch = createLiveStream(
     () => {
@@ -18,7 +18,7 @@ const ServerStreams: Component = () => {
   return (
     <div class="mx-auto flex max-w-5xl flex-col gap-4 p-4">
       <PageHeader
-        title="Server streams"
+        title="Watch"
         kind="Server streaming"
         rpc="rpc Watch(WatchRequest) returns (stream WatchResponse)"
       >
@@ -35,4 +35,4 @@ const ServerStreams: Component = () => {
   );
 };
 
-export default ServerStreams;
+export default Watch;
