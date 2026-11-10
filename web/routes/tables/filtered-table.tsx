@@ -3,6 +3,7 @@ import { SlidersHorizontal } from "$lib/icon";
 import { createMediaQuery } from "$lib/media-query";
 import { Splitter } from "$lib/splitter";
 import type { TableScrollMode } from "$lib/table";
+import { Portal } from "@solidjs/web";
 import { type Component, Show } from "solid-js";
 
 type FilteredTableProps = {
@@ -26,9 +27,13 @@ export const FilteredTable: Component<FilteredTableProps> = (props) => {
         <div class="pb-[calc(5rem+env(safe-area-inset-bottom))]">
           <props.table scrollMode="window" />
           <Drawer.Root>
-            <Drawer.Trigger class="fixed right-[calc(1rem+env(safe-area-inset-right))] bottom-[calc(2rem+env(safe-area-inset-bottom))] z-20 m-0 shadow-lg">
-              <SlidersHorizontal size={16} /> Filters
-            </Drawer.Trigger>
+            {/* Portaled out of the tab panel, whose entry animation's transform would
+                otherwise make it the button's containing block for a moment. */}
+            <Portal>
+              <Drawer.Trigger class="fixed right-[calc(1rem+env(safe-area-inset-right))] bottom-[calc(2rem+env(safe-area-inset-bottom))] z-20 m-0 shadow-lg">
+                <SlidersHorizontal size={16} /> Filters
+              </Drawer.Trigger>
+            </Portal>
             <Drawer.Content>
               <div class="flex items-center justify-between">
                 <Drawer.Title>Filters</Drawer.Title>

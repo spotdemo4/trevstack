@@ -12,6 +12,8 @@
 
 :root {
   color-scheme: light;
+  /* Keeps the layout from shifting when a drawer hides the scrollbar to lock scrolling. */
+  scrollbar-gutter: stable;
 }
 
 :root.dark {
