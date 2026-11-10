@@ -5,7 +5,6 @@ import (
 	_ "embed"
 
 	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
-	"trev.zip/template/stack/server/v2/validation"
 )
 
 //go:embed summary.sql
@@ -16,10 +15,6 @@ func (h *Handler) Summary(
 	ctx context.Context,
 	req *numberv1.SummaryRequest,
 ) (*numberv1.SummaryResponse, error) {
-	if err := validation.TimeRange(req.GetStart(), req.GetEnd()); err != nil {
-		return nil, err
-	}
-
 	var startArg, endArg any
 	if start := req.GetStart(); start != nil {
 		startArg = start.AsTime()

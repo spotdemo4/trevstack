@@ -1,4 +1,7 @@
 // Package v1 implements the auth.v1 AuthService.
+//
+// Requests reach the handlers only after the server has checked them against
+// the buf.validate rules in their protos, so the handlers rely on those rules.
 package v1
 
 import (

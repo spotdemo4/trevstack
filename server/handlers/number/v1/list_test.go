@@ -133,15 +133,18 @@ func TestList(t *testing.T) {
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
-			handler, _ := newTest(t)
-			stream, err := handler.List(context.Background(), tc.req)
-			if err == nil {
-				_ = stream.Close()
-				t.Fatal("List() error = nil, want validation error")
-			}
-			if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
-				t.Errorf("code = %v, want InvalidArgument", got)
-			}
+			assertInvalid(t, tc.req)
 		})
 	}
+
+	t.Run("accepts no filters and the bounds", func(t *testing.T) {
+		assertValid(t, &numberv1.ListRequest{})
+		assertValid(t, numberv1.ListRequest_builder{
+			Name:    new(strings.Repeat("a", 50)),
+			Minimum: new(uint32(0)),
+			Maximum: new(uint32(1_000_000)),
+			Start:   earlier,
+			End:     later,
+		}.Build())
+	})
 }

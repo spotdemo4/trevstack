@@ -10,7 +10,12 @@ import (
 )
 
 func authorize(manager *Manager, method string, metadata trevrpc.Metadata) error {
-	return NewAuthorizer(manager).Authorize(context.Background(), trevrpc.HandlerContext{
+	_, err := authorizeContext(manager, method, metadata)
+	return err
+}
+
+func authorizeContext(manager *Manager, method string, metadata trevrpc.Metadata) (context.Context, error) {
+	return NewAuthorizer(manager).AuthorizeContext(context.Background(), trevrpc.HandlerContext{
 		FullMethod: method,
 		Metadata:   metadata,
 	})
@@ -48,8 +53,12 @@ func TestAuthorizerAllowsPublicMethodsWithoutToken(t *testing.T) {
 		authv1.AuthService_Logout_FullMethodName,
 		authv1.AuthService_Signup_FullMethodName,
 	} {
-		if err := authorize(manager, method, nil); err != nil {
-			t.Errorf("Authorize(%s) error = %v, want nil", method, err)
+		ctx, err := authorizeContext(manager, method, nil)
+		if err != nil {
+			t.Fatalf("AuthorizeContext(%s) error = %v, want nil", method, err)
+		}
+		if username, ok := UsernameFromContext(ctx); ok {
+			t.Errorf("AuthorizeContext(%s) username = %q, want none", method, username)
 		}
 	}
 }
@@ -61,8 +70,14 @@ func TestAuthorizerAcceptsValidToken(t *testing.T) {
 		bearer(token),
 		{"authorization": []byte("bearer " + token)},
 	} {
-		if err := authorize(manager, numberv1.NumberService_Add_FullMethodName, metadata); err != nil {
-			t.Errorf("Authorize(%q) error = %v, want nil", metadata["authorization"], err)
+		ctx, err := authorizeContext(manager, numberv1.NumberService_Add_FullMethodName, metadata)
+		if err != nil {
+			t.Fatalf("AuthorizeContext(%q) error = %v, want nil", metadata["authorization"], err)
+		}
+		// Interceptors and handlers learn the user without looking the
+		// session up again.
+		if username, ok := UsernameFromContext(ctx); !ok || username != "alice" {
+			t.Errorf("AuthorizeContext(%q) username = (%q, %t), want alice", metadata["authorization"], username, ok)
 		}
 	}
 }

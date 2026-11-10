@@ -19,7 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     trevrpc = {
-      url = "git+https://trev.zip/llc/TrevRPC.git?ref=refs/tags/v1.7.0";
+      url = "git+https://trev.zip/llc/TrevRPC.git?ref=refs/tags/v1.8.0";
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.trevpkgs.follows = "trevpkgs";
@@ -348,7 +348,7 @@
             bufDeps = pkgs.bufFetchDeps {
               src = ./.;
               pname = "trevstack-proto-deps";
-              hash = "sha256-wkF8EYPfVivwqyfQwizSTbviVBuylABBem6k9wheCjY=";
+              hash = "sha256-ly8LKnOEEcA5/q9fsWGA8AYvQwKQ8dhxwLjXzI2fbPU=";
             };
             packages = with pkgs; [
               bufHook

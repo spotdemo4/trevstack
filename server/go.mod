@@ -5,6 +5,7 @@ go 1.26.9
 toolchain go1.26.10
 
 require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2
 	github.com/Marlliton/slogpretty v0.1.3
 	github.com/XSAM/otelsql v0.44.0
 	github.com/mattn/go-sqlite3 v1.14.53
@@ -17,12 +18,17 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.47.0
 	golang.org/x/crypto v0.58.0
 	google.golang.org/protobuf v1.36.12
-	trev.zip/llc/trevrpc/trevrpc-go v1.7.0
-	trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc v1.7.0
+	trev.zip/llc/trevrpc/trevrpc-go v1.8.0
+	trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc v1.8.0
+	trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc v1.8.0
 )
 
 require (
+	buf.build/go/protovalidate v1.4.0 // indirect
+	cel.dev/cel-go v0.32.0 // indirect
+	cel.dev/expr v0.25.3 // indirect
 	github.com/DataDog/zstd v1.5.7 // indirect
+	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -59,6 +65,8 @@ require (
 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
+	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
 	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/text v0.43.0 // indirect

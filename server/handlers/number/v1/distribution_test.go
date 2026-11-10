@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
@@ -86,14 +85,7 @@ func TestDistribution(t *testing.T) {
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
-			handler, _ := newTest(t)
-			_, err := handler.Distribution(context.Background(), tc.req)
-			if err == nil {
-				t.Fatal("expected validation error, got nil")
-			}
-			if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
-				t.Errorf("code = %v, want InvalidArgument", got)
-			}
+			assertInvalid(t, tc.req)
 		})
 	}
 }

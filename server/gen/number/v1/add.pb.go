@@ -7,6 +7,7 @@
 package numberv1
 
 import (
+	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -193,11 +194,11 @@ var File_number_v1_add_proto protoreflect.FileDescriptor
 
 const file_number_v1_add_proto_rawDesc = "" +
 	"\n" +
-	"\x13number/v1/add.proto\x12\tnumber.v1\"V\n" +
+	"\x13number/v1/add.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\"t\n" +
 	"\n" +
-	"AddRequest\x12\x17\n" +
-	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x1b\n" +
-	"\x06number\x18\x02 \x01(\rH\x01R\x06number\x88\x01\x01B\a\n" +
+	"AddRequest\x12%\n" +
+	"\x04name\x18\x01 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\x01\x182H\x00R\x04name\x88\x01\x01\x12+\n" +
+	"\x06number\x18\x02 \x01(\rB\x0e\xbaH\v\xc8\x01\x01*\x06\x18\xc0\x84=(\x01H\x01R\x06number\x88\x01\x01B\a\n" +
 	"\x05_nameB\t\n" +
 	"\a_number\"\x1f\n" +
 	"\vAddResponse\x12\x10\n" +

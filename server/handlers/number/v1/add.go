@@ -18,10 +18,6 @@ func (h *Handler) Add(
 	ctx context.Context,
 	req *numberv1.AddRequest,
 ) (*numberv1.AddResponse, error) {
-	if err := validateAddRequest(req); err != nil {
-		return nil, err
-	}
-
 	// Add the number to the database.
 	_, err := h.db.ExecContext(ctx, addSQL, req.GetName(), req.GetNumber())
 	if err != nil {

@@ -18,10 +18,6 @@ func (h *Handler) Distribution(
 	ctx context.Context,
 	req *numberv1.DistributionRequest,
 ) (*numberv1.DistributionResponse, error) {
-	if err := validateDistributionRequest(req); err != nil {
-		return nil, err
-	}
-
 	var startArg, endArg any
 	if start := req.GetStart(); start != nil {
 		startArg = start.AsTime()

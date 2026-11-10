@@ -2,12 +2,27 @@ syntax = "proto3";
 
 package auth.v1;
 
+import "buf/validate/validate.proto";
+
 // Credentials for an existing account.
 message LoginRequest {
   // Required. 3 to 64 letters, digits, underscores, or hyphens, starting with a letter or digit.
-  optional string username = 1;
+  optional string username = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 3,
+    (buf.validate.field).string.max_len = 64,
+    (buf.validate.field).cel = {
+      id: "username.format"
+      message: "value must start with a letter or digit and contain only letters, digits, underscores, and hyphens"
+      expression: "this.matches('^[A-Za-z0-9][A-Za-z0-9_-]*$')"
+    }
+  ];
   // Required. At least 8 characters and at most 72 bytes; never returned in a response.
-  optional string password = 2;
+  optional string password = 2 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 8,
+    (buf.validate.field).string.max_bytes = 72
+  ];
 }
 
 // Session token and metadata returned after successful authentication.

@@ -17,6 +17,7 @@ import (
 	"github.com/XSAM/otelsql"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	"trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc"
+	"trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc"
 	"trev.zip/template/stack/server/v2/auth"
 	"trev.zip/template/stack/server/v2/database"
 	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
@@ -151,6 +152,9 @@ func run(cfg config, log *slog.Logger) error {
 	options.HTTPFallback = mux
 	server.SetOptions(options)
 	server.SetAuthorizer(auth.NewAuthorizer(sessionManager))
+	// Requests that break the buf.validate rules in their protos fail with
+	// InvalidArgument before they reach a handler.
+	server.SetValidator(protovalidatetrevrpc.New(nil))
 	// Remote trace context is not trusted since the API is public. Spans from
 	// clients are linked to the server's span instead.
 	server.SetInterceptors(oteltrevrpc.NewInterceptor(), rateLimiter, loginterceptor.New(log))

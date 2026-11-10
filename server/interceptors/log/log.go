@@ -6,6 +6,7 @@ import (
 	"log/slog"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	"trev.zip/template/stack/server/v2/auth"
 )
 
 // Interceptor logs the calls that reach a handler and their errors.
@@ -21,7 +22,8 @@ func New(log *slog.Logger) *Interceptor {
 }
 
 // Intercept logs each call when it starts, and when it ends with its status,
-// along with the client's IP when the transport knows it.
+// along with the client's IP when the transport knows it and the user of an
+// authenticated call.
 func (i *Interceptor) Intercept(
 	ctx context.Context,
 	info trevrpc.HandlerContext,
@@ -29,6 +31,9 @@ func (i *Interceptor) Intercept(
 	attrs := []any{"method", info.FullMethod}
 	if info.RemoteAddr.IsValid() {
 		attrs = append(attrs, "client_ip", info.RemoteAddr.Addr().String())
+	}
+	if username, ok := auth.UsernameFromContext(ctx); ok {
+		attrs = append(attrs, "user", username)
 	}
 	i.log.DebugContext(ctx, "request received", attrs...)
 

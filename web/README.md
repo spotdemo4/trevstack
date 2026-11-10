@@ -27,8 +27,12 @@ when the app loads: WebTransport, or QMux over WebSocket when WebTransport is un
 blocked. Calls made while it connects wait for it.
 Clients for each service are in [`lib/rpc`](lib/rpc) and wrap calls in
 [Effect](https://effect.website/) with [`@trevrpc/effect`](https://www.npmjs.com/package/@trevrpc/effect)
-for typed errors and cancellation. Forms check requests with
-[Effect schemas](https://effect.website/docs/schema/introduction/) that follow the server's rules.
+for typed errors and cancellation. The clients check each request against the
+[`buf.validate`](https://buf.build/bufbuild/protovalidate) rules in its proto with
+[`@trevrpc/protovalidate`](https://www.npmjs.com/package/@trevrpc/protovalidate) before sending it,
+and forms check their values against the same rules with `protoSchema` from
+[`lib/form/proto-schema.ts`](lib/form/proto-schema.ts), so a mistake shows under its field at once
+and the rules live in one place.
 
 When the server uses its development certificate, the channel reads the certificate's hashes from
 `/certificate-hashes` before each WebTransport attempt and trusts it by them.

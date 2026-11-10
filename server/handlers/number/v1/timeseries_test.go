@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
@@ -37,43 +36,28 @@ func TestTimeSeries(t *testing.T) {
 	})
 
 	t.Run("rejects missing interval", func(t *testing.T) {
-		handler, _ := newTest(t)
-		_, err := handler.TimeSeries(context.Background(), &numberv1.TimeSeriesRequest{})
-		if err == nil {
-			t.Fatal("expected validation error, got nil")
-		}
-		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
-			t.Errorf("code = %v, want InvalidArgument", got)
-		}
+		assertInvalid(t, &numberv1.TimeSeriesRequest{})
 	})
 
 	t.Run("rejects unspecified interval", func(t *testing.T) {
-		handler, _ := newTest(t)
-		_, err := handler.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
+		assertInvalid(t, numberv1.TimeSeriesRequest_builder{
 			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_UNSPECIFIED),
 		}.Build())
-		if err == nil {
-			t.Fatal("expected validation error, got nil")
-		}
-		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
-			t.Errorf("code = %v, want InvalidArgument", got)
-		}
+	})
+
+	t.Run("rejects undefined interval", func(t *testing.T) {
+		assertInvalid(t, numberv1.TimeSeriesRequest_builder{
+			Interval: new(numberv1.TimeInterval(5)),
+		}.Build())
 	})
 
 	t.Run("rejects end before start (CEL)", func(t *testing.T) {
-		handler, _ := newTest(t)
 		earlier := timestamppb.New(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
 		later := timestamppb.New(time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC))
-		_, err := handler.TimeSeries(context.Background(), numberv1.TimeSeriesRequest_builder{
+		assertInvalid(t, numberv1.TimeSeriesRequest_builder{
 			Interval: new(numberv1.TimeInterval_TIME_INTERVAL_DAY),
 			Start:    later,
 			End:      earlier,
 		}.Build())
-		if err == nil {
-			t.Fatal("expected validation error, got nil")
-		}
-		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
-			t.Errorf("code = %v, want InvalidArgument", got)
-		}
 	})
 }

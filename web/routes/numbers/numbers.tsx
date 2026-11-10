@@ -1,10 +1,11 @@
-import type { ListRequestSchema } from "$gen/number/v1/list_pb";
+import { ListRequestSchema } from "$gen/number/v1/list_pb";
 import { Drawer } from "$lib/drawer";
 import { createStreamingStore } from "$lib/effect";
 import { DateField } from "$lib/form/date-field";
 import { Form } from "$lib/form/form";
 import { useForm } from "$lib/form/hook";
 import { NumberField } from "$lib/form/number-field";
+import { protoSchema } from "$lib/form/proto-schema";
 import { SubmitButton } from "$lib/form/submit-button";
 import { TextField } from "$lib/form/text-field";
 import { SlidersHorizontal } from "$lib/icon";
@@ -14,51 +15,7 @@ import { Splitter } from "$lib/splitter";
 import { Table, type TableScrollMode } from "$lib/table";
 import type { MessageInitShape } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
-import { Schema } from "effect";
 import { type Component, createSignal, Show } from "solid-js";
-
-const Timestamp = Schema.Struct({
-  $typeName: Schema.Literal("google.protobuf.Timestamp"),
-  seconds: Schema.BigInt,
-  nanos: Schema.Number,
-});
-const Bound = Schema.Number.check(
-  Schema.isInt({ message: "Must be a whole number" }),
-  Schema.isBetween(
-    { minimum: 0, maximum: 1_000_000 },
-    { message: "Must be between 0 and 1000000" },
-  ),
-);
-
-// The same rules as the server's, so most mistakes are caught before a request.
-const listSchema = Schema.toStandardSchemaV1(
-  Schema.Struct({
-    name: Schema.optionalKey(
-      Schema.String.check(
-        Schema.isMaxLength(50, { message: "Name must be at most 50 characters" }),
-      ),
-    ),
-    minimum: Schema.optionalKey(Bound),
-    maximum: Schema.optionalKey(Bound),
-    start: Schema.optionalKey(Timestamp),
-    end: Schema.optionalKey(Timestamp),
-  }).check(
-    Schema.makeFilter(
-      ({ minimum, maximum }) =>
-        minimum === undefined ||
-        maximum === undefined ||
-        minimum < maximum ||
-        "Minimum must be less than maximum",
-    ),
-    Schema.makeFilter(
-      ({ start, end }) =>
-        start === undefined ||
-        end === undefined ||
-        timestampDate(end) > timestampDate(start) ||
-        "End must be after start",
-    ),
-  ),
-);
 
 export const Numbers: Component = () => {
   const isDesktop = createMediaQuery("(min-width: 900px)");
@@ -70,7 +27,7 @@ export const Numbers: Component = () => {
     (resp) => resp.item!,
   );
 
-  const form = useForm(listSchema, () => ({
+  const form = useForm(protoSchema(ListRequestSchema), () => ({
     validation: {
       onChange: true,
     },

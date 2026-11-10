@@ -9,12 +9,14 @@ import (
 	"testing"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	"trev.zip/template/stack/server/v2/auth"
 )
 
 func TestInterceptorLogsCalls(t *testing.T) {
 	for _, test := range []struct {
 		name       string
 		remoteAddr netip.AddrPort
+		username   string
 		code       trevrpc.Code
 		wantStart  string
 		wantFinish string
@@ -32,6 +34,14 @@ func TestInterceptorLogsCalls(t *testing.T) {
 			code:       trevrpc.CodeInvalidArgument,
 			wantStart:  `level=DEBUG msg="request received" method=/number.v1.NumberService/Add client_ip=2001:db8::1`,
 			wantFinish: `level=ERROR msg="request error" method=/number.v1.NumberService/Add client_ip=2001:db8::1 code=InvalidArgument`,
+		},
+		{
+			name:       "authenticated",
+			remoteAddr: netip.MustParseAddrPort("203.0.113.7:4433"),
+			username:   "alice",
+			code:       trevrpc.CodeOK,
+			wantStart:  `level=DEBUG msg="request received" method=/number.v1.NumberService/Add client_ip=203.0.113.7 user=alice`,
+			wantFinish: `level=DEBUG msg="request completed" method=/number.v1.NumberService/Add client_ip=203.0.113.7 user=alice`,
 		},
 		{
 			name:       "unknown client",
@@ -53,6 +63,9 @@ func TestInterceptorLogsCalls(t *testing.T) {
 			}))
 
 			ctx := context.Background()
+			if test.username != "" {
+				ctx = auth.ContextWithUsername(ctx, test.username)
+			}
 			next, finish, err := New(logger).Intercept(ctx, trevrpc.HandlerContext{
 				FullMethod: "/number.v1.NumberService/Add",
 				RemoteAddr: test.remoteAddr,

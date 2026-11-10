@@ -20,10 +20,6 @@ func (h *Handler) Signup(
 	ctx context.Context,
 	req *authv1.SignupRequest,
 ) (*authv1.SignupResponse, error) {
-	if err := validateCredentials(req); err != nil {
-		return nil, err
-	}
-
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword()), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, trevrpc.Internal("could not hash password")

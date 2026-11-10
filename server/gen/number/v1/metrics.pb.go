@@ -7,6 +7,7 @@
 package numberv1
 
 import (
+	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -1159,10 +1160,11 @@ var File_number_v1_metrics_proto protoreflect.FileDescriptor
 
 const file_number_v1_metrics_proto_rawDesc = "" +
 	"\n" +
-	"\x17number/v1/metrics.proto\x12\tnumber.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"p\n" +
-	"\x0eSummaryRequest\x120\n" +
-	"\x05start\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
-	"\x03end\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x03end\"\xb4\x01\n" +
+	"\x17number/v1/metrics.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa6\x02\n" +
+	"\x0eSummaryRequest\x12T\n" +
+	"\x05start\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x05start\x12P\n" +
+	"\x03end\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x03end:l\xbaHi\x1ag\n" +
+	"\x0fend_after_start\x12\x17end must be after start\x1a;!has(this.start) || !has(this.end) || this.end > this.start\"\xb4\x01\n" +
 	"\x0fSummaryResponse\x12\x1f\n" +
 	"\vtotal_count\x18\x01 \x01(\x03R\n" +
 	"totalCount\x12\x1b\n" +
@@ -1170,11 +1172,13 @@ const file_number_v1_metrics_proto_rawDesc = "" +
 	"\aaverage\x18\x03 \x01(\x01R\aaverage\x12\x10\n" +
 	"\x03min\x18\x04 \x01(\rR\x03min\x12\x10\n" +
 	"\x03max\x18\x05 \x01(\rR\x03max\x12%\n" +
-	"\x0edistinct_names\x18\x06 \x01(\rR\rdistinctNames\"\xba\x01\n" +
-	"\x11TimeSeriesRequest\x128\n" +
-	"\binterval\x18\x01 \x01(\x0e2\x17.number.v1.TimeIntervalH\x00R\binterval\x88\x01\x01\x120\n" +
-	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
-	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x03endB\v\n" +
+	"\x0edistinct_names\x18\x06 \x01(\rR\rdistinctNames\"\xff\x02\n" +
+	"\x11TimeSeriesRequest\x12G\n" +
+	"\binterval\x18\x01 \x01(\x0e2\x17.number.v1.TimeIntervalB\r\xbaH\n" +
+	"\xc8\x01\x01\x82\x01\x04\x10\x01 \x00H\x00R\binterval\x88\x01\x01\x12T\n" +
+	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x05start\x12P\n" +
+	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x03end:l\xbaHi\x1ag\n" +
+	"\x0fend_after_start\x12\x17end must be after start\x1a;!has(this.start) || !has(this.end) || this.end > this.startB\v\n" +
 	"\t_interval\"\x87\x01\n" +
 	"\x0fTimeSeriesPoint\x122\n" +
 	"\x06bucket\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x06bucket\x12\x14\n" +
@@ -1182,22 +1186,24 @@ const file_number_v1_metrics_proto_rawDesc = "" +
 	"\x03sum\x18\x03 \x01(\x04R\x03sum\x12\x18\n" +
 	"\aaverage\x18\x04 \x01(\x01R\aaverage\"H\n" +
 	"\x12TimeSeriesResponse\x122\n" +
-	"\x06points\x18\x01 \x03(\v2\x1a.number.v1.TimeSeriesPointR\x06points\"\xae\x01\n" +
-	"\x13DistributionRequest\x12&\n" +
-	"\fbucket_count\x18\x01 \x01(\rH\x00R\vbucketCount\x88\x01\x01\x120\n" +
-	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
-	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x03endB\x0f\n" +
+	"\x06points\x18\x01 \x03(\v2\x1a.number.v1.TimeSeriesPointR\x06points\"\xf2\x02\n" +
+	"\x13DistributionRequest\x124\n" +
+	"\fbucket_count\x18\x01 \x01(\rB\f\xbaH\t\xc8\x01\x01*\x04\x18d(\x01H\x00R\vbucketCount\x88\x01\x01\x12T\n" +
+	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x05start\x12P\n" +
+	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x03end:l\xbaHi\x1ag\n" +
+	"\x0fend_after_start\x12\x17end must be after start\x1a;!has(this.start) || !has(this.end) || this.end > this.startB\x0f\n" +
 	"\r_bucket_count\"V\n" +
 	"\x12DistributionBucket\x12\x14\n" +
 	"\x05lower\x18\x01 \x01(\rR\x05lower\x12\x14\n" +
 	"\x05upper\x18\x02 \x01(\rR\x05upper\x12\x14\n" +
 	"\x05count\x18\x03 \x01(\x03R\x05count\"O\n" +
 	"\x14DistributionResponse\x127\n" +
-	"\abuckets\x18\x01 \x03(\v2\x1d.number.v1.DistributionBucketR\abuckets\"\x96\x01\n" +
-	"\x0fTopNamesRequest\x12\x19\n" +
-	"\x05limit\x18\x01 \x01(\rH\x00R\x05limit\x88\x01\x01\x120\n" +
-	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
-	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x03endB\b\n" +
+	"\abuckets\x18\x01 \x03(\v2\x1d.number.v1.DistributionBucketR\abuckets\"\xda\x02\n" +
+	"\x0fTopNamesRequest\x12'\n" +
+	"\x05limit\x18\x01 \x01(\rB\f\xbaH\t\xc8\x01\x01*\x04\x18d(\x01H\x00R\x05limit\x88\x01\x01\x12T\n" +
+	"\x05start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x05start\x12P\n" +
+	"\x03end\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x03end:l\xbaHi\x1ag\n" +
+	"\x0fend_after_start\x12\x17end must be after start\x1a;!has(this.start) || !has(this.end) || this.end > this.startB\b\n" +
 	"\x06_limit\"_\n" +
 	"\aTopName\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +

@@ -7,6 +7,7 @@
 package numberv1
 
 import (
+	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -383,17 +384,19 @@ var File_number_v1_list_proto protoreflect.FileDescriptor
 
 const file_number_v1_list_proto_rawDesc = "" +
 	"\n" +
-	"\x14number/v1/list.proto\x12\tnumber.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"l\n" +
+	"\x14number/v1/list.proto\x12\tnumber.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"l\n" +
 	"\x04Item\x128\n" +
 	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06number\x18\x03 \x01(\rR\x06number\"\xe5\x01\n" +
-	"\vListRequest\x12\x17\n" +
-	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x1d\n" +
-	"\aminimum\x18\x02 \x01(\rH\x01R\aminimum\x88\x01\x01\x12\x1d\n" +
-	"\amaximum\x18\x03 \x01(\rH\x02R\amaximum\x88\x01\x01\x120\n" +
-	"\x05start\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
-	"\x03end\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x03endB\a\n" +
+	"\x06number\x18\x03 \x01(\rR\x06number\"\xc6\x04\n" +
+	"\vListRequest\x12 \n" +
+	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\x04name\x88\x01\x01\x12(\n" +
+	"\aminimum\x18\x02 \x01(\rB\t\xbaH\x06*\x04\x18\xc0\x84=H\x01R\aminimum\x88\x01\x01\x12(\n" +
+	"\amaximum\x18\x03 \x01(\rB\t\xbaH\x06*\x04\x18\xc0\x84=H\x02R\amaximum\x88\x01\x01\x12T\n" +
+	"\x05start\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x05start\x12P\n" +
+	"\x03end\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaH\x1f\xb2\x01\x1c\"\r\b\xff\x82\xd1\xff\xaf\a\x10\xff\x93\xeb\xdc\x032\v\b\x80\x92\xb8Ø\xfe\xff\xff\xff\x01R\x03end:\xf7\x01\xbaH\xf3\x01\x1a\x87\x01\n" +
+	"\x19minimum_less_than_maximum\x12!minimum must be less than maximum\x1aG!has(this.minimum) || !has(this.maximum) || this.minimum < this.maximum\x1ag\n" +
+	"\x0fend_after_start\x12\x17end must be after start\x1a;!has(this.start) || !has(this.end) || this.end > this.startB\a\n" +
 	"\x05_nameB\n" +
 	"\n" +
 	"\b_minimumB\n" +

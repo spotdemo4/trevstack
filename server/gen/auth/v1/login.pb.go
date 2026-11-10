@@ -7,6 +7,7 @@
 package authv1
 
 import (
+	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -227,10 +228,11 @@ var File_auth_v1_login_proto protoreflect.FileDescriptor
 
 const file_auth_v1_login_proto_rawDesc = "" +
 	"\n" +
-	"\x13auth/v1/login.proto\x12\aauth.v1\"j\n" +
-	"\fLoginRequest\x12\x1f\n" +
-	"\busername\x18\x01 \x01(\tH\x00R\busername\x88\x01\x01\x12\x1f\n" +
-	"\bpassword\x18\x02 \x01(\tH\x01R\bpassword\x88\x01\x01B\v\n" +
+	"\x13auth/v1/login.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\"\xaf\x02\n" +
+	"\fLoginRequest\x12\xd5\x01\n" +
+	"\busername\x18\x01 \x01(\tB\xb3\x01\xbaH\xaf\x01\xba\x01\xa2\x01\n" +
+	"\x0fusername.format\x12bvalue must start with a letter or digit and contain only letters, digits, underscores, and hyphens\x1a+this.matches('^[A-Za-z0-9][A-Za-z0-9_-]*$')\xc8\x01\x01r\x04\x10\x03\x18@H\x00R\busername\x88\x01\x01\x12-\n" +
+	"\bpassword\x18\x02 \x01(\tB\f\xbaH\t\xc8\x01\x01r\x04\x10\b(HH\x01R\bpassword\x88\x01\x01B\v\n" +
 	"\t_usernameB\v\n" +
 	"\t_password\"I\n" +
 	"\rLoginResponse\x12\x14\n" +

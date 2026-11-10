@@ -15,10 +15,6 @@ func (h *Handler) TopNames(
 	ctx context.Context,
 	req *numberv1.TopNamesRequest,
 ) (*numberv1.TopNamesResponse, error) {
-	if err := validateTopNamesRequest(req); err != nil {
-		return nil, err
-	}
-
 	var startArg, endArg any
 	if start := req.GetStart(); start != nil {
 		startArg = start.AsTime()

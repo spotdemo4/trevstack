@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
@@ -55,15 +54,13 @@ func TestSummary(t *testing.T) {
 	})
 
 	t.Run("rejects end before start (CEL)", func(t *testing.T) {
-		handler, _ := newTest(t)
 		earlier := timestamppb.New(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC))
 		later := timestamppb.New(time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC))
-		_, err := handler.Summary(context.Background(), numberv1.SummaryRequest_builder{Start: later, End: earlier}.Build())
-		if err == nil {
-			t.Fatal("expected validation error, got nil")
-		}
-		if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
-			t.Errorf("code = %v, want InvalidArgument", got)
-		}
+		assertInvalid(t, numberv1.SummaryRequest_builder{Start: later, End: earlier}.Build())
+	})
+
+	t.Run("rejects timestamps outside the valid range", func(t *testing.T) {
+		assertInvalid(t, numberv1.SummaryRequest_builder{End: &timestamppb.Timestamp{Seconds: 253402300800}}.Build())
+		assertInvalid(t, numberv1.SummaryRequest_builder{Start: &timestamppb.Timestamp{Seconds: -62135596801}}.Build())
 	})
 }

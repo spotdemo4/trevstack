@@ -19,10 +19,6 @@ func (h *Handler) Login(
 	ctx context.Context,
 	req *authv1.LoginRequest,
 ) (*authv1.LoginResponse, error) {
-	if err := validateCredentials(req); err != nil {
-		return nil, err
-	}
-
 	var userID int64
 	var username string
 	var passwordHash string

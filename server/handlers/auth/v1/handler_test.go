@@ -3,13 +3,16 @@ package v1_test
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"strings"
 	"testing"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/protobuf/proto"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
+	"trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc"
 	"trev.zip/template/stack/server/v2/auth"
 	"trev.zip/template/stack/server/v2/database"
 	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
@@ -35,6 +38,21 @@ func newAuthTest(t *testing.T) (*authhandler.Handler, *sql.DB, *auth.Manager) {
 
 func codeOf(err error) trevrpc.Code {
 	return trevrpc.StatusFromError(err).Code
+}
+
+// validate checks req against the buf.validate rules of its message, as the
+// server does before it calls a handler.
+func validate(t *testing.T, req proto.Message) error {
+	t.Helper()
+	desc := req.ProtoReflect().Descriptor()
+	check, err := protovalidatetrevrpc.New(nil).ValidateFunc(desc)
+	if err != nil {
+		t.Fatalf("compile rules of %s: %v", desc.FullName(), err)
+	}
+	if check == nil {
+		t.Fatalf("%s has no rules", desc.FullName())
+	}
+	return check(req)
 }
 
 func seedUser(t *testing.T, db *sql.DB, username, password string) {
@@ -90,9 +108,6 @@ func TestSignupRejectsDuplicateUsername(t *testing.T) {
 }
 
 func TestCredentialsValidation(t *testing.T) {
-	handler, db, _ := newAuthTest(t)
-	seedUser(t, db, "alice", "correct horse battery staple")
-
 	for _, test := range []struct {
 		name     string
 		username *string
@@ -108,19 +123,47 @@ func TestCredentialsValidation(t *testing.T) {
 		{name: "password over 72 bytes", username: new("alice"), password: new(strings.Repeat("é", 37))},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			_, err := handler.Signup(context.Background(), authv1.SignupRequest_builder{
+			err := validate(t, authv1.SignupRequest_builder{
 				Username: test.username,
 				Password: test.password,
 			}.Build())
 			if got := codeOf(err); got != trevrpc.CodeInvalidArgument {
-				t.Errorf("Signup() code = %v, want InvalidArgument (error %v)", got, err)
+				t.Errorf("SignupRequest code = %v, want InvalidArgument (error %v)", got, err)
 			}
-			_, err = handler.Login(context.Background(), authv1.LoginRequest_builder{
+			err = validate(t, authv1.LoginRequest_builder{
 				Username: test.username,
 				Password: test.password,
 			}.Build())
 			if got := codeOf(err); got != trevrpc.CodeInvalidArgument {
-				t.Errorf("Login() code = %v, want InvalidArgument (error %v)", got, err)
+				t.Errorf("LoginRequest code = %v, want InvalidArgument (error %v)", got, err)
+			}
+		})
+	}
+}
+
+func TestCredentialsValidationAcceptsBounds(t *testing.T) {
+	for _, test := range []struct {
+		name     string
+		username string
+		password string
+	}{
+		{name: "shortest", username: "al1", password: "12345678"},
+		{name: "longest", username: "a" + strings.Repeat("_-9", 21), password: strings.Repeat("é", 36)},
+		// Passwords are measured in characters for the minimum.
+		{name: "multibyte password", username: "alice", password: strings.Repeat("é", 8)},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			if err := validate(t, authv1.SignupRequest_builder{
+				Username: new(test.username),
+				Password: new(test.password),
+			}.Build()); err != nil {
+				t.Errorf("SignupRequest error = %v, want nil", err)
+			}
+			if err := validate(t, authv1.LoginRequest_builder{
+				Username: new(test.username),
+				Password: new(test.password),
+			}.Build()); err != nil {
+				t.Errorf("LoginRequest error = %v, want nil", err)
 			}
 		})
 	}
@@ -152,13 +195,58 @@ func TestLoginIssuesSession(t *testing.T) {
 	}
 }
 
-func TestLogoutWithoutTokenSucceeds(t *testing.T) {
+// logoutContext returns the context of a Logout call with metadata.
+func logoutContext(t *testing.T, metadata trevrpc.Metadata) context.Context {
+	return trevrpc.NewHandlerContext(t.Context(), trevrpc.HandlerContext{
+		FullMethod: authv1.AuthService_Logout_FullMethodName,
+		Metadata:   metadata,
+	})
+}
+
+func login(t *testing.T, handler *authhandler.Handler, username, password string) string {
+	t.Helper()
+	response, err := handler.Login(t.Context(), authv1.LoginRequest_builder{
+		Username: new(username),
+		Password: new(password),
+	}.Build())
+	if err != nil {
+		t.Fatalf("Login() error = %v", err)
+	}
+	return response.GetToken()
+}
+
+func TestLogoutEndsTheCallsSession(t *testing.T) {
+	handler, db, manager := newAuthTest(t)
+	seedUser(t, db, "alice", "correct horse battery staple")
+	ended := login(t, handler, "alice", "correct horse battery staple")
+	other := login(t, handler, "alice", "correct horse battery staple")
+
+	ctx := logoutContext(t, trevrpc.Metadata{"authorization": []byte("Bearer " + ended)})
+	if _, err := handler.Logout(ctx, &authv1.LogoutRequest{}); err != nil {
+		t.Fatalf("Logout() error = %v, want nil", err)
+	}
+	if _, err := manager.Verify(t.Context(), ended); !errors.Is(err, auth.ErrInvalidSession) {
+		t.Errorf("Verify(ended token) error = %v, want ErrInvalidSession", err)
+	}
+	// Signing out on one device leaves the others signed in.
+	if _, err := manager.Verify(t.Context(), other); err != nil {
+		t.Errorf("Verify(other token) error = %v, want nil", err)
+	}
+}
+
+func TestLogoutWithoutSessionSucceeds(t *testing.T) {
 	handler, _, _ := newAuthTest(t)
 
-	// Outside a TrevRPC call the context carries no metadata, so there is no
-	// token. The integration tests end a session through a real call.
-	if _, err := handler.Logout(context.Background(), &authv1.LogoutRequest{}); err != nil {
-		t.Errorf("Logout() error = %v, want nil", err)
+	for name, metadata := range map[string]trevrpc.Metadata{
+		"no token":        nil,
+		"malformed token": {"authorization": []byte("Basic abc")},
+		"unknown token":   {"authorization": []byte("Bearer not-a-session")},
+	} {
+		t.Run(name, func(t *testing.T) {
+			if _, err := handler.Logout(logoutContext(t, metadata), &authv1.LogoutRequest{}); err != nil {
+				t.Errorf("Logout() error = %v, want nil", err)
+			}
+		})
 	}
 }
 

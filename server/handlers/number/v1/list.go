@@ -18,10 +18,6 @@ func (h *Handler) List(
 	ctx context.Context,
 	req *numberv1.ListRequest,
 ) (trevrpc.MessageStream[*numberv1.ListResponse], error) {
-	if err := validateListRequest(req); err != nil {
-		return nil, err
-	}
-
 	var nameArg, minArg, maxArg, startArg, endArg any
 	if req.HasName() {
 		nameArg = req.GetName()

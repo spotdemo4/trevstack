@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
 )
 
@@ -58,15 +57,13 @@ func TestAdd(t *testing.T) {
 	}
 	for _, tc := range validationCases {
 		t.Run("rejects "+tc.name, func(t *testing.T) {
-			handler, _ := newTest(t)
-
-			_, err := handler.Add(context.Background(), tc.req)
-			if err == nil {
-				t.Fatal("expected validation error, got nil")
-			}
-			if got := trevrpc.StatusFromError(err).Code; got != trevrpc.CodeInvalidArgument {
-				t.Errorf("code = %v, want InvalidArgument", got)
-			}
+			assertInvalid(t, tc.req)
 		})
 	}
+
+	t.Run("accepts the bounds", func(t *testing.T) {
+		// Names are measured in characters, not bytes.
+		assertValid(t, numberv1.AddRequest_builder{Name: new(strings.Repeat("é", 50)), Number: new(uint32(1))}.Build())
+		assertValid(t, numberv1.AddRequest_builder{Name: new("a"), Number: new(uint32(1_000_000))}.Build())
+	})
 }

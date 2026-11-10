@@ -18,6 +18,9 @@ plugins:
     out: web/gen
     opt:
       - target=ts
+      # import buf.validate from @bufbuild/protovalidate, whose exports need the extension
+      - import_extension=js
+      - rewrite_imports=./buf/validate/*_pb.js:@bufbuild/protovalidate/gen
 
   - local: protoc-gen-prost
     out: client/src/gen
@@ -37,3 +40,5 @@ managed:
   disable:
     - file_option: go_package_prefix
       module: buf.build/trevrpc/trevrpc
+    - file_option: go_package_prefix
+      module: buf.build/bufbuild/protovalidate

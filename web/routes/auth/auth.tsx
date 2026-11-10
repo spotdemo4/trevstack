@@ -1,53 +1,33 @@
-import type { LoginResponse } from "$gen/auth/v1/login_pb";
+import { LoginRequestSchema, type LoginResponse } from "$gen/auth/v1/login_pb";
+import { SignupRequestSchema } from "$gen/auth/v1/signup_pb";
 import { getReturnPath, session } from "$lib/auth";
 import { Card } from "$lib/card";
 import { errorDescription } from "$lib/effect";
 import { Form } from "$lib/form/form";
 import { type FormController, useForm } from "$lib/form/hook";
+import { protoSchema } from "$lib/form/proto-schema";
 import { SubmitButton } from "$lib/form/submit-button";
 import { TextField } from "$lib/form/text-field";
 import { AuthClient } from "$lib/rpc";
 import { Tabs } from "$lib/tabs";
 import { toaster } from "$lib/toast";
 import { useNavigate } from "@solidjs/router";
-import { Effect, Schema } from "effect";
+import { Effect } from "effect";
 import type { Component } from "solid-js";
 
-const utf8 = new TextEncoder();
-
-// The same rules as the server's, so most mistakes are caught before a request.
-const Credentials = Schema.Struct({
-  username: Schema.String.check(
-    Schema.isMinLength(3, { message: "Username must be at least 3 characters" }),
-    Schema.isMaxLength(64, { message: "Username must be at most 64 characters" }),
-    Schema.isPattern(/^[A-Za-z0-9][A-Za-z0-9_-]*$/, {
-      message:
-        "Username must start with a letter or digit and contain only letters, digits, underscores, and hyphens",
-    }),
-  ).annotateKey({ messageMissingKey: "Username is required" }),
-  password: Schema.String.check(
-    Schema.isMinLength(8, { message: "Password must be at least 8 characters" }),
-    Schema.makeFilter(
-      (password) => utf8.encode(password).length <= 72 || "Password must be at most 72 bytes",
-    ),
-  ).annotateKey({ messageMissingKey: "Password is required" }),
-});
-
-const credentialsSchema = Schema.toStandardSchemaV1(Credentials);
-
-type CredentialsForm = FormController<Partial<typeof Credentials.Encoded>>;
+type CredentialsForm = FormController<{ username?: string; password?: string }>;
 
 export const Auth: Component = () => {
   const navigate = useNavigate();
   const returnTo = getReturnPath(window.location.search, window.location.origin);
 
-  const loginForm = useForm(credentialsSchema, () => ({
+  const loginForm = useForm(protoSchema(LoginRequestSchema), () => ({
     validation: {
       onMount: true,
       onChange: true,
     },
     onSubmit: ({ value }) =>
-      AuthClient.login({ username: value.username, password: value.password }).pipe(
+      AuthClient.login(value).pipe(
         Effect.tap(rememberSession),
         Effect.match({
           onSuccess: () => {
@@ -65,14 +45,14 @@ export const Auth: Component = () => {
       ),
   }));
 
-  const signupForm = useForm(credentialsSchema, () => ({
+  const signupForm = useForm(protoSchema(SignupRequestSchema), () => ({
     validation: {
       onMount: true,
       onChange: true,
     },
     onSubmit: ({ value }) =>
       Effect.gen(function* () {
-        yield* AuthClient.signup({ username: value.username, password: value.password });
+        yield* AuthClient.signup(value);
         return yield* AuthClient.login({ username: value.username, password: value.password });
       }).pipe(
         Effect.tap(rememberSession),

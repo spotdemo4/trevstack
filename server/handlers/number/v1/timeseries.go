@@ -36,10 +36,6 @@ func (h *Handler) TimeSeries(
 	ctx context.Context,
 	req *numberv1.TimeSeriesRequest,
 ) (*numberv1.TimeSeriesResponse, error) {
-	if err := validateTimeSeriesRequest(req); err != nil {
-		return nil, err
-	}
-
 	interval := req.GetInterval()
 	expr, ok := bucketExpr(interval)
 	if !ok {

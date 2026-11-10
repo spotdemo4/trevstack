@@ -68,8 +68,11 @@ and in builds without the `prod` tag from the web development server at `http://
 - `number.v1.NumberService`: `Add`, `List`, `Summary`, `TimeSeries`, `Distribution`, and `TopNames`.
   These require a session.
 
-The proto definitions in [`../proto`](../proto) are the source of truth for every request and response,
-and their comments describe the rules the server validates requests against.
+The proto definitions in [`../proto`](../proto) are the source of truth for every request and response.
+Their [`buf.validate`](https://buf.build/bufbuild/protovalidate) rules are the rules requests must
+follow: the server checks them with [protovalidate](https://github.com/bufbuild/protovalidate) before a
+handler runs, and a request that breaks them fails with `invalid_argument` and a
+`buf.validate.Violations` detail that lists each broken rule by field.
 
 ## tls
 
@@ -133,8 +136,8 @@ configuration directory to persist data in a container.
 
 Logs are written to stdout as JSON. Builds with the `dev` tag print human-readable logs instead.
 RPCs that pass authorization are logged at `debug`, and those that then fail at `error`, with their
-`method` and, when the transport knows it, the `client_ip` described in
-[rate limiting](#rate-limiting). TrevRPC's server diagnostics are logged as `trevrpc: <phase>` at the
+`method`, the `user` of the session for calls that require one, and, when the transport knows it, the
+`client_ip` described in [rate limiting](#rate-limiting). TrevRPC's server diagnostics are logged as `trevrpc: <phase>` at the
 level TrevRPC recommends, such as `debug` for failed TLS handshakes and `error` for handler panics.
 
 When the logs signal is enabled, the same records are also exported over OpenTelemetry.
@@ -220,6 +223,5 @@ go test -tags prod ./...
 | `interceptors/` | logging and rate limiting                            |
 | `logger/`       | `slog` setup and OpenTelemetry log bridge            |
 | `telemetry/`    | OpenTelemetry provider setup                         |
-| `validation/`   | request field checks                                 |
 
 SQL queries live next to the handlers that use them as `.sql` files and are embedded at build time.
