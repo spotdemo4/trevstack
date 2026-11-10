@@ -76,7 +76,7 @@ and exits once the server ends the call.
 | flag                  | environment      | default                  | description                                   |
 | --------------------- | ---------------- | ------------------------ | --------------------------------------------- |
 | `--url URL`           | `STACK_URL`      | `https://localhost:8080` | server URL                                    |
-| `--ca-cert FILE`      | `STACK_CA_CERT`  |                          | PEM certificates to trust besides the bundled |
+| `--ca-cert FILE`      | `STACK_CA_CERT`  | development certificate  | PEM certificates to trust besides the bundled |
 | `--username USERNAME` | `STACK_USERNAME` |                          | **required**, account username                |
 | `--password PASSWORD` | `STACK_PASSWORD` |                          | **required**, account password                |
 | `-h, --help`          |                  |                          | print help                                    |
@@ -89,9 +89,14 @@ history.
 The URL must use `https` and name only a host and an optional port (`443` by default), without a
 path, credentials, a query string, or a fragment. The server's certificate is verified against the
 bundled [webpki roots](https://github.com/rustls/webpki-roots) and the certificates in `--ca-cert`.
-To trust a server's development certificate, save it with
-`openssl s_client -connect localhost:8080 </dev/null | openssl x509 > server.pem` and pass
-`--ca-cert server.pem`; save it again when the server replaces it, every 6 days.
+
+Without `--ca-cert`, the client also trusts the
+[development certificate](../server/README.md#tls) of a server on the same machine, which the
+server writes to `trevstack/development.pem` in the user configuration directory, beside its
+database. The file covers only `localhost`, `127.0.0.1` and `::1`, and the client skips it when it
+doesn't exist. For a server whose files the client can't see, such as one in a container, save its
+certificate with `openssl s_client -connect localhost:8080 </dev/null | openssl x509 > server.pem`
+and pass `--ca-cert server.pem`; save it again when the server replaces it, every 6 days.
 
 ### authentication
 

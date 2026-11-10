@@ -710,6 +710,7 @@ remove_client() {
   remove_block .gitattributes '# Rust source files use Rust diff driver'
   sed_inplace -e '/^Cargo\.lock linguist-generated=true$/d' -e '/^client\/src\/gen\/\*\* linguist-generated=true$/d' .gitattributes
   replace_literal '`server/gen/`, `web/gen/`, or `client/src/gen/`' '`server/gen/` or `web/gen/`' AGENTS.md
+  sed_inplace '/^- The server also writes the development certificate to /d' AGENTS.md
   remove_block CONTRIBUTING.md 'run the client with optional arguments:' '```'
   sed_inplace '/^nix build \.#client$/d' CONTRIBUTING.md
   for provider_directory in .github .gitea .forgejo; do

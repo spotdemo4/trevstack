@@ -76,7 +76,8 @@ class Server:
     """A server process with its own home directory, and therefore its own database.
 
     The server generates a self-signed certificate, which the browser trusts for
-    WebTransport by the hash the server publishes, and the client by its file.
+    WebTransport by the hash the server publishes, and the client by the file the
+    server writes beside its database, found by sharing the server's home directory.
     """
 
     def __init__(self, binary: Path, home: Path) -> None:
@@ -84,20 +85,17 @@ class Server:
         self.port = free_port()
         self.process = subprocess.Popen(
             [binary, "--port", str(self.port)],
-            env={
-                "PATH": os.environ.get("PATH", ""),
-                "HOME": str(home),
-                "XDG_CONFIG_HOME": str(home / ".config"),
-            },
+            env={"PATH": os.environ.get("PATH", ""), **self.home_env},
         )
+
+    @property
+    def home_env(self) -> dict[str, str]:
+        """Return the environment that makes this server's home directory the user's."""
+        return {"HOME": str(self.home), "XDG_CONFIG_HOME": str(self.home / ".config")}
 
     @property
     def origin(self) -> str:
         return f"https://127.0.0.1:{self.port}"
-
-    @property
-    def certificate(self) -> Path:
-        return self.home / "certificate.pem"
 
     @property
     def database(self) -> Path:
@@ -110,8 +108,7 @@ class Server:
             if (code := self.process.poll()) is not None:
                 raise RuntimeError(f"server exited with code {code} before it was ready")
             with contextlib.suppress(OSError):
-                certificate = ssl.get_server_certificate(("127.0.0.1", self.port), timeout=1)
-                self.certificate.write_text(certificate)
+                ssl.get_server_certificate(("127.0.0.1", self.port), timeout=1)
                 return
             time.sleep(0.05)
         raise TimeoutError(f"server was not ready within {READY_TIMEOUT}s")
@@ -168,8 +165,8 @@ class IntegrationTestCase(unittest.TestCase):
     def client_env(self, username: str, password: str) -> dict[str, str]:
         return {
             "PATH": os.environ.get("PATH", ""),
+            **self.server.home_env,
             "STACK_URL": self.server.origin,
-            "STACK_CA_CERT": str(self.server.certificate),
             "STACK_USERNAME": username,
             "STACK_PASSWORD": password,
         }

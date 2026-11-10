@@ -12,6 +12,7 @@ import (
 	"github.com/XSAM/otelsql"
 	_ "github.com/mattn/go-sqlite3" // registers the sqlite3 driver
 	semconv "go.opentelemetry.io/otel/semconv/v1.43.0"
+	"trev.zip/template/stack/server/v3/configdir"
 )
 
 var options = []string{
@@ -55,16 +56,8 @@ var options = []string{
 
 // New opens the database in the user config directory.
 func New(ctx context.Context) (*sql.DB, error) {
-	userConfigDir, err := os.UserConfigDir()
+	configDir, err := configdir.Get()
 	if err != nil {
-		return nil, err
-	}
-
-	configDir := filepath.Join(userConfigDir, "trevstack")
-	if err := os.MkdirAll(configDir, 0700); err != nil {
-		return nil, err
-	}
-	if err := os.Chmod(configDir, 0700); err != nil {
 		return nil, err
 	}
 

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"crypto/x509"
 	"encoding/pem"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
@@ -63,6 +65,88 @@ func TestLoadTLSConfigLoadsCertificate(t *testing.T) {
 
 	if _, _, err := loadTLSConfig(certFile, filepath.Join(dir, "missing.pem")); err == nil {
 		t.Error("loadTLSConfig() with a missing key error = nil")
+	}
+}
+
+func TestDevelopmentCertificateWriterWritesPEM(t *testing.T) {
+	development, err := trevrpc.NewDevelopmentCertificate()
+	if err != nil {
+		t.Fatalf("NewDevelopmentCertificate() error = %v", err)
+	}
+	path := filepath.Join(t.TempDir(), developmentCertificateFile)
+	writer := &developmentCertificateWriter{path: path, development: development}
+	if err := writer.write(); err != nil {
+		t.Fatalf("write() error = %v", err)
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read %s: %v", path, err)
+	}
+	want, err := development.PEM()
+	if err != nil {
+		t.Fatalf("PEM() error = %v", err)
+	}
+	if !bytes.Equal(data, want) {
+		t.Error("file does not hold the development certificates")
+	}
+
+	// The file must hold the certificate the server presents, which clients
+	// verify against it.
+	cert, err := development.GetCertificate(nil)
+	if err != nil {
+		t.Fatalf("GetCertificate() error = %v", err)
+	}
+	block, _ := pem.Decode(data)
+	if block == nil || !bytes.Equal(block.Bytes, cert.Certificate[0]) {
+		t.Error("file does not start with the presented certificate")
+	}
+
+	if runtime.GOOS != "windows" {
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("stat %s: %v", path, err)
+		}
+		if got := info.Mode().Perm(); got != 0o600 {
+			t.Errorf("mode = %04o, want 0600", got)
+		}
+	}
+
+	entries, err := os.ReadDir(filepath.Dir(path))
+	if err != nil {
+		t.Fatalf("read dir: %v", err)
+	}
+	if len(entries) != 1 {
+		t.Errorf("directory holds %d entries, want only the certificate file", len(entries))
+	}
+}
+
+func TestDevelopmentCertificateWriterSkipsUnchangedCertificates(t *testing.T) {
+	development, err := trevrpc.NewDevelopmentCertificate()
+	if err != nil {
+		t.Fatalf("NewDevelopmentCertificate() error = %v", err)
+	}
+	path := filepath.Join(t.TempDir(), developmentCertificateFile)
+	writer := &developmentCertificateWriter{path: path, development: development}
+	if err := writer.write(); err != nil {
+		t.Fatalf("write() error = %v", err)
+	}
+
+	// Another server sharing the file replaced it; this one leaves it until
+	// its own certificates rotate.
+	other := []byte("another server's certificates")
+	if err := os.WriteFile(path, other, 0o600); err != nil {
+		t.Fatalf("write %s: %v", path, err)
+	}
+	if err := writer.write(); err != nil {
+		t.Fatalf("write() error = %v", err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read %s: %v", path, err)
+	}
+	if !bytes.Equal(data, other) {
+		t.Error("write() replaced the file although the certificates had not rotated")
 	}
 }
 

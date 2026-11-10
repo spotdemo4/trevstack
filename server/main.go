@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"slices"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 	"trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc"
 	"trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc"
 	"trev.zip/template/stack/server/v3/auth"
+	"trev.zip/template/stack/server/v3/configdir"
 	"trev.zip/template/stack/server/v3/database"
 	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
 	authv1handler "trev.zip/template/stack/server/v3/handlers/auth/v1"
@@ -120,6 +122,21 @@ func run(cfg config, log *slog.Logger) error {
 	if development != nil {
 		log.WarnContext(ctx, "using a generated development certificate; set TLS_CERT and TLS_KEY in production")
 		mux.Handle("GET "+certificateHashesPath, development)
+
+		// Native clients on this machine trust the certificate from a file
+		// beside the database.
+		configDir, err := configdir.Get()
+		if err != nil {
+			return fmt.Errorf("could not find the configuration directory: %w", err)
+		}
+		writer := &developmentCertificateWriter{
+			path:        filepath.Join(configDir, developmentCertificateFile),
+			development: development,
+		}
+		if err := writer.write(); err != nil {
+			log.WarnContext(ctx, "could not write the development certificate", "path", writer.path, "error", err)
+		}
+		go writer.run(ctx, log, developmentCertificateRefresh)
 	} else {
 		// Without this, the web handler would answer with index.html.
 		mux.Handle(certificateHashesPath, http.NotFoundHandler())

@@ -1,4 +1,4 @@
-use std::{future::Future, path::Path, str::FromStr, time::Duration};
+use std::{fs, future::Future, io, path::PathBuf, str::FromStr, time::Duration};
 
 use quinn::rustls::pki_types::{CertificateDer, pem::PemObject};
 use thiserror::Error;
@@ -40,6 +40,16 @@ pub struct ServiceUrl {
     port: u16,
 }
 
+/// Certificates to trust in addition to the bundled roots.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum CaCert {
+    /// A PEM file the user passed, which must exist.
+    File(PathBuf),
+    /// The PEM file a server on this machine writes its development
+    /// certificates to, used when it exists.
+    Development(PathBuf),
+}
+
 impl ServiceUrl {
     /// Connects to the server, trusting the certificates in `ca_cert` in
     /// addition to the bundled roots.
@@ -48,29 +58,39 @@ impl ServiceUrl {
     ///
     /// Returns an error if the CA certificates can't be read or the connection
     /// fails.
-    pub async fn connect(&self, ca_cert: Option<&Path>) -> Result<Channel, ClientError> {
+    pub async fn connect(&self, ca_cert: Option<&CaCert>) -> Result<Channel, ClientError> {
         // The channel verifies the server against the bundled webpki roots
         // and tries QUIC first, then QMux over TLS when UDP is blocked.
         let mut builder = Channel::builder(&self.to_string())
             .map_err(ClientError::Connect)?
             .connect_timeout(CONNECT_TIMEOUT);
-        if let Some(path) = ca_cert {
-            builder = builder.add_root_certificates(read_certificates(path)?);
+        if let Some(certs) = ca_cert.map(read_ca_cert).transpose()?.flatten() {
+            builder = builder.add_root_certificates(certs);
         }
         builder.connect().await.map_err(ClientError::Connect)
     }
 }
 
-/// Reads the PEM certificates in `path`, to trust in addition to the bundled
-/// roots.
-fn read_certificates(path: &Path) -> Result<Vec<CertificateDer<'static>>, ClientError> {
-    let certs = CertificateDer::pem_file_iter(path)
-        .and_then(Iterator::collect::<Result<Vec<_>, _>>)
-        .map_err(|error| ClientError::CaCert(error.to_string()))?;
+/// Reads the certificates in `ca_cert`, or `None` for a development
+/// certificate file that doesn't exist, since no server has written it.
+fn read_ca_cert(ca_cert: &CaCert) -> Result<Option<Vec<CertificateDer<'static>>>, ClientError> {
+    let (path, optional) = match ca_cert {
+        CaCert::File(path) => (path, false),
+        CaCert::Development(path) => (path, true),
+    };
+    let error = |message: String| ClientError::CaCert(format!("{}: {message}", path.display()));
+    let pem = match fs::read(path) {
+        Ok(pem) => pem,
+        Err(err) if optional && err.kind() == io::ErrorKind::NotFound => return Ok(None),
+        Err(err) => return Err(error(err.to_string())),
+    };
+    let certs = CertificateDer::pem_slice_iter(&pem)
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|err| error(err.to_string()))?;
     if certs.is_empty() {
-        return Err(ClientError::CaCert("no certificates found".to_owned()));
+        return Err(error("no certificates found".to_owned()));
     }
-    Ok(certs)
+    Ok(Some(certs))
 }
 
 /// Logs in to obtain a session token, runs `run` with the `Bearer <token>`
@@ -234,17 +254,81 @@ pub enum ClientError {
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use std::sync::{Arc, Mutex};
+    use std::{
+        env, fs,
+        path::PathBuf,
+        process,
+        sync::{Arc, Mutex},
+    };
 
     use bytes::Bytes;
     use prost::Message;
     use trevrpc::{Code, ResponseEnvelope, Status, client::RpcTransport, wire::RpcRequest};
 
-    use super::{ClientError, Credentials, ServiceUrl, send, with_session};
+    use super::{CaCert, ClientError, Credentials, ServiceUrl, read_ca_cert, send, with_session};
     use crate::proto::{
         auth::v1::{LoginResponse, LogoutResponse},
         cursor::v1::{Cursor, CursorServiceClient, SendRequest, SendResponse},
     };
+
+    /// A self-signed certificate for localhost, like the server's
+    /// development certificates.
+    const CERTIFICATE_PEM: &str = "-----BEGIN CERTIFICATE-----
+MIIBbDCCARGgAwIBAgIUXsGcjeIWiNTpNApFqQMTUDjFEiIwCgYIKoZIzj0EAwIw
+ADAeFw0yNjExMTAyMzQ1MDBaFw0yNjExMjMyMzQ1MDBaMAAwWTATBgcqhkjOPQIB
+BggqhkjOPQMBBwNCAAQzI/LKuucjW6nBL1l45GWahQiB4n3ZA4BFRweJGZAk5bgb
+SZuJUCXfGGb8habEV7ckS0djo1vZL2JAQRIAapFpo2kwZzAdBgNVHQ4EFgQU/i+V
++ad6AG0r9qQK6CWRQT4xQzQwHwYDVR0jBBgwFoAU/i+V+ad6AG0r9qQK6CWRQT4x
+QzQwDwYDVR0TAQH/BAUwAwEB/zAUBgNVHREEDTALgglsb2NhbGhvc3QwCgYIKoZI
+zj0EAwIDSQAwRgIhAOG59QpsEZZndJ/lfnf4TqXjQBGWXkY1CThQcLhGYAg4AiEA
+vA7TbIgtuEjlVOFExE3M7zealbwCalvFrOwYAM9VWt8=
+-----END CERTIFICATE-----
+";
+
+    /// Writes `contents` to a file named `name` in a new temporary directory,
+    /// returning its path.
+    fn temp_file(name: &str, contents: &str) -> PathBuf {
+        let dir = env::temp_dir().join(format!("trevstack-client-{}-{name}", process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        let path = dir.join(name);
+        fs::write(&path, contents).unwrap();
+        path
+    }
+
+    #[test]
+    fn reads_ca_cert_files() {
+        let pem = format!("{CERTIFICATE_PEM}{CERTIFICATE_PEM}");
+        for ca_cert in [CaCert::File, CaCert::Development] {
+            let path = temp_file("certificates.pem", &pem);
+            let certs = read_ca_cert(&ca_cert(path)).unwrap().unwrap();
+            assert_eq!(certs.len(), 2);
+        }
+    }
+
+    #[test]
+    fn ignores_missing_development_certificate() {
+        let path = env::temp_dir().join("trevstack-client-missing/development.pem");
+        assert!(
+            read_ca_cert(&CaCert::Development(path.clone()))
+                .unwrap()
+                .is_none()
+        );
+        assert!(matches!(
+            read_ca_cert(&CaCert::File(path)),
+            Err(ClientError::CaCert(message)) if message.contains("missing")
+        ));
+    }
+
+    #[test]
+    fn rejects_files_without_certificates() {
+        for ca_cert in [CaCert::File, CaCert::Development] {
+            let path = temp_file("empty.pem", "");
+            assert!(matches!(
+                read_ca_cert(&ca_cert(path)),
+                Err(ClientError::CaCert(message)) if message.contains("no certificates found")
+            ));
+        }
+    }
 
     /// The method, authorization metadata and body of each request a mock
     /// transport saw.

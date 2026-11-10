@@ -3,13 +3,16 @@ use std::path::PathBuf;
 use clap::{Parser, Subcommand};
 use thiserror::Error;
 
-use crate::client::{Credentials, ServiceUrl, ServiceUrlError};
+use crate::client::{CaCert, Credentials, ServiceUrl, ServiceUrlError};
 
 const DEFAULT_URL: &str = "https://localhost:8080";
 const URL_ENV: &str = "STACK_URL";
 const CA_CERT_ENV: &str = "STACK_CA_CERT";
 const USERNAME_ENV: &str = "STACK_USERNAME";
 const PASSWORD_ENV: &str = "STACK_PASSWORD";
+/// The file the server writes its development certificates to, in the
+/// trevstack directory of the user configuration directory.
+const DEVELOPMENT_CERT_FILE: &str = "development.pem";
 
 // the doc comments are the --help text, where backticks would be shown as-is
 #[allow(clippy::doc_markdown)]
@@ -23,8 +26,9 @@ pub struct Cli {
     #[arg(long, global = true)]
     url: Option<String>,
 
-    /// PEM file with certificates to trust in addition to the bundled roots
-    /// [env: STACK_CA_CERT]
+    /// PEM file with certificates to trust in addition to the bundled roots;
+    /// defaults to the development certificates a server on this machine
+    /// writes [env: STACK_CA_CERT]
     #[arg(long, global = true)]
     ca_cert: Option<PathBuf>,
 
@@ -86,7 +90,7 @@ pub fn parse_coordinate(input: &str) -> Result<f64, String> {
 #[derive(Debug)]
 pub struct Config {
     pub url: ServiceUrl,
-    pub ca_cert: Option<PathBuf>,
+    pub ca_cert: Option<CaCert>,
     pub credentials: Credentials,
     pub command: Command,
 }
@@ -119,7 +123,13 @@ impl Cli {
             .unwrap_or_else(|| DEFAULT_URL.to_owned());
         let ca_cert = self
             .ca_cert
-            .or_else(|| get_env(CA_CERT_ENV).map(PathBuf::from));
+            .or_else(|| get_env(CA_CERT_ENV).map(PathBuf::from))
+            .map(CaCert::File)
+            .or_else(|| {
+                user_config_dir(&get_env).map(|dir| {
+                    CaCert::Development(dir.join("trevstack").join(DEVELOPMENT_CERT_FILE))
+                })
+            });
         let username = self
             .username
             .or_else(|| get_env(USERNAME_ENV))
@@ -138,6 +148,24 @@ impl Cli {
     }
 }
 
+/// Returns the user configuration directory the way the server's Go
+/// `os.UserConfigDir` does, so both find the same files, or `None` when the
+/// environment variables it depends on are unset.
+fn user_config_dir(get_env: impl Fn(&str) -> Option<String>) -> Option<PathBuf> {
+    let get_env = |name| get_env(name).filter(|value| !value.is_empty());
+    if cfg!(windows) {
+        get_env("AppData").map(PathBuf::from)
+    } else if cfg!(target_vendor = "apple") {
+        get_env("HOME").map(|home| PathBuf::from(home).join("Library/Application Support"))
+    } else {
+        match get_env("XDG_CONFIG_HOME") {
+            // Go rejects a relative XDG_CONFIG_HOME rather than ignoring it.
+            Some(dir) => Some(PathBuf::from(dir)).filter(|dir| dir.is_absolute()),
+            None => get_env("HOME").map(|home| PathBuf::from(home).join(".config")),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use clap::Parser;
@@ -146,8 +174,9 @@ mod tests {
 
     use super::{
         CA_CERT_ENV, Cli, Command, ConfigError, DEFAULT_URL, PASSWORD_ENV, URL_ENV, USERNAME_ENV,
-        parse_coordinate,
+        parse_coordinate, user_config_dir,
     };
+    use crate::client::CaCert;
 
     fn credentials_env(name: &str) -> Option<String> {
         match name {
@@ -165,7 +194,6 @@ mod tests {
             .unwrap();
 
         assert_eq!(config.url.to_string(), DEFAULT_URL);
-        assert_eq!(config.ca_cert, None);
         assert_eq!(config.command, Command::Send { x: 0.25, y: 0.75 });
     }
 
@@ -225,7 +253,7 @@ mod tests {
                 _ => credentials_env(name),
             })
             .unwrap();
-        assert_eq!(from_env.ca_cert.as_deref(), Some(Path::new("env.pem")));
+        assert_eq!(from_env.ca_cert, Some(CaCert::File("env.pem".into())));
 
         let from_option = Cli::try_parse_from(["client", "--ca-cert", "cli.pem", "watch"])
             .unwrap()
@@ -234,7 +262,58 @@ mod tests {
                 _ => credentials_env(name),
             })
             .unwrap();
-        assert_eq!(from_option.ca_cert.as_deref(), Some(Path::new("cli.pem")));
+        assert_eq!(from_option.ca_cert, Some(CaCert::File("cli.pem".into())));
+    }
+
+    #[test]
+    fn defaults_ca_cert_to_development_certificate() {
+        let home_env = |name: &str| match name {
+            "HOME" => Some("/home/demo".to_owned()),
+            "AppData" => Some(r"C:\Users\demo\AppData\Roaming".to_owned()),
+            _ => None,
+        };
+        let config = Cli::try_parse_from(["client", "watch"])
+            .unwrap()
+            .into_config(|name| home_env(name).or_else(|| credentials_env(name)))
+            .unwrap();
+        let config_dir = user_config_dir(home_env).unwrap();
+        assert_eq!(
+            config.ca_cert,
+            Some(CaCert::Development(
+                config_dir.join("trevstack").join("development.pem")
+            ))
+        );
+
+        let without_home = Cli::try_parse_from(["client", "watch"])
+            .unwrap()
+            .into_config(credentials_env)
+            .unwrap();
+        assert_eq!(without_home.ca_cert, None);
+    }
+
+    #[cfg(all(unix, not(target_vendor = "apple")))]
+    #[test]
+    fn finds_config_dir_like_go() {
+        let env = |xdg: Option<&'static str>| {
+            move |name: &str| match name {
+                "HOME" => Some("/home/demo".to_owned()),
+                "XDG_CONFIG_HOME" => xdg.map(str::to_owned),
+                _ => None,
+            }
+        };
+        assert_eq!(
+            user_config_dir(env(None)),
+            Some(Path::new("/home/demo/.config").to_owned())
+        );
+        assert_eq!(
+            user_config_dir(env(Some(""))),
+            Some(Path::new("/home/demo/.config").to_owned())
+        );
+        assert_eq!(
+            user_config_dir(env(Some("/etc/demo"))),
+            Some(Path::new("/etc/demo").to_owned())
+        );
+        assert_eq!(user_config_dir(env(Some("relative"))), None);
     }
 
     #[test]

@@ -94,6 +94,12 @@ and replaces every 6 days. Browsers can trust a certificate like this for WebTra
 which the server publishes as JSON at `/certificate-hashes` (404 with a configured certificate) and
 the web app reads, but not for anything else, so it is for development only.
 
+For native clients on the same machine, which trust a certificate as a root rather than by its hash,
+the server also writes the current and next certificates to `development.pem` beside the
+[database](#database), and rewrites it within an hour of each rotation. The file holds no private key.
+Servers that share a configuration directory share the file too, and it holds the certificates of the
+one that started last.
+
 ## authentication
 
 `Login` starts a session and returns its token: 32 random bytes, base64url-encoded, that mean nothing

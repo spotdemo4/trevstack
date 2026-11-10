@@ -21,7 +21,7 @@ use tokio::sync::mpsc;
 ///
 /// Returns the errors of connecting, logging in, and the command.
 pub async fn run(config: Config) -> Result<(), ClientError> {
-    let channel = config.url.connect(config.ca_cert.as_deref()).await?;
+    let channel = config.url.connect(config.ca_cert.as_ref()).await?;
     let client = CursorServiceClient::new(channel.clone());
     let username = config.credentials.username.clone();
     let command = config.command;
