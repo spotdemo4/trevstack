@@ -1,6 +1,6 @@
 import type { Component } from "solid-js";
 
-export const NotFound: Component = () => {
+const NotFound: Component = () => {
   return (
     <div class="flex h-body flex-col items-center justify-center gap-2">
       <span class="font-mono text-6xl font-bold text-foreground-faint">404</span>
@@ -11,3 +11,5 @@ export const NotFound: Component = () => {
     </div>
   );
 };
+
+export default NotFound;

@@ -28,7 +28,7 @@ type MetricsRange = {
   end?: Timestamp;
 };
 
-export const Metrics: Component = () => {
+const Metrics: Component = () => {
   const [rangeFilter, setRangeFilter] = createSignal<MetricsRange>({});
   const [interval, setInterval] = createSignal<TimeInterval>(TimeInterval.DAY);
   const [bucketCount, setBucketCount] = createSignal(10);
@@ -200,3 +200,5 @@ export const Metrics: Component = () => {
     </div>
   );
 };
+
+export default Metrics;

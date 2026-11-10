@@ -17,7 +17,7 @@ import type { Component } from "solid-js";
 
 type CredentialsForm = FormController<{ username?: string; password?: string }>;
 
-export const Auth: Component = () => {
+const Auth: Component = () => {
   const navigate = useNavigate();
   const returnTo = getReturnPath(window.location.search, window.location.origin);
 
@@ -125,3 +125,5 @@ function rememberSession(response: LoginResponse) {
     catch: () => new Error("Could not read your session. Please sign in again."),
   });
 }
+
+export default Auth;

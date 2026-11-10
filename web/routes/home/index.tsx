@@ -12,7 +12,7 @@ import { toaster } from "$lib/toast";
 import { Effect } from "effect";
 import type { Component } from "solid-js";
 
-export const Home: Component = () => {
+const Home: Component = () => {
   const form = useForm(protoSchema(AddRequestSchema), () => ({
     validation: {
       onMount: true,
@@ -52,3 +52,5 @@ export const Home: Component = () => {
     </div>
   );
 };
+
+export default Home;

@@ -17,7 +17,7 @@ import type { MessageInitShape } from "@bufbuild/protobuf";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { type Component, createSignal, Show } from "solid-js";
 
-export const Numbers: Component = () => {
+const Numbers: Component = () => {
   const isDesktop = createMediaQuery("(min-width: 900px)");
 
   const [request, setRequest] = createSignal<MessageInitShape<typeof ListRequestSchema>>({});
@@ -107,3 +107,5 @@ export const Numbers: Component = () => {
     </Show>
   );
 };
+
+export default Numbers;
