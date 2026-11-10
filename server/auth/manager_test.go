@@ -10,7 +10,7 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
-	"trev.zip/template/stack/server/v2/database"
+	"trev.zip/template/stack/server/v3/database"
 )
 
 // newTestManager returns a Manager on a migrated in-memory database with the

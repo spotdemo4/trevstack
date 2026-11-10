@@ -4,8 +4,8 @@ import (
 	"context"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
-	"trev.zip/template/stack/server/v2/logger"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
+	"trev.zip/template/stack/server/v3/logger"
 )
 
 // Share records the positions the client streams while streaming every other

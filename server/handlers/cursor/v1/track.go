@@ -4,7 +4,7 @@ import (
 	"context"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
 )
 
 // Track records the positions the client streams, and summarizes them once

@@ -9,8 +9,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	"trev.zip/template/stack/server/v2/auth"
-	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
+	"trev.zip/template/stack/server/v3/auth"
+	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
 )
 
 var dummyPasswordHash = func() []byte {

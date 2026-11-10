@@ -13,10 +13,10 @@ import (
 	"google.golang.org/protobuf/proto"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	"trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc"
-	"trev.zip/template/stack/server/v2/auth"
-	"trev.zip/template/stack/server/v2/database"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
-	cursorv1handler "trev.zip/template/stack/server/v2/handlers/cursor/v1"
+	"trev.zip/template/stack/server/v3/auth"
+	"trev.zip/template/stack/server/v3/database"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
+	cursorv1handler "trev.zip/template/stack/server/v3/handlers/cursor/v1"
 )
 
 type handlerT = cursorv1handler.Handler

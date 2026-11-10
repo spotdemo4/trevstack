@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
+	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
 )
 
 // Authorizer authenticates calls with the session token in their

@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	"trev.zip/template/stack/server/v2/auth"
+	"trev.zip/template/stack/server/v3/auth"
 )
 
 func TestInterceptorLogsCalls(t *testing.T) {

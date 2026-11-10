@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	"trev.zip/template/stack/server/v2/auth"
+	"trev.zip/template/stack/server/v3/auth"
 )
 
 // Interceptor logs the calls that reach a handler and their errors.

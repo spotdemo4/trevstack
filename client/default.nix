@@ -5,7 +5,7 @@
 }:
 mkRustPackage (final: {
   pname = "trevstack-client";
-  version = "3.1.0";
+  version = "4.0.0";
 
   src = ./.;
   cargoLock.lockFile = ./Cargo.lock;

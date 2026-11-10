@@ -16,9 +16,9 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	"trev.zip/template/stack/server/v2/auth"
-	"trev.zip/template/stack/server/v2/broker"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
+	"trev.zip/template/stack/server/v3/auth"
+	"trev.zip/template/stack/server/v3/broker"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
 )
 
 // eventBuffer is how many events a watcher may fall behind before it is

@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
+	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
 )
 
 func authorize(manager *Manager, method string, metadata trevrpc.Metadata) error {

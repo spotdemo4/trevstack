@@ -5,7 +5,7 @@ import (
 	_ "embed"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
 )
 
 //go:embed list.sql

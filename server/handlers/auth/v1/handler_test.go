@@ -13,10 +13,10 @@ import (
 	"google.golang.org/protobuf/proto"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	"trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc"
-	"trev.zip/template/stack/server/v2/auth"
-	"trev.zip/template/stack/server/v2/database"
-	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
-	authhandler "trev.zip/template/stack/server/v2/handlers/auth/v1"
+	"trev.zip/template/stack/server/v3/auth"
+	"trev.zip/template/stack/server/v3/database"
+	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
+	authhandler "trev.zip/template/stack/server/v3/handlers/auth/v1"
 )
 
 func newAuthTest(t *testing.T) (*authhandler.Handler, *sql.DB, *auth.Manager) {

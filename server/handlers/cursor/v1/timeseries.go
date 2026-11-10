@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
 )
 
 //go:embed timeseries.sql

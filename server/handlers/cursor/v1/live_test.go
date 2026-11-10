@@ -7,7 +7,7 @@ import (
 	"time"
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
-	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
+	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
 )
 
 func send(t *testing.T, h *handlerT, username string, x, y float64) *cursorv1.Cursor {
