@@ -24,7 +24,7 @@ export const FilteredTable: Component<FilteredTableProps> = (props) => {
     <Show
       when={isDesktop()}
       fallback={
-        <div class="pb-[calc(5rem+env(safe-area-inset-bottom))]">
+        <div class="pb-[calc(3rem+env(safe-area-inset-bottom))]">
           <props.table scrollMode="window" />
           <Drawer.Root>
             {/* Portaled out of the tab panel, whose entry animation's transform would
