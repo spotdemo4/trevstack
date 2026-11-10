@@ -134,9 +134,18 @@ class Server:
                 (username.lower(), PASSWORD_HASH),
             )
 
-    def numbers(self) -> list[tuple[str, int]]:
+    def cursors(self) -> list[tuple[str, int, float, float]]:
+        """Return each stored position as (username, source, x, y), oldest first.
+
+        source is the cursor.v1.Source of its stream: 1 for Send, 2 for Track, 3 for Share.
+        """
         with contextlib.closing(sqlite3.connect(self.database)) as db:
-            return db.execute("SELECT name, number FROM numbers ORDER BY id").fetchall()
+            return db.execute(
+                "SELECT u.username, s.source, c.x, c.y FROM cursors AS c"
+                " JOIN cursor_streams AS s ON c.stream_id = s.id"
+                " JOIN users AS u ON s.user_id = u.id"
+                " ORDER BY c.id"
+            ).fetchall()
 
     def sessions(self) -> int:
         """Return how many sessions the server keeps, expired or not."""
@@ -156,22 +165,46 @@ class IntegrationTestCase(unittest.TestCase):
         self.addCleanup(self.server.stop)
         self.server.wait_ready()
 
+    def client_env(self, username: str, password: str) -> dict[str, str]:
+        return {
+            "PATH": os.environ.get("PATH", ""),
+            "STACK_URL": self.server.origin,
+            "STACK_CA_CERT": str(self.server.certificate),
+            "STACK_USERNAME": username,
+            "STACK_PASSWORD": password,
+        }
+
     def run_client(
-        self, username: str, password: str, name: str, number: int
+        self, username: str, password: str, *args: str, input: str | None = None
     ) -> subprocess.CompletedProcess[str]:
+        """Run the client with args until it exits, with input on its stdin, if any."""
         return subprocess.run(
-            [binaries().client, name, str(number)],
-            env={
-                "PATH": os.environ.get("PATH", ""),
-                "STACK_URL": self.server.origin,
-                "STACK_CA_CERT": str(self.server.certificate),
-                "STACK_USERNAME": username,
-                "STACK_PASSWORD": password,
-            },
+            [binaries().client, *args],
+            env=self.client_env(username, password),
+            input=input,
             capture_output=True,
             text=True,
             timeout=CLIENT_TIMEOUT,
         )
+
+    def start_client(self, username: str, password: str, *args: str) -> subprocess.Popen[str]:
+        """Start the client with args and piped stdin and stdout, and stop it after the test."""
+        process = subprocess.Popen(
+            [binaries().client, *args],
+            env=self.client_env(username, password),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+        def stop() -> None:
+            if process.poll() is None:
+                process.kill()
+            process.communicate()
+
+        self.addCleanup(stop)
+        return process
 
 
 class BrowserTestCase(IntegrationTestCase):

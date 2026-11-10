@@ -22,7 +22,7 @@ import (
 	"trev.zip/template/stack/server/v2/database"
 	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
 	authv1handler "trev.zip/template/stack/server/v2/handlers/auth/v1"
-	numberv1handler "trev.zip/template/stack/server/v2/handlers/number/v1"
+	cursorv1handler "trev.zip/template/stack/server/v2/handlers/cursor/v1"
 	webhandler "trev.zip/template/stack/server/v2/handlers/web"
 	loginterceptor "trev.zip/template/stack/server/v2/interceptors/log"
 	ratelimitinterceptor "trev.zip/template/stack/server/v2/interceptors/ratelimit"
@@ -161,7 +161,7 @@ func run(cfg config, log *slog.Logger) error {
 	server.SetMetrics(rpcMetrics)
 	server.SetDiagnostics(trevrpc.LogDiagnostics(log))
 	authv1handler.Register(server, db, sessionManager)
-	numberv1handler.Register(server, db)
+	cursorv1handler.Register(server, db)
 
 	// Native QUIC, HTTP/3 and WebTransport share a UDP socket, and their TCP
 	// fallbacks and HTTP/1.1 and HTTP/2 share a TCP socket, on the same port.

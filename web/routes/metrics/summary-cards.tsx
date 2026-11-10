@@ -1,4 +1,4 @@
-import type { SummaryResponse } from "$gen/number/v1/metrics_pb";
+import type { SummaryResponse } from "$gen/cursor/v1/metrics_pb";
 import { Card } from "$lib/card";
 import { Skeleton } from "$lib/skeleton";
 import { type Component, For, Show } from "solid-js";
@@ -21,12 +21,12 @@ export const SummaryCards: Component<SummaryCardsProps> = (props) => {
     const d = props.data;
     if (!d) return [];
     return [
-      { label: "Items", value: formatNumber(d.totalCount) },
-      { label: "Sum", value: formatNumber(d.totalSum) },
-      { label: "Average", value: formatNumber(d.average) },
-      { label: "Min", value: formatNumber(d.min) },
-      { label: "Max", value: formatNumber(d.max) },
-      { label: "Distinct names", value: formatNumber(d.distinctNames) },
+      { label: "Positions", value: formatNumber(d.count) },
+      { label: "Streams", value: formatNumber(d.streams) },
+      { label: "Users", value: formatNumber(d.users) },
+      { label: "Distance", value: formatNumber(d.distance) },
+      { label: "Positions / stream", value: formatNumber(d.averageCount) },
+      { label: "Distance / stream", value: formatNumber(d.averageDistance) },
     ];
   };
   const pending = () => props.loading || !props.data;

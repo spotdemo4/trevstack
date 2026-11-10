@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use thiserror::Error;
 
 use crate::client::{Credentials, ServiceUrl, ServiceUrlError};
@@ -14,31 +14,73 @@ const PASSWORD_ENV: &str = "STACK_PASSWORD";
 // the doc comments are the --help text, where backticks would be shown as-is
 #[allow(clippy::doc_markdown)]
 #[derive(Debug, Parser)]
-#[command(version, about = "Send a name and number to the Number service")]
+#[command(
+    version,
+    about = "Send, stream and watch cursor positions on the Cursor service"
+)]
 pub struct Cli {
     /// Server URL [env: STACK_URL]
-    #[arg(long)]
+    #[arg(long, global = true)]
     url: Option<String>,
 
     /// PEM file with certificates to trust in addition to the bundled roots
     /// [env: STACK_CA_CERT]
-    #[arg(long)]
+    #[arg(long, global = true)]
     ca_cert: Option<PathBuf>,
 
     /// Account username [env: STACK_USERNAME]
-    #[arg(long)]
+    #[arg(long, global = true)]
     username: Option<String>,
 
     /// Account password; prefer the environment variable to keep it out of the
     /// process list [env: STACK_PASSWORD]
-    #[arg(long)]
+    #[arg(long, global = true)]
     password: Option<String>,
 
-    /// Name associated with the number
-    name: String,
+    #[command(subcommand)]
+    command: Command,
+}
 
-    /// Number to add
-    number: u32,
+// the doc comments are the --help text, where backticks would be shown as-is
+#[allow(clippy::doc_markdown)]
+#[derive(Clone, Copy, Debug, PartialEq, Subcommand)]
+pub enum Command {
+    /// Record one position and print its stream ID
+    Send {
+        /// Horizontal position, from 0 (left edge) to 1 (right edge)
+        #[arg(value_parser = parse_coordinate)]
+        x: f64,
+        /// Vertical position, from 0 (top edge) to 1 (bottom edge)
+        #[arg(value_parser = parse_coordinate)]
+        y: f64,
+    },
+    /// Show every user's cursor as it moves; prints one line per event when
+    /// stdout is not a terminal
+    Watch,
+    /// Stream your mouse position over the terminal, then print the stream's
+    /// summary; reads "x y" lines from stdin when not run in a terminal
+    Track,
+    /// Stream your mouse position over the terminal while showing everyone
+    /// else's; reads "x y" lines from stdin and prints one line per event when
+    /// not run in a terminal
+    Share,
+}
+
+/// Parses a coordinate: a finite number from 0 to 1.
+///
+/// # Errors
+///
+/// Returns an error if `input` is not a number from 0 to 1.
+pub fn parse_coordinate(input: &str) -> Result<f64, String> {
+    let value: f64 = input
+        .trim()
+        .parse()
+        .map_err(|_| format!("{input:?} is not a number"))?;
+    if (0.0..=1.0).contains(&value) {
+        Ok(value)
+    } else {
+        Err(format!("{input} is not from 0 to 1"))
+    }
 }
 
 #[derive(Debug)]
@@ -46,8 +88,7 @@ pub struct Config {
     pub url: ServiceUrl,
     pub ca_cert: Option<PathBuf>,
     pub credentials: Credentials,
-    pub name: String,
-    pub number: u32,
+    pub command: Command,
 }
 
 #[derive(Debug, Error)]
@@ -92,8 +133,7 @@ impl Cli {
             url: url.parse()?,
             ca_cert,
             credentials: Credentials { username, password },
-            name: self.name,
-            number: self.number,
+            command: self.command,
         })
     }
 }
@@ -104,7 +144,10 @@ mod tests {
 
     use std::path::Path;
 
-    use super::{CA_CERT_ENV, Cli, ConfigError, DEFAULT_URL, PASSWORD_ENV, URL_ENV, USERNAME_ENV};
+    use super::{
+        CA_CERT_ENV, Cli, Command, ConfigError, DEFAULT_URL, PASSWORD_ENV, URL_ENV, USERNAME_ENV,
+        parse_coordinate,
+    };
 
     fn credentials_env(name: &str) -> Option<String> {
         match name {
@@ -116,20 +159,34 @@ mod tests {
 
     #[test]
     fn uses_default_url() {
-        let config = Cli::try_parse_from(["client", "alice", "7"])
+        let config = Cli::try_parse_from(["client", "send", "0.25", "0.75"])
             .unwrap()
             .into_config(credentials_env)
             .unwrap();
 
         assert_eq!(config.url.to_string(), DEFAULT_URL);
         assert_eq!(config.ca_cert, None);
-        assert_eq!(config.name, "alice");
-        assert_eq!(config.number, 7);
+        assert_eq!(config.command, Command::Send { x: 0.25, y: 0.75 });
+    }
+
+    #[test]
+    fn parses_streaming_subcommands() {
+        for (name, command) in [
+            ("watch", Command::Watch),
+            ("track", Command::Track),
+            ("share", Command::Share),
+        ] {
+            let config = Cli::try_parse_from(["client", name])
+                .unwrap()
+                .into_config(credentials_env)
+                .unwrap();
+            assert_eq!(config.command, command);
+        }
     }
 
     #[test]
     fn environment_overrides_default_url() {
-        let config = Cli::try_parse_from(["client", "alice", "7"])
+        let config = Cli::try_parse_from(["client", "watch"])
             .unwrap()
             .into_config(|name| match name {
                 URL_ENV => Some("https://localhost:9000".to_owned()),
@@ -142,8 +199,12 @@ mod tests {
 
     #[test]
     fn option_overrides_environment() {
-        let config =
-            Cli::try_parse_from(["client", "--url", "https://localhost:7000", "alice", "7"])
+        // global options may come before or after the subcommand
+        for args in [
+            ["client", "--url", "https://localhost:7000", "watch"],
+            ["client", "watch", "--url", "https://localhost:7000"],
+        ] {
+            let config = Cli::try_parse_from(args)
                 .unwrap()
                 .into_config(|name| match name {
                     URL_ENV => Some("https://localhost:9000".to_owned()),
@@ -151,12 +212,13 @@ mod tests {
                 })
                 .unwrap();
 
-        assert_eq!(config.url.to_string(), "https://localhost:7000");
+            assert_eq!(config.url.to_string(), "https://localhost:7000");
+        }
     }
 
     #[test]
     fn reads_ca_cert_from_environment_and_option() {
-        let from_env = Cli::try_parse_from(["client", "alice", "7"])
+        let from_env = Cli::try_parse_from(["client", "watch"])
             .unwrap()
             .into_config(|name| match name {
                 CA_CERT_ENV => Some("env.pem".to_owned()),
@@ -165,7 +227,7 @@ mod tests {
             .unwrap();
         assert_eq!(from_env.ca_cert.as_deref(), Some(Path::new("env.pem")));
 
-        let from_option = Cli::try_parse_from(["client", "--ca-cert", "cli.pem", "alice", "7"])
+        let from_option = Cli::try_parse_from(["client", "--ca-cert", "cli.pem", "watch"])
             .unwrap()
             .into_config(|name| match name {
                 CA_CERT_ENV => Some("env.pem".to_owned()),
@@ -177,7 +239,7 @@ mod tests {
 
     #[test]
     fn reads_credentials_from_environment() {
-        let config = Cli::try_parse_from(["client", "alice", "7"])
+        let config = Cli::try_parse_from(["client", "watch"])
             .unwrap()
             .into_config(credentials_env)
             .unwrap();
@@ -194,8 +256,7 @@ mod tests {
             "cli_user",
             "--password",
             "cli-password",
-            "alice",
-            "7",
+            "watch",
         ])
         .unwrap()
         .into_config(credentials_env)
@@ -207,7 +268,7 @@ mod tests {
 
     #[test]
     fn requires_credentials() {
-        let missing_username = Cli::try_parse_from(["client", "--password", "secret123", "a", "7"])
+        let missing_username = Cli::try_parse_from(["client", "--password", "secret123", "watch"])
             .unwrap()
             .into_config(|_| None);
         assert!(matches!(
@@ -215,7 +276,7 @@ mod tests {
             Err(ConfigError::MissingUsername)
         ));
 
-        let missing_password = Cli::try_parse_from(["client", "--username", "bob", "a", "7"])
+        let missing_password = Cli::try_parse_from(["client", "--username", "bob", "watch"])
             .unwrap()
             .into_config(|_| None);
         assert!(matches!(
@@ -226,7 +287,7 @@ mod tests {
 
     #[test]
     fn redacts_password_in_debug_output() {
-        let config = Cli::try_parse_from(["client", "alice", "7"])
+        let config = Cli::try_parse_from(["client", "watch"])
             .unwrap()
             .into_config(credentials_env)
             .unwrap();
@@ -237,14 +298,29 @@ mod tests {
     }
 
     #[test]
-    fn rejects_invalid_number() {
-        assert!(Cli::try_parse_from(["client", "alice", "not-a-number"]).is_err());
-        assert!(Cli::try_parse_from(["client", "alice", "4294967296"]).is_err());
+    fn parses_coordinates() {
+        assert_eq!(parse_coordinate("0"), Ok(0.0));
+        assert_eq!(parse_coordinate("1"), Ok(1.0));
+        assert_eq!(parse_coordinate("0.5"), Ok(0.5));
+        assert!(parse_coordinate("-0.1").is_err());
+        assert!(parse_coordinate("1.01").is_err());
+        assert!(parse_coordinate("NaN").is_err());
+        assert!(parse_coordinate("inf").is_err());
+        assert!(parse_coordinate("left").is_err());
     }
 
     #[test]
-    fn requires_exactly_one_pair() {
-        assert!(Cli::try_parse_from(["client", "alice"]).is_err());
-        assert!(Cli::try_parse_from(["client", "alice", "7", "extra"]).is_err());
+    fn rejects_invalid_send_arguments() {
+        assert!(Cli::try_parse_from(["client", "send", "0.5", "1.5"]).is_err());
+        assert!(Cli::try_parse_from(["client", "send", "0.5"]).is_err());
+        assert!(Cli::try_parse_from(["client", "send", "0.5", "0.5", "0.5"]).is_err());
+        // a negative coordinate is out of range, not an unknown flag that hides it
+        assert!(Cli::try_parse_from(["client", "send", "--", "-0.5", "0.5"]).is_err());
+    }
+
+    #[test]
+    fn requires_a_subcommand() {
+        assert!(Cli::try_parse_from(["client"]).is_err());
+        assert!(Cli::try_parse_from(["client", "add", "alice", "7"]).is_err());
     }
 }

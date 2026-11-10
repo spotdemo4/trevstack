@@ -35,7 +35,10 @@ export type ChartDrawContext<T> = {
 
 type ChartProps<T> = {
   data: T[];
-  height: number;
+  /** Height of the whole chart. Ignored when `aspectRatio` is set. */
+  height?: number;
+  /** Width over height of the area inside the margin, whose height then follows the width. */
+  aspectRatio?: number;
   margin: ChartMargin;
   draw: (ctx: ChartDrawContext<T>) => void;
   emptyLabel?: string;
@@ -55,6 +58,12 @@ export function Chart<T>(props: ChartProps<T>): JSX.Element {
   let tooltipEl!: HTMLDivElement;
 
   const [width, setWidth] = createSignal(0);
+  const height = () =>
+    props.aspectRatio
+      ? Math.max(0, width() - props.margin.left - props.margin.right) / props.aspectRatio +
+        props.margin.top +
+        props.margin.bottom
+      : (props.height ?? 0);
 
   onSettled(() => {
     const observer = new ResizeObserver(([entry]) => {
@@ -82,7 +91,7 @@ export function Chart<T>(props: ChartProps<T>): JSX.Element {
   createEffect(
     () => ({
       width: width(),
-      height: props.height,
+      height: height(),
       margin: props.margin,
       data: props.data,
       draw: props.draw,
@@ -112,7 +121,7 @@ export function Chart<T>(props: ChartProps<T>): JSX.Element {
       <svg
         ref={(el) => (svg = el)}
         width={width()}
-        height={props.height}
+        height={height()}
         class={`${styles.ChartCanvas} block`}
       />
       <div ref={(el) => (tooltipEl = el)} class={tooltipClass} />

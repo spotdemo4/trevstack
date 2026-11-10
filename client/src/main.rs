@@ -14,10 +14,7 @@ async fn main() -> ExitCode {
     };
 
     match run(config).await {
-        Ok(sum) => {
-            println!("{sum}");
-            ExitCode::SUCCESS
-        }
+        Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("client: {error}");
             ExitCode::FAILURE

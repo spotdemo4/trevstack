@@ -22,7 +22,7 @@ func New(log *slog.Logger) *Interceptor {
 }
 
 // Intercept logs each call when it starts, and when it ends with its status,
-// along with the client's IP when the transport knows it and the user of an
+// at error unless it succeeded or the client cancelled it, along with the client's IP when the transport knows it and the user of an
 // authenticated call.
 func (i *Interceptor) Intercept(
 	ctx context.Context,
@@ -38,10 +38,15 @@ func (i *Interceptor) Intercept(
 	i.log.DebugContext(ctx, "request received", attrs...)
 
 	return ctx, func(finished trevrpc.RPCFinished) {
-		if finished.Code != trevrpc.CodeOK {
-			i.log.ErrorContext(ctx, "request error", append(attrs, "code", finished.Code.String())...)
-		} else {
+		switch finished.Code {
+		case trevrpc.CodeOK:
 			i.log.DebugContext(ctx, "request completed", attrs...)
+		case trevrpc.CodeCancelled:
+			// The client gave up on the call, such as a page that stopped
+			// watching a stream when it closed, which is not a server error.
+			i.log.DebugContext(ctx, "request cancelled", attrs...)
+		default:
+			i.log.ErrorContext(ctx, "request error", append(attrs, "code", finished.Code.String())...)
 		}
 	}, nil
 }

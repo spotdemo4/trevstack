@@ -11,8 +11,12 @@ import { Layout } from "./layout/layout";
 import { NetworkStatus } from "./layout/network-status";
 
 const Home = lazy(() => import("./routes/home"));
-const Numbers = lazy(() => import("./routes/numbers"));
+const Forms = lazy(() => import("./routes/forms"));
+const Tables = lazy(() => import("./routes/tables"));
 const Metrics = lazy(() => import("./routes/metrics"));
+const ServerStreams = lazy(() => import("./routes/server-streams"));
+const ClientStreams = lazy(() => import("./routes/client-streams"));
+const BidiStreams = lazy(() => import("./routes/bidi-streams"));
 const Auth = lazy(() => import("./routes/auth"));
 const Forbidden = lazy(() => import("./routes/403"));
 const NotFound = lazy(() => import("./routes/404"));
@@ -20,8 +24,12 @@ const NotFound = lazy(() => import("./routes/404"));
 const Router = createRouter({
   routes: [
     { path: "/", component: Home },
-    { path: "/numbers", component: Numbers },
+    { path: "/forms", component: Forms },
+    { path: "/tables", component: Tables },
     { path: "/metrics", component: Metrics },
+    { path: "/server-streams", component: ServerStreams },
+    { path: "/client-streams", component: ClientStreams },
+    { path: "/bidi-streams", component: BidiStreams },
     { path: "/auth", component: Auth },
     { path: "/403", component: Forbidden },
     { path: "*404", component: NotFound },

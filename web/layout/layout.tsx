@@ -3,7 +3,7 @@ import { Drawer, useDrawer } from "$lib/drawer";
 import { GitBranch, Layers, Menu } from "$lib/icon";
 import { createMediaQuery } from "$lib/media-query";
 import type { JSX } from "@solidjs/web";
-import { children, type Component, type ComponentProps, Show } from "solid-js";
+import { children, type Component, type ComponentProps, For, Show } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 import { version } from "../package.json";
@@ -31,34 +31,30 @@ const Logo: Component<ComponentProps<typeof Layers>> = (props) => (
   />
 );
 
+const links = [
+  { href: "/", label: "Home", end: true },
+  { href: "/forms", label: "Forms" },
+  { href: "/tables", label: "Tables" },
+  { href: "/metrics", label: "Metrics" },
+  { href: "/server-streams", label: "Server streams" },
+  { href: "/client-streams", label: "Client streams" },
+  { href: "/bidi-streams", label: "Bidi streams" },
+];
+
 const NavigationLinks: Component<NavigationProps> = (props) => (
-  <>
-    <NavLink
-      end
-      href="/"
-      onClick={props.onNavigate}
-      class={props.mobile ? "rounded-lg px-3 py-3" : undefined}
-      activeClass={props.mobile ? "bg-fill-subtle" : undefined}
-    >
-      Home
-    </NavLink>
-    <NavLink
-      href="/numbers"
-      onClick={props.onNavigate}
-      class={props.mobile ? "rounded-lg px-3 py-3" : undefined}
-      activeClass={props.mobile ? "bg-fill-subtle" : undefined}
-    >
-      Numbers
-    </NavLink>
-    <NavLink
-      href="/metrics"
-      onClick={props.onNavigate}
-      class={props.mobile ? "rounded-lg px-3 py-3" : undefined}
-      activeClass={props.mobile ? "bg-fill-subtle" : undefined}
-    >
-      Metrics
-    </NavLink>
-  </>
+  <For each={links}>
+    {(link) => (
+      <NavLink
+        end={link.end}
+        href={link.href}
+        onClick={props.onNavigate}
+        class={props.mobile ? "rounded-lg px-3 py-3" : "whitespace-nowrap"}
+        activeClass={props.mobile ? "bg-fill-subtle" : undefined}
+      >
+        {link.label}
+      </NavLink>
+    )}
+  </For>
 );
 
 const MobileNavigation: Component = () => {

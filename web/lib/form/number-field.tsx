@@ -5,8 +5,13 @@ import type { FieldController } from "./hook";
 
 type NumberFieldProps = {
   class?: string;
-  field: FieldController<number | undefined>;
+  /** A field of a 64-bit integer holds a bigint, which `protoSchema` makes of the number. */
+  field: FieldController<number | undefined> | FieldController<bigint | undefined>;
   label?: string;
+  min?: number;
+  max?: number;
+  /** The granularity of the value; a fractional step lets the input hold decimals. */
+  step?: number;
 };
 
 export const NumberField: Component<NumberFieldProps> = (props) => {
@@ -30,12 +35,17 @@ export const NumberField: Component<NumberFieldProps> = (props) => {
         invalid={props.field.invalid()}
         aria-describedby={props.field.invalid() ? errorId : undefined}
         class={props.class}
+        min={props.min}
+        max={props.max}
+        step={props.step}
+        inputmode={
+          props.step !== undefined && !Number.isInteger(props.step) ? "decimal" : "numeric"
+        }
         value={props.field.value() != undefined ? String(props.field.value()) : ""}
         onBlur={props.field.handleBlur}
         onValueChange={(details) => {
-          props.field.handleChange(
-            Number.isNaN(details.valueAsNumber) ? undefined : details.valueAsNumber,
-          );
+          const handleChange = props.field.handleChange as (value: number | undefined) => void;
+          handleChange(Number.isNaN(details.valueAsNumber) ? undefined : details.valueAsNumber);
         }}
       />
       <Show when={props.field.invalid()}>

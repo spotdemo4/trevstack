@@ -1,0 +1,9 @@
+/* A faint grid, so the pad reads as a surface even while it is empty. */
+.Pad {
+  background-image:
+    linear-gradient(to right, var(--color-line-subtle) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line-subtle) 1px, transparent 1px);
+  /* square cells: 10% of the width is 16/9 * 10% of the height */
+  background-size: 10% 17.778%;
+  background-position: -1px -1px;
+}

@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package cursor.v1;
+
+import "buf/validate/validate.proto";
+import "cursor/v1/cursor.proto";
+import "google/protobuf/timestamp.proto";
+
+// Optional filters for the position stream.
+message ListRequest {
+  option (buf.validate.message).cel = {
+    id: "min_x_less_than_max_x"
+    message: "min x must be less than max x"
+    expression: "!has(this.min_x) || !has(this.max_x) || this.min_x < this.max_x"
+  };
+  option (buf.validate.message).cel = {
+    id: "min_y_less_than_max_y"
+    message: "min y must be less than max y"
+    expression: "!has(this.min_y) || !has(this.max_y) || this.min_y < this.max_y"
+  };
+  option (buf.validate.message).cel = {
+    id: "end_after_start"
+    message: "end must be after start"
+    expression: "!has(this.start) || !has(this.end) || this.end > this.start"
+  };
+
+  // At most 50 characters.
+  optional string username = 1 [(buf.validate.field).string.max_len = 50];
+  // Any source except SOURCE_UNSPECIFIED.
+  optional Source source = 2 [
+    (buf.validate.field).enum.defined_only = true,
+    (buf.validate.field).enum.not_in = 0
+  ];
+  // At least 1.
+  optional int64 stream_id = 3 [(buf.validate.field).int64.gte = 1];
+  // 0 to 1, and less than max_x.
+  optional double min_x = 4 [(buf.validate.field).double = {
+    gte: 0
+    lte: 1
+  }];
+  // 0 to 1, and greater than min_x.
+  optional double max_x = 5 [(buf.validate.field).double = {
+    gte: 0
+    lte: 1
+  }];
+  // 0 to 1, and less than max_y.
+  optional double min_y = 6 [(buf.validate.field).double = {
+    gte: 0
+    lte: 1
+  }];
+  // 0 to 1, and greater than min_y.
+  optional double max_y = 7 [(buf.validate.field).double = {
+    gte: 0
+    lte: 1
+  }];
+  google.protobuf.Timestamp start = 8 [(buf.validate.field).timestamp = {
+    gte: {seconds: -62135596800}
+    lte: {
+      seconds: 253402300799
+      nanos: 999999999
+    }
+  }];
+  // After start.
+  google.protobuf.Timestamp end = 9 [(buf.validate.field).timestamp = {
+    gte: {seconds: -62135596800}
+    lte: {
+      seconds: 253402300799
+      nanos: 999999999
+    }
+  }];
+}
+
+// One matching position in the server stream, not an array of results.
+message ListResponse {
+  Cursor cursor = 1;
+}
+
+// Optional filters for the stream summaries.
+message ListStreamsRequest {
+  option (buf.validate.message).cel = {
+    id: "end_after_start"
+    message: "end must be after start"
+    expression: "!has(this.start) || !has(this.end) || this.end > this.start"
+  };
+
+  // At most 50 characters.
+  optional string username = 1 [(buf.validate.field).string.max_len = 50];
+  // Any source except SOURCE_UNSPECIFIED.
+  optional Source source = 2 [
+    (buf.validate.field).enum.defined_only = true,
+    (buf.validate.field).enum.not_in = 0
+  ];
+  // Inclusive lower bound of the stream's first position.
+  google.protobuf.Timestamp start = 3 [(buf.validate.field).timestamp = {
+    gte: {seconds: -62135596800}
+    lte: {
+      seconds: 253402300799
+      nanos: 999999999
+    }
+  }];
+  // Inclusive upper bound of the stream's first position, after start.
+  google.protobuf.Timestamp end = 4 [(buf.validate.field).timestamp = {
+    gte: {seconds: -62135596800}
+    lte: {
+      seconds: 253402300799
+      nanos: 999999999
+    }
+  }];
+}
+
+// One matching stream in the server stream, not an array of results.
+message ListStreamsResponse {
+  StreamSummary stream = 1;
+}

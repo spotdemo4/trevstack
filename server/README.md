@@ -65,8 +65,15 @@ and in builds without the `prod` tag from the web development server at `http://
 ### services
 
 - `auth.v1.AuthService`: `Signup`, `Login`, and `Logout`. These do not require a session.
-- `number.v1.NumberService`: `Add`, `List`, `Summary`, `TimeSeries`, `Distribution`, and `TopNames`.
-  These require a session.
+- `cursor.v1.CursorService`: records and streams cursor positions, and requires a session. It has
+  an RPC of each kind: `Send` is unary, `Watch`, `List`, and `ListStreams` stream responses, `Track`
+  streams requests, and `Share` streams both. `Summary`, `TimeSeries`, `Heatmap`, and `TopUsers`
+  aggregate the recorded positions.
+
+`Watch` and `Share` send each position to every open `Watch` and `Share` stream as it arrives,
+before it is stored, through an in-memory [broker](broker/broker.go) that never blocks the sender.
+A watcher that falls more than 1024 events behind is dropped with `resource_exhausted`. Since
+watchers live in the server's memory, they only see positions sent to the same server process.
 
 The proto definitions in [`../proto`](../proto) are the source of truth for every request and response.
 Their [`buf.validate`](https://buf.build/bufbuild/protovalidate) rules are the rules requests must
@@ -135,7 +142,7 @@ configuration directory to persist data in a container.
 ## logging
 
 Logs are written to stdout as JSON. Builds with the `dev` tag print human-readable logs instead.
-RPCs that pass authorization are logged at `debug`, and those that then fail at `error`, with their
+RPCs that pass authorization are logged at `debug`, and those that then fail at `error`, unless the client cancelled them, with their
 `method`, the `user` of the session for calls that require one, and, when the transport knows it, the
 `client_ip` described in [rate limiting](#rate-limiting). TrevRPC's server diagnostics are logged as `trevrpc: <phase>` at the
 level TrevRPC recommends, such as `debug` for failed TLS handshakes and `error` for handler panics.

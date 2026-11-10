@@ -68,7 +68,7 @@ func TestRateLimitBypassesUnconfiguredMethods(t *testing.T) {
 	})
 
 	for range 10 {
-		if _, allowed := interceptor.allow("/number.v1.NumberService/Add", netip.AddrPort{}); !allowed {
+		if _, allowed := interceptor.allow("/cursor.v1.CursorService/Send", netip.AddrPort{}); !allowed {
 			t.Fatal("unconfigured method was rejected")
 		}
 	}
@@ -185,7 +185,7 @@ func TestRateLimitIntercept(t *testing.T) {
 		t.Errorf("%s = %q, want 2", RetryAfterKey, got)
 	}
 
-	if err := intercept("/number.v1.NumberService/Add"); err != nil {
+	if err := intercept("/cursor.v1.CursorService/Send"); err != nil {
 		t.Fatalf("unconfigured call error = %v", err)
 	}
 }

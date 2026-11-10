@@ -6,7 +6,7 @@ import (
 
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	authv1 "trev.zip/template/stack/server/v2/gen/auth/v1"
-	numberv1 "trev.zip/template/stack/server/v2/gen/number/v1"
+	cursorv1 "trev.zip/template/stack/server/v2/gen/cursor/v1"
 )
 
 func authorize(manager *Manager, method string, metadata trevrpc.Metadata) error {
@@ -37,7 +37,7 @@ func TestIsPublicAuthMethod(t *testing.T) {
 		{method: authv1.AuthService_Login_FullMethodName, want: true},
 		{method: authv1.AuthService_Logout_FullMethodName, want: true},
 		{method: authv1.AuthService_Signup_FullMethodName, want: true},
-		{method: numberv1.NumberService_Add_FullMethodName, want: false},
+		{method: cursorv1.CursorService_Send_FullMethodName, want: false},
 		{method: "/auth.v1.AuthService/Unknown", want: false},
 	} {
 		if got := isPublicAuthMethod(test.method); got != test.want {
@@ -70,7 +70,7 @@ func TestAuthorizerAcceptsValidToken(t *testing.T) {
 		bearer(token),
 		{"authorization": []byte("bearer " + token)},
 	} {
-		ctx, err := authorizeContext(manager, numberv1.NumberService_Add_FullMethodName, metadata)
+		ctx, err := authorizeContext(manager, cursorv1.CursorService_Send_FullMethodName, metadata)
 		if err != nil {
 			t.Fatalf("AuthorizeContext(%q) error = %v, want nil", metadata["authorization"], err)
 		}
@@ -84,7 +84,7 @@ func TestAuthorizerAcceptsValidToken(t *testing.T) {
 
 func TestAuthorizerRequiresToken(t *testing.T) {
 	manager, _, _ := newTestManager(t)
-	err := authorize(manager, numberv1.NumberService_List_FullMethodName, nil)
+	err := authorize(manager, cursorv1.CursorService_List_FullMethodName, nil)
 	if got := codeOf(err); got != trevrpc.CodeUnauthenticated {
 		t.Errorf("code = %v, want Unauthenticated (error %v)", got, err)
 	}
@@ -94,7 +94,7 @@ func TestAuthorizerRejectsMalformedMetadata(t *testing.T) {
 	manager, db, _ := newTestManager(t)
 	token, _ := issue(t, manager, db, "alice")
 	for _, value := range []string{"", "Bearer", "Bearer ", "Basic " + token, token, "Bearer " + token + " extra"} {
-		err := authorize(manager, numberv1.NumberService_Add_FullMethodName, trevrpc.Metadata{"authorization": []byte(value)})
+		err := authorize(manager, cursorv1.CursorService_Send_FullMethodName, trevrpc.Metadata{"authorization": []byte(value)})
 		if got := codeOf(err); got != trevrpc.CodeUnauthenticated {
 			t.Errorf("Authorize(%q) code = %v, want Unauthenticated (error %v)", value, got, err)
 		}
@@ -118,7 +118,7 @@ func TestAuthorizerRejectsEndedSessions(t *testing.T) {
 		"legacy JWT": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGljZSJ9.c2lnbmF0dXJl",
 	} {
 		t.Run(name, func(t *testing.T) {
-			err := authorize(manager, numberv1.NumberService_Add_FullMethodName, bearer(token))
+			err := authorize(manager, cursorv1.CursorService_Send_FullMethodName, bearer(token))
 			if got := codeOf(err); got != trevrpc.CodeUnauthenticated {
 				t.Errorf("code = %v, want Unauthenticated (error %v)", got, err)
 			}
@@ -131,7 +131,7 @@ func TestAuthorizerFailsInternallyWithoutDatabase(t *testing.T) {
 	token, _ := issue(t, manager, db, "alice")
 	_ = db.Close()
 
-	err := authorize(manager, numberv1.NumberService_Add_FullMethodName, bearer(token))
+	err := authorize(manager, cursorv1.CursorService_Send_FullMethodName, bearer(token))
 	if got := codeOf(err); got != trevrpc.CodeInternal {
 		t.Errorf("code = %v, want Internal (error %v)", got, err)
 	}

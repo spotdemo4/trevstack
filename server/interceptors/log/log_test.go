@@ -25,29 +25,36 @@ func TestInterceptorLogsCalls(t *testing.T) {
 			name:       "ok",
 			remoteAddr: netip.MustParseAddrPort("203.0.113.7:4433"),
 			code:       trevrpc.CodeOK,
-			wantStart:  `level=DEBUG msg="request received" method=/number.v1.NumberService/Add client_ip=203.0.113.7`,
-			wantFinish: `level=DEBUG msg="request completed" method=/number.v1.NumberService/Add client_ip=203.0.113.7`,
+			wantStart:  `level=DEBUG msg="request received" method=/cursor.v1.CursorService/Send client_ip=203.0.113.7`,
+			wantFinish: `level=DEBUG msg="request completed" method=/cursor.v1.CursorService/Send client_ip=203.0.113.7`,
 		},
 		{
 			name:       "error",
 			remoteAddr: netip.MustParseAddrPort("[2001:db8::1]:4433"),
 			code:       trevrpc.CodeInvalidArgument,
-			wantStart:  `level=DEBUG msg="request received" method=/number.v1.NumberService/Add client_ip=2001:db8::1`,
-			wantFinish: `level=ERROR msg="request error" method=/number.v1.NumberService/Add client_ip=2001:db8::1 code=InvalidArgument`,
+			wantStart:  `level=DEBUG msg="request received" method=/cursor.v1.CursorService/Send client_ip=2001:db8::1`,
+			wantFinish: `level=ERROR msg="request error" method=/cursor.v1.CursorService/Send client_ip=2001:db8::1 code=InvalidArgument`,
+		},
+		{
+			name:       "cancelled",
+			remoteAddr: netip.MustParseAddrPort("203.0.113.7:4433"),
+			code:       trevrpc.CodeCancelled,
+			wantStart:  `level=DEBUG msg="request received" method=/cursor.v1.CursorService/Send client_ip=203.0.113.7`,
+			wantFinish: `level=DEBUG msg="request cancelled" method=/cursor.v1.CursorService/Send client_ip=203.0.113.7`,
 		},
 		{
 			name:       "authenticated",
 			remoteAddr: netip.MustParseAddrPort("203.0.113.7:4433"),
 			username:   "alice",
 			code:       trevrpc.CodeOK,
-			wantStart:  `level=DEBUG msg="request received" method=/number.v1.NumberService/Add client_ip=203.0.113.7 user=alice`,
-			wantFinish: `level=DEBUG msg="request completed" method=/number.v1.NumberService/Add client_ip=203.0.113.7 user=alice`,
+			wantStart:  `level=DEBUG msg="request received" method=/cursor.v1.CursorService/Send client_ip=203.0.113.7 user=alice`,
+			wantFinish: `level=DEBUG msg="request completed" method=/cursor.v1.CursorService/Send client_ip=203.0.113.7 user=alice`,
 		},
 		{
 			name:       "unknown client",
 			code:       trevrpc.CodeInvalidArgument,
-			wantStart:  `level=DEBUG msg="request received" method=/number.v1.NumberService/Add`,
-			wantFinish: `level=ERROR msg="request error" method=/number.v1.NumberService/Add code=InvalidArgument`,
+			wantStart:  `level=DEBUG msg="request received" method=/cursor.v1.CursorService/Send`,
+			wantFinish: `level=ERROR msg="request error" method=/cursor.v1.CursorService/Send code=InvalidArgument`,
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
@@ -67,7 +74,7 @@ func TestInterceptorLogsCalls(t *testing.T) {
 				ctx = auth.ContextWithUsername(ctx, test.username)
 			}
 			next, finish, err := New(logger).Intercept(ctx, trevrpc.HandlerContext{
-				FullMethod: "/number.v1.NumberService/Add",
+				FullMethod: "/cursor.v1.CursorService/Send",
 				RemoteAddr: test.remoteAddr,
 			})
 			if err != nil || next != ctx || finish == nil {

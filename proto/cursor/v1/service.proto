@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package cursor.v1;
+
+import "cursor/v1/list.proto";
+import "cursor/v1/metrics.proto";
+import "cursor/v1/send.proto";
+import "cursor/v1/share.proto";
+import "cursor/v1/track.proto";
+import "cursor/v1/watch.proto";
+
+// Records, streams and analyzes cursor positions shared across all users. Requires a session token.
+//
+// Positions are recorded in streams: each Send call, and each Track or Share stream that sends a
+// position, is a stream of its own, attributed to the session's user.
+service CursorService {
+  // Records a single position.
+  rpc Send(SendRequest) returns (SendResponse);
+  // Streams every user's cursor events as they happen, starting with the latest position of each
+  // open Track and Share stream. Positions are sent to watchers before they are stored. A watcher
+  // that falls too far behind fails with resource_exhausted.
+  rpc Watch(WatchRequest) returns (stream WatchResponse);
+  // Records each position the client streams, then summarizes them once the client ends the stream.
+  rpc Track(stream TrackRequest) returns (TrackResponse);
+  // Records each position the client streams, while streaming every other stream's cursor events
+  // back as Watch does. The call ends when the client ends its half of the stream.
+  rpc Share(stream ShareRequest) returns (stream ShareResponse);
+  // Streams one response per matching position, newest first. An empty result sends no messages.
+  // Username filtering uses a substring match; coordinate, stream and timestamp bounds are inclusive.
+  rpc List(ListRequest) returns (stream ListResponse);
+  // Streams one response per matching stream, newest first. An empty result sends no messages.
+  // Username filtering uses a substring match; timestamp bounds apply to each stream's first position.
+  rpc ListStreams(ListStreamsRequest) returns (stream ListStreamsResponse);
+  // Returns position, stream and user counts and distances for the selected time range.
+  // All aggregates are zero when no positions match.
+  rpc Summary(SummaryRequest) returns (SummaryResponse);
+  // Returns position, stream and user counts in ascending UTC time buckets. Empty buckets are omitted.
+  // Weeks begin on Sunday; months begin on the first day.
+  rpc TimeSeries(TimeSeriesRequest) returns (TimeSeriesResponse);
+  // Counts positions in a grid of equal cells over the pad, including empty cells. Positions on the
+  // right and bottom edges count towards the last column and row.
+  rpc Heatmap(HeatmapRequest) returns (HeatmapResponse);
+  // Ranks users by position count, then distance, both descending, up to the requested limit.
+  rpc TopUsers(TopUsersRequest) returns (TopUsersResponse);
+}

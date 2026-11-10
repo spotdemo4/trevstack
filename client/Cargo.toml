@@ -176,11 +176,13 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
+crossterm = { version = "0.29", features = ["event-stream"] }
+futures-util = "0.3"
 prost = "0.14"
 prost-types = "0.14"
 quinn = "0.11"
 thiserror = "2.0"
-tokio = { version = "1.47", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.47", features = ["macros", "rt-multi-thread", "signal", "sync", "time"] }
 trevrpc = "1.8.0"
 url = "2.5"
 

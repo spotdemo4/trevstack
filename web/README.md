@@ -9,12 +9,20 @@ nothing to deploy separately.
 
 ## pages
 
-| path       | description                                             |
-| ---------- | ------------------------------------------------------- |
-| `/auth`    | sign in and sign up                                     |
-| `/`        | add a named number                                      |
-| `/numbers` | filter and browse recorded numbers as they stream in    |
-| `/metrics` | summary, time series, distribution, and top name charts |
+Each page demonstrates a kind of RPC with the cursor positions of `cursor.v1.CursorService`, which
+every signed-in user shares. Positions are fractions of a 16:9 pad's width and height, from its
+top-left corner.
+
+| path              | RPC                                                    | description                                                      |
+| ----------------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
+| `/auth`           | `Login`, `Signup`                                      | sign in and sign up                                              |
+| `/`               |                                                        | an introduction that links to every other page                   |
+| `/forms`          | `Send` (unary)                                         | send one position, typed or picked on a pad                      |
+| `/tables`         | `List`, `ListStreams` (server streaming)               | filter and browse positions and streams as they stream in        |
+| `/metrics`        | `Summary`, `TimeSeries`, `Heatmap`, `TopUsers` (unary) | summary, activity over time, heatmap, and top user charts        |
+| `/server-streams` | `Watch` (server streaming)                             | every cursor, live, with a trail                                 |
+| `/client-streams` | `Track` (client streaming)                             | stream your cursor while tracking, then see the stream's summary |
+| `/bidi-streams`   | `Share` (bidirectional streaming)                      | stream your cursor and see everyone else's over one call         |
 
 Every page except `/auth` requires a session; signed-out visitors are redirected to `/auth` and
 returned to the page they asked for after signing in. RPCs that fail with `permission_denied` show
@@ -33,6 +41,12 @@ for typed errors and cancellation. The clients check each request against the
 and forms check their values against the same rules with `protoSchema` from
 [`lib/form/proto-schema.ts`](lib/form/proto-schema.ts), so a mistake shows under its field at once
 and the rules live in one place.
+
+Streaming calls take and return Effect streams. `createStreamingStore` collects a response stream
+into a store for a table, `createLiveStream` runs a stream that never ends, such as `Watch`, for as
+long as a page is open, restarting it when it fails, and `createPushStream` makes a request stream
+for `Track` and `Share` that pointer events push into, all in [`lib/effect`](lib/effect). The cursor
+pad and the store of live cursors it shows are in [`lib/cursor-pad`](lib/cursor-pad).
 
 When the server uses its development certificate, the channel reads the certificate's hashes from
 `/certificate-hashes` before each WebTransport attempt and trusts it by them.

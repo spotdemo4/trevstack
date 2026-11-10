@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package cursor.v1;
+
+import "cursor/v1/cursor.proto";
+
+message WatchRequest {}
+
+// One cursor event in the server stream.
+message WatchResponse {
+  oneof event {
+    // A cursor moved.
+    Cursor moved = 1;
+    // A stream ended, so its cursor can be removed.
+    StreamEnd ended = 2;
+  }
+}

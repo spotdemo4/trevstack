@@ -7,10 +7,15 @@ pub mod auth {
     }
 }
 
-pub mod number {
-    #[allow(clippy::empty_docs, clippy::doc_markdown, clippy::must_use_candidate)]
+pub mod cursor {
+    #[allow(
+        clippy::empty_docs,
+        clippy::doc_markdown,
+        clippy::must_use_candidate,
+        clippy::too_many_lines
+    )]
     pub mod v1 {
-        include!("gen/number.v1.rs");
-        include!("gen/number.v1.trevrpc.rs");
+        include!("gen/cursor.v1.rs");
+        include!("gen/cursor.v1.trevrpc.rs");
     }
 }

@@ -8,13 +8,30 @@ import {
 import { createStandardSchema } from "@bufbuild/protovalidate";
 import type { StandardSchemaV1 } from "effect/StandardSchema";
 
-/** The 32-bit integer types, which a form's numbers must fit, and their ranges. */
+/**
+ * The integer types, which a form's numbers must fit, and their ranges. A number input only holds
+ * safe integers exactly, which bounds the 64-bit types.
+ */
 const INTEGER_RANGES = new Map<ScalarType, readonly [number, number]>([
   [ScalarType.INT32, [-(2 ** 31), 2 ** 31 - 1]],
   [ScalarType.SINT32, [-(2 ** 31), 2 ** 31 - 1]],
   [ScalarType.SFIXED32, [-(2 ** 31), 2 ** 31 - 1]],
   [ScalarType.UINT32, [0, 2 ** 32 - 1]],
   [ScalarType.FIXED32, [0, 2 ** 32 - 1]],
+  [ScalarType.INT64, [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]],
+  [ScalarType.SINT64, [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]],
+  [ScalarType.SFIXED64, [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]],
+  [ScalarType.UINT64, [0, Number.MAX_SAFE_INTEGER]],
+  [ScalarType.FIXED64, [0, Number.MAX_SAFE_INTEGER]],
+]);
+
+/** The 64-bit integer types, whose fields hold a bigint rather than a form's number. */
+const BIGINT_TYPES = new Set([
+  ScalarType.INT64,
+  ScalarType.SINT64,
+  ScalarType.SFIXED64,
+  ScalarType.UINT64,
+  ScalarType.FIXED64,
 ]);
 
 /**
@@ -24,7 +41,7 @@ const INTEGER_RANGES = new Map<ScalarType, readonly [number, number]>([
  *
  * It is protovalidate's Standard Schema, which only checks the rules, plus a check that numbers
  * fit their integer field: a number input can hold 1.5 or -1, which protovalidate accepts and the
- * request then fails to encode. Use `createStandardSchema` directly once
+ * request then fails to encode. Numbers for 64-bit integer fields become bigints. Use `createStandardSchema` directly once
  * https://github.com/bufbuild/protovalidate-es/issues/218 is fixed.
  */
 export function protoSchema<Desc extends DescMessage>(
@@ -39,13 +56,20 @@ export function protoSchema<Desc extends DescMessage>(
         const values: Record<string, unknown> = { ...value };
         const issues: StandardSchemaV1.Issue[] = [];
         for (const field of schema.fields) {
-          const message = typeProblem(field, values[field.localName]);
+          const fieldValue = values[field.localName];
+          const message = typeProblem(field, fieldValue);
           if (message !== undefined) {
             issues.push({ message, path: [field.localName] });
             delete values[field.localName];
+          } else if (
+            field.fieldKind === "scalar" &&
+            BIGINT_TYPES.has(field.scalar) &&
+            typeof fieldValue === "number"
+          ) {
+            values[field.localName] = BigInt(fieldValue);
           }
         }
-        if (issues.length === 0) return standard.validate(value);
+        if (issues.length === 0) return standard.validate(values);
 
         // A field with a type problem was left out of the message, so its rules, such as being
         // required, do not also report on it.

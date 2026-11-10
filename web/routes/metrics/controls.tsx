@@ -1,8 +1,9 @@
-import { TimeInterval } from "$gen/number/v1/metrics_pb";
+import { TimeInterval } from "$gen/cursor/v1/metrics_pb";
 import { NumberInput, SelectInput } from "$lib/input";
 import type { Component } from "solid-js";
 
 const intervalItems = [
+  { value: TimeInterval.MINUTE, label: "Minute" },
   { value: TimeInterval.HOUR, label: "Hour" },
   { value: TimeInterval.DAY, label: "Day" },
   { value: TimeInterval.WEEK, label: "Week" },
@@ -15,6 +16,7 @@ export const IntervalSelect: Component<{
 }> = (props) => (
   <div class="w-36">
     <SelectInput
+      aria-label="Interval"
       items={intervalItems}
       value={[String(props.value)]}
       onValueChange={(details) => {
@@ -32,9 +34,12 @@ const MAX_COUNT = 100;
 export const CountInput: Component<{
   value: number;
   onChange: (value: number) => void;
+  /** Names the input for assistive technology. */
+  label: string;
 }> = (props) => (
   <div class="w-32">
     <NumberInput
+      aria-label={props.label}
       min={MIN_COUNT}
       max={MAX_COUNT}
       value={String(props.value)}

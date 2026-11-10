@@ -1,4 +1,4 @@
-import type { TimeSeriesPoint } from "$gen/number/v1/metrics_pb";
+import type { TimeSeriesPoint } from "$gen/cursor/v1/metrics_pb";
 import { Chart, type ChartDrawContext, styles } from "$lib/chart";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { extent, max } from "d3-array";
@@ -8,9 +8,9 @@ import { select } from "d3-selection";
 import { area, curveMonotoneX, line } from "d3-shape";
 import { type Component, createMemo } from "solid-js";
 
-import { formatStats } from "./format";
+import { formatCounts } from "./format";
 
-type Datum = { date: Date; count: number; sum: number; average: number };
+type Datum = { date: Date; count: number; streams: number; users: number };
 
 const margin = { top: 12, right: 16, bottom: 28, left: 44 };
 
@@ -89,7 +89,7 @@ const draw = ({ g, width, height, data, tooltip }: ChartDrawContext<Datum>) => {
     .on("pointerleave", (event: PointerEvent) => {
       select(event.currentTarget as SVGCircleElement).attr("r", 3);
     });
-  tooltip.attach(points, (d) => formatStats(d.date.toLocaleString(), d));
+  tooltip.attach(points, (d) => formatCounts(d.date.toLocaleString(), d));
 };
 
 export const TimeSeriesChart: Component<{ points: TimeSeriesPoint[]; height: number }> = (
@@ -102,8 +102,8 @@ export const TimeSeriesChart: Component<{ points: TimeSeriesPoint[]; height: num
             {
               date: timestampDate(p.bucket),
               count: Number(p.count),
-              sum: Number(p.sum),
-              average: p.average,
+              streams: Number(p.streams),
+              users: Number(p.users),
             },
           ]
         : [],

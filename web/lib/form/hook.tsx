@@ -145,6 +145,13 @@ function createForm<TInput extends object, TOutput>(
 ): FormController<TInput> {
   const initialValues = { ...config.defaultValues } as Exclude<TInput, Function>;
   const [values, setValues] = createSignal<TInput>(initialValues);
+  // A signal's reads return its new value only after the next flush, so the latest values are
+  // also kept here, for changes to several fields, or a change and a submit, in one event.
+  let latest: TInput = initialValues;
+  const updateValues = (next: TInput) => {
+    latest = next;
+    setValues(() => next);
+  };
   const [errorState, setErrorState] = createSignal<ErrorState>({});
   const [blurred, setBlurred] = createSignal<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = createSignal(false);
@@ -184,8 +191,8 @@ function createForm<TInput extends object, TOutput>(
     isValid: () => (errorState()[name] ?? []).length === 0,
     invalid: () => blurred()[name] === true && (errorState()[name] ?? []).length > 0,
     handleChange: (value) => {
-      const next = { ...values(), [name]: value } as TInput;
-      setValues(() => next);
+      const next = { ...latest, [name]: value } as TInput;
+      updateValues(next);
       validateOnChange(next);
     },
     handleBlur: () => setBlurred((current) => ({ ...current, [name]: true })),
@@ -194,7 +201,7 @@ function createForm<TInput extends object, TOutput>(
   const reset = (): void => {
     validationId += 1;
     const next = { ...config.defaultValues } as TInput;
-    setValues(() => next);
+    updateValues(next);
     setErrorState({});
     setBlurred({});
     setIsValidating(false);
@@ -202,7 +209,7 @@ function createForm<TInput extends object, TOutput>(
   };
 
   const handleSubmit = async (): Promise<boolean> => {
-    const value = values();
+    const value = latest;
     setBlurred((current) => {
       const next = { ...current };
       for (const key of Object.keys(value)) next[key] = true;

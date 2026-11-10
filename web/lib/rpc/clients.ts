@@ -1,5 +1,5 @@
 import { AuthService } from "$gen/auth/v1/service_pb";
-import { NumberService } from "$gen/number/v1/service_pb";
+import { CursorService } from "$gen/cursor/v1/service_pb";
 import { createEffectClient } from "@trevrpc/effect";
 import { createRequestValidator } from "@trevrpc/protovalidate";
 
@@ -10,4 +10,4 @@ import { channel } from "./channel";
 const validator = createRequestValidator();
 
 export const AuthClient = createEffectClient(AuthService, channel, { validator });
-export const NumberClient = createEffectClient(NumberService, channel, { validator });
+export const CursorClient = createEffectClient(CursorService, channel, { validator });

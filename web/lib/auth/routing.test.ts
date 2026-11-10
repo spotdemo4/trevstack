@@ -8,13 +8,13 @@ test("public paths normalize case and trailing slashes without matching child ro
   for (const path of ["/auth", "/AUTH/", "/403", "/403///"]) {
     expect(isPublicPath(path), path).toBe(true);
   }
-  for (const path of ["/", "", "/numbers", "/metrics", "/auth/other", "/403/other"]) {
+  for (const path of ["/", "", "/tables", "/metrics", "/auth/other", "/403/other"]) {
     expect(isPublicPath(path), path).toBe(false);
   }
 });
 
 test("sign-in round trips the protected path, query, and hash", () => {
-  const path = "/numbers?filter=a%26b&sort=desc#results";
+  const path = "/tables?filter=a%26b&sort=desc#results";
   const target = new URL(getSignInPath(path), origin);
   expect(target.pathname).toBe("/auth");
   expect(getReturnPath(target.search, origin)).toBe(path);
@@ -25,9 +25,9 @@ test("return paths reject external destinations and sign-in loops", () => {
     "https://other.example",
     "//other.example/path",
     "/\\other.example/path",
-    "numbers",
+    "tables",
     "/auth",
-    "/AUTH///?returnTo=/numbers",
+    "/AUTH///?returnTo=/tables",
   ]) {
     expect(getReturnPath(`?returnTo=${encodeURIComponent(path)}`, origin), path).toBe("/");
   }

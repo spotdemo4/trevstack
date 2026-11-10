@@ -1,5 +1,5 @@
 import type { JSX } from "@solidjs/web";
-import { type Component, omit } from "solid-js";
+import { type Component, createEffect, omit } from "solid-js";
 import { twMerge } from "tailwind-merge";
 
 type NumberValueChangeDetails = {
@@ -18,8 +18,21 @@ type NumberInputProps = Omit<
 };
 
 export const NumberInput: Component<NumberInputProps> = (props) => {
-  const inputProps = omit(props, "onValueChange", "class", "invalid");
+  const inputProps = omit(props, "onValueChange", "class", "invalid", "value");
   let inputRef: HTMLInputElement | undefined;
+
+  // The value is written only when it differs from the number the input holds, so it doesn't
+  // rewrite what is being typed: "0." or "-" hold no number yet, which a field reports as unset,
+  // and "0.50" holds 0.5.
+  createEffect(
+    () => props.value ?? "",
+    (value) => {
+      if (!inputRef) return;
+      const current = inputRef.valueAsNumber;
+      const same = Number.isNaN(current) ? value === "" : value !== "" && Number(value) === current;
+      if (!same) inputRef.value = value;
+    },
+  );
 
   const emitValue = () => {
     if (!inputRef) return;
@@ -34,7 +47,7 @@ export const NumberInput: Component<NumberInputProps> = (props) => {
       {...inputProps}
       ref={(node) => (inputRef = node)}
       type="number"
-      inputmode="numeric"
+      inputmode={props.inputmode ?? "numeric"}
       aria-invalid={props.invalid ? "true" : undefined}
       onInput={emitValue}
       class={twMerge(

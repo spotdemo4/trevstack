@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package cursor.v1;
+
+import "buf/validate/validate.proto";
+import "cursor/v1/cursor.proto";
+
+// One position in the client stream.
+message TrackRequest {
+  // Required. 0 (left edge) to 1 (right edge).
+  optional double x = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).double = {
+      gte: 0
+      lte: 1
+    }
+  ];
+  // Required. 0 (top edge) to 1 (bottom edge).
+  optional double y = 2 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).double = {
+      gte: 0
+      lte: 1
+    }
+  ];
+}
+
+message TrackResponse {
+  // The positions the stream recorded. Unset when the client sent none.
+  StreamSummary stream = 1;
+}

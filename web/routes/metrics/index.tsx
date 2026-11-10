@@ -1,20 +1,20 @@
-import { TimeInterval } from "$gen/number/v1/metrics_pb";
+import { TimeInterval } from "$gen/cursor/v1/metrics_pb";
 import { createEffectResource, toastFailure } from "$lib/effect";
 import { DateField } from "$lib/form/date-field";
 import { Form } from "$lib/form/form";
 import { useForm } from "$lib/form/hook";
 import { ResetButton } from "$lib/form/reset-button";
 import { SubmitButton } from "$lib/form/submit-button";
-import { NumberClient } from "$lib/rpc";
+import { CursorClient } from "$lib/rpc";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { Errored, isPending, Loading, type Component, createSignal } from "solid-js";
 
 import { ChartCard } from "./chart-card";
 import { CountInput, IntervalSelect } from "./controls";
-import { DistributionChart } from "./distribution-chart";
+import { HeatmapChart } from "./heatmap-chart";
 import { SummaryCards } from "./summary-cards";
 import { TimeSeriesChart } from "./time-series-chart";
-import { TopNamesChart } from "./top-names-chart";
+import { TopUsersChart } from "./top-users-chart";
 
 type MetricsRange = {
   start?: Timestamp;
@@ -33,25 +33,30 @@ const Metrics: Component = () => {
   }));
 
   const summary = createEffectResource(range, (req) =>
-    toastFailure("Failed to load summary")(NumberClient.summary(req)),
+    toastFailure("Failed to load summary")(CursorClient.summary(req)),
   );
 
-  const [interval, setInterval] = createSignal<TimeInterval>(TimeInterval.DAY);
+  const [interval, setInterval] = createSignal<TimeInterval>(TimeInterval.MINUTE);
   const timeSeries = createEffectResource(
     () => ({ ...range(), interval: interval() }),
-    (req) => toastFailure("Failed to load activity over time")(NumberClient.timeSeries(req)),
+    (req) => toastFailure("Failed to load activity over time")(CursorClient.timeSeries(req)),
   );
 
-  const [bucketCount, setBucketCount] = createSignal(10);
-  const distribution = createEffectResource(
-    () => ({ ...range(), bucketCount: bucketCount() }),
-    (req) => toastFailure("Failed to load number distribution")(NumberClient.distribution(req)),
+  // Rows follow columns, so the cells are about square on the 16:9 pad.
+  const [columns, setColumns] = createSignal(32);
+  const heatmap = createEffectResource(
+    () => ({
+      ...range(),
+      columns: columns(),
+      rows: Math.min(100, Math.max(1, Math.round((columns() * 9) / 16))),
+    }),
+    (req) => toastFailure("Failed to load heatmap")(CursorClient.heatmap(req)),
   );
 
   const [limit, setLimit] = createSignal(8);
-  const topNames = createEffectResource(
+  const topUsers = createEffectResource(
     () => ({ ...range(), limit: limit() }),
-    (req) => toastFailure("Failed to load top names")(NumberClient.topNames(req)),
+    (req) => toastFailure("Failed to load top users")(CursorClient.topUsers(req)),
   );
 
   return (
@@ -83,21 +88,21 @@ const Metrics: Component = () => {
 
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <ChartCard
-          title="Number distribution"
+          title="Heatmap"
           height={260}
-          errorLabel="Failed to load distribution."
-          controls={<CountInput value={bucketCount()} onChange={setBucketCount} />}
+          errorLabel="Failed to load heatmap."
+          controls={<CountInput value={columns()} onChange={setColumns} label="Columns" />}
         >
-          <DistributionChart buckets={distribution()?.buckets ?? []} height={260} />
+          <HeatmapChart heatmap={heatmap()} emptyHeight={260} />
         </ChartCard>
 
         <ChartCard
-          title="Top names"
+          title="Top users"
           height={260}
-          errorLabel="Failed to load top names."
-          controls={<CountInput value={limit()} onChange={setLimit} />}
+          errorLabel="Failed to load top users."
+          controls={<CountInput value={limit()} onChange={setLimit} label="Users" />}
         >
-          <TopNamesChart names={topNames()?.names ?? []} minHeight={260} />
+          <TopUsersChart users={topUsers()?.users ?? []} minHeight={260} />
         </ChartCard>
       </div>
     </div>
