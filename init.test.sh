@@ -193,7 +193,8 @@ test_application() (
   git add -A
   git commit --quiet --message 'Initial commit'
   # The build sandbox has no /usr/bin/env for the shebang
-  printf '%s\n' n https://git.example.com/octo/hello-world '' '' '' | bash ./init.sh 'Hello World' "$description"
+  # GitHub (detected), no Gitea, Forgejo mirror, Zed, VS Code, client
+  printf '%s\n' '' n y https://git.example.com/octo/hello-world '' '' '' | bash ./init.sh 'Hello World' "$description"
 
   assert_initialized github.com/octo/hello-world hello-world 'Says \"hi\" to ${USER} \\o/'
   assert_eq "$(git remote)" $'forgejo\norigin' remotes
@@ -208,6 +209,8 @@ test_application() (
     'description = "Says \"hi\" to \${USER} \\o/";' \
     'client-lint = {' 'integration = {' 'python-lint = {' \
     'actions-gh = {' 'actions-fj = {' 'renovate-gh = {' 'renovate-fj = {'
+  assert_lacks flake.nix 'actions-gt = {' 'renovate-gt = {'
+  assert_missing .gitea
   assert_contains client/Cargo.toml 'name = "hello-world-client"' 'description = "Says \"hi\" to ${USER} \\o/"'
   assert_contains client/Cargo.lock 'name = "hello-world-client"'
   assert_contains client/src/main.rs 'use hello_world_client::'
@@ -224,15 +227,17 @@ test_minimal() (
   cd "$project"
   # nix flake init leaves the template uncommitted and init.sh not executable
   chmod -x init.sh
-  printf '%s\n' y n n n | bash init.sh 'Hello Min' 'Says hello'
+  # Forgejo (detected), no GitHub, no Gitea, no Zed, no VS Code, no client
+  printf '%s\n' '' n n n n n | bash init.sh 'Hello Min' 'Says hello'
 
   assert_initialized git.example.com/octo/hello-min hello-min 'Says hello'
   assert_eq "$(git log --format=%s)" 'chore: initialize project' commits
   assert_eq "$(git remote)" origin remotes
   assert_eq "$(git remote get-url origin)" https://git.example.com/octo/hello-min.git 'origin remote'
-  assert_missing .github .zed .vscode client test pyproject.toml
+  assert_missing .github .gitea .zed .vscode client test pyproject.toml
   assert_contains README.md \
     'https://git.example.com/octo/hello-min/actions?workflow=check.yaml' \
+    'logo=forgejo' \
     '- [server](server/README.md)'
   assert_lacks README.md 'client' 'rust'
   assert_contains server/README.md 'git.example.com/octo/hello-min/server:latest'
@@ -241,11 +246,45 @@ test_minimal() (
     '"repositories": ["octo/hello-min"]'
   assert_lacks flake.nix \
     client cargo python ruff trevrpc-rust \
-    'client-lint = {' 'integration = {' 'python-lint = {' 'actions-gh = {' 'renovate-gh = {'
+    'client-lint = {' 'integration = {' 'python-lint = {' 'actions-gh = {' 'renovate-gh = {' \
+    'actions-gt = {' 'renovate-gt = {'
   assert_contains flake.nix 'actions-fj = {' 'renovate-fj = {'
+  assert_contains web/layout/layout.tsx 'on Forgejo'
   assert_lacks .gitattributes Cargo client
   assert_lacks buf.gen.yaml prost trevrpc-rust
   assert_lacks AGENTS.md client
+)
+
+test_gitea() (
+  local project=$tmp/hello-gitea
+  new_project "$project" https://gitea.example.com/octo/hello-gitea.git
+  cd "$project"
+  git add -A
+  git commit --quiet --message 'Initial commit'
+  # Gitea, GitHub mirror, no Forgejo, no Zed, no VS Code, no client
+  printf '%s\n' Gitea y git@github.com:octo/hello-mirror.git n n n n | bash ./init.sh 'Hello Gitea' 'Says hello'
+
+  assert_initialized gitea.example.com/octo/hello-gitea hello-gitea 'Says hello'
+  assert_eq "$(git remote)" $'github\norigin' remotes
+  assert_eq "$(git remote get-url github)" git@github.com:octo/hello-mirror.git 'github remote'
+  assert_missing .forgejo .zed .vscode client test
+  assert_contains README.md \
+    'https://gitea.example.com/octo/hello-gitea/actions?workflow=check.yaml' \
+    'logo=gitea'
+  assert_contains server/README.md 'gitea.example.com/octo/hello-gitea/server:latest'
+  assert_contains web/layout/layout.tsx 'on Gitea'
+  assert_contains flake.nix 'actions-gt = {' 'renovate-gt = {' 'actions-gh = {' 'renovate-gh = {'
+  assert_lacks flake.nix 'actions-fj = {' 'renovate-fj = {'
+  assert_contains .gitea/renovate.jsonc \
+    '"platform": "gitea"' \
+    '"endpoint": "https://gitea.example.com/api/v1"' \
+    '"repositories": ["octo/hello-gitea"]'
+  assert_contains .github/renovate.jsonc '"repositories": ["octo/hello-mirror"]'
+  # The client is removed from every kept forge's configuration
+  assert_lacks .gitea/workflows/release.yaml client
+  assert_lacks .gitea/workflows/vulnerable.yaml cargo
+  assert_lacks .gitea/renovate.jsonc cargo
+  assert_lacks .github/workflows/release.yaml client
 )
 
 test_rollback() (
@@ -262,16 +301,22 @@ test_rollback() (
     bash ./init.sh Rollback Rollback </dev/null
   rm untracked
 
-  # The Forgejo URL is read before the template is changed
+  # The forge and mirror URLs are read before the template is changed
+  assert_fails 'Forge must be github, gitea or forgejo.' \
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' gitlab)
+  assert_fails 'Gitea origin URL cannot use github.com.' \
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' gitea)
   assert_fails 'Repository URL must use HTTPS, SCP, or ssh:// syntax.' \
-    bash ./init.sh Rollback Rollback < <(printf '%s\n' n ftp://git.example.com/octo/rollback)
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y ftp://git.example.com/octo/rollback)
+  assert_fails 'Gitea repository URL cannot use github.com.' \
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' github y https://github.com/octo/rollback)
 
   # Generating code fails after the new repository has replaced the old one
   mkdir "$tmp/failing"
   printf '#!%s\nexit 1\n' "$BASH" >"$tmp/failing/nix"
   chmod +x "$tmp/failing/nix"
   assert_fails '' env PATH="$tmp/failing:$PATH" \
-    bash ./init.sh Rollback Rollback < <(printf '%s\n' n https://git.example.com/octo/rollback '' '' '')
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y https://git.example.com/octo/rollback '' '' '')
 
   assert_eq "$(git rev-parse HEAD)" "$head" HEAD
   assert_eq "$(git status --porcelain --untracked-files=all)" '' 'worktree status'
@@ -309,7 +354,7 @@ chmod +x "$tmp/bin/nix"
 PATH=$tmp/bin:$PATH
 
 create_upstream
-for test in test_parse_remote test_slugify test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_application test_minimal test_rollback; do
+for test in test_parse_remote test_slugify test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_application test_minimal test_gitea test_rollback; do
   "$test"
   printf 'ok: %s\n' "$test"
 done

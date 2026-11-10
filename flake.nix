@@ -386,6 +386,21 @@
             '';
           };
 
+          actions-gt = {
+            root = ./.gitea/workflows;
+            filter = file: file.hasExt "yaml";
+            packages = with pkgs; [
+              action-validator
+              gitea-actions-runner
+              zizmor
+            ];
+            script = ''
+              gitea-runner exec --list --workflows "$file"
+              action-validator "$file"
+              zizmor --offline "$file"
+            '';
+          };
+
           renovate-gh = {
             root = ./.github;
             files = ./.github/renovate.jsonc;
@@ -398,6 +413,15 @@
           renovate-fj = {
             root = ./.forgejo;
             files = ./.forgejo/renovate.jsonc;
+            packages = with pkgs; [ renovate ];
+            script = ''
+              renovate-config-validator renovate.jsonc
+            '';
+          };
+
+          renovate-gt = {
+            root = ./.gitea;
+            files = ./.gitea/renovate.jsonc;
             packages = with pkgs; [ renovate ];
             script = ''
               renovate-config-validator renovate.jsonc

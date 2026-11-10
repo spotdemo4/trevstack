@@ -1,0 +1,156 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-global-schema.json",
+
+  // self-hosted
+  "onboarding": false,
+  "requireConfig": "ignored",
+  "platform": "gitea",
+  "endpoint": "https://trev.zip/api/v1",
+  "repositories": ["template/stack"],
+  "allowedCommands": ["^nix run \\.#update-buf-deps$", "^nix run \\.#update-go-deps$"],
+
+  // repository
+  "extends": ["config:recommended"],
+  "addLabels": ["dep"],
+  "prHourlyLimit": 0,
+  "nix": {
+    "enabled": true
+  },
+  // transitive npm vulnerabilities are reported by the vulnerable workflow
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
+  "vulnerabilityAlerts": {
+    "addLabels": ["security"],
+    "automerge": true
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["* * * * 0"], // sunday
+    "skipInstalls": false,
+    "postUpgradeTasks": {
+      "commands": ["nix run .#update-buf-deps"],
+      "executionMode": "branch"
+    }
+  },
+  "customManagers": [
+    {
+      // the go in nixpkgs-unstable, which builds this project
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)go\\.mod$/"],
+      "matchStrings": ["toolchain\\s+go(?<currentValue>\\S+)"],
+      "depNameTemplate": "go",
+      "packageNameTemplate": "nix_unstable/go",
+      "datasourceTemplate": "repology",
+      "versioningTemplate": "semver"
+    },
+    {
+      // the rustc in nixpkgs-unstable, which builds this project
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)Cargo\\.toml$/"],
+      "matchStrings": ["rust-version\\s*=\\s*\"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "rust",
+      "packageNameTemplate": "nix_unstable/rustc",
+      "datasourceTemplate": "repology",
+      "versioningTemplate": "semver"
+    },
+    {
+      // shares the trevrpc flake input's datasource, so both land in the same update
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)buf\\.yaml$/"],
+      "matchStrings": ["buf\\.build/trevrpc/trevrpc:(?<currentValue>v\\S+)"],
+      "depNameTemplate": "buf.build/trevrpc/trevrpc",
+      "packageNameTemplate": "https://trev.zip/llc/TrevRPC.git",
+      "datasourceTemplate": "git-tags",
+      "versioningTemplate": "semver"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchManagers": ["nix"],
+      "addLabels": ["nix"]
+    },
+    {
+      "matchManagers": ["nix"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "addLabels": ["actions"]
+    },
+    {
+      "matchManagers": ["gomod"],
+      "addLabels": ["go"],
+      "postUpdateOptions": ["gomodUpdateImportPaths"],
+      // "update" runs it for every go update, even in groups led by another manager
+      "postUpgradeTasks": {
+        "commands": ["nix run .#update-go-deps"],
+        "executionMode": "update"
+      }
+    },
+    {
+      // replaced by the go custom manager
+      "matchManagers": ["gomod"],
+      "matchDepTypes": ["toolchain"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["go"],
+      "addLabels": ["go"]
+    },
+    {
+      "matchManagers": ["npm"],
+      "addLabels": ["node"],
+      "rangeStrategy": "bump",
+      "postUpdateOptions": ["npmInstallTwice"]
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["engines"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["cargo"],
+      "addLabels": ["rust"]
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["rust"],
+      "addLabels": ["rust"]
+    },
+    {
+      "matchPackageNames": ["solid-js", "@solidjs/**"],
+      "groupName": "solidjs"
+    },
+    {
+      "matchPackageNames": ["d3", "d3-*", "@types/d3", "@types/d3-*"],
+      "groupName": "d3"
+    },
+    {
+      "matchPackageNames": [
+        "@trevrpc/**",
+        "trev.zip/llc/trevrpc/**",
+        "trevrpc",
+        "https://trev.zip/llc/trevrpc{,.git}"
+      ],
+      "groupName": "trevrpc",
+      "rangeStrategy": "bump"
+    },
+    {
+      // regenerates code and updates buf.lock. kept separate from the trevrpc group,
+      // where it would replace the gomod postUpgradeTasks instead of merging
+      "matchManagers": ["nix", "custom.regex"],
+      "matchDepNames": ["trevrpc", "buf.build/trevrpc/trevrpc"],
+      "postUpgradeTasks": {
+        "commands": ["nix run .#update-buf-deps"],
+        "executionMode": "update"
+      }
+    }
+  ]
+}

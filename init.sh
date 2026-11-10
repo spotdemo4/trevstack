@@ -10,6 +10,9 @@ template_url=https://trev.zip/template/stack
 version=0.0.1
 year=$(date +%Y)
 
+# Forges, by the name of their configuration directory
+forges=(github gitea forgejo)
+
 die() {
   printf '%s\n' "$1" >&2
   exit 1
@@ -79,6 +82,37 @@ parse_remote() {
     die "$label contains unsupported host or path characters."
   fi
   remote_web_url="https://$remote_host/$remote_repo_path"
+}
+
+# Prints a forge's display name.
+forge_name() {
+  case $1 in
+    github) printf 'GitHub\n' ;;
+    gitea) printf 'Gitea\n' ;;
+    forgejo) printf 'Forgejo\n' ;;
+  esac
+}
+
+# Prints the suffix of a forge's flake checks.
+forge_check() {
+  case $1 in
+    github) printf 'gh\n' ;;
+    gitea) printf 'gt\n' ;;
+    forgejo) printf 'fj\n' ;;
+  esac
+}
+
+# Checks that a repository URL's host suits its forge: GitHub repositories are
+# on github.com, and Gitea and Forgejo repositories are anywhere else.
+check_forge_host() {
+  local label=$1 forge=$2 host
+  host=$(printf '%s' "${3%%:*}" | tr '[:upper:]' '[:lower:]')
+  if [[ $forge == github && $host != github.com ]]; then
+    die "$label must use github.com."
+  fi
+  if [[ $forge != github && $host == github.com ]]; then
+    die "$label cannot use github.com."
+  fi
 }
 
 # Prints the package name for a project title.
@@ -283,6 +317,27 @@ check_repository() {
   fi
 }
 
+# Sets forge and origin_is_github from the forge the user says hosts origin.
+# The default is GitHub for github.com, and Forgejo for any other host.
+read_forge() {
+  local default=forgejo reply
+  if [[ $origin_provider_lower == github.com ]]; then
+    default=github
+  fi
+  read -r -p "Which forge hosts origin? [github/gitea/forgejo] ($default) " reply || reply=
+  forge=$(printf '%s' "$reply" | tr '[:upper:]' '[:lower:]')
+  forge=${forge:-$default}
+  case $forge in
+    github | gitea | forgejo) ;;
+    *) die 'Forge must be github, gitea or forgejo.' ;;
+  esac
+  check_forge_host "$(forge_name "$forge") origin URL" "$forge" "$origin_host"
+  origin_is_github=false
+  if [[ $forge == github ]]; then
+    origin_is_github=true
+  fi
+}
+
 # Checks the title and description, and reads the project's location from the
 # origin remote.
 check_project() {
@@ -306,8 +361,7 @@ check_project() {
   origin_web_url=$remote_web_url
   origin_provider_host=${origin_host%%:*}
   origin_provider_lower=$(printf '%s' "$origin_provider_host" | tr '[:upper:]' '[:lower:]')
-  origin_is_github=false
-  [[ $origin_provider_lower == github.com ]] && origin_is_github=true
+  read_forge
 
   remote_names=()
   while IFS= read -r remote_name; do
@@ -367,58 +421,62 @@ read_template_metadata() {
   source_github_owner=${source_github_repository%%/*}
   source_forgejo_repository=$(sed -n 's/^[[:space:]]*"repositories":[[:space:]]*\["\([^"]*\)"\].*/\1/p' .forgejo/renovate.jsonc 2>/dev/null | head -n 1 || true)
   source_forgejo_endpoint=$(sed -n 's/^[[:space:]]*"endpoint":[[:space:]]*"\([^"]*\)".*/\1/p' .forgejo/renovate.jsonc 2>/dev/null | head -n 1 || true)
-  source_registry=$(grep -hE '^[[:space:]]*REGISTRY:[[:space:]]*[^[:space:]]+' .forgejo/workflows/*.yaml 2>/dev/null | sed -n 's/.*REGISTRY:[[:space:]]*//p' | head -n 1 || true)
+  source_gitea_repository=$(sed -n 's/^[[:space:]]*"repositories":[[:space:]]*\["\([^"]*\)"\].*/\1/p' .gitea/renovate.jsonc 2>/dev/null | head -n 1 || true)
+  source_gitea_endpoint=$(sed -n 's/^[[:space:]]*"endpoint":[[:space:]]*"\([^"]*\)".*/\1/p' .gitea/renovate.jsonc 2>/dev/null | head -n 1 || true)
+  source_registry=$(grep -hE '^[[:space:]]*REGISTRY:[[:space:]]*[^[:space:]]+' .forgejo/workflows/*.yaml .gitea/workflows/*.yaml 2>/dev/null | sed -n 's/.*REGISTRY:[[:space:]]*//p' | head -n 1 || true)
 }
 
-# Sets secondary_remote, secondary_name, secondary_host and secondary_repo_path
-# from the URL of the project's repository on the other provider.
+# Sets secondary_remote, secondary_host and secondary_repo_path from the URL of
+# the project's repository on another forge.
 read_secondary_repository() {
-  local provider=$1 secondary_provider_host
-  read -r -p "$provider repository URL: " secondary_remote || secondary_remote=
+  local forge=$1 label
+  label="$(forge_name "$1") repository URL"
+  read -r -p "$label: " secondary_remote || secondary_remote=
   parse_remote 'Repository URL' "$secondary_remote"
+  check_forge_host "$label" "$forge" "$remote_host"
   secondary_host=$remote_host
   secondary_repo_path=$remote_repo_path
-  secondary_provider_host=$(printf '%s' "${secondary_host%%:*}" | tr '[:upper:]' '[:lower:]')
-  if [[ $provider == GitHub && $secondary_provider_host != github.com ]]; then
-    die 'GitHub repository URL must use github.com.'
-  fi
-  if [[ $provider == Forgejo && $secondary_provider_host == github.com ]]; then
-    die 'Forgejo repository URL cannot use github.com.'
-  fi
-  if [[ $provider == GitHub ]]; then
-    secondary_name=github
-  else
-    secondary_name=forgejo
-  fi
 }
 
-# Asks whether to keep the other provider's configuration, and for its
-# repository if so.
-choose_provider() {
-  local reply
-  secondary_remote=
-  secondary_name=
-  secondary_host=
-  secondary_repo_path=
-  delete_provider=
-  if $origin_is_github && [[ -d .forgejo ]]; then
-    read -r -p 'GitHub origin detected. Delete .forgejo? [y/N] ' reply || reply=
-    if [[ $reply =~ ^[Yy]$ ]]; then
-      delete_provider=forgejo
+# Records the project's repository on a forge.
+set_forge_repository() {
+  case $1 in
+    github) github_repo_path=$3 ;;
+    gitea)
+      gitea_host=$2
+      gitea_repo_path=$3
+      ;;
+    forgejo)
+      forgejo_host=$2
+      forgejo_repo_path=$3
+      ;;
+  esac
+}
+
+# Asks whether the project also uses each other forge, and for its repository
+# if so. The configuration of forges it doesn't use is deleted.
+choose_providers() {
+  local other reply
+  mirror_names=()
+  mirror_remotes=()
+  github_repo_path=
+  gitea_host=
+  gitea_repo_path=
+  forgejo_host=
+  forgejo_repo_path=
+  set_forge_repository "$forge" "$origin_host" "$origin_repo_path"
+  for other in "${forges[@]}"; do
+    [[ $other != "$forge" && -d .$other ]] || continue
+    read -r -p "Also use $(forge_name "$other")? [y/N] " reply || reply=
+    if [[ $reply =~ ^[Yy]([Ee][Ss])?$ ]]; then
+      read_secondary_repository "$other"
+      mirror_names+=("$other")
+      mirror_remotes+=("$secondary_remote")
+      set_forge_repository "$other" "$secondary_host" "$secondary_repo_path"
     else
-      read_secondary_repository Forgejo
+      delete_directories+=(".$other")
     fi
-  elif ! $origin_is_github && [[ -d .github ]]; then
-    read -r -p 'Non-GitHub origin detected. Delete .github? [y/N] ' reply || reply=
-    if [[ $reply =~ ^[Yy]$ ]]; then
-      delete_provider=github
-    else
-      read_secondary_repository GitHub
-    fi
-  fi
-  if [[ -n $delete_provider ]]; then
-    delete_directories+=(".$delete_provider")
-  fi
+  done
 }
 
 choose_editors() {
@@ -458,23 +516,15 @@ check_ignored_files() {
   done
 }
 
-# Works out the project's repository on each provider.
+# Works out the project's module path and package registry. The registry is
+# the origin's unless that is GitHub, then a Forgejo or Gitea mirror's.
 resolve_repositories() {
-  if $origin_is_github; then
-    github_repo_path=$origin_repo_path
-    forgejo_host=
-    forgejo_repo_path=
-    if [[ -n $secondary_remote ]]; then
-      forgejo_host=$secondary_host
-      forgejo_repo_path=$secondary_repo_path
-    fi
+  if ! $origin_is_github; then
+    registry_host=$origin_host
+  elif [[ -n $forgejo_host ]]; then
+    registry_host=$forgejo_host
   else
-    forgejo_host=$origin_host
-    forgejo_repo_path=$origin_repo_path
-    github_repo_path=
-    if [[ -n $secondary_remote ]]; then
-      github_repo_path=$secondary_repo_path
-    fi
+    registry_host=$gitea_host
   fi
   target_base=${origin_host}/${origin_repo_path}
   target_module=${target_base}/server
@@ -595,37 +645,40 @@ reset_versions() {
   done
 }
 
-# Points the GitHub and Forgejo configuration at the project's repositories, or
-# removes it.
+# Points a Forgejo or Gitea Renovate configuration at the project's repository.
+configure_forge_renovate() {
+  local file=$1 host=$2 repo_path=$3 source_repository=$4 source_endpoint=$5
+  [[ -f $file ]] || return 0
+  [[ -n $repo_path && -n $source_repository ]] && replace_literal "$source_repository" "$repo_path" "$file"
+  [[ -n $host && -n $source_endpoint ]] && replace_literal "$source_endpoint" "https://${host}/api/v1" "$file"
+  return 0
+}
+
+# Points each forge's configuration at the project's repositories, and removes
+# the checks of forges whose configuration was deleted.
 configure_providers() {
-  local provider_directory
+  local other check
   if [[ -f .github/renovate.jsonc ]]; then
     [[ -n $github_repo_path && -n $source_github_repository ]] && replace_literal "$source_github_repository" "$github_repo_path" .github/renovate.jsonc
     [[ -n $github_repo_path && -n $source_github_owner && -n $slug ]] && replace_literal "${source_github_owner}/${slug}" "$github_repo_path" .github/renovate.jsonc
   fi
-  if [[ -f .forgejo/renovate.jsonc ]]; then
-    [[ -n $forgejo_repo_path && -n $source_forgejo_repository ]] && replace_literal "$source_forgejo_repository" "$forgejo_repo_path" .forgejo/renovate.jsonc
-    [[ -n $forgejo_host && -n $source_forgejo_endpoint ]] && replace_literal "$source_forgejo_endpoint" "https://${forgejo_host}/api/v1" .forgejo/renovate.jsonc
-  fi
-  if [[ -d .forgejo && -n $forgejo_host ]]; then
-    [[ -n $source_registry ]] && replace_tracked_text "REGISTRY: $source_registry" "REGISTRY: $forgejo_host"
-    replace_tracked_text "//$source_registry/api/packages" "//$forgejo_host/api/packages"
+  configure_forge_renovate .forgejo/renovate.jsonc "$forgejo_host" "$forgejo_repo_path" "$source_forgejo_repository" "$source_forgejo_endpoint"
+  configure_forge_renovate .gitea/renovate.jsonc "$gitea_host" "$gitea_repo_path" "$source_gitea_repository" "$source_gitea_endpoint"
+  if [[ -n $registry_host ]] && [[ -d .forgejo || -d .gitea ]]; then
+    [[ -n $source_registry ]] && replace_tracked_text "REGISTRY: $source_registry" "REGISTRY: $registry_host"
+    replace_tracked_text "//$source_registry/api/packages" "//$registry_host/api/packages"
   fi
 
-  if [[ $delete_provider == github ]]; then
-    remove_checks actions-gh renovate-gh
-  elif [[ $delete_provider == forgejo ]]; then
-    remove_checks actions-fj renovate-fj
-  fi
-  if [[ ! -d .github && -f flake.nix ]]; then
-    remove_checks actions-gh renovate-gh
-    sed_inplace '\|^[[:space:]]*\./\.github/workflows$|d' flake.nix
-    sed_inplace '/^          renovate = {$/,/^          };/d' flake.nix
-  fi
-  if [[ ! -d .forgejo && -f flake.nix ]]; then
-    remove_checks actions-fj renovate-fj
-    sed_inplace '\|^[[:space:]]*\./\.forgejo/workflows$|d' flake.nix
-  fi
+  [[ -f flake.nix ]] || return 0
+  for other in "${forges[@]}"; do
+    [[ ! -d .$other ]] || continue
+    check=$(forge_check "$other")
+    remove_checks "actions-$check" "renovate-$check"
+    sed_inplace "\\|^[[:space:]]*\\./\\.$other/workflows\$|d" flake.nix
+    if [[ $other == github ]]; then
+      sed_inplace '/^          renovate = {$/,/^          };/d' flake.nix
+    fi
+  done
 }
 
 # Removes the Rust client and the Python tests that drive it.
@@ -659,7 +712,7 @@ remove_client() {
   replace_literal '`server/gen/`, `web/gen/`, or `client/src/gen/`' '`server/gen/` or `web/gen/`' AGENTS.md
   remove_block CONTRIBUTING.md 'run the client with optional arguments:' '```'
   sed_inplace '/^nix build \.#client$/d' CONTRIBUTING.md
-  for provider_directory in .github .forgejo; do
+  for provider_directory in .github .gitea .forgejo; do
     [[ -d $provider_directory ]] || continue
     replace_literal ', "client/v*"' '' "$provider_directory/workflows/release.yaml"
     remove_block "$provider_directory/workflows/release.yaml" '  client:' '            images.x86_64-linux.client.armv7l-unknown-linux-gnueabihf'
@@ -702,8 +755,8 @@ write_readme() {
     vulnerable_badge="[![vulnerable](${origin_web_url}/actions/workflows/vulnerable.yaml/badge.svg?branch=main)](${origin_web_url}/actions/workflows/vulnerable.yaml)"
   else
     raw_url="${origin_web_url}/raw/branch/main"
-    check_badge="[![check](${origin_web_url}/actions/workflows/check.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=check&labelColor=%23313244)](${origin_web_url}/actions?workflow=check.yaml)"
-    vulnerable_badge="[![vulnerable](${origin_web_url}/actions/workflows/vulnerable.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](${origin_web_url}/actions?workflow=vulnerable.yaml)"
+    check_badge="[![check](${origin_web_url}/actions/workflows/check.yaml/badge.svg?branch=main&logo=${forge}&logoColor=%23bac2de&label=check&labelColor=%23313244)](${origin_web_url}/actions?workflow=check.yaml)"
+    vulnerable_badge="[![vulnerable](${origin_web_url}/actions/workflows/vulnerable.yaml/badge.svg?branch=main&logo=${forge}&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](${origin_web_url}/actions?workflow=vulnerable.yaml)"
   fi
   # The raw lockfile URL is nested inside the Shields endpoint URL.
   encoded_lock_url="${raw_url}/flake.lock"
@@ -740,14 +793,14 @@ write_readme() {
     printf '\n%s\n\n%s\n' "$description" "$readme_sections"
   } >README.md
   if ! $origin_is_github && [[ -f web/layout/layout.tsx ]]; then
-    replace_literal 'on GitHub' 'on Forgejo' web/layout/layout.tsx
+    replace_literal 'on GitHub' "on $(forge_name "$forge")" web/layout/layout.tsx
   fi
 }
 
 # Commits the project as the new repository's root commit, preserving every
-# remote and adding the other provider's if one was chosen.
+# remote and adding those of the other forges the project uses.
 commit_new_repository() {
-  local remote_name remote_url fetch_urls push_urls
+  local remote_name remote_url fetch_urls push_urls index
   "${new_git[@]}" config core.bare false
   "${new_git[@]}" config user.name "$git_name"
   "${new_git[@]}" config user.email "$git_email"
@@ -769,13 +822,14 @@ commit_new_repository() {
       "${new_git[@]}" remote set-url --add --push "$remote_name" "$remote_url"
     done
   done
-  if [[ -n $secondary_remote ]]; then
-    if "${new_git[@]}" remote get-url "$secondary_name" >/dev/null 2>&1; then
-      "${new_git[@]}" remote set-url "$secondary_name" "$secondary_remote"
+  for ((index = 0; index < ${#mirror_names[@]}; index++)); do
+    remote_name=${mirror_names[index]}
+    if "${new_git[@]}" remote get-url "$remote_name" >/dev/null 2>&1; then
+      "${new_git[@]}" remote set-url "$remote_name" "${mirror_remotes[index]}"
     else
-      "${new_git[@]}" remote add "$secondary_name" "$secondary_remote"
+      "${new_git[@]}" remote add "$remote_name" "${mirror_remotes[index]}"
     fi
-  fi
+  done
 
   "${new_git[@]}" add -A
   "${new_git[@]}" rm --cached --ignore-unmatch --quiet -- init.sh
@@ -857,7 +911,7 @@ main() {
   read_template_metadata
 
   delete_directories=()
-  choose_provider
+  choose_providers
   choose_editors
   choose_components
   check_ignored_files

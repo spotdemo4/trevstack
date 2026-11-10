@@ -1,0 +1,95 @@
+name: vulnerable
+
+on:
+  schedule:
+    - cron: "0 9 * * 0" # every Sunday at 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@c184156b02706754274a295bca8418e75ccc0ef7 # v1.76.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
+          shell: vulnerable
+
+      - name: Run govulncheck
+        working-directory: server
+        run: govulncheck ./...
+
+  rust:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@c184156b02706754274a295bca8418e75ccc0ef7 # v1.76.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
+          shell: vulnerable
+
+      - name: Run cargo audit
+        working-directory: client
+        run: cargo-audit audit
+
+  npm:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@c184156b02706754274a295bca8418e75ccc0ef7 # v1.76.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
+          shell: vulnerable
+
+      - name: Run npm audit (web)
+        working-directory: web
+        run: npm audit --omit=dev --audit-level moderate
+
+  nix:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@c184156b02706754274a295bca8418e75ccc0ef7 # v1.76.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
+          shell: vulnerable
+
+      - name: Run flake-checker
+        run: flake-checker -f
+
+  actions:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@c184156b02706754274a295bca8418e75ccc0ef7 # v1.76.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
+          shell: vulnerable
+
+      - name: Run zizmor
+        run: zizmor $(find .gitea/workflows -name "*.yaml")
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
