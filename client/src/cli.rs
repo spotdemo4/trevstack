@@ -170,8 +170,6 @@ fn user_config_dir(get_env: impl Fn(&str) -> Option<String>) -> Option<PathBuf> 
 mod tests {
     use clap::Parser;
 
-    use std::path::Path;
-
     use super::{
         CA_CERT_ENV, Cli, Command, ConfigError, DEFAULT_URL, PASSWORD_ENV, URL_ENV, USERNAME_ENV,
         parse_coordinate, user_config_dir,
@@ -294,6 +292,8 @@ mod tests {
     #[cfg(all(unix, not(target_vendor = "apple")))]
     #[test]
     fn finds_config_dir_like_go() {
+        use std::path::Path;
+
         let env = |xdg: Option<&'static str>| {
             move |name: &str| match name {
                 "HOME" => Some("/home/demo".to_owned()),
