@@ -1,5 +1,7 @@
 import { LoginResponseSchema } from "$gen/auth/v1/login_pb";
-import { create } from "@bufbuild/protobuf";
+import { AuthService } from "$gen/auth/v1/service_pb";
+import { CursorService } from "$gen/cursor/v1/service_pb";
+import { create, type DescMethod } from "@bufbuild/protobuf";
 import { type CallFinish, Code, type InterceptedCall, TrevRpcError } from "@trevrpc/trevrpc-js";
 import { afterEach, beforeEach, expect, type MockInstance, test, vi } from "vitest";
 
@@ -100,12 +102,14 @@ test("failures without a session leave navigation to the app", () => {
   expect(redirects).toEqual([]);
 });
 
-function call(service = "number.v1.NumberService", name = "List"): InterceptedCall {
+function call(descriptor: DescMethod = CursorService.method.list): InterceptedCall {
+  const service = descriptor.parent.typeName;
   return {
-    method: `/${service}/${name}`,
+    method: `/${service}/${descriptor.name}`,
     service,
-    name,
+    name: descriptor.name,
     kind: "serverStreaming",
+    descriptor,
     metadata: {},
     timeoutMs: undefined,
     signal: undefined,
@@ -142,7 +146,7 @@ test("protected calls started under an older session are ignored when they end",
 });
 
 test("public calls leave their failures to the forms", async () => {
-  const intercepted = call("auth.v1.AuthService", "Login");
+  const intercepted = call(AuthService.method.login);
 
   expect(await intercept(intercepted)).toBeUndefined();
   expect(intercepted.metadata).toEqual({});
@@ -153,10 +157,19 @@ test("connection metadata carries the session token, or nothing without a sessio
   expect(sessionMetadata(null)).toBeUndefined();
 });
 
+test("connection metadata rejects a token that is not a bearer token", () => {
+  const claims = session.peek().claims;
+  if (!claims) throw new Error("no session");
+  expect(() => sessionMetadata({ ...claims, token: "not a token" })).toThrow(
+    expect.objectContaining({ code: Code.InvalidArgument }),
+  );
+});
+
 test("only login, logout and signup are public", () => {
-  expect(isPublicMethod("auth.v1.AuthService", "Login")).toBe(true);
-  expect(isPublicMethod("auth.v1.AuthService", "Logout")).toBe(true);
-  expect(isPublicMethod("auth.v1.AuthService", "Signup")).toBe(true);
-  expect(isPublicMethod("number.v1.NumberService", "List")).toBe(false);
-  expect(isPublicMethod("auth.v1.AuthService", "Unknown")).toBe(false);
+  expect(isPublicMethod(AuthService.method.login)).toBe(true);
+  expect(isPublicMethod(AuthService.method.logout)).toBe(true);
+  expect(isPublicMethod(AuthService.method.signup)).toBe(true);
+  for (const method of CursorService.methods) {
+    expect(isPublicMethod(method)).toBe(false);
+  }
 });

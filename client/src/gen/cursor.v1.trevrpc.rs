@@ -158,7 +158,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(cursor_service_paths::SEND, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.SendRequest", "cursor.v1.SendResponse"), move |context, body| {
+        server.route_with_options(cursor_service_paths::SEND, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.SendRequest", "cursor.v1.SendResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <SendRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -170,7 +170,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_streaming_with_options(cursor_service_paths::WATCH, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.WatchRequest", "cursor.v1.WatchResponse"), move |context, body, _request_stream| {
+        server.route_streaming_with_options(cursor_service_paths::WATCH, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.WatchRequest", "cursor.v1.WatchResponse").with_method_options(b""), move |context, body, _request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <WatchRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -182,7 +182,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_streaming_with_options(cursor_service_paths::TRACK, ::trevrpc::RpcKind::ClientStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TrackRequest", "cursor.v1.TrackResponse"), move |context, _body, request_stream| {
+        server.route_streaming_with_options(cursor_service_paths::TRACK, ::trevrpc::RpcKind::ClientStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TrackRequest", "cursor.v1.TrackResponse").with_method_options(b""), move |context, _body, request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let requests = ::trevrpc::stream::decode::<TrackRequest>(request_stream);
@@ -194,7 +194,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_streaming_with_options(cursor_service_paths::SHARE, ::trevrpc::RpcKind::BidirectionalStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ShareRequest", "cursor.v1.ShareResponse"), move |context, _body, request_stream| {
+        server.route_streaming_with_options(cursor_service_paths::SHARE, ::trevrpc::RpcKind::BidirectionalStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ShareRequest", "cursor.v1.ShareResponse").with_method_options(b""), move |context, _body, request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let requests = ::trevrpc::stream::decode::<ShareRequest>(request_stream);
@@ -206,7 +206,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_streaming_with_options(cursor_service_paths::LIST, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ListRequest", "cursor.v1.ListResponse"), move |context, body, _request_stream| {
+        server.route_streaming_with_options(cursor_service_paths::LIST, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ListRequest", "cursor.v1.ListResponse").with_method_options(b""), move |context, body, _request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <ListRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -218,7 +218,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_streaming_with_options(cursor_service_paths::LIST_STREAMS, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ListStreamsRequest", "cursor.v1.ListStreamsResponse"), move |context, body, _request_stream| {
+        server.route_streaming_with_options(cursor_service_paths::LIST_STREAMS, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ListStreamsRequest", "cursor.v1.ListStreamsResponse").with_method_options(b""), move |context, body, _request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <ListStreamsRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -230,7 +230,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(cursor_service_paths::SUMMARY, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.SummaryRequest", "cursor.v1.SummaryResponse"), move |context, body| {
+        server.route_with_options(cursor_service_paths::SUMMARY, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.SummaryRequest", "cursor.v1.SummaryResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <SummaryRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -242,7 +242,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(cursor_service_paths::TIME_SERIES, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TimeSeriesRequest", "cursor.v1.TimeSeriesResponse"), move |context, body| {
+        server.route_with_options(cursor_service_paths::TIME_SERIES, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TimeSeriesRequest", "cursor.v1.TimeSeriesResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <TimeSeriesRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -254,7 +254,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(cursor_service_paths::HEATMAP, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.HeatmapRequest", "cursor.v1.HeatmapResponse"), move |context, body| {
+        server.route_with_options(cursor_service_paths::HEATMAP, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.HeatmapRequest", "cursor.v1.HeatmapResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <HeatmapRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -266,7 +266,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(cursor_service_paths::TOP_USERS, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TopUsersRequest", "cursor.v1.TopUsersResponse"), move |context, body| {
+        server.route_with_options(cursor_service_paths::TOP_USERS, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TopUsersRequest", "cursor.v1.TopUsersResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <TopUsersRequest as ::prost::Message>::decode(body.as_slice())?;

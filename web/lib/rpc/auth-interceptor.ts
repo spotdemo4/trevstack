@@ -1,28 +1,26 @@
-import { Code, type CallInterceptor, TrevRpcError } from "@trevrpc/trevrpc-js";
+import { public$ } from "$gen/auth/v1/options_pb";
+import { type DescMethod, getOption } from "@bufbuild/protobuf";
+import { bearerMetadata, Code, type CallInterceptor, TrevRpcError } from "@trevrpc/trevrpc-js";
 
 import { getSignInPath, normalizePath } from "../auth/routing.ts";
 import { session, type SessionClaims } from "../auth/session.ts";
 
 /**
- * Methods that do not need a session, whose failures their callers handle:
- * the forms report sign-in and sign-up failures, and signing out ignores them.
+ * Whether a method needs no session, which its `(auth.v1.public)` option says, as the server reads
+ * it. The callers of public methods handle their failures: the forms report sign-in and sign-up
+ * failures, and signing out ignores them.
  */
-const PUBLIC_METHODS = new Set([
-  "auth.v1.AuthService/Login",
-  "auth.v1.AuthService/Logout",
-  "auth.v1.AuthService/Signup",
-]);
-
-export function isPublicMethod(service: string, method: string): boolean {
-  return PUBLIC_METHODS.has(`${service}/${method}`);
+export function isPublicMethod(method: DescMethod): boolean {
+  return getOption(method, public$);
 }
 
 /**
  * The channel's connection metadata for a session: its token, which every call
  * carries and which crosses each connection once, or none without a session.
+ * Throws for a token that is not a bearer token, which only edited storage holds.
  */
 export function sessionMetadata(claims: SessionClaims | null): Record<string, string> | undefined {
-  return claims ? { authorization: `Bearer ${claims.token}` } : undefined;
+  return claims ? bearerMetadata(claims.token) : undefined;
 }
 
 /**
@@ -30,7 +28,7 @@ export function sessionMetadata(claims: SessionClaims | null): Record<string, st
  * ends. The session token comes from the channel's connection metadata.
  */
 export const authInterceptor: CallInterceptor = (call) => {
-  if (isPublicMethod(call.service, call.name)) return;
+  if (isPublicMethod(call.descriptor)) return;
 
   // Calls start inside effects, so read the session without tracking it.
   const { revision } = session.peek();

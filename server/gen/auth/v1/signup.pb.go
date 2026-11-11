@@ -190,7 +190,7 @@ const file_auth_v1_signup_proto_rawDesc = "" +
 	"\t_usernameB\v\n" +
 	"\t_password\"\x10\n" +
 	"\x0eSignupResponseB\x8d\x01\n" +
-	"\vcom.auth.v1B\vSignupProtoP\x01Z4trev.zip/template/stack/server/v2/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
+	"\vcom.auth.v1B\vSignupProtoP\x01Z4trev.zip/template/stack/server/v3/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_signup_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_auth_v1_signup_proto_goTypes = []any{

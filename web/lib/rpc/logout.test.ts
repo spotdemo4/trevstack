@@ -53,6 +53,21 @@ test("stays signed out when the server cannot end the session", async () => {
   expect(session.claims()).toBeNull();
 });
 
+test("forgets a token that is not a bearer token without calling the server", () => {
+  session.setFromLogin(
+    create(LoginResponseSchema, {
+      token: "not a token",
+      sub: "trev",
+      exp: BigInt(Math.floor(Date.now() / 1000) + 3600),
+    }),
+  );
+
+  logout();
+
+  expect(session.claims()).toBeNull();
+  expect(logoutCall).not.toHaveBeenCalled();
+});
+
 test("does not call the server without a session", () => {
   session.clear();
 

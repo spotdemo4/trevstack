@@ -451,13 +451,13 @@ cachePackages = [
     hash = 'sha256-MKd0AdkWEe2A79mGPzOY5I76nMqTsGJKQNPJOKyOwkQ='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go']
-    version = 'v1.8.0'
-    hash = 'sha256-Ncnl2Cch0650GaPVih+Q+Fba0UmJbZd8vA6Ew+9wzrk='
+    version = 'v1.9.0'
+    hash = 'sha256-0eQcqXM5ro8CCiqRIpcS2jFUo1/YSvKanCAT5z5Wu/0='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc']
-    version = 'v1.8.0'
-    hash = 'sha256-s61g4X+JtAvxr6w1SxzGkwa3zc755mrJrTCGl8iMzEQ='
+    version = 'v1.9.0'
+    hash = 'sha256-bz+iegDsxCdA08ByfNzDW7ccgk4OU7Rp85OY0Rz7t5E='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc']
-    version = 'v1.8.0'
-    hash = 'sha256-f5G9gJxm4UeKv0XvQcLLg4I5AhtcUbo/U8u41IAB9nQ='
+    version = 'v1.9.0'
+    hash = 'sha256-81aoPzkUzh/lYs6t36q4Ip/TWbTdHwmn4/tZjYQ6XIc='

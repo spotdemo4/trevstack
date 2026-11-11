@@ -68,7 +68,7 @@ export default defineConfig({
         icons: [{ src: "/icons/icon.svg", sizes: "any", type: "image/svg+xml" }],
       },
       workbox: {
-        navigateFallbackDenylist: [/^\/trevrpc/, /^\/certificate-hashes/],
+        navigateFallbackDenylist: [/^\/trevrpc/],
       },
     }),
   ],
@@ -81,8 +81,9 @@ export default defineConfig({
     proxy: {
       // RPCs go straight to the server at VITE_RPC_URL; WebTransport cannot be
       // proxied. The page fetches the hashes of the server's development
-      // certificate from here to trust it for WebTransport.
-      "/certificate-hashes": {
+      // certificate from here to trust it for WebTransport, since the browser
+      // does not trust the certificate to fetch them from the server.
+      "/trevrpc/certificate-hashes": {
         target: "https://localhost:8080",
         changeOrigin: true,
         secure: false,

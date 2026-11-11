@@ -19,6 +19,7 @@ import (
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	"trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc"
 	"trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc"
+	"trev.zip/llc/trevrpc/trevrpc-go/ratelimit"
 	"trev.zip/template/stack/server/v3/auth"
 	"trev.zip/template/stack/server/v3/database"
 	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
@@ -26,17 +27,12 @@ import (
 	cursorv1handler "trev.zip/template/stack/server/v3/handlers/cursor/v1"
 	webhandler "trev.zip/template/stack/server/v3/handlers/web"
 	loginterceptor "trev.zip/template/stack/server/v3/interceptors/log"
-	ratelimitinterceptor "trev.zip/template/stack/server/v3/interceptors/ratelimit"
 	"trev.zip/template/stack/server/v3/logger"
 	"trev.zip/template/stack/server/v3/telemetry"
 )
 
 const (
 	telemetryShutdownTimeout = 5 * time.Second
-
-	// certificateHashesPath publishes the hashes of the development
-	// certificate, which browsers trust it by.
-	certificateHashesPath = "/certificate-hashes"
 
 	loginRateLimitRequests  = 5
 	loginRateLimitWindow    = time.Minute
@@ -125,7 +121,6 @@ func run(cfg config, log *slog.Logger) error {
 	mux.Handle("/", webhandler.New(WebFS))
 	if development != nil {
 		log.WarnContext(ctx, "using a generated development certificate; set TLS_CERT and TLS_KEY in production")
-		mux.Handle("GET "+certificateHashesPath, development)
 
 		// Native clients on this machine trust the certificate from a file
 		// beside the database.
@@ -137,9 +132,6 @@ func run(cfg config, log *slog.Logger) error {
 			log.WarnContext(ctx, "could not write the development certificate", "path", writer.path, "error", err)
 		}
 		go writer.run(ctx, log, developmentCertificateRefresh)
-	} else {
-		// Without this, the web handler would answer with index.html.
-		mux.Handle(certificateHashesPath, http.NotFoundHandler())
 	}
 
 	rpcMetrics, err := oteltrevrpc.NewMetrics()
@@ -148,14 +140,18 @@ func run(cfg config, log *slog.Logger) error {
 	}
 
 	sessionManager := auth.NewManager(db)
-	rateLimiter := ratelimitinterceptor.New(map[string]ratelimitinterceptor.Policy{
-		authv1.AuthService_Login_FullMethodName: {
-			Requests: loginRateLimitRequests,
-			Window:   loginRateLimitWindow,
-		},
-		authv1.AuthService_Signup_FullMethodName: {
-			Requests: signupRateLimitRequests,
-			Window:   signupRateLimitWindow,
+	// Rejected calls fail with ResourceExhausted and a google.rpc.RetryInfo
+	// detail, which TrevRPC clients read as the delay before a retry.
+	rateLimiter := ratelimit.New(ratelimit.Options{
+		Policies: map[string]ratelimit.Policy{
+			authv1.AuthService_Login_FullMethodName: {
+				Requests: loginRateLimitRequests,
+				Window:   loginRateLimitWindow,
+			},
+			authv1.AuthService_Signup_FullMethodName: {
+				Requests: signupRateLimitRequests,
+				Window:   signupRateLimitWindow,
+			},
 		},
 	})
 
@@ -167,6 +163,11 @@ func run(cfg config, log *slog.Logger) error {
 	options.EnableWebTransport = true
 	options.WebTransportAdmission = trevrpc.SameOriginAdmission(slices.Concat(cfg.allowedOrigins, devOrigins)...)
 	options.HTTPFallback = mux
+	// The server presents the development certificate, and publishes the
+	// hashes browsers trust it by at /trevrpc/certificate-hashes; without one,
+	// that path answers 404, which tells the web app that the browser trusts
+	// the server's certificate already.
+	options.DevelopmentCertificate = development
 	server.SetOptions(options)
 	server.SetAuthorizer(auth.NewAuthorizer(sessionManager))
 	// Requests that break the buf.validate rules in their protos fail with

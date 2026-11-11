@@ -211,7 +211,7 @@ const file_cursor_v1_track_proto_rawDesc = "" +
 	"\rTrackResponse\x120\n" +
 	"\x06stream\x18\x01 \x01(\v2\x18.cursor.v1.StreamSummaryR\x06streamB\x9a\x01\n" +
 	"\rcom.cursor.v1B\n" +
-	"TrackProtoP\x01Z8trev.zip/template/stack/server/v2/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
+	"TrackProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 
 var file_cursor_v1_track_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

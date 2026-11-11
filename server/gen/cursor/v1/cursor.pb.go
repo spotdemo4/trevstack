@@ -481,7 +481,7 @@ const file_cursor_v1_cursor_proto_rawDesc = "" +
 	"\vSOURCE_SEND\x10\x01\x12\x10\n" +
 	"\fSOURCE_TRACK\x10\x02\x12\x10\n" +
 	"\fSOURCE_SHARE\x10\x03B\x9b\x01\n" +
-	"\rcom.cursor.v1B\vCursorProtoP\x01Z8trev.zip/template/stack/server/v2/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
+	"\rcom.cursor.v1B\vCursorProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 
 var file_cursor_v1_cursor_proto_enumTypes = make([]protoimpl.EnumInfo, 1)

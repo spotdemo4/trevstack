@@ -118,10 +118,12 @@ where
         .timeout(RPC_TIMEOUT)
         .await
         .map_err(|error| ClientError::Login(error.into_status()))?;
-    if session.token.is_empty() {
-        return Err(ClientError::InvalidSession);
-    }
-    let authorization = format!("Bearer {}", session.token);
+    // A token that is not a bearer token, such as an empty one, would fail
+    // every call as unauthenticated, like an expired session.
+    let (_, authorization) =
+        trevrpc::bearer_metadata(&session.token).map_err(|_| ClientError::InvalidSession)?;
+    let authorization =
+        String::from_utf8(authorization).map_err(|_| ClientError::InvalidSession)?;
 
     let result = run(authorization.clone()).await;
 
@@ -513,13 +515,23 @@ vA7TbIgtuEjlVOFExE3M7zealbwCalvFrOwYAM9VWt8=
     }
 
     #[tokio::test]
-    async fn rejects_empty_session_token() {
-        let transport = mock_transport(|_| Ok(LoginResponse::default().encode_to_vec()));
+    async fn rejects_session_tokens_that_are_not_bearer_tokens() {
+        let transports = [
+            mock_transport(|_| Ok(LoginResponse::default().encode_to_vec())),
+            mock_transport(|_| {
+                Ok(LoginResponse {
+                    token: "not a token".to_owned(),
+                    ..LoginResponse::default()
+                }
+                .encode_to_vec())
+            }),
+        ];
+        for transport in transports {
+            let error = send_in_session(&transport).await.unwrap_err();
 
-        let error = send_in_session(&transport).await.unwrap_err();
-
-        assert!(matches!(error, ClientError::InvalidSession));
-        assert_eq!(transport.calls().len(), 1);
+            assert!(matches!(error, ClientError::InvalidSession));
+            assert_eq!(transport.calls().len(), 1);
+        }
     }
 
     fn credentials() -> Credentials {

@@ -37,7 +37,7 @@ const file_cursor_v1_service_proto_rawDesc = "" +
 	"TimeSeries\x12\x1c.cursor.v1.TimeSeriesRequest\x1a\x1d.cursor.v1.TimeSeriesResponse\x12@\n" +
 	"\aHeatmap\x12\x19.cursor.v1.HeatmapRequest\x1a\x1a.cursor.v1.HeatmapResponse\x12C\n" +
 	"\bTopUsers\x12\x1a.cursor.v1.TopUsersRequest\x1a\x1b.cursor.v1.TopUsersResponseB\x9c\x01\n" +
-	"\rcom.cursor.v1B\fServiceProtoP\x01Z8trev.zip/template/stack/server/v2/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
+	"\rcom.cursor.v1B\fServiceProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 
 var file_cursor_v1_service_proto_goTypes = []any{

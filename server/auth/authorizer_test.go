@@ -2,8 +2,11 @@ package auth
 
 import (
 	"context"
+	"strings"
 	"testing"
 
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/reflect/protoregistry"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
 	cursorv1 "trev.zip/template/stack/server/v3/gen/cursor/v1"
@@ -14,11 +17,27 @@ func authorize(manager *Manager, method string, metadata trevrpc.Metadata) error
 	return err
 }
 
+// authorizeContext authorizes a call to method as the server does, which
+// gives the authorizer the descriptor of a method it has.
 func authorizeContext(manager *Manager, method string, metadata trevrpc.Metadata) (context.Context, error) {
-	return NewAuthorizer(manager).AuthorizeContext(context.Background(), trevrpc.HandlerContext{
-		FullMethod: method,
-		Metadata:   metadata,
+	return NewAuthorizer(manager).Authorize(context.Background(), trevrpc.HandlerContext{
+		FullMethod:       method,
+		MethodDescriptor: methodDescriptor(method),
+		Metadata:         metadata,
 	})
+}
+
+// methodDescriptor returns the descriptor of the method with the full method
+// name method, such as "/auth.v1.AuthService/Login", or nil for a method that
+// does not exist.
+func methodDescriptor(method string) protoreflect.MethodDescriptor {
+	name := protoreflect.FullName(strings.ReplaceAll(strings.TrimPrefix(method, "/"), "/", "."))
+	descriptor, err := protoregistry.GlobalFiles.FindDescriptorByName(name)
+	if err != nil {
+		return nil
+	}
+	methodDescriptor, _ := descriptor.(protoreflect.MethodDescriptor)
+	return methodDescriptor
 }
 
 func bearer(token string) trevrpc.Metadata {
@@ -29,7 +48,7 @@ func codeOf(err error) trevrpc.Code {
 	return trevrpc.StatusFromError(err).Code
 }
 
-func TestIsPublicAuthMethod(t *testing.T) {
+func TestIsPublic(t *testing.T) {
 	for _, test := range []struct {
 		method string
 		want   bool
@@ -40,8 +59,8 @@ func TestIsPublicAuthMethod(t *testing.T) {
 		{method: cursorv1.CursorService_Send_FullMethodName, want: false},
 		{method: "/auth.v1.AuthService/Unknown", want: false},
 	} {
-		if got := isPublicAuthMethod(test.method); got != test.want {
-			t.Errorf("isPublicAuthMethod(%q) = %t, want %t", test.method, got, test.want)
+		if got := isPublic(methodDescriptor(test.method)); got != test.want {
+			t.Errorf("isPublic(%q) = %t, want %t", test.method, got, test.want)
 		}
 	}
 }
@@ -55,10 +74,10 @@ func TestAuthorizerAllowsPublicMethodsWithoutToken(t *testing.T) {
 	} {
 		ctx, err := authorizeContext(manager, method, nil)
 		if err != nil {
-			t.Fatalf("AuthorizeContext(%s) error = %v, want nil", method, err)
+			t.Fatalf("Authorize(%s) error = %v, want nil", method, err)
 		}
 		if username, ok := UsernameFromContext(ctx); ok {
-			t.Errorf("AuthorizeContext(%s) username = %q, want none", method, username)
+			t.Errorf("Authorize(%s) username = %q, want none", method, username)
 		}
 	}
 }
@@ -72,12 +91,12 @@ func TestAuthorizerAcceptsValidToken(t *testing.T) {
 	} {
 		ctx, err := authorizeContext(manager, cursorv1.CursorService_Send_FullMethodName, metadata)
 		if err != nil {
-			t.Fatalf("AuthorizeContext(%q) error = %v, want nil", metadata["authorization"], err)
+			t.Fatalf("Authorize(%q) error = %v, want nil", metadata["authorization"], err)
 		}
 		// Interceptors and handlers learn the user without looking the
 		// session up again.
 		if username, ok := UsernameFromContext(ctx); !ok || username != "alice" {
-			t.Errorf("AuthorizeContext(%q) username = (%q, %t), want alice", metadata["authorization"], username, ok)
+			t.Errorf("Authorize(%q) username = (%q, %t), want alice", metadata["authorization"], username, ok)
 		}
 	}
 }

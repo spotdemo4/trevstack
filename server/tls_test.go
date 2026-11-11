@@ -20,7 +20,12 @@ func TestLoadTLSConfigUsesDevelopmentCertificate(t *testing.T) {
 	if development == nil {
 		t.Fatal("loadTLSConfig() returned no development certificate")
 	}
-	cert, err := config.GetCertificate(nil)
+	// Listen presents the development certificate itself, and refuses a TLS
+	// configuration alongside it.
+	if config != nil {
+		t.Error("loadTLSConfig() returned a TLS configuration with a development certificate")
+	}
+	cert, err := development.GetCertificate(nil)
 	if err != nil {
 		t.Fatalf("GetCertificate() error = %v", err)
 	}

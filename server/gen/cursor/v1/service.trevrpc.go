@@ -125,14 +125,15 @@ func (c *CursorServiceClient) TopUsers(ctx context.Context, request *TopUsersReq
 
 // RegisterCursorServiceServer registers handlers for the CursorService service.
 func RegisterCursorServiceServer(server *trevrpc_go.Server, implementation CursorServiceServer) {
-	trevrpc_go.RegisterUnary[*SendRequest, *SendResponse](server, CursorService_Send_FullMethodName, func() *SendRequest { return &SendRequest{} }, implementation.Send)
-	trevrpc_go.RegisterServerStreaming[*WatchRequest, *WatchResponse](server, CursorService_Watch_FullMethodName, func() *WatchRequest { return &WatchRequest{} }, implementation.Watch)
-	trevrpc_go.RegisterClientStreaming[*TrackRequest, *TrackResponse](server, CursorService_Track_FullMethodName, func() *TrackRequest { return &TrackRequest{} }, implementation.Track)
-	trevrpc_go.RegisterBidirectionalStreaming[*ShareRequest, *ShareResponse](server, CursorService_Share_FullMethodName, func() *ShareRequest { return &ShareRequest{} }, implementation.Share)
-	trevrpc_go.RegisterServerStreaming[*ListRequest, *ListResponse](server, CursorService_List_FullMethodName, func() *ListRequest { return &ListRequest{} }, implementation.List)
-	trevrpc_go.RegisterServerStreaming[*ListStreamsRequest, *ListStreamsResponse](server, CursorService_ListStreams_FullMethodName, func() *ListStreamsRequest { return &ListStreamsRequest{} }, implementation.ListStreams)
-	trevrpc_go.RegisterUnary[*SummaryRequest, *SummaryResponse](server, CursorService_Summary_FullMethodName, func() *SummaryRequest { return &SummaryRequest{} }, implementation.Summary)
-	trevrpc_go.RegisterUnary[*TimeSeriesRequest, *TimeSeriesResponse](server, CursorService_TimeSeries_FullMethodName, func() *TimeSeriesRequest { return &TimeSeriesRequest{} }, implementation.TimeSeries)
-	trevrpc_go.RegisterUnary[*HeatmapRequest, *HeatmapResponse](server, CursorService_Heatmap_FullMethodName, func() *HeatmapRequest { return &HeatmapRequest{} }, implementation.Heatmap)
-	trevrpc_go.RegisterUnary[*TopUsersRequest, *TopUsersResponse](server, CursorService_TopUsers_FullMethodName, func() *TopUsersRequest { return &TopUsersRequest{} }, implementation.TopUsers)
+	methods := File_cursor_v1_service_proto.Services().ByName("CursorService").Methods()
+	trevrpc_go.RegisterUnary[*SendRequest, *SendResponse](server, CursorService_Send_FullMethodName, func() *SendRequest { return &SendRequest{} }, implementation.Send, trevrpc_go.RouteMethodDescriptor(methods.ByName("Send")))
+	trevrpc_go.RegisterServerStreaming[*WatchRequest, *WatchResponse](server, CursorService_Watch_FullMethodName, func() *WatchRequest { return &WatchRequest{} }, implementation.Watch, trevrpc_go.RouteMethodDescriptor(methods.ByName("Watch")))
+	trevrpc_go.RegisterClientStreaming[*TrackRequest, *TrackResponse](server, CursorService_Track_FullMethodName, func() *TrackRequest { return &TrackRequest{} }, implementation.Track, trevrpc_go.RouteMethodDescriptor(methods.ByName("Track")))
+	trevrpc_go.RegisterBidirectionalStreaming[*ShareRequest, *ShareResponse](server, CursorService_Share_FullMethodName, func() *ShareRequest { return &ShareRequest{} }, implementation.Share, trevrpc_go.RouteMethodDescriptor(methods.ByName("Share")))
+	trevrpc_go.RegisterServerStreaming[*ListRequest, *ListResponse](server, CursorService_List_FullMethodName, func() *ListRequest { return &ListRequest{} }, implementation.List, trevrpc_go.RouteMethodDescriptor(methods.ByName("List")))
+	trevrpc_go.RegisterServerStreaming[*ListStreamsRequest, *ListStreamsResponse](server, CursorService_ListStreams_FullMethodName, func() *ListStreamsRequest { return &ListStreamsRequest{} }, implementation.ListStreams, trevrpc_go.RouteMethodDescriptor(methods.ByName("ListStreams")))
+	trevrpc_go.RegisterUnary[*SummaryRequest, *SummaryResponse](server, CursorService_Summary_FullMethodName, func() *SummaryRequest { return &SummaryRequest{} }, implementation.Summary, trevrpc_go.RouteMethodDescriptor(methods.ByName("Summary")))
+	trevrpc_go.RegisterUnary[*TimeSeriesRequest, *TimeSeriesResponse](server, CursorService_TimeSeries_FullMethodName, func() *TimeSeriesRequest { return &TimeSeriesRequest{} }, implementation.TimeSeries, trevrpc_go.RouteMethodDescriptor(methods.ByName("TimeSeries")))
+	trevrpc_go.RegisterUnary[*HeatmapRequest, *HeatmapResponse](server, CursorService_Heatmap_FullMethodName, func() *HeatmapRequest { return &HeatmapRequest{} }, implementation.Heatmap, trevrpc_go.RouteMethodDescriptor(methods.ByName("Heatmap")))
+	trevrpc_go.RegisterUnary[*TopUsersRequest, *TopUsersResponse](server, CursorService_TopUsers_FullMethodName, func() *TopUsersRequest { return &TopUsersRequest{} }, implementation.TopUsers, trevrpc_go.RouteMethodDescriptor(methods.ByName("TopUsers")))
 }

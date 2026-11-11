@@ -95,7 +95,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(auth_service_paths::SIGNUP, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.SignupRequest", "auth.v1.SignupResponse"), move |context, body| {
+        server.route_with_options(auth_service_paths::SIGNUP, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.SignupRequest", "auth.v1.SignupResponse").with_method_options(b"\x80\xb5\x18\x01"), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <SignupRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -107,7 +107,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(auth_service_paths::LOGIN, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.LoginRequest", "auth.v1.LoginResponse"), move |context, body| {
+        server.route_with_options(auth_service_paths::LOGIN, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.LoginRequest", "auth.v1.LoginResponse").with_method_options(b"\x80\xb5\x18\x01"), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <LoginRequest as ::prost::Message>::decode(body.as_slice())?;
@@ -119,7 +119,7 @@ where
 
     {
         let service = ::std::sync::Arc::clone(&service);
-        server.route_with_options(auth_service_paths::LOGOUT, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.LogoutRequest", "auth.v1.LogoutResponse"), move |context, body| {
+        server.route_with_options(auth_service_paths::LOGOUT, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.LogoutRequest", "auth.v1.LogoutResponse").with_method_options(b"\x80\xb5\x18\x01"), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
                 let request = <LogoutRequest as ::prost::Message>::decode(body.as_slice())?;

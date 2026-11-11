@@ -8,6 +8,7 @@ import type { LoginRequestSchema, LoginResponseSchema } from "./login_pb.js";
 import { file_auth_v1_login } from "./login_pb.js";
 import type { LogoutRequestSchema, LogoutResponseSchema } from "./logout_pb.js";
 import { file_auth_v1_logout } from "./logout_pb.js";
+import { file_auth_v1_options } from "./options_pb.js";
 import type { SignupRequestSchema, SignupResponseSchema } from "./signup_pb.js";
 import { file_auth_v1_signup } from "./signup_pb.js";
 
@@ -15,10 +16,10 @@ import { file_auth_v1_signup } from "./signup_pb.js";
  * Describes the file auth/v1/service.proto.
  */
 export const file_auth_v1_service: GenFile = /*@__PURE__*/
-  fileDesc("ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEyuwEKC0F1dGhTZXJ2aWNlEjkKBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2USNgoFTG9naW4SFS5hdXRoLnYxLkxvZ2luUmVxdWVzdBoWLmF1dGgudjEuTG9naW5SZXNwb25zZRI5CgZMb2dvdXQSFi5hdXRoLnYxLkxvZ291dFJlcXVlc3QaFy5hdXRoLnYxLkxvZ291dFJlc3BvbnNlQo4BCgtjb20uYXV0aC52MUIMU2VydmljZVByb3RvUAFaNHRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci92Mi9nZW4vYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z", [file_auth_v1_login, file_auth_v1_logout, file_auth_v1_signup]);
+  fileDesc("ChVhdXRoL3YxL3NlcnZpY2UucHJvdG8SB2F1dGgudjEyzQEKC0F1dGhTZXJ2aWNlEj8KBlNpZ251cBIWLmF1dGgudjEuU2lnbnVwUmVxdWVzdBoXLmF1dGgudjEuU2lnbnVwUmVzcG9uc2UiBIC1GAESPAoFTG9naW4SFS5hdXRoLnYxLkxvZ2luUmVxdWVzdBoWLmF1dGgudjEuTG9naW5SZXNwb25zZSIEgLUYARI/CgZMb2dvdXQSFi5hdXRoLnYxLkxvZ291dFJlcXVlc3QaFy5hdXRoLnYxLkxvZ291dFJlc3BvbnNlIgSAtRgBQo4BCgtjb20uYXV0aC52MUIMU2VydmljZVByb3RvUAFaNHRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci92My9nZW4vYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z", [file_auth_v1_login, file_auth_v1_logout, file_auth_v1_options, file_auth_v1_signup]);
 
 /**
- * Account registration and sessions. These operations do not require an existing session.
+ * Account registration and sessions. These methods are public: they do not require a session.
  *
  * @generated from service auth.v1.AuthService
  */

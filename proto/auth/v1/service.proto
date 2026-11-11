@@ -4,16 +4,23 @@ package auth.v1;
 
 import "auth/v1/login.proto";
 import "auth/v1/logout.proto";
+import "auth/v1/options.proto";
 import "auth/v1/signup.proto";
 
-// Account registration and sessions. These operations do not require an existing session.
+// Account registration and sessions. These methods are public: they do not require a session.
 service AuthService {
   // Creates an account with a case-insensitive username. Does not sign in.
-  rpc Signup(SignupRequest) returns (SignupResponse);
+  rpc Signup(SignupRequest) returns (SignupResponse) {
+    option (public) = true;
+  }
   // Authenticates an account and returns a session token.
   // Unknown usernames and incorrect passwords both return an unauthenticated error.
-  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (public) = true;
+  }
   // Ends the session whose token the call carries as `authorization: Bearer <token>` metadata.
   // Succeeds without a token, or with one that names no session, so signing out twice is harmless.
-  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (public) = true;
+  }
 }

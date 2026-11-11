@@ -24,12 +24,12 @@ var File_auth_v1_service_proto protoreflect.FileDescriptor
 
 const file_auth_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x15auth/v1/service.proto\x12\aauth.v1\x1a\x13auth/v1/login.proto\x1a\x14auth/v1/logout.proto\x1a\x14auth/v1/signup.proto2\xbb\x01\n" +
-	"\vAuthService\x129\n" +
-	"\x06Signup\x12\x16.auth.v1.SignupRequest\x1a\x17.auth.v1.SignupResponse\x126\n" +
-	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\x129\n" +
-	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponseB\x8e\x01\n" +
-	"\vcom.auth.v1B\fServiceProtoP\x01Z4trev.zip/template/stack/server/v2/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
+	"\x15auth/v1/service.proto\x12\aauth.v1\x1a\x13auth/v1/login.proto\x1a\x14auth/v1/logout.proto\x1a\x15auth/v1/options.proto\x1a\x14auth/v1/signup.proto2\xcd\x01\n" +
+	"\vAuthService\x12?\n" +
+	"\x06Signup\x12\x16.auth.v1.SignupRequest\x1a\x17.auth.v1.SignupResponse\"\x04\x80\xb5\x18\x01\x12<\n" +
+	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\"\x04\x80\xb5\x18\x01\x12?\n" +
+	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x04\x80\xb5\x18\x01B\x8e\x01\n" +
+	"\vcom.auth.v1B\fServiceProtoP\x01Z4trev.zip/template/stack/server/v3/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_service_proto_goTypes = []any{
 	(*SignupRequest)(nil),  // 0: auth.v1.SignupRequest
@@ -60,6 +60,7 @@ func file_auth_v1_service_proto_init() {
 	}
 	file_auth_v1_login_proto_init()
 	file_auth_v1_logout_proto_init()
+	file_auth_v1_options_proto_init()
 	file_auth_v1_signup_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

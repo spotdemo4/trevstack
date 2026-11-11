@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	trevrpc "trev.zip/llc/trevrpc/trevrpc-go"
 	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
 )
@@ -15,38 +17,32 @@ type Authorizer struct {
 	sessions *Manager
 }
 
-var _ trevrpc.ContextAuthorizer = (*Authorizer)(nil)
+var _ trevrpc.Authorizer = (*Authorizer)(nil)
 
 // NewAuthorizer returns an Authorizer that verifies sessions with manager.
 func NewAuthorizer(manager *Manager) *Authorizer {
 	return &Authorizer{sessions: manager}
 }
 
-// Authorize rejects calls to protected methods with Unauthenticated unless
-// they carry the token of an unexpired session.
-func (a *Authorizer) Authorize(ctx context.Context, info trevrpc.HandlerContext) error {
-	_, err := a.AuthorizeContext(ctx, info)
-	return err
-}
-
-// AuthorizeContext authorizes calls like Authorize, and returns the context of
-// an authenticated call with the username of its session, which
+// Authorize rejects calls to methods that are not public with Unauthenticated
+// unless they carry the token of an unexpired session, and returns the context
+// of an authenticated call with the username of its session, which
 // UsernameFromContext reads. Calls to public methods keep their context.
-func (a *Authorizer) AuthorizeContext(ctx context.Context, info trevrpc.HandlerContext) (context.Context, error) {
-	if isPublicAuthMethod(info.FullMethod) {
+func (a *Authorizer) Authorize(ctx context.Context, info trevrpc.HandlerContext) (context.Context, error) {
+	if isPublic(info.MethodDescriptor) {
 		return ctx, nil
 	}
 
 	token, err := trevrpc.BearerToken(info.Metadata)
 	if err != nil {
-		return nil, err
+		return ctx, err
 	}
 	username, err := a.sessions.Verify(ctx, token)
 	if err != nil {
 		if errors.Is(err, ErrInvalidSession) {
-			return nil, trevrpc.Unauthenticated("invalid or expired session")
+			return ctx, trevrpc.Unauthenticated("invalid or expired session")
 		}
-		return nil, trevrpc.Internal("could not verify session")
+		return ctx, trevrpc.Internal("could not verify session")
 	}
 	return ContextWithUsername(ctx, username), nil
 }
@@ -67,13 +63,14 @@ func UsernameFromContext(ctx context.Context) (string, bool) {
 	return username, ok
 }
 
-func isPublicAuthMethod(method string) bool {
-	switch method {
-	case authv1.AuthService_Login_FullMethodName,
-		authv1.AuthService_Logout_FullMethodName,
-		authv1.AuthService_Signup_FullMethodName:
-		return true
-	default:
+// isPublic reports whether method is marked with the (auth.v1.public) option,
+// which lets calls without a session through. Methods the server does not
+// have, which have no descriptor, are not public, so callers that are not
+// signed in cannot tell which methods exist.
+func isPublic(method protoreflect.MethodDescriptor) bool {
+	if method == nil {
 		return false
 	}
+	public, _ := proto.GetExtension(method.Options(), authv1.E_Public).(bool)
+	return public
 }

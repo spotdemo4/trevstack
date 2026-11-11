@@ -1208,7 +1208,7 @@ const file_cursor_v1_metrics_proto_rawDesc = "" +
 	"\x11TIME_INTERVAL_DAY\x10\x03\x12\x16\n" +
 	"\x12TIME_INTERVAL_WEEK\x10\x04\x12\x17\n" +
 	"\x13TIME_INTERVAL_MONTH\x10\x05B\x9c\x01\n" +
-	"\rcom.cursor.v1B\fMetricsProtoP\x01Z8trev.zip/template/stack/server/v2/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
+	"\rcom.cursor.v1B\fMetricsProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 
 var file_cursor_v1_metrics_proto_enumTypes = make([]protoimpl.EnumInfo, 1)

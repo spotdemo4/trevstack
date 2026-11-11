@@ -210,7 +210,7 @@ const file_cursor_v1_send_proto_rawDesc = "" +
 	"\x02_y\"9\n" +
 	"\fSendResponse\x12)\n" +
 	"\x06cursor\x18\x01 \x01(\v2\x11.cursor.v1.CursorR\x06cursorB\x99\x01\n" +
-	"\rcom.cursor.v1B\tSendProtoP\x01Z8trev.zip/template/stack/server/v2/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
+	"\rcom.cursor.v1B\tSendProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 
 var file_cursor_v1_send_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

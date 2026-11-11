@@ -9,8 +9,12 @@ const rpcUrl = import.meta.env.VITE_RPC_URL || `${window.location.origin}/trevrp
 /** The channel every client shares, which starts connecting when the app loads. */
 export const channel = createChannel(rpcUrl, {
   // A server with a development certificate publishes the hashes browsers
-  // trust it by; a 404 means the browser already trusts its certificate.
-  serverCertificateHashesUrl: "/certificate-hashes",
+  // trust it by at its endpoint; a 404 means the browser already trusts its
+  // certificate. They are read from the page's own server, which is the
+  // TrevRPC server in production, and proxies them in development: a
+  // browser would not fetch them from a server whose certificate it does
+  // not trust.
+  serverCertificateHashesUrl: "/trevrpc/certificate-hashes",
   interceptors: [authInterceptor],
 });
 
@@ -23,8 +27,9 @@ session.subscribe((claims) => {
   try {
     channel.setConnectionMetadata(sessionMetadata(claims));
   } catch {
-    // A token too large to send, which only edited storage holds: send none,
-    // so the next protected call fails as unauthenticated and signs out.
+    // A token that is too large to send or not a bearer token, which only
+    // edited storage holds: send none, so the next protected call fails as
+    // unauthenticated and signs out.
     channel.setConnectionMetadata();
   }
 });

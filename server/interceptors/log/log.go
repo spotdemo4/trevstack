@@ -22,8 +22,11 @@ func New(log *slog.Logger) *Interceptor {
 }
 
 // Intercept logs each call when it starts, and when it ends with its status,
-// at error unless it succeeded or the client cancelled it, along with the client's IP when the transport knows it and the user of an
-// authenticated call.
+// at error unless it succeeded or the client cancelled it, along with the
+// client's IP when the transport knows it and the user of an authenticated
+// call. A failed call is logged with the error it ended with, as the server
+// saw it: the caller of a call that failed internally is only told "internal
+// server error".
 func (i *Interceptor) Intercept(
 	ctx context.Context,
 	info trevrpc.HandlerContext,
@@ -46,7 +49,11 @@ func (i *Interceptor) Intercept(
 			// watching a stream when it closed, which is not a server error.
 			i.log.DebugContext(ctx, "request cancelled", attrs...)
 		default:
-			i.log.ErrorContext(ctx, "request error", append(attrs, "code", finished.Code.String())...)
+			attrs = append(attrs, "code", finished.Code.String())
+			if finished.Err != nil {
+				attrs = append(attrs, "error", finished.Err)
+			}
+			i.log.ErrorContext(ctx, "request error", attrs...)
 		}
 	}, nil
 }

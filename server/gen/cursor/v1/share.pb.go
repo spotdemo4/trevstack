@@ -320,7 +320,7 @@ const file_cursor_v1_share_proto_rawDesc = "" +
 	"\x05ended\x18\x02 \x01(\v2\x14.cursor.v1.StreamEndH\x00R\x05endedB\a\n" +
 	"\x05eventB\x9a\x01\n" +
 	"\rcom.cursor.v1B\n" +
-	"ShareProtoP\x01Z8trev.zip/template/stack/server/v2/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
+	"ShareProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 
 var file_cursor_v1_share_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

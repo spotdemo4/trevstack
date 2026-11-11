@@ -69,7 +69,8 @@ func (c *AuthServiceClient) Logout(ctx context.Context, request *LogoutRequest, 
 
 // RegisterAuthServiceServer registers handlers for the AuthService service.
 func RegisterAuthServiceServer(server *trevrpc_go.Server, implementation AuthServiceServer) {
-	trevrpc_go.RegisterUnary[*SignupRequest, *SignupResponse](server, AuthService_Signup_FullMethodName, func() *SignupRequest { return &SignupRequest{} }, implementation.Signup)
-	trevrpc_go.RegisterUnary[*LoginRequest, *LoginResponse](server, AuthService_Login_FullMethodName, func() *LoginRequest { return &LoginRequest{} }, implementation.Login)
-	trevrpc_go.RegisterUnary[*LogoutRequest, *LogoutResponse](server, AuthService_Logout_FullMethodName, func() *LogoutRequest { return &LogoutRequest{} }, implementation.Logout)
+	methods := File_auth_v1_service_proto.Services().ByName("AuthService").Methods()
+	trevrpc_go.RegisterUnary[*SignupRequest, *SignupResponse](server, AuthService_Signup_FullMethodName, func() *SignupRequest { return &SignupRequest{} }, implementation.Signup, trevrpc_go.RouteMethodDescriptor(methods.ByName("Signup")))
+	trevrpc_go.RegisterUnary[*LoginRequest, *LoginResponse](server, AuthService_Login_FullMethodName, func() *LoginRequest { return &LoginRequest{} }, implementation.Login, trevrpc_go.RouteMethodDescriptor(methods.ByName("Login")))
+	trevrpc_go.RegisterUnary[*LogoutRequest, *LogoutResponse](server, AuthService_Logout_FullMethodName, func() *LogoutRequest { return &LogoutRequest{} }, implementation.Logout, trevrpc_go.RouteMethodDescriptor(methods.ByName("Logout")))
 }

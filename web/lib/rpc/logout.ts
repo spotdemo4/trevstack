@@ -1,3 +1,4 @@
+import { bearerMetadata } from "@trevrpc/trevrpc-js";
 import { Effect } from "effect";
 
 import { session } from "../auth/session.ts";
@@ -14,9 +15,13 @@ export function logout(): void {
   session.clear();
   if (!claims) return;
 
-  Effect.runFork(
-    AuthClient.logout({}, { metadata: { authorization: `Bearer ${claims.token}` } }).pipe(
-      Effect.ignore,
-    ),
-  );
+  let metadata;
+  try {
+    metadata = bearerMetadata(claims.token);
+  } catch {
+    // Not a bearer token, which only edited storage holds, so it names no
+    // session to end.
+    return;
+  }
+  Effect.runFork(AuthClient.logout({}, { metadata }).pipe(Effect.ignore));
 }

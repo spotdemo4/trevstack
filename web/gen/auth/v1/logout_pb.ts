@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file auth/v1/logout.proto.
  */
 export const file_auth_v1_logout: GenFile = /*@__PURE__*/
-  fileDesc("ChRhdXRoL3YxL2xvZ291dC5wcm90bxIHYXV0aC52MSIPCg1Mb2dvdXRSZXF1ZXN0IhAKDkxvZ291dFJlc3BvbnNlQo0BCgtjb20uYXV0aC52MUILTG9nb3V0UHJvdG9QAVo0dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL3YyL2dlbi9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM");
+  fileDesc("ChRhdXRoL3YxL2xvZ291dC5wcm90bxIHYXV0aC52MSIPCg1Mb2dvdXRSZXF1ZXN0IhAKDkxvZ291dFJlc3BvbnNlQo0BCgtjb20uYXV0aC52MUILTG9nb3V0UHJvdG9QAVo0dHJldi56aXAvdGVtcGxhdGUvc3RhY2svc2VydmVyL3YzL2dlbi9hdXRoL3YxO2F1dGh2MaICA0FYWKoCB0F1dGguVjHKAgdBdXRoXFYx4gITQXV0aFxWMVxHUEJNZXRhZGF0YeoCCEF1dGg6OlYxYgZwcm90bzM");
 
 /**
  * @generated from message auth.v1.LogoutRequest

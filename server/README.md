@@ -47,11 +47,11 @@ Flags take precedence over environment variables.
 
 ## routes
 
-| path                  | description                                                              |
-| --------------------- | ------------------------------------------------------------------------ |
-| `/trevrpc`            | TrevRPC browser sessions, over WebTransport or QMux over WebSocket       |
-| `/certificate-hashes` | hashes of the development certificate, see [tls](#tls)                   |
-| `/`                   | web app; unknown paths fall back to `index.html` for client-side routing |
+| path                          | description                                                              |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `/trevrpc`                    | TrevRPC browser sessions, over WebTransport or QMux over WebSocket       |
+| `/trevrpc/certificate-hashes` | hashes of the development certificate, see [tls](#tls)                   |
+| `/`                           | web app; unknown paths fall back to `index.html` for client-side routing |
 
 The server listens on one UDP and one TCP port with the same number. Native TrevRPC clients connect
 over QUIC on the UDP port and fall back to QMux over TLS on the TCP port when UDP is blocked.
@@ -64,7 +64,8 @@ and in builds without the `prod` tag from the web development server at `http://
 
 ### services
 
-- `auth.v1.AuthService`: `Signup`, `Login`, and `Logout`. These do not require a session.
+- `auth.v1.AuthService`: `Signup`, `Login`, and `Logout`. These do not require a session, which their
+  `(auth.v1.public)` option says.
 - `cursor.v1.CursorService`: records and streams cursor positions, and requires a session. It has
   an RPC of each kind: `Send` is unary, `Watch`, `List`, and `ListStreams` stream responses, `Track`
   streams requests, and `Share` streams both. `Summary`, `TimeSeries`, `Heatmap`, and `TopUsers`
@@ -91,8 +92,8 @@ Without a certificate, the server uses TrevRPC's
 [development certificate](https://trev.zip/llc/TrevRPC/wiki/WebTransport#development-certificates):
 a self-signed ECDSA certificate for `localhost`, `127.0.0.1`, and `::1` that it generates at startup
 and replaces every 6 days. Browsers can trust a certificate like this for WebTransport by its hashes,
-which the server publishes as JSON at `/certificate-hashes` (404 with a configured certificate) and
-the web app reads, but not for anything else, so it is for development only.
+which TrevRPC publishes as JSON at `/trevrpc/certificate-hashes` (404 with a configured certificate)
+and the web app reads, but not for anything else, so it is for development only.
 
 For native clients on the same machine, which trust a certificate as a root rather than by its hash,
 the server also writes the current and next certificates to `development.pem` beside the
@@ -106,14 +107,19 @@ one that started last.
 on their own. The database stores only each token's SHA-256 hash, so a copy of it cannot be used to
 sign in. Clients send the token as `authorization: Bearer <token>` metadata on every call that requires
 a session, and calls with a missing, malformed, expired, or ended session fail with `unauthenticated`.
+Every method requires a session unless its proto marks it with the `(auth.v1.public)` option, from
+[`options.proto`](../proto/auth/v1/options.proto), which the [authorizer](auth/authorizer.go) reads
+from the method's descriptor.
 Sessions last 24 hours and survive restarts. `Logout` ends the session whose token the call carries,
 and deleting a user ends all of theirs. Expired sessions are deleted at the next sign-in.
 
 ### rate limiting
 
-`Login` is limited to 5 requests per minute and `Signup` to 3 requests per hour for each client IP.
-Rejected requests fail with `resource_exhausted` and `retry-after` metadata holding the seconds to
-wait.
+`Login` is limited to 5 requests per minute and `Signup` to 3 requests per hour for each client IP,
+with IPv6 clients counted by their /64 prefix, by TrevRPC's
+[rate limiter](https://trev.zip/llc/TrevRPC/wiki/Operations-Limits-and-Security#rate-limiting).
+Rejected requests fail with `resource_exhausted` and a `google.rpc.RetryInfo` detail holding the time
+to wait, which TrevRPC clients read.
 
 The client IP is the source address of the connection. Proxies that do not preserve it must be in
 `TRUSTED_PROXY_CIDRS` and send a

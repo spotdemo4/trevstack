@@ -49,18 +49,19 @@ for `Track` and `Share` that pointer events push into, all in [`lib/effect`](lib
 pad and the store of live cursors it shows are in [`lib/cursor-pad`](lib/cursor-pad).
 
 When the server uses its development certificate, the channel reads the certificate's hashes from
-`/certificate-hashes` before each WebTransport attempt and trusts it by them.
+`/trevrpc/certificate-hashes` before each WebTransport attempt and trusts it by them.
 
 `Login` returns a session token, which the app keeps in local storage with the username and expiry.
 The channel sends it as connection metadata, which crosses each connection once instead of in every
-request, and its interceptor handles the failures of calls that require a session. The app can tell from local
+request, and its interceptor handles the failures of calls that require a session: every method but
+those whose proto marks them with the `(auth.v1.public)` option. The app can tell from local
 storage, without a request, whether to show signed-in pages. It signs out when the session expires
 or when an RPC fails with `unauthenticated`, and syncs sign-in state across tabs. Logging out forgets
 the token at once and asks the server, with `Logout`, to end the session.
 
 ## progressive web app
 
-A service worker caches the app shell for offline use; `/trevrpc` and `/certificate-hashes` are never served from the cache.
+A service worker caches the app shell for offline use; `/trevrpc`, which holds `/trevrpc/certificate-hashes`, is never served from the cache.
 The app checks for a new version every 15 minutes and whenever it comes back into view,
 then offers the update in a toast instead of reloading, so unsaved input is never lost.
 
@@ -85,7 +86,7 @@ npm run dev
 The app is served at http://localhost:3000 with hot reloading. It calls the server at
 `https://localhost:8080/trevrpc`, set by `VITE_RPC_URL` in [`.env.development`](.env.development),
 which admits the app's pages when built with the `dev` tag, and reads the hashes of the server's
-development certificate through a proxy at `/certificate-hashes`. The development certificate is
+development certificate through a proxy at `/trevrpc/certificate-hashes`. The development certificate is
 trusted for WebTransport only, so use a browser with WebTransport, such as Chromium or Firefox;
 the WebSocket fallback needs a certificate the browser trusts, passed with `TLS_CERT` and `TLS_KEY`.
 

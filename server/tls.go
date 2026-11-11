@@ -26,9 +26,10 @@ const (
 )
 
 // loadTLSConfig returns the listener's TLS configuration with the certificate
-// in certFile and keyFile, or, when both are empty, with a rotating
-// development certificate for localhost that browsers trust by its hashes,
-// which is returned too.
+// in certFile and keyFile, or, when both are empty, a rotating development
+// certificate for localhost that browsers trust by its hashes, for
+// ServerOptions.DevelopmentCertificate, which presents it and publishes its
+// hashes, and no TLS configuration.
 func loadTLSConfig(certFile, keyFile string) (*tls.Config, *trevrpc.DevelopmentCertificate, error) {
 	if certFile != "" || keyFile != "" {
 		cert, err := tls.LoadX509KeyPair(certFile, keyFile)
@@ -42,7 +43,7 @@ func loadTLSConfig(certFile, keyFile string) (*tls.Config, *trevrpc.DevelopmentC
 	if err != nil {
 		return nil, nil, fmt.Errorf("could not generate certificate: %w", err)
 	}
-	return development.TLSConfig(), development, nil
+	return nil, development, nil
 }
 
 // developmentCertificateWriter keeps a file holding the current and next
