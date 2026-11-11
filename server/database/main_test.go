@@ -8,24 +8,14 @@ import (
 )
 
 func TestNewRestrictsDatabasePermissions(t *testing.T) {
-	// os.UserConfigDir uses XDG_CONFIG_HOME on Linux but HOME on macOS
-	tmp := t.TempDir()
-	t.Setenv("HOME", tmp)
-	t.Setenv("XDG_CONFIG_HOME", tmp)
+	configDir := t.TempDir()
 
-	configHome, err := os.UserConfigDir()
-	if err != nil {
-		t.Fatalf("UserConfigDir() error = %v", err)
-	}
-
-	db, err := New(context.Background())
+	db, err := New(context.Background(), configDir)
 	if err != nil {
 		t.Fatalf("New() error = %v", err)
 	}
 	t.Cleanup(func() { _ = db.Close() })
 
-	configDir := filepath.Join(configHome, "trevstack")
-	assertMode(t, configDir, 0700)
 	assertMode(t, filepath.Join(configDir, "trevstack.db"), 0600)
 }
 

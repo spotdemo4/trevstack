@@ -20,7 +20,6 @@ import (
 	"trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc"
 	"trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc"
 	"trev.zip/template/stack/server/v3/auth"
-	"trev.zip/template/stack/server/v3/configdir"
 	"trev.zip/template/stack/server/v3/database"
 	authv1 "trev.zip/template/stack/server/v3/gen/auth/v1"
 	authv1handler "trev.zip/template/stack/server/v3/handlers/auth/v1"
@@ -97,7 +96,12 @@ func run(cfg config, log *slog.Logger) error {
 
 	ctx = logger.WithLog(ctx, log)
 
-	db, err := database.New(ctx)
+	configDir, err := ensureConfigDir()
+	if err != nil {
+		return fmt.Errorf("could not find the configuration directory: %w", err)
+	}
+
+	db, err := database.New(ctx, configDir)
 	if err != nil {
 		return fmt.Errorf("could not initialize database: %w", err)
 	}
@@ -125,10 +129,6 @@ func run(cfg config, log *slog.Logger) error {
 
 		// Native clients on this machine trust the certificate from a file
 		// beside the database.
-		configDir, err := configdir.Get()
-		if err != nil {
-			return fmt.Errorf("could not find the configuration directory: %w", err)
-		}
 		writer := &developmentCertificateWriter{
 			path:        filepath.Join(configDir, developmentCertificateFile),
 			development: development,

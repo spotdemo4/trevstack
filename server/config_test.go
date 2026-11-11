@@ -5,6 +5,8 @@ import (
 	"errors"
 	"flag"
 	"net/netip"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -281,5 +283,37 @@ func TestParseConfigHelpIgnoresInvalidEnvironment(t *testing.T) {
 				t.Fatalf("parseConfig() error = %v, want %v", err, flag.ErrHelp)
 			}
 		})
+	}
+}
+
+func TestEnsureConfigDirRestrictsPermissions(t *testing.T) {
+	// os.UserConfigDir uses XDG_CONFIG_HOME on Linux but HOME on macOS
+	tmp := t.TempDir()
+	t.Setenv("HOME", tmp)
+	t.Setenv("XDG_CONFIG_HOME", tmp)
+
+	configHome, err := os.UserConfigDir()
+	if err != nil {
+		t.Fatalf("UserConfigDir() error = %v", err)
+	}
+	// An existing directory with looser permissions is tightened.
+	want := filepath.Join(configHome, "trevstack")
+	if err := os.MkdirAll(want, 0755); err != nil {
+		t.Fatalf("MkdirAll() error = %v", err)
+	}
+
+	got, err := ensureConfigDir()
+	if err != nil {
+		t.Fatalf("ensureConfigDir() error = %v", err)
+	}
+	if got != want {
+		t.Errorf("ensureConfigDir() = %q, want %q", got, want)
+	}
+	info, err := os.Stat(got)
+	if err != nil {
+		t.Fatalf("stat %s: %v", got, err)
+	}
+	if mode := info.Mode().Perm(); mode != 0700 {
+		t.Errorf("mode for %s = %04o, want 0700", got, mode)
 	}
 }

@@ -12,7 +12,6 @@ import (
 	"github.com/XSAM/otelsql"
 	_ "github.com/mattn/go-sqlite3" // registers the sqlite3 driver
 	semconv "go.opentelemetry.io/otel/semconv/v1.43.0"
-	"trev.zip/template/stack/server/v3/configdir"
 )
 
 var options = []string{
@@ -54,13 +53,8 @@ var options = []string{
 	"_cache_size=-32768", // -32768 means 32 MiB of cache.
 }
 
-// New opens the database in the user config directory.
-func New(ctx context.Context) (*sql.DB, error) {
-	configDir, err := configdir.Get()
-	if err != nil {
-		return nil, err
-	}
-
+// New opens trevstack.db in configDir, which must already exist.
+func New(ctx context.Context, configDir string) (*sql.DB, error) {
 	dbPath := filepath.Join(configDir, "trevstack.db")
 	// Trace queries through the global TracerProvider. Statements are recorded
 	// as written, so bound parameters are never exported.
