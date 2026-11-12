@@ -27,7 +27,7 @@ part of [trev.zip/template](https://trev.zip/template)
 ## using
 
 - [server](server/README.md): serves the API and the web app
-- [web](web/README.md): SolidJS web app served by the server
+  - [web](web/README.md): web app served by the server
 - [client](client/README.md): command-line client for the API
 
 ## contributing
