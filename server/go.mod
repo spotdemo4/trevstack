@@ -18,9 +18,9 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.47.0
 	golang.org/x/crypto v0.59.0
 	google.golang.org/protobuf v1.36.12
-	trev.zip/llc/trevrpc/trevrpc-go v1.9.0
-	trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc v1.9.0
-	trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc v1.9.0
+	trev.zip/llc/trevrpc/trevrpc-go v1.11.1
+	trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc v1.11.1
+	trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc v1.11.1
 )
 
 require (

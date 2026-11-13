@@ -198,7 +198,8 @@ cachePackages = [
   'google.golang.org/protobuf/types/known/wrapperspb',
   'trev.zip/llc/trevrpc/trevrpc-go',
   'trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc',
-  'trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc'
+  'trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc',
+  'trev.zip/llc/trevrpc/trevrpc-go/ratelimit'
 ]
 
 [mod]
@@ -451,13 +452,13 @@ cachePackages = [
     hash = 'sha256-MKd0AdkWEe2A79mGPzOY5I76nMqTsGJKQNPJOKyOwkQ='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go']
-    version = 'v1.9.0'
-    hash = 'sha256-0eQcqXM5ro8CCiqRIpcS2jFUo1/YSvKanCAT5z5Wu/0='
+    version = 'v1.11.1'
+    hash = 'sha256-0+NAokPN5Yh4IFyJsLTWnMPu78wzIQ41xYMXFQu7mLg='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc']
-    version = 'v1.9.0'
-    hash = 'sha256-bz+iegDsxCdA08ByfNzDW7ccgk4OU7Rp85OY0Rz7t5E='
+    version = 'v1.11.1'
+    hash = 'sha256-rvrdPGe3tTw2oqiQu50BkELwmPUUVkAXrrlz69KfpoM='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc']
-    version = 'v1.9.0'
-    hash = 'sha256-81aoPzkUzh/lYs6t36q4Ip/TWbTdHwmn4/tZjYQ6XIc='
+    version = 'v1.11.1'
+    hash = 'sha256-fvg+PNNOwGEOzrJTsqDBA/d0sO4CTLqah7pVylsq+U4='

@@ -177,16 +177,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1794380638,
-        "narHash": "sha256-+AM///H07Yl1yu3I1N4x3uAc1RrF8sdpVQbBQJljCBA=",
-        "ref": "refs/tags/v1.9.0",
-        "rev": "c5c8d9b75baa9f50cddf4eb6c5b902f084f0baa6",
-        "revCount": 973,
+        "lastModified": 1794556788,
+        "narHash": "sha256-I6P85bSfPIZxysF5kNAWfbTn7E9qi1aMbwYUc/hPYoc=",
+        "ref": "refs/tags/v1.11.1",
+        "rev": "ea43d30681374cd35347933c90c0e252f8e015ef",
+        "revCount": 1003,
         "type": "git",
         "url": "https://trev.zip/llc/TrevRPC.git"
       },
       "original": {
-        "ref": "refs/tags/v1.9.0",
+        "ref": "refs/tags/v1.11.1",
         "type": "git",
         "url": "https://trev.zip/llc/TrevRPC.git"
       }
