@@ -231,12 +231,6 @@
 
         # nix flake check
         checks = pkgs.mkChecks {
-          inherit (self.packages.${system})
-            client
-            web
-            server
-            ;
-
           server-lint = {
             src = self.packages.${system}.server;
             packages = with pkgs; [ golangci-lint ];
