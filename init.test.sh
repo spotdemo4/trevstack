@@ -218,6 +218,7 @@ test_application() (
   assert_contains .forgejo/renovate.jsonc \
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-world"]'
+  assert_contains .agents/skills/fix-vulnerable/SKILL.md 'govulncheck, cargo audit, npm audit' '## cargo audit' 'RUSTSEC' 'cargo-audit audit'
   [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test ]] || fail 'application files are missing'
 )
 
@@ -253,6 +254,8 @@ test_minimal() (
   assert_lacks .gitattributes Cargo client
   assert_lacks buf.gen.yaml prost trevrpc-rust
   assert_lacks AGENTS.md client
+  assert_contains .agents/skills/fix-vulnerable/SKILL.md 'runs govulncheck, npm audit, flake-checker' '## govulncheck' '## npm audit' '## flake-checker'
+  assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client
 )
 
 test_gitea() (
@@ -285,6 +288,7 @@ test_gitea() (
   assert_lacks .gitea/workflows/vulnerable.yaml cargo
   assert_lacks .gitea/renovate.jsonc cargo
   assert_lacks .github/workflows/release.yaml client
+  assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client
 )
 
 test_rollback() (

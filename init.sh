@@ -713,6 +713,12 @@ remove_client() {
   sed_inplace '/^- The server also writes the development certificate to /d' AGENTS.md
   remove_block CONTRIBUTING.md 'run the client with optional arguments:' '```'
   sed_inplace '/^nix build \.#client$/d' CONTRIBUTING.md
+  sed_inplace \
+    -e '/^(cd client && nix develop \.\.#vulnerable -c cargo-audit audit)$/d' \
+    -e '/^## cargo audit$/,/^## npm audit$/{/^## npm audit$/!d;}' \
+    .agents/skills/fix-vulnerable/SKILL.md
+  replace_literal 'govulncheck, cargo audit, npm audit' 'govulncheck, npm audit' .agents/skills/fix-vulnerable/SKILL.md
+  replace_literal 'a RUSTSEC advisory, ' '' .agents/skills/fix-vulnerable/SKILL.md
   for provider_directory in .github .gitea .forgejo; do
     [[ -d $provider_directory ]] || continue
     replace_literal ', "client/v*"' '' "$provider_directory/workflows/release.yaml"
@@ -877,7 +883,7 @@ validate_project() {
     require_text client/default.nix "description = \"$nix_description\";"
   else
     [[ ! -e client && ! -e test && ! -e pyproject.toml ]] || die 'Replacement validation failed: client files still exist.'
-    ! grep -qE '\./client|client/|#client|\<cargo\>|rust(fmt|c|-analyzer)|\<ruff\>|pyright|python3|protoc-gen-prost|trevrpc-rust|^### client$' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md || die 'Replacement validation failed: client references remain.'
+    ! grep -qE '\./client|client/|#client|\<cargo\>|rust(fmt|c|-analyzer)|\<ruff\>|pyright|python3|protoc-gen-prost|trevrpc-rust|RUSTSEC|^### client$' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md .agents/skills/fix-vulnerable/SKILL.md || die 'Replacement validation failed: client references remain.'
   fi
   require_text web/default.nix "version = \"$version\";"
   require_text server/default.nix "version = \"$version\";"
