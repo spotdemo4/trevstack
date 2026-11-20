@@ -18,7 +18,7 @@
   },
   // transitive npm vulnerabilities are reported by the vulnerable workflow
   "osvVulnerabilityAlerts": true,
-  "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
+  "dependencyDashboard": { "osvVulnerabilitySummary": "unresolved" },
   "vulnerabilityAlerts": {
     "addLabels": ["security"],
     "automerge": true
