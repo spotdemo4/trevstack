@@ -193,8 +193,9 @@ test_application() (
   git add -A
   git commit --quiet --message 'Initial commit'
   # The build sandbox has no /usr/bin/env for the shebang
-  # GitHub (detected), no Gitea, Forgejo mirror, Zed, VS Code, client
-  printf '%s\n' '' n y https://git.example.com/octo/hello-world '' '' '' | bash ./init.sh 'Hello World' "$description"
+  # GitHub (detected), no Gitea, Forgejo mirror, Zed, VS Code, Claude Code,
+  # client
+  printf '%s\n' '' n y https://git.example.com/octo/hello-world '' '' '' '' | bash ./init.sh 'Hello World' "$description"
 
   assert_initialized github.com/octo/hello-world hello-world 'Says \"hi\" to ${USER} \\o/'
   assert_eq "$(git remote)" $'forgejo\norigin' remotes
@@ -220,6 +221,8 @@ test_application() (
     '"repositories": ["octo/hello-world"]'
   assert_contains .agents/skills/fix-vulnerable/SKILL.md 'govulncheck, cargo audit, npm audit' '## cargo audit' 'RUSTSEC' 'cargo-audit audit'
   [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test ]] || fail 'application files are missing'
+  assert_eq "$(git ls-files .claude)" .claude/skills 'tracked .claude files'
+  assert_eq "$(readlink .claude/skills)" ../.agents/skills '.claude/skills target'
 )
 
 test_minimal() (
@@ -228,14 +231,16 @@ test_minimal() (
   cd "$project"
   # nix flake init leaves the template uncommitted and init.sh not executable
   chmod -x init.sh
-  # Forgejo (detected), no GitHub, no Gitea, no Zed, no VS Code, no client
-  printf '%s\n' '' n n n n n | bash init.sh 'Hello Min' 'Says hello'
+  # Forgejo (detected), no GitHub, no Gitea, no Zed, no VS Code, no Claude Code,
+  # no client
+  printf '%s\n' '' n n n n n n | bash init.sh 'Hello Min' 'Says hello'
 
   assert_initialized git.example.com/octo/hello-min hello-min 'Says hello'
   assert_eq "$(git log --format=%s)" 'chore: initialize project' commits
   assert_eq "$(git remote)" origin remotes
   assert_eq "$(git remote get-url origin)" https://git.example.com/octo/hello-min.git 'origin remote'
-  assert_missing .github .gitea .zed .vscode client test pyproject.toml
+  assert_missing .github .gitea .zed .vscode .claude client test pyproject.toml
+  [[ -f .agents/skills/template-sync/SKILL.md ]] || fail '.agents/skills is missing'
   assert_contains README.md \
     'https://git.example.com/octo/hello-min/actions?workflow=check.yaml' \
     'logo=forgejo' \
@@ -264,13 +269,14 @@ test_gitea() (
   cd "$project"
   git add -A
   git commit --quiet --message 'Initial commit'
-  # Gitea, GitHub mirror, no Forgejo, no Zed, no VS Code, no client
-  printf '%s\n' Gitea y git@github.com:octo/hello-mirror.git n n n n | bash ./init.sh 'Hello Gitea' 'Says hello'
+  # Gitea, GitHub mirror, no Forgejo, no Zed, no VS Code, Claude Code, no client
+  printf '%s\n' Gitea y git@github.com:octo/hello-mirror.git n n n y n | bash ./init.sh 'Hello Gitea' 'Says hello'
 
   assert_initialized gitea.example.com/octo/hello-gitea hello-gitea 'Says hello'
   assert_eq "$(git remote)" $'github\norigin' remotes
   assert_eq "$(git remote get-url github)" git@github.com:octo/hello-mirror.git 'github remote'
   assert_missing .forgejo .zed .vscode client test
+  [[ -L .claude/skills && -f .claude/skills/template-sync/SKILL.md ]] || fail '.claude/skills is missing'
   assert_contains README.md \
     'https://gitea.example.com/octo/hello-gitea/actions?workflow=check.yaml' \
     'logo=gitea'
@@ -315,12 +321,13 @@ test_rollback() (
   assert_fails 'Gitea repository URL cannot use github.com.' \
     bash ./init.sh Rollback Rollback < <(printf '%s\n' github y https://github.com/octo/rollback)
 
-  # Generating code fails after the new repository has replaced the old one
+  # Generating code fails after the new repository has replaced the old one, and
+  # the answers include declining Claude Code, which deletes .claude
   mkdir "$tmp/failing"
   printf '#!%s\nexit 1\n' "$BASH" >"$tmp/failing/nix"
   chmod +x "$tmp/failing/nix"
   assert_fails '' env PATH="$tmp/failing:$PATH" \
-    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y https://git.example.com/octo/rollback '' '' '')
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y https://git.example.com/octo/rollback '' '' n '')
 
   assert_eq "$(git rev-parse HEAD)" "$head" HEAD
   assert_eq "$(git status --porcelain --untracked-files=all)" '' 'worktree status'

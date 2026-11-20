@@ -492,6 +492,16 @@ choose_editors() {
   fi
 }
 
+# Skills live in .agents/skills, which other agents also read. .claude only
+# links them for Claude Code.
+choose_agents() {
+  local reply
+  read -r -p 'Are you using Claude Code? [Y/n] ' reply || reply=
+  if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
+    delete_directories+=(.claude)
+  fi
+}
+
 # Asks which of the optional components to keep.
 choose_components() {
   local reply
@@ -920,6 +930,7 @@ main() {
   delete_directories=()
   choose_providers
   choose_editors
+  choose_agents
   choose_components
   check_ignored_files
   resolve_repositories
