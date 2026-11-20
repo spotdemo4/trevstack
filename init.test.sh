@@ -174,7 +174,7 @@ assert_initialized() {
   assert_eq "$(git status --porcelain --untracked-files=all)" '' 'worktree status'
   assert_eq "$(jq -r .commit .template.json)" "$upstream_commit" '.template.json commit'
   # The generated code is replaced by buf generate, which the build sandbox can't run
-  assert_eq "$(git grep -n -i -e trevstack -e template/stack -e init.sh -e init.test.sh -- ':!.template.json' ':!AGENTS.md' || true)" '' 'template references'
+  assert_eq "$(git grep -n -i -e trevstack -e template/stack -e init.sh -e init.test.sh -- ':!.template.json' ':!.agents/skills/template-sync/SKILL.md' || true)" '' 'template references'
   assert_eq "$(head -n 1 server/go.mod)" "module $module/server" 'server module'
   assert_lacks server/main.go "$module/server/v"
   assert_contains server/default.nix "pname = \"$slug-server\";" 'version = "0.0.1";'
