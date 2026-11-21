@@ -733,7 +733,7 @@ remove_client() {
     -e '/^            rustfmt$/d' \
     -e '/^            ruff$/d' \
     -e '/^          client = pkgs\.callPackage \.\/client { };$/d' \
-    -e '/^          client = pkgs\.mkImage {$/,/^          };$/d' \
+    -e '/^          client = pkgs\.trev\.libs\.mkImage {$/,/^          };$/d' \
     -e '/^            client$/d' \
     flake.nix
   remove_block flake.nix '              # rust'

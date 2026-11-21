@@ -1,9 +1,9 @@
 {
   clippy,
   lib,
-  mkRustPackage,
+  trev,
 }:
-mkRustPackage (final: {
+trev.libs.mkRustPackage (final: {
   pname = "trevstack-client";
   version = "4.3.0";
 

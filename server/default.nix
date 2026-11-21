@@ -1,9 +1,9 @@
 {
-  mkGoModule,
+  trev,
   lib,
   web,
 }:
-mkGoModule (final: {
+trev.libs.mkGoModule (final: {
   pname = "trevstack-server";
   version = "3.3.0";
 

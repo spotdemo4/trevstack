@@ -45,7 +45,7 @@
         # nix develop [#...]
         devShells = {
           default = pkgs.mkShell {
-            shellHook = pkgs.shellhook.ref;
+            shellHook = pkgs.trev.shellhook.ref;
             env = {
               GOTOOLCHAIN = "local";
               RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
@@ -98,27 +98,27 @@
 
               # util
               treefmt
-              bumper
-              fix-hash
+              trev.bumper
+              trev.fix-hash
               gomod2nix.packages.${system}.default
             ];
           };
 
           bump = pkgs.mkShell {
             packages = with pkgs; [
-              bumper
+              trev.bumper
             ];
           };
 
           release = pkgs.mkShell {
             packages = with pkgs; [
-              flake-release
+              trev.flake-release
             ];
           };
 
           update = pkgs.mkShell {
             packages = with pkgs; [
-              renovate
+              trev.renovate
               go # go get
               cargo # cargo update
               nodejs_26 # npm install
@@ -138,7 +138,7 @@
         };
 
         # nix run [#...]
-        apps = pkgs.mkApps {
+        apps = pkgs.trev.libs.mkApps {
           configure = {
             inputsFrom = [ self.devShells.${system}.default ];
             script = ''
@@ -214,11 +214,11 @@
         # nix build #images.[...]
         images = rec {
           default = server;
-          client = pkgs.mkImage {
+          client = pkgs.trev.libs.mkImage {
             src = self.packages.${system}.client;
             contents = with pkgs; [ dockerTools.caCertificates ];
           };
-          server = pkgs.mkImage {
+          server = pkgs.trev.libs.mkImage {
             src = self.packages.${system}.default;
             contents = with pkgs; [ dockerTools.caCertificates ];
             # QUIC, HTTP/3 and WebTransport use UDP; their fallbacks use TCP
@@ -230,7 +230,7 @@
         };
 
         # nix flake check
-        checks = pkgs.mkChecks {
+        checks = pkgs.trev.libs.mkChecks {
           server-lint = {
             src = self.packages.${system}.server;
             packages = with pkgs; [ golangci-lint ];
@@ -340,13 +340,13 @@
               ./buf.yaml
               ./buf.gen.yaml
             ];
-            bufDeps = pkgs.bufFetchDeps {
+            bufDeps = pkgs.trev.libs.bufFetchDeps {
               src = ./.;
               pname = "trevstack-proto-deps";
               hash = "sha256-UkM9Neh01dDHINf92aCD0KuJQ9fDue+ZaDtdxHkA2HQ=";
             };
             packages = with pkgs; [
-              bufHook
+              trev.libs.bufHook
               buf
             ];
             script = ''
@@ -399,7 +399,7 @@
           renovate-gh = {
             root = ./.github;
             files = ./.github/renovate.jsonc;
-            packages = with pkgs; [ renovate ];
+            packages = with pkgs; [ trev.renovate ];
             script = ''
               renovate-config-validator renovate.jsonc
             '';
@@ -408,7 +408,7 @@
           renovate-fj = {
             root = ./.forgejo;
             files = ./.forgejo/renovate.jsonc;
-            packages = with pkgs; [ renovate ];
+            packages = with pkgs; [ trev.renovate ];
             script = ''
               renovate-config-validator renovate.jsonc
             '';
@@ -417,7 +417,7 @@
           renovate-gt = {
             root = ./.gitea;
             files = ./.gitea/renovate.jsonc;
-            packages = with pkgs; [ renovate ];
+            packages = with pkgs; [ trev.renovate ];
             script = ''
               renovate-config-validator renovate.jsonc
             '';
