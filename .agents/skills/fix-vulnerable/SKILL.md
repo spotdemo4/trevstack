@@ -5,7 +5,7 @@ description: Fixes failures reported by the vulnerable workflow, which runs govu
 
 # Fix Vulnerable
 
-The `vulnerable` workflow runs weekly in each forge directory (`.github`, `.gitea`, `.forgejo`) that exists, with a job for each tool. Read the failed job's log to find which tool failed and why, then reproduce it locally in the `vulnerable` dev shell, from the job's working directory:
+The `vulnerable` workflow runs weekly in each forge directory (`.github`, `.gitea`, `.forgejo`, `.tangled`) that exists, with a job for each tool. Tangled runs each tool as its own workflow (`vulnerable-nix`, `vulnerable-go`, `vulnerable-rust`, `vulnerable-npm`) and skips zizmor, which only audits Actions workflows. Read the failed job's log to find which tool failed and why, then reproduce it locally in the `vulnerable` dev shell, from the job's working directory:
 
 ```sh
 (cd server && nix develop ..#vulnerable -c govulncheck ./...)
@@ -55,7 +55,7 @@ Warnings for unmaintained, unsound or yanked crates don't fail the job.
 
 ## npm audit
 
-The job runs in `web`. The GitHub job audits dev dependencies too, but the Gitea and Forgejo jobs pass `--omit=dev`, so an advisory in a dev dependency only fails the GitHub one.
+The job runs in `web`. The GitHub job audits dev dependencies too, but the Gitea, Forgejo and Tangled jobs pass `--omit=dev`, so an advisory in a dev dependency only fails the GitHub one.
 
 Renovate opens automerging fix PRs for vulnerable direct dependencies, so check for an open Renovate PR first. A failure without one is usually a transitive dependency.
 

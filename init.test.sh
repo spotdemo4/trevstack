@@ -85,6 +85,24 @@ EOF
   assert_fails 'Origin URL contains unsupported host or path characters.' parse_remote 'Origin URL' 'https://github.com/octo/../hello'
 }
 
+test_check_tangled_remote() {
+  local url
+  while read -r url; do
+    check_tangled_remote "$url"
+  done <<'EOF'
+https://tangled.org/octo.example.com/hello
+https://tangled.org/@octo.example.com/hello
+git@tangled.org:octo.example.com/hello
+octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx
+ssh://git@knot.example.com:2222/did:plc:abcdefghijklmnopqrstuvwx
+EOF
+
+  assert_fails 'Unsupported repository URL.' check_tangled_remote 'ftp://tangled.org/octo/hello'
+  assert_fails 'Unsupported repository URL.' check_tangled_remote 'https://tangled.org/octo/hello?tab=readme'
+  assert_fails 'Unsupported repository URL.' check_tangled_remote 'https://tangled.org/octo/hello world'
+  assert_fails 'Tangled repository URL cannot use github.com.' check_tangled_remote 'git@github.com:octo/hello.git'
+}
+
 test_slugify() {
   assert_eq "$(slugify 'Hello World')" hello-world 'slugify Hello World'
   assert_eq "$(slugify ' My_App 2! ')" my-app-2 'slugify My_App 2!'
@@ -193,13 +211,18 @@ test_application() (
   git add -A
   git commit --quiet --message 'Initial commit'
   # The build sandbox has no /usr/bin/env for the shebang
-  # GitHub (detected), no Gitea, Forgejo mirror, Zed, VS Code, Claude Code,
-  # client
-  printf '%s\n' '' n y https://git.example.com/octo/hello-world '' '' '' '' | bash ./init.sh 'Hello World' "$description"
+  # GitHub (detected), no Gitea, Forgejo mirror, Tangled mirror, Zed, VS Code,
+  # Claude Code, client
+  printf '%s\n' '' n y https://git.example.com/octo/hello-world \
+    y octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx '' '' '' '' |
+    bash ./init.sh 'Hello World' "$description"
 
   assert_initialized github.com/octo/hello-world hello-world 'Says \"hi\" to ${USER} \\o/'
-  assert_eq "$(git remote)" $'forgejo\norigin' remotes
+  assert_eq "$(git remote)" $'forgejo\norigin\ntangled' remotes
   assert_eq "$(git remote get-url forgejo)" https://git.example.com/octo/hello-world 'forgejo remote'
+  assert_eq "$(git remote get-url tangled)" octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx 'tangled remote'
+  assert_contains .tangled/workflows/vulnerable.yaml 'vulnerable-nix:' 'vulnerable-go:' 'vulnerable-rust:' 'vulnerable-npm:' 'cargo-audit audit'
+  [[ -f .tangled/workflows/check.yaml ]] || fail 'Tangled check workflow is missing'
   assert_eq "$(head -n 1 README.md)" '# <img src="web/public/icons/icon.svg" alt="" height="32"> Hello World' 'README title'
   assert_contains README.md "$description" \
     'https://github.com/octo/hello-world/actions/workflows/check.yaml' \
@@ -219,7 +242,7 @@ test_application() (
   assert_contains .forgejo/renovate.jsonc \
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-world"]'
-  assert_contains .agents/skills/fix-vulnerable/SKILL.md 'govulncheck, cargo audit, npm audit' '## cargo audit' 'RUSTSEC' 'cargo-audit audit'
+  assert_contains .agents/skills/fix-vulnerable/SKILL.md 'govulncheck, cargo audit, npm audit' '## cargo audit' 'RUSTSEC' 'cargo-audit audit' '`vulnerable-rust`'
   [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test ]] || fail 'application files are missing'
   assert_eq "$(git ls-files .claude)" .claude/skills 'tracked .claude files'
   assert_eq "$(readlink .claude/skills)" ../.agents/skills '.claude/skills target'
@@ -231,15 +254,15 @@ test_minimal() (
   cd "$project"
   # nix flake init leaves the template uncommitted and init.sh not executable
   chmod -x init.sh
-  # Forgejo (detected), no GitHub, no Gitea, no Zed, no VS Code, no Claude Code,
-  # no client
-  printf '%s\n' '' n n n n n n | bash init.sh 'Hello Min' 'Says hello'
+  # Forgejo (detected), no GitHub, no Gitea, no Tangled, no Zed, no VS Code, no
+  # Claude Code, no client
+  printf '%s\n' '' n n n n n n n | bash init.sh 'Hello Min' 'Says hello'
 
   assert_initialized git.example.com/octo/hello-min hello-min 'Says hello'
   assert_eq "$(git log --format=%s)" 'chore: initialize project' commits
   assert_eq "$(git remote)" origin remotes
   assert_eq "$(git remote get-url origin)" https://git.example.com/octo/hello-min.git 'origin remote'
-  assert_missing .github .gitea .zed .vscode .claude client test pyproject.toml
+  assert_missing .github .gitea .tangled .zed .vscode .claude client test pyproject.toml
   [[ -f .agents/skills/template-sync/SKILL.md ]] || fail '.agents/skills is missing'
   assert_contains README.md \
     'https://git.example.com/octo/hello-min/actions?workflow=check.yaml' \
@@ -269,12 +292,16 @@ test_gitea() (
   cd "$project"
   git add -A
   git commit --quiet --message 'Initial commit'
-  # Gitea, GitHub mirror, no Forgejo, no Zed, no VS Code, Claude Code, no client
-  printf '%s\n' Gitea y git@github.com:octo/hello-mirror.git n n n y n | bash ./init.sh 'Hello Gitea' 'Says hello'
+  # Gitea, GitHub mirror, no Forgejo, Tangled mirror, no Zed, no VS Code, Claude
+  # Code, no client
+  printf '%s\n' Gitea y git@github.com:octo/hello-mirror.git n \
+    y https://tangled.org/@octo.example.com/hello-gitea n n y n |
+    bash ./init.sh 'Hello Gitea' 'Says hello'
 
   assert_initialized gitea.example.com/octo/hello-gitea hello-gitea 'Says hello'
-  assert_eq "$(git remote)" $'github\norigin' remotes
+  assert_eq "$(git remote)" $'github\norigin\ntangled' remotes
   assert_eq "$(git remote get-url github)" git@github.com:octo/hello-mirror.git 'github remote'
+  assert_eq "$(git remote get-url tangled)" https://tangled.org/@octo.example.com/hello-gitea 'tangled remote'
   assert_missing .forgejo .zed .vscode client test
   [[ -L .claude/skills && -f .claude/skills/template-sync/SKILL.md ]] || fail '.claude/skills is missing'
   assert_contains README.md \
@@ -292,9 +319,13 @@ test_gitea() (
   # The client is removed from every kept forge's configuration
   assert_lacks .gitea/workflows/release.yaml client
   assert_lacks .gitea/workflows/vulnerable.yaml cargo
+  assert_contains .tangled/workflows/check.yaml 'nix flake check'
+  assert_contains .tangled/workflows/vulnerable.yaml 'vulnerable-nix:' 'vulnerable-go:' 'vulnerable-npm:'
+  assert_lacks .tangled/workflows/vulnerable.yaml cargo rust client
   assert_lacks .gitea/renovate.jsonc cargo
   assert_lacks .github/workflows/release.yaml client
   assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client
+  assert_contains .agents/skills/fix-vulnerable/SKILL.md '(`vulnerable-nix`, `vulnerable-go`, `vulnerable-npm`)'
 )
 
 test_rollback() (
@@ -320,6 +351,10 @@ test_rollback() (
     bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y ftp://git.example.com/octo/rollback)
   assert_fails 'Gitea repository URL cannot use github.com.' \
     bash ./init.sh Rollback Rollback < <(printf '%s\n' github y https://github.com/octo/rollback)
+  assert_fails 'Unsupported repository URL.' \
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n n y 'https://tangled.org/octo/roll back')
+  assert_fails 'Tangled repository URL cannot use github.com.' \
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n n y https://github.com/octo/rollback)
 
   # Generating code fails after the new repository has replaced the old one, and
   # the answers include declining Claude Code, which deletes .claude
@@ -327,7 +362,7 @@ test_rollback() (
   printf '#!%s\nexit 1\n' "$BASH" >"$tmp/failing/nix"
   chmod +x "$tmp/failing/nix"
   assert_fails '' env PATH="$tmp/failing:$PATH" \
-    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y https://git.example.com/octo/rollback '' '' n '')
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y https://git.example.com/octo/rollback n '' '' n '')
 
   assert_eq "$(git rev-parse HEAD)" "$head" HEAD
   assert_eq "$(git status --porcelain --untracked-files=all)" '' 'worktree status'
@@ -365,7 +400,7 @@ chmod +x "$tmp/bin/nix"
 PATH=$tmp/bin:$PATH
 
 create_upstream
-for test in test_parse_remote test_slugify test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_application test_minimal test_gitea test_rollback; do
+for test in test_parse_remote test_check_tangled_remote test_slugify test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_application test_minimal test_gitea test_rollback; do
   "$test"
   printf 'ok: %s\n' "$test"
 done

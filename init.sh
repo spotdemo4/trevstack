@@ -10,8 +10,9 @@ template_url=https://trev.zip/template/stack
 version=0.0.1
 year=$(date +%Y)
 
-# Forges, by the name of their configuration directory
-forges=(github gitea forgejo)
+# Forges, by the name of their configuration directory. Tangled has no flake
+# checks, and can't host origin.
+forges=(github gitea forgejo tangled)
 
 die() {
   printf '%s\n' "$1" >&2
@@ -90,10 +91,11 @@ forge_name() {
     github) printf 'GitHub\n' ;;
     gitea) printf 'Gitea\n' ;;
     forgejo) printf 'Forgejo\n' ;;
+    tangled) printf 'Tangled\n' ;;
   esac
 }
 
-# Prints the suffix of a forge's flake checks.
+# Prints the suffix of a forge's flake checks, which Tangled doesn't have.
 forge_check() {
   case $1 in
     github) printf 'gh\n' ;;
@@ -103,7 +105,7 @@ forge_check() {
 }
 
 # Checks that a repository URL's host suits its forge: GitHub repositories are
-# on github.com, and Gitea and Forgejo repositories are anywhere else.
+# on github.com, and other forges' repositories are anywhere else.
 check_forge_host() {
   local label=$1 forge=$2 host
   host=$(printf '%s' "${3%%:*}" | tr '[:upper:]' '[:lower:]')
@@ -426,12 +428,37 @@ read_template_metadata() {
   source_registry=$(grep -hE '^[[:space:]]*REGISTRY:[[:space:]]*[^[:space:]]+' .forgejo/workflows/*.yaml .gitea/workflows/*.yaml 2>/dev/null | sed -n 's/.*REGISTRY:[[:space:]]*//p' | head -n 1 || true)
 }
 
+# Checks a Tangled repository URL. Tangled remotes can name the repository by
+# its DID (owner.example.com@knot.example.com:did:plc:...) or by its owner's
+# handle (https://tangled.org/@owner.example.com/repo), which parse_remote
+# doesn't accept.
+check_tangled_remote() {
+  local url=$1 host path='[A-Za-z0-9._:@/-]+'
+  local url_pattern="^(https?|ssh)://([^@/]*@)?([A-Za-z0-9.-]+)(:[0-9]+)?/$path\$"
+  local scp_pattern="^[A-Za-z0-9._-]+@([A-Za-z0-9.-]+):$path\$"
+  if [[ $url =~ $url_pattern ]]; then
+    host=${BASH_REMATCH[3]}
+  elif [[ $url =~ $scp_pattern ]]; then
+    host=${BASH_REMATCH[1]}
+  else
+    die 'Unsupported repository URL.'
+  fi
+  check_forge_host 'Tangled repository URL' tangled "$host"
+}
+
 # Sets secondary_remote, secondary_host and secondary_repo_path from the URL of
 # the project's repository on another forge.
 read_secondary_repository() {
   local forge=$1 label
   label="$(forge_name "$1") repository URL"
   read -r -p "$label: " secondary_remote || secondary_remote=
+  # Tangled has no configuration that names the repository
+  if [[ $forge == tangled ]]; then
+    check_tangled_remote "$secondary_remote"
+    secondary_host=
+    secondary_repo_path=
+    return
+  fi
   parse_remote 'Repository URL' "$secondary_remote"
   check_forge_host "$label" "$forge" "$remote_host"
   secondary_host=$remote_host
@@ -683,7 +710,9 @@ configure_providers() {
   for other in "${forges[@]}"; do
     [[ ! -d .$other ]] || continue
     check=$(forge_check "$other")
-    remove_checks "actions-$check" "renovate-$check"
+    if [[ -n $check ]]; then
+      remove_checks "actions-$check" "renovate-$check"
+    fi
     sed_inplace "\\|^[[:space:]]*\\./\\.$other/workflows\$|d" flake.nix
     if [[ $other == github ]]; then
       sed_inplace '/^          renovate = {$/,/^          };/d' flake.nix
@@ -729,6 +758,10 @@ remove_client() {
     .agents/skills/fix-vulnerable/SKILL.md
   replace_literal 'govulncheck, cargo audit, npm audit' 'govulncheck, npm audit' .agents/skills/fix-vulnerable/SKILL.md
   replace_literal 'a RUSTSEC advisory, ' '' .agents/skills/fix-vulnerable/SKILL.md
+  replace_literal '`vulnerable-rust`, ' '' .agents/skills/fix-vulnerable/SKILL.md
+  if [[ -d .tangled ]]; then
+    remove_block .tangled/workflows/vulnerable.yaml '  vulnerable-rust:' '          nix develop ..#vulnerable --command cargo-audit audit'
+  fi
   for provider_directory in .github .gitea .forgejo; do
     [[ -d $provider_directory ]] || continue
     replace_literal ', "client/v*"' '' "$provider_directory/workflows/release.yaml"
