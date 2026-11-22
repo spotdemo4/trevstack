@@ -43,6 +43,14 @@
       system: pkgs:
       let
         androidSdk = pkgs.callPackage ./android/sdk.nix { };
+        androidHome = "${androidSdk}/libexec/android-sdk";
+        # the aapt2 that the Android Gradle plugin downloads doesn't run on NixOS
+        aapt2Override = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidHome}/build-tools/37.0.0/aapt2";
+        python = pkgs.python3.withPackages (ps: [ ps.playwright ]);
+        playwrightEnv = {
+          PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
+          PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+        };
       in
       {
 
@@ -50,14 +58,11 @@
         devShells = {
           default = pkgs.mkShell {
             shellHook = pkgs.trev.shellhook.ref;
-            env = {
+            env = playwrightEnv // {
               GOTOOLCHAIN = "local";
               RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
-              PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
-              PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
-              ANDROID_HOME = "${androidSdk}/libexec/android-sdk";
-              # the aapt2 that the Android Gradle plugin downloads doesn't run on NixOS
-              GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdk}/libexec/android-sdk/build-tools/37.0.0/aapt2";
+              ANDROID_HOME = androidHome;
+              GRADLE_OPTS = aapt2Override;
             };
             packages = with pkgs; [
               # go
@@ -96,7 +101,7 @@
               trevrpc.packages.${system}.trevrpc-kotlin
 
               # python
-              (python3.withPackages (ps: [ ps.playwright ]))
+              python
               ruff
               pyright
 
@@ -133,7 +138,7 @@
 
           update = pkgs.mkShell {
             # Renovate updates android/app/gradle.lockfile with Gradle, which configures the app
-            env.ANDROID_HOME = "${androidSdk}/libexec/android-sdk";
+            env.ANDROID_HOME = androidHome;
             packages = with pkgs; [
               trev.renovate
               gradle_9 # gradle --write-locks
@@ -182,11 +187,11 @@
               jdk25
             ];
             script = ''
-              export ANDROID_HOME=${androidSdk}/libexec/android-sdk
+              export ANDROID_HOME=${androidHome}
               # the dependencies tasks resolve every declared configuration, and the builds resolve
               # the ones the Android Gradle plugin adds while building, which writes all their locks
               gradle -p android --write-locks \
-                -Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdk}/libexec/android-sdk/build-tools/37.0.0/aapt2 \
+                ${aapt2Override} \
                 dependencies :app:dependencies \
                 :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :app:testDebugUnitTest
               # then pins every artifact the Nix build downloads in android/deps.json. bwrap only
@@ -280,10 +285,8 @@
 
           integration = {
             root = ./test;
-            packages = with pkgs; [ (python3.withPackages (ps: [ ps.playwright ])) ];
-            env = {
-              PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
-              PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+            packages = [ python ];
+            env = playwrightEnv // {
               # the build sandbox has no fonts, and without them text has no size and is never visible
               FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = [ pkgs.dejavu_fonts ]; };
             };
@@ -335,7 +338,7 @@
             filter = file: file.hasExt "py";
             include = [ ./pyproject.toml ];
             packages = with pkgs; [
-              (python3.withPackages (ps: [ ps.playwright ]))
+              python
               ruff
               pyright
             ];

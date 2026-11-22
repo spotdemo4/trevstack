@@ -798,12 +798,21 @@ configure_providers() {
   done
 }
 
+# Removes the let block from flake.nix once the removed components leave it
+# empty.
+remove_empty_let() {
+  sed_inplace '/^      let$/{N;/^      let\n      in$/d;}' flake.nix
+}
+
 # Removes the Rust client and the Python tests that drive it.
 remove_client() {
   local provider_directory cargo_rule_line
   rm -f pyproject.toml
   sed_inplace \
+    -e 's/^            env = playwrightEnv \/\/ {$/            env = {/' \
     -e '/^            RUST_SRC_PATH = /d' \
+    -e '/^        python = /d' \
+    -e '/^        playwrightEnv = {$/,/^        };$/d' \
     -e '/^              protoc-gen-prost$/d' \
     -e '/^              trevrpc\.packages\.\${system}\.trevrpc-rust$/d' \
     -e '/^              \.\/client\/src\/gen$/d' \
@@ -818,6 +827,7 @@ remove_client() {
     flake.nix
   remove_block flake.nix '              # rust'
   remove_block flake.nix '              # python'
+  remove_empty_let
   remove_checks integration python-lint
   remove_block buf.gen.yaml '  - local: protoc-gen-prost'
   remove_block buf.gen.yaml '  - local: protoc-gen-trevrpc-rust'
@@ -885,7 +895,7 @@ remove_android() {
   local provider_directory rule_line
   sed_inplace \
     -e '/^              ANDROID_HOME = /d' \
-    -e "/^              # the aapt2 that the Android Gradle plugin downloads doesn't run on NixOS$/d" \
+    -e "/^        # the aapt2 that the Android Gradle plugin downloads doesn't run on NixOS$/d" \
     -e '/^              GRADLE_OPTS = /d' \
     -e "/^              protobuf # protoc, which runs buf's java plugin$/d" \
     -e '/^              protobuf$/d' \
@@ -894,9 +904,9 @@ remove_android() {
     -e '/^          android = pkgs\.buildPackages\.callPackage \.\/android { };$/d' \
     -e '/^          android = \.\/android;$/d' \
     -e '/^            ktlint$/d' \
-    -e '/^      let$/d' \
     -e '/^        androidSdk = pkgs\.callPackage \.\/android\/sdk\.nix { };$/d' \
-    -e '/^      in$/d' \
+    -e '/^        androidHome = /d' \
+    -e '/^        aapt2Override = /d' \
     -e '/^            # Renovate updates android\/app\/gradle\.lockfile with Gradle, which configures the app$/d' \
     -e '/^            env\.ANDROID_HOME = /d' \
     -e '/^              gradle_9 # gradle --write-locks$/d' \
@@ -904,6 +914,7 @@ remove_android() {
     flake.nix
   remove_block flake.nix '              # android'
   remove_block flake.nix '          update-android-deps = {' '          };'
+  remove_empty_let
   remove_block buf.gen.yaml '  # protobuf-java messages, which the TrevRPC Kotlin runtime encodes and decodes. the buf.validate'
   remove_block buf.gen.yaml '  - local: protoc-gen-trevrpc-kotlin'
   remove_block buf.gen.yaml '    - file_option: java_package_prefix' "      value: $(java_package "$source_base").gen"

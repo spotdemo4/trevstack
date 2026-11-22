@@ -177,6 +177,17 @@ EOF
   rm flake.nix
 )
 
+test_remove_empty_let() (
+  cd "$tmp"
+  printf '      let\n        a = 1;\n      in\n      {\n' >flake.nix
+  remove_empty_let
+  assert_eq "$(<flake.nix)" $'      let\n        a = 1;\n      in\n      {' 'remove_empty_let with bindings'
+  printf '      let\n      in\n      {\n' >flake.nix
+  remove_empty_let
+  assert_eq "$(<flake.nix)" '      {' 'remove_empty_let without bindings'
+  rm flake.nix
+)
+
 # Creates the template's upstream repository, which init.sh fetches to find the
 # template commit.
 create_upstream() {
@@ -301,7 +312,7 @@ test_minimal() (
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-min"]'
   assert_lacks flake.nix \
-    client cargo python ruff trevrpc-rust \
+    client cargo python playwright ruff trevrpc-rust \
     'integration = {' 'python-lint = {' 'actions-gh = {' 'renovate-gh = {' \
     'actions-gt = {' 'renovate-gt = {'
   assert_contains flake.nix 'actions-fj = {' 'renovate-fj = {'
@@ -489,7 +500,7 @@ chmod +x "$tmp/bin/nix"
 PATH=$tmp/bin:$PATH
 
 create_upstream
-for test in test_parse_remote test_check_tangled_remote test_slugify test_java_package test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_application test_minimal test_gitea test_t3_worktree_setup test_rollback; do
+for test in test_parse_remote test_check_tangled_remote test_slugify test_java_package test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_remove_empty_let test_application test_minimal test_gitea test_t3_worktree_setup test_rollback; do
   "$test"
   printf 'ok: %s\n' "$test"
 done
