@@ -11,7 +11,7 @@ import { file_google_protobuf_descriptor } from "@bufbuild/protobuf/wkt";
  * Describes the file auth/v1/options.proto.
  */
 export const file_auth_v1_options: GenFile = /*@__PURE__*/
-  fileDesc("ChVhdXRoL3YxL29wdGlvbnMucHJvdG8SB2F1dGgudjE6OAoGcHVibGljEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMY0IYDIAEoCFIGcHVibGljQo4BCgtjb20uYXV0aC52MUIMT3B0aW9uc1Byb3RvUAFaNHRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci92My9nZW4vYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z", [file_google_protobuf_descriptor]);
+  fileDesc("ChVhdXRoL3YxL29wdGlvbnMucHJvdG8SB2F1dGgudjE6OAoGcHVibGljEh4uZ29vZ2xlLnByb3RvYnVmLk1ldGhvZE9wdGlvbnMY0IYDIAEoCFIGcHVibGljQqYBCiN6aXAudHJldi50ZW1wbGF0ZS5zdGFjay5nZW4uYXV0aC52MUIMT3B0aW9uc1Byb3RvUAFaNHRyZXYuemlwL3RlbXBsYXRlL3N0YWNrL3NlcnZlci92My9nZW4vYXV0aC92MTthdXRodjGiAgNBWFiqAgdBdXRoLlYxygIHQXV0aFxWMeICE0F1dGhcVjFcR1BCTWV0YWRhdGHqAghBdXRoOjpWMWIGcHJvdG8z", [file_google_protobuf_descriptor]);
 
 /**
  * Marks a method that needs no session. Every other method requires the token of an unexpired

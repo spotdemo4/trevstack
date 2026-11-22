@@ -15,6 +15,15 @@ go:
           - "**/go.mod"
           - "**/go.sum"
 
+kotlin:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.kt"
+          - "**/*.kts"
+          - "**/gradle/libs.versions.toml"
+          - "**/gradle/wrapper/**"
+          - android/deps.json
+
 nix:
   - changed-files:
       - any-glob-to-any-file:

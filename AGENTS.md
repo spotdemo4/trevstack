@@ -15,7 +15,7 @@
 
 ## Generated API Code
 
-- Regenerate TrevRPC libraries with `buf generate` from the repository root (or `nix develop -c buf generate` outside the dev shell); do not manually edit generated files in `server/gen/`, `web/gen/`, or `client/src/gen/`.
+- Regenerate TrevRPC libraries with `buf generate` from the repository root (or `nix develop -c buf generate` outside the dev shell); do not manually edit generated files in `server/gen/`, `web/gen/`, `client/src/gen/`, or `android/app/src/gen/`.
 - Make API changes in the proto source files.
 
 ## Version Control Requirements

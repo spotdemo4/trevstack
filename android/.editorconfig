@@ -1,0 +1,4 @@
+# https://ktlint.github.io/ktlint/latest/rules/configuration-ktlint/#rule-specific-configuration-settings
+[*.{kt,kts}]
+# composable functions are named like classes
+ktlint_function_naming_ignore_when_annotated_with = Composable

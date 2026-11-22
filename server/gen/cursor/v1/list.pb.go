@@ -683,8 +683,8 @@ const file_cursor_v1_list_proto_rawDesc = "" +
 	"\t_usernameB\t\n" +
 	"\a_source\"G\n" +
 	"\x13ListStreamsResponse\x120\n" +
-	"\x06stream\x18\x01 \x01(\v2\x18.cursor.v1.StreamSummaryR\x06streamB\x99\x01\n" +
-	"\rcom.cursor.v1B\tListProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
+	"\x06stream\x18\x01 \x01(\v2\x18.cursor.v1.StreamSummaryR\x06streamB\xb1\x01\n" +
+	"%zip.trev.template.stack.gen.cursor.v1B\tListProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 
 var file_cursor_v1_list_proto_msgTypes = make([]protoimpl.MessageInfo, 4)

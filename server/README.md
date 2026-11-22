@@ -49,14 +49,16 @@ Flags take precedence over environment variables.
 
 | path                          | description                                                              |
 | ----------------------------- | ------------------------------------------------------------------------ |
-| `/trevrpc`                    | TrevRPC browser sessions, over WebTransport or QMux over WebSocket       |
+| `/trevrpc`                    | TrevRPC browser sessions and Android clients' calls                      |
 | `/trevrpc/certificate-hashes` | hashes of the development certificate, see [tls](#tls)                   |
 | `/`                           | web app; unknown paths fall back to `index.html` for client-side routing |
 
 The server listens on one UDP and one TCP port with the same number. Native TrevRPC clients connect
 over QUIC on the UDP port and fall back to QMux over TLS on the TCP port when UDP is blocked.
 Browsers connect to `/trevrpc` over WebTransport on the UDP port, or QMux over WebSocket on the TCP
-port, and load the web app over HTTP/3, HTTP/2, or HTTP/1.1. Every connection uses TLS.
+port, and load the web app over HTTP/3, HTTP/2, or HTTP/1.1. Android clients, which use Cronet,
+POST each call to `/trevrpc` over HTTP/3 on the UDP port, or HTTP/2 on the TCP port when UDP is
+blocked. Every connection uses TLS.
 
 Browser sessions are admitted from pages served by the server itself and from `ALLOWED_ORIGINS`,
 and in builds without the `prod` tag from the web development server at `http://localhost:3000`; the

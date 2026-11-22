@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- the web app's dark background and icon colours, from Catppuccin Mocha -->
+    <color name="ic_launcher_background">#1E1E2E</color>
+    <color name="ic_launcher_foreground">#BAC2DE</color>
+</resources>

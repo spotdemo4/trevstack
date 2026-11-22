@@ -238,8 +238,8 @@ const file_auth_v1_login_proto_rawDesc = "" +
 	"\rLoginResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +
 	"\x03sub\x18\x02 \x01(\tR\x03sub\x12\x10\n" +
-	"\x03exp\x18\x03 \x01(\x03R\x03expB\x8c\x01\n" +
-	"\vcom.auth.v1B\n" +
+	"\x03exp\x18\x03 \x01(\x03R\x03expB\xa4\x01\n" +
+	"#zip.trev.template.stack.gen.auth.v1B\n" +
 	"LoginProtoP\x01Z4trev.zip/template/stack/server/v3/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_login_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

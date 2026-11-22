@@ -127,6 +127,35 @@ slugify() {
   printf '%s\n' "$slug"
 }
 
+# Prints the Java package and Android application ID for a repository path
+# such as trev.zip/template/stack: the host's labels in reverse, then the
+# path's segments, each lowercase letters and digits that start with a letter
+# and aren't a Java keyword (zip.trev.template.stack). Underscores are left
+# out too, since ktlint rejects them in package names.
+java_package() {
+  local host path part package='' index
+  local -a labels parts segments=()
+  host=${1%%/*}
+  host=${host%%:*}
+  path=${1#*/}
+  IFS=. read -r -a labels <<<"$host"
+  for ((index = ${#labels[@]} - 1; index >= 0; index--)); do
+    segments+=("${labels[index]}")
+  done
+  IFS=/ read -r -a parts <<<"$path"
+  segments+=("${parts[@]}")
+  for part in "${segments[@]}"; do
+    part=$(printf '%s' "$part" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+//g')
+    [[ -n $part ]] || continue
+    [[ $part =~ ^[a-z] ]] || part="x$part"
+    case $part in
+      abstract | assert | boolean | break | byte | case | catch | char | class | const | continue | default | do | double | else | enum | extends | false | final | finally | float | for | goto | if | implements | import | instanceof | int | interface | long | native | new | null | package | private | protected | public | return | short | static | strictfp | super | switch | synchronized | this | throw | throws | transient | true | try | void | volatile | while) part="x$part" ;;
+    esac
+    package+=${package:+.}$part
+  done
+  printf '%s\n' "$package"
+}
+
 # Prints a value escaped for a double-quoted Nix string.
 nix_string() {
   local value=$1
@@ -194,7 +223,7 @@ replace_tracked_text() {
   while IFS= read -r -d '' file; do
     [[ -f $file && ! -L $file ]] || continue
     case $file in
-      server/gen/* | web/gen/* | client/src/gen/*) continue ;;
+      server/gen/* | web/gen/* | client/src/gen/* | android/app/src/gen/*) continue ;;
     esac
     grep -IqF -- "$old" "$file" || continue
     replace_literal "$old" "$new" "$file"
@@ -544,6 +573,13 @@ choose_components() {
     # The Python integration tests exist only to drive the client binary.
     delete_directories+=(client test)
   fi
+
+  keep_android=true
+  read -r -p 'Keep the Android app? [Y/n] ' reply || reply=
+  if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
+    keep_android=false
+    delete_directories+=(android)
+  fi
 }
 
 # Checks that the directories to delete hold nothing but build outputs.
@@ -551,7 +587,7 @@ check_ignored_files() {
   local directory ignored_files
   for directory in "${delete_directories[@]}"; do
     # Build outputs are safe to discard along with the directories that produced them.
-    ignored_files=$(git ls-files --others --ignored --exclude-standard -- "$directory" ':(exclude)client/target' ':(exclude,glob)**/__pycache__/**' ':(exclude,glob)**/.ruff_cache/**') || die 'Unable to inspect ignored files.'
+    ignored_files=$(git ls-files --others --ignored --exclude-standard -- "$directory" ':(exclude)client/target' ':(exclude)android/.gradle' ':(exclude)android/.kotlin' ':(exclude)android/build' ':(exclude)android/app/build' ':(exclude)android/local.properties' ':(exclude,glob)**/__pycache__/**' ':(exclude,glob)**/.ruff_cache/**') || die 'Unable to inspect ignored files.'
     if [[ -n $ignored_files ]]; then
       die "Remove ignored files under $directory before deleting it."
     fi
@@ -570,6 +606,7 @@ resolve_repositories() {
   fi
   target_base=${origin_host}/${origin_repo_path}
   target_module=${target_base}/server
+  target_package=$(java_package "$target_base")
 }
 
 # Creates the repository that replaces .git once the project is initialized,
@@ -644,11 +681,40 @@ rename_project() {
   replace_literal "${slug}_client" "${slug//-/_}_client" client/src/main.rs
 }
 
+# Moves the Android app to the Java package of the project's repository, which
+# is also its application ID.
+rename_android_package() {
+  local source_package directory source_directory target_directory temp_directory parent
+  source_package=$(java_package "$source_base")
+  [[ $source_package != "$target_package" ]] || return 0
+  replace_tracked_text "$source_package" "$target_package"
+  # and as a path, in the Android README
+  replace_tracked_text "${source_package//.//}" "${target_package//.//}"
+  for directory in android/app/src/main/kotlin android/app/src/test/kotlin; do
+    source_directory=$directory/${source_package//.//}
+    target_directory=$directory/${target_package//.//}
+    [[ -d $source_directory ]] || die "Unable to find the Android package in $directory."
+    # Through a temporary directory, in case one package contains the other.
+    temp_directory=$(mktemp -d "$directory/.package.XXXXXX")
+    mv "$source_directory" "$temp_directory/package"
+    parent=${source_directory%/*}
+    while [[ $parent != "$directory" ]] && rmdir "$parent" 2>/dev/null; do
+      parent=${parent%/*}
+    done
+    mkdir -p "${target_directory%/*}"
+    mv "$temp_directory/package" "$target_directory"
+    rmdir "$temp_directory"
+  done
+  # buf generate writes Java into package directories, so the configure app
+  # regenerates the code from scratch.
+  rm -rf android/app/src/gen
+}
+
 # Replaces the template's description with the project's.
 set_descriptions() {
   local old_description
   if [[ -n $source_description && $source_description != "$description" ]]; then
-    replace_literal "$source_description" "$nix_description" flake.nix client/default.nix server/default.nix
+    replace_literal "$source_description" "$nix_description" flake.nix client/default.nix server/default.nix android/default.nix
     replace_literal "$source_description" "$json_description" client/Cargo.toml
   fi
   old_description=$(sed -n 's/^  "description":[[:space:]]*"\(.*\)",/\1/p' web/package.json | head -n 1 || true)
@@ -682,6 +748,12 @@ reset_versions() {
     [[ -n $client_lock_name_line ]] || die 'Unable to find the client lockfile package metadata.'
     sed_inplace -E "$((client_lock_name_line + 1))s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" client/Cargo.lock
     nix_package_files+=(client/default.nix)
+  fi
+  if $keep_android; then
+    version_line=$(grep -n -m 1 -E '^version[[:space:]]*=[[:space:]]*"[^"]+"$' android/build.gradle.kts | cut -d: -f1 || true)
+    [[ -n $version_line ]] || die 'Unable to find the Android app version metadata.'
+    sed_inplace -E "${version_line}s|^version[[:space:]]*=[[:space:]]*\"[^\"]+\"$|version = \"$version\"|" android/build.gradle.kts
+    nix_package_files+=(android/default.nix)
   fi
   for nix_package_file in "${nix_package_files[@]}"; do
     sed_inplace -E 's/(^[[:space:]]+version = ")[^"]+(";)/\1'"$version"'\2/' "$nix_package_file"
@@ -755,7 +827,6 @@ remove_client() {
   remove_block .gitignore '# python'
   remove_block .gitattributes '# Rust source files use Rust diff driver'
   sed_inplace -e '/^Cargo\.lock linguist-generated=true$/d' -e '/^client\/src\/gen\/\*\* linguist-generated=true$/d' .gitattributes
-  replace_literal '`server/gen/`, `web/gen/`, or `client/src/gen/`' '`server/gen/` or `web/gen/`' AGENTS.md
   sed_inplace '/^- The server also writes the development certificate to /d' AGENTS.md
   remove_block CONTRIBUTING.md 'run the client with optional arguments:' '```'
   sed_inplace '/^nix build \.#client$/d' CONTRIBUTING.md
@@ -789,6 +860,80 @@ remove_client() {
     remove_block .vscode/settings.json '  // charliermarsh.ruff'
     sed_inplace -e '/^    "ms-pyright\.pyright",$/d' -e '/^    "charliermarsh\.ruff",$/d' .vscode/extensions.json
   fi
+}
+
+# Lists the generated code directories of the components the project kept in
+# AGENTS.md.
+write_generated_directories() {
+  local directories=('`server/gen/`' '`web/gen/`') list index
+  $keep_client && directories+=('`client/src/gen/`')
+  $keep_android && directories+=('`android/app/src/gen/`')
+  list=${directories[0]}
+  for ((index = 1; index < ${#directories[@]}; index++)); do
+    if ((index == ${#directories[@]} - 1)); then
+      ((${#directories[@]} > 2)) && list+=','
+      list+=" or ${directories[index]}"
+    else
+      list+=", ${directories[index]}"
+    fi
+  done
+  replace_literal '`server/gen/`, `web/gen/`, `client/src/gen/`, or `android/app/src/gen/`' "$list" AGENTS.md
+}
+
+# Removes the Android app.
+remove_android() {
+  local provider_directory rule_line
+  sed_inplace \
+    -e '/^              ANDROID_HOME = /d' \
+    -e "/^              # the aapt2 that the Android Gradle plugin downloads doesn't run on NixOS$/d" \
+    -e '/^              GRADLE_OPTS = /d' \
+    -e "/^              protobuf # protoc, which runs buf's java plugin$/d" \
+    -e '/^              protobuf$/d' \
+    -e '/^ *trevrpc\.packages\.\${system}\.trevrpc-kotlin$/d' \
+    -e '/^              \.\/android\/app\/src\/gen$/d' \
+    -e '/^          android = pkgs\.buildPackages\.callPackage \.\/android { };$/d' \
+    -e '/^            ktlint$/d' \
+    -e '/^      let$/d' \
+    -e '/^        androidSdk = pkgs\.callPackage \.\/android\/sdk\.nix { };$/d' \
+    -e '/^      in$/d' \
+    -e '/^            # Renovate updates android\/app\/gradle\.lockfile with Gradle, which configures the app$/d' \
+    -e '/^            env\.ANDROID_HOME = /d' \
+    -e '/^              gradle_9 # gradle --write-locks$/d' \
+    -e '/^              jdk25$/d' \
+    flake.nix
+  remove_block flake.nix '              # android'
+  remove_block flake.nix '          update-android-deps = {' '          };'
+  remove_checks android-lint
+  remove_block buf.gen.yaml '  # protobuf-java messages, which the TrevRPC Kotlin runtime encodes and decodes. the buf.validate'
+  remove_block buf.gen.yaml '  - local: protoc-gen-trevrpc-kotlin'
+  remove_block buf.gen.yaml '    - file_option: java_package_prefix' "      value: $(java_package "$source_base").gen"
+  remove_block treefmt.toml '[formatter.ktlint]'
+  sed_inplace '/^  "android\/app\/src\/gen\/\*\*",$/d' treefmt.toml
+  remove_block .gitignore '# android'
+  remove_block .gitattributes '# Kotlin source files use Kotlin diff driver'
+  remove_block .gitattributes '# Gradle wrapper'
+  sed_inplace \
+    -e '/^android\/deps\.json linguist-generated=true$/d' \
+    -e '/^gradle\.lockfile linguist-generated=true$/d' \
+    -e '/^settings-gradle\.lockfile linguist-generated=true$/d' \
+    -e '/^android\/app\/src\/gen\/\*\* linguist-generated=true$/d' \
+    .gitattributes
+  sed_inplace '/^nix build \.#android$/d' CONTRIBUTING.md
+  remove_block CONTRIBUTING.md 'after changing `android/gradle/libs.versions.toml`, update the Gradle lock files and `android/deps.json`:' '```'
+  for provider_directory in .github .gitea .forgejo; do
+    [[ -d $provider_directory ]] || continue
+    remove_block "$provider_directory/labeler.yaml" 'kotlin:'
+    rule_line=$(grep -n -m 1 -F '"matchManagers": ["gradle", "gradle-wrapper"],' "$provider_directory/renovate.jsonc" | cut -d: -f1 || true)
+    if [[ -z $rule_line || $(sed -n "$((rule_line - 1))p;$((rule_line + 7))p" "$provider_directory/renovate.jsonc") != $'    {\n    },' ]]; then
+      die "Unable to find the gradle rule in $provider_directory/renovate.jsonc."
+    fi
+    sed_inplace "$((rule_line - 1)),$((rule_line + 7))d" "$provider_directory/renovate.jsonc"
+    sed_inplace \
+      -e '/^    "\^nix run \\\\\.#update-android-deps\$"$/d' \
+      -e 's/^\(    "\^nix run \\\\\.#update-go-deps\$"\),$/\1/' \
+      -e '/^        "zip\.trev\.trevrpc:\*\*",$/d' \
+      "$provider_directory/renovate.jsonc"
+  done
 }
 
 # Rewrites the license holder without assuming the template's current year or name.
@@ -830,6 +975,9 @@ write_readme() {
     readme_badges+=("$rust_badge")
   else
     readme_sections=$(printf '%s\n' "$readme_sections" | sed '/^- \[client\](client\/README\.md)/d')
+  fi
+  if ! $keep_android; then
+    readme_sections=$(printf '%s\n' "$readme_sections" | sed '/^- \[android\](android\/README\.md)/d')
   fi
   # Container images share a registry path, so rewrite the prefix in every component README.
   readme_image_base=$(sed -n 's|^[[:space:]]*\([^[:space:]]*\)/server:latest$|\1|p' server/README.md)
@@ -935,6 +1083,17 @@ validate_project() {
     [[ ! -e client && ! -e test && ! -e pyproject.toml ]] || die 'Replacement validation failed: client files still exist.'
     ! grep -qE '\./client|client/|#client|\<cargo\>|rust(fmt|c|-analyzer)|\<ruff\>|pyright|python3|protoc-gen-prost|trevrpc-rust|RUSTSEC|^### client$' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md .agents/skills/fix-vulnerable/SKILL.md || die 'Replacement validation failed: client references remain.'
   fi
+  if $keep_android; then
+    require_text android/build.gradle.kts "version = \"$version\""
+    require_text android/default.nix "pname = \"${slug}-android\";"
+    require_text android/default.nix "version = \"$version\";"
+    require_text android/default.nix "description = \"$nix_description\";"
+    require_text android/app/build.gradle.kts "applicationId = \"$target_package\""
+    [[ -f android/app/src/main/kotlin/${target_package//.//}/MainActivity.kt ]] || die 'Replacement validation failed: the Android package was not moved.'
+  else
+    [[ ! -e android ]] || die 'Replacement validation failed: Android files still exist.'
+    ! grep -qE '\./android|android/|#android|ktlint|gradle|trevrpc-kotlin|java_package|zip\.trev\.trevrpc' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md .gitignore .gitattributes || die 'Replacement validation failed: Android references remain.'
+  fi
   require_text web/default.nix "version = \"$version\";"
   require_text server/default.nix "version = \"$version\";"
   require_text server/default.nix "description = \"$nix_description\";"
@@ -982,12 +1141,19 @@ main() {
   changes_started=true
   remove_template_files
   rename_project
+  if $keep_android; then
+    rename_android_package
+  fi
   set_descriptions
   reset_versions
   configure_providers
   if ! $keep_client; then
     remove_client
   fi
+  if ! $keep_android; then
+    remove_android
+  fi
+  write_generated_directories
   write_license
   write_readme
   commit_new_repository

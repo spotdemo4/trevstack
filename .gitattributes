@@ -10,11 +10,15 @@ go.sum linguist-generated=true
 gomod2nix.toml linguist-generated=true
 Cargo.lock linguist-generated=true
 package-lock.json linguist-generated=true
+android/deps.json linguist-generated=true
+gradle.lockfile linguist-generated=true
+settings-gradle.lockfile linguist-generated=true
 
 # Linguist: Buf-generated code
 server/gen/** linguist-generated=true
 web/gen/** linguist-generated=true
 client/src/gen/** linguist-generated=true
+android/app/src/gen/** linguist-generated=true
 
 # Go source files use Go diff driver
 *.go diff=go linguist-language=Go
@@ -22,6 +26,14 @@ go.mod text linguist-language=Go
 
 # Rust source files use Rust diff driver
 *.rs text diff=rust linguist-language=Rust
+
+# Kotlin source files use Kotlin diff driver
+*.kt text diff=kotlin linguist-language=Kotlin
+*.kts text diff=kotlin linguist-language=Kotlin
+
+# Gradle wrapper
+gradlew text eol=lf
+*.jar binary
 
 # Node / TypeScript source files
 *.js text diff=javascript linguist-language=JavaScript

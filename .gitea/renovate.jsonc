@@ -7,7 +7,11 @@
   "platform": "gitea",
   "endpoint": "https://trev.zip/api/v1",
   "repositories": ["template/stack"],
-  "allowedCommands": ["^nix run \\.#update-buf-deps$", "^nix run \\.#update-go-deps$"],
+  "allowedCommands": [
+    "^nix run \\.#update-buf-deps$",
+    "^nix run \\.#update-go-deps$",
+    "^nix run \\.#update-android-deps$"
+  ],
 
   // repository
   "extends": ["config:recommended"],
@@ -110,6 +114,15 @@
       "addLabels": ["rust"]
     },
     {
+      "matchManagers": ["gradle", "gradle-wrapper"],
+      "addLabels": ["kotlin"],
+      // "update" runs it for every gradle update, even in groups led by another manager
+      "postUpgradeTasks": {
+        "commands": ["nix run .#update-android-deps"],
+        "executionMode": "update"
+      }
+    },
+    {
       "matchPackageNames": ["solid-js", "@solidjs/**"],
       "groupName": "solidjs"
     },
@@ -121,6 +134,7 @@
       "matchPackageNames": [
         "@trevrpc/**",
         "trev.zip/llc/trevrpc/**",
+        "zip.trev.trevrpc:**",
         "trevrpc",
         "https://trev.zip/llc/trevrpc{,.git}"
       ],

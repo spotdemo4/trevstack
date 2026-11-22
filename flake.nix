@@ -40,7 +40,11 @@
       ...
     }:
     trevpkgs.libs.mkFlake (
-      system: pkgs: {
+      system: pkgs:
+      let
+        androidSdk = pkgs.callPackage ./android/sdk.nix { };
+      in
+      {
 
         # nix develop [#...]
         devShells = {
@@ -51,6 +55,9 @@
               RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
               PLAYWRIGHT_BROWSERS_PATH = pkgs.playwright-driver.browsers;
               PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+              ANDROID_HOME = "${androidSdk}/libexec/android-sdk";
+              # the aapt2 that the Android Gradle plugin downloads doesn't run on NixOS
+              GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdk}/libexec/android-sdk/build-tools/37.0.0/aapt2";
             };
             packages = with pkgs; [
               # go
@@ -71,14 +78,22 @@
               rustfmt
               clippy
 
+              # android
+              jdk25
+              gradle_9
+              ktlint
+              androidSdk
+
               # proto
               buf
               protoc-gen-go
               protoc-gen-es
               protoc-gen-prost
+              protobuf # protoc, which runs buf's java plugin
               trevrpc.packages.${system}.trevrpc-go
               trevrpc.packages.${system}.trevrpc-js
               trevrpc.packages.${system}.trevrpc-rust
+              trevrpc.packages.${system}.trevrpc-kotlin
 
               # python
               (python3.withPackages (ps: [ ps.playwright ]))
@@ -117,8 +132,12 @@
           };
 
           update = pkgs.mkShell {
+            # Renovate updates android/app/gradle.lockfile with Gradle, which configures the app
+            env.ANDROID_HOME = "${androidSdk}/libexec/android-sdk";
             packages = with pkgs; [
               trev.renovate
+              gradle_9 # gradle --write-locks
+              jdk25
               go # go get
               cargo # cargo update
               nodejs_26 # npm install
@@ -154,6 +173,26 @@
               buf dep update
               buf generate
               fix-hash .#checks.${system}.protobuf-lint
+            '';
+          };
+
+          update-android-deps = {
+            packages = with pkgs; [
+              gradle_9
+              jdk25
+            ];
+            script = ''
+              export ANDROID_HOME=${androidSdk}/libexec/android-sdk
+              # the dependencies tasks resolve every declared configuration, and the builds resolve
+              # the ones the Android Gradle plugin adds while building, which writes all their locks
+              gradle -p android --write-locks \
+                -Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdk}/libexec/android-sdk/build-tools/37.0.0/aapt2 \
+                dependencies :app:dependencies \
+                :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease :app:testDebugUnitTest
+              # then pins every artifact the Nix build downloads in android/deps.json. bwrap only
+              # keeps the build out of ~, and needs user namespaces, which CI runners may not allow
+              update_script=$(nix build --no-link --print-out-paths .#android.mitmCache.updateScript)
+              USE_BWRAP=0 "$update_script"
             '';
           };
 
@@ -200,6 +239,7 @@
             nixfmt
             rustfmt
             ruff
+            ktlint
           ];
         };
 
@@ -207,6 +247,7 @@
         packages = rec {
           default = server;
           client = pkgs.callPackage ./client { };
+          android = pkgs.buildPackages.callPackage ./android { };
           web = pkgs.buildPackages.callPackage ./web { };
           server = pkgs.callPackage ./server { inherit web; };
         };
@@ -249,6 +290,17 @@
             script = ''
               cargo fmt --check
               cargo clippy --offline --all-targets -- -D warnings
+            '';
+          };
+
+          android-lint = {
+            root = ./android;
+            filter = file: file.hasExt "kt" || file.hasExt "kts";
+            include = [ ./android/.editorconfig ];
+            packages = with pkgs; [ ktlint ];
+            # the Android lint checks run when the package builds
+            script = ''
+              ktlint --relative "**/*.kt" "**/*.kts" "!app/src/gen/**"
             '';
           };
 
@@ -365,6 +417,7 @@
               ./server/gen
               ./web/gen
               ./client/src/gen
+              ./android/app/src/gen
             ];
             inherit (self.checks.${system}.protobuf-lint) bufDeps;
             packages = with pkgs; [
@@ -373,9 +426,11 @@
               protoc-gen-go
               protoc-gen-es
               protoc-gen-prost
+              protobuf
               trevrpc.packages.${system}.trevrpc-go
               trevrpc.packages.${system}.trevrpc-js
               trevrpc.packages.${system}.trevrpc-rust
+              trevrpc.packages.${system}.trevrpc-kotlin
             ];
             # regenerates every plugin output from scratch, so stale and leftover files both fail
             script = ''

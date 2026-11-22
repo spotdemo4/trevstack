@@ -318,8 +318,8 @@ const file_cursor_v1_share_proto_rawDesc = "" +
 	"\rShareResponse\x12)\n" +
 	"\x05moved\x18\x01 \x01(\v2\x11.cursor.v1.CursorH\x00R\x05moved\x12,\n" +
 	"\x05ended\x18\x02 \x01(\v2\x14.cursor.v1.StreamEndH\x00R\x05endedB\a\n" +
-	"\x05eventB\x9a\x01\n" +
-	"\rcom.cursor.v1B\n" +
+	"\x05eventB\xb2\x01\n" +
+	"%zip.trev.template.stack.gen.cursor.v1B\n" +
 	"ShareProtoP\x01Z8trev.zip/template/stack/server/v3/gen/cursor/v1;cursorv1\xa2\x02\x03CXX\xaa\x02\tCursor.V1\xca\x02\tCursor\\V1\xe2\x02\x15Cursor\\V1\\GPBMetadata\xea\x02\n" +
 	"Cursor::V1b\x06proto3"
 

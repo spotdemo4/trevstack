@@ -54,6 +54,7 @@ nix flake check
 ```sh
 nix build .#server
 nix build .#client
+nix build .#android
 ```
 
 ### dependencies
@@ -69,6 +70,12 @@ with [go](https://go.dev/) and [gomod2nix](https://github.com/nix-community/gomo
 ```sh
 go -C server mod tidy
 gomod2nix generate --with-deps --dir server
+```
+
+after changing `android/gradle/libs.versions.toml`, update the Gradle lock files and `android/deps.json`:
+
+```sh
+nix run .#update-android-deps
 ```
 
 ### release

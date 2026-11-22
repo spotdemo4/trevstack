@@ -159,7 +159,9 @@ func run(cfg config, log *slog.Logger) error {
 	options := server.Options()
 	// Browsers connect over WebTransport, or QMux over WebSocket when UDP is
 	// blocked, at /trevrpc, from pages served by mux, at allowedOrigins, or
-	// at devOrigins. Every other request is served by mux.
+	// at devOrigins. Android clients POST each call to /trevrpc over HTTP/3,
+	// or HTTP/2 when UDP is blocked. Every other request is served by mux.
+	options.EnableHTTP = true
 	options.EnableWebTransport = true
 	options.WebTransportAdmission = trevrpc.SameOriginAdmission(slices.Concat(cfg.allowedOrigins, devOrigins)...)
 	options.HTTPFallback = mux

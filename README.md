@@ -83,6 +83,7 @@ changes can be ported to the project.
   authentication, and observability
   - [web](web/README.md): web app served by the server; pages, API calls, and theme
 - [client](client/README.md): command-line client for the API; subcommands, options, and scripting
+- [android](android/README.md): Android app for the API; modes, development, and signing
 
 The API is defined in [`proto/`](proto); change it there and run `buf generate` to regenerate the code
 that uses it.

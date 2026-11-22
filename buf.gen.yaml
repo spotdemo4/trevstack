@@ -39,13 +39,24 @@ plugins:
     out: client/src/gen
     strategy: all
 
+  # protobuf-java messages, which the TrevRPC Kotlin runtime encodes and decodes. the buf.validate
+  # messages are included because the generated descriptors of the protos that use them refer to them
+  - protoc_builtin: java
+    out: android/app/src/gen
+    include_imports: true
+
+  - local: protoc-gen-trevrpc-kotlin
+    out: android/app/src/gen
+
 managed:
   enabled: true
   override:
     - file_option: go_package_prefix
       value: trev.zip/template/stack/server/v3/gen
+    - file_option: java_package_prefix
+      value: zip.trev.template.stack.gen
   disable:
     - file_option: go_package_prefix
       module: buf.build/trevrpc/trevrpc
-    - file_option: go_package_prefix
-      module: buf.build/bufbuild/protovalidate
+    # keeps the packages that protovalidate's own generated code uses
+    - module: buf.build/bufbuild/protovalidate

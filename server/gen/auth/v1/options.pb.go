@@ -47,8 +47,8 @@ var File_auth_v1_options_proto protoreflect.FileDescriptor
 const file_auth_v1_options_proto_rawDesc = "" +
 	"\n" +
 	"\x15auth/v1/options.proto\x12\aauth.v1\x1a google/protobuf/descriptor.proto:8\n" +
-	"\x06public\x12\x1e.google.protobuf.MethodOptions\x18І\x03 \x01(\bR\x06publicB\x8e\x01\n" +
-	"\vcom.auth.v1B\fOptionsProtoP\x01Z4trev.zip/template/stack/server/v3/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
+	"\x06public\x12\x1e.google.protobuf.MethodOptions\x18І\x03 \x01(\bR\x06publicB\xa6\x01\n" +
+	"#zip.trev.template.stack.gen.auth.v1B\fOptionsProtoP\x01Z4trev.zip/template/stack/server/v3/gen/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var file_auth_v1_options_proto_goTypes = []any{
 	(*descriptorpb.MethodOptions)(nil), // 0: google.protobuf.MethodOptions

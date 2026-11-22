@@ -110,6 +110,18 @@ test_slugify() {
   assert_fails 'Title must produce a package name beginning with a letter.' slugify '!!!'
 }
 
+test_java_package() {
+  local base expected
+  while read -r base expected; do
+    assert_eq "$(java_package "$base")" "$expected" "java_package $base"
+  done <<'EOF'
+trev.zip/template/stack zip.trev.template.stack
+github.com/octo/hello-world com.github.octo.helloworld
+git.example.com:3000/Octo/My_App com.example.git.octo.myapp
+github.com/2048/class com.github.x2048.xclass
+EOF
+}
+
 test_nix_string() {
   assert_eq "$(nix_string 'Say "hi" to ${USER} \o/')" 'Say \"hi\" to \${USER} \\o/' nix_string
 }
@@ -212,9 +224,9 @@ test_application() (
   git commit --quiet --message 'Initial commit'
   # The build sandbox has no /usr/bin/env for the shebang
   # GitHub (detected), no Gitea, Forgejo mirror, Tangled mirror, Zed, VS Code,
-  # Claude Code, T3 Code, client
+  # Claude Code, T3 Code, client, Android app
   printf '%s\n' '' n y https://git.example.com/octo/hello-world \
-    y octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx '' '' '' '' '' |
+    y octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx '' '' '' '' '' '' |
     bash ./init.sh 'Hello World' "$description"
 
   assert_initialized github.com/octo/hello-world hello-world 'Says \"hi\" to ${USER} \\o/'
@@ -246,6 +258,21 @@ test_application() (
   [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test && -f t3.json ]] || fail 'application files are missing'
   assert_eq "$(git ls-files .claude)" .claude/skills 'tracked .claude files'
   assert_eq "$(readlink .claude/skills)" ../.agents/skills '.claude/skills target'
+  # The Android app moves to the repository's package
+  assert_contains android/app/build.gradle.kts \
+    'namespace = "com.github.octo.helloworld"' 'applicationId = "com.github.octo.helloworld"'
+  assert_contains android/app/src/main/kotlin/com/github/octo/helloworld/MainActivity.kt 'package com.github.octo.helloworld'
+  assert_contains android/app/src/test/kotlin/com/github/octo/helloworld/CursorsTest.kt 'import com.github.octo.helloworld.gen.cursor.v1.Cursor'
+  assert_missing android/app/src/main/kotlin/zip android/app/src/test/kotlin/zip android/app/src/gen
+  assert_contains buf.gen.yaml 'value: com.github.octo.helloworld.gen' 'protoc-gen-trevrpc-kotlin'
+  assert_contains android/build.gradle.kts 'version = "0.0.1"'
+  assert_contains android/settings.gradle.kts 'rootProject.name = "hello-world"'
+  assert_contains android/app/src/main/res/values/strings.xml '<string name="app_name">Hello World</string>'
+  assert_contains android/default.nix 'pname = "hello-world-android";' 'version = "0.0.1";' 'description = "Says \"hi\" to \${USER} \\o/";'
+  assert_contains flake.nix 'android-lint = {' 'update-android-deps = {' 'trevrpc-kotlin'
+  assert_contains AGENTS.md '`server/gen/`, `web/gen/`, `client/src/gen/`, or `android/app/src/gen/`'
+  assert_contains README.md '- [android](android/README.md)'
+  assert_contains .github/renovate.jsonc 'update-android-deps' '"zip.trev.trevrpc:**",'
 )
 
 test_minimal() (
@@ -255,20 +282,20 @@ test_minimal() (
   # nix flake init leaves the template uncommitted and init.sh not executable
   chmod -x init.sh
   # Forgejo (detected), no GitHub, no Gitea, no Tangled, no Zed, no VS Code, no
-  # Claude Code, no T3 Code, no client
-  printf '%s\n' '' n n n n n n n n | bash init.sh 'Hello Min' 'Says hello'
+  # Claude Code, no T3 Code, no client, no Android app
+  printf '%s\n' '' n n n n n n n n n | bash init.sh 'Hello Min' 'Says hello'
 
   assert_initialized git.example.com/octo/hello-min hello-min 'Says hello'
   assert_eq "$(git log --format=%s)" 'chore: initialize project' commits
   assert_eq "$(git remote)" origin remotes
   assert_eq "$(git remote get-url origin)" https://git.example.com/octo/hello-min.git 'origin remote'
-  assert_missing .github .gitea .tangled .zed .vscode .claude t3.json client test pyproject.toml
+  assert_missing .github .gitea .tangled .zed .vscode .claude t3.json client test pyproject.toml android
   [[ -f .agents/skills/template-sync/SKILL.md ]] || fail '.agents/skills is missing'
   assert_contains README.md \
     'https://git.example.com/octo/hello-min/actions?workflow=check.yaml' \
     'logo=forgejo' \
     '- [server](server/README.md)'
-  assert_lacks README.md 'client' 'rust'
+  assert_lacks README.md 'client' 'rust' 'android'
   assert_contains server/README.md 'git.example.com/octo/hello-min/server:latest'
   assert_contains .forgejo/renovate.jsonc \
     '"endpoint": "https://git.example.com/api/v1"' \
@@ -281,7 +308,17 @@ test_minimal() (
   assert_contains web/layout/layout.tsx 'on Forgejo'
   assert_lacks .gitattributes Cargo client
   assert_lacks buf.gen.yaml prost trevrpc-rust
-  assert_lacks AGENTS.md client
+  assert_lacks AGENTS.md client android
+  assert_contains AGENTS.md '`server/gen/` or `web/gen/`'
+  assert_lacks flake.nix android ktlint gradle jdk25 trevrpc-kotlin 'protobuf # protoc' ANDROID
+  assert_lacks buf.gen.yaml java kotlin
+  assert_lacks treefmt.toml ktlint android
+  assert_lacks .gitignore android
+  assert_lacks .gitattributes Kotlin android Gradle
+  assert_lacks CONTRIBUTING.md android
+  assert_lacks .forgejo/renovate.jsonc gradle android zip.trev.trevrpc
+  assert_contains .forgejo/renovate.jsonc '"^nix run \\.#update-go-deps$"'
+  assert_lacks .forgejo/labeler.yaml kotlin
   assert_contains .agents/skills/fix-vulnerable/SKILL.md 'runs govulncheck, npm audit, flake-checker' '## govulncheck' '## npm audit' '## flake-checker'
   assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client
 )
@@ -293,9 +330,9 @@ test_gitea() (
   git add -A
   git commit --quiet --message 'Initial commit'
   # Gitea, GitHub mirror, no Forgejo, Tangled mirror, no Zed, no VS Code, Claude
-  # Code, T3 Code, no client
+  # Code, T3 Code, no client, Android app
   printf '%s\n' Gitea y git@github.com:octo/hello-mirror.git n \
-    y https://tangled.org/@octo.example.com/hello-gitea n n y y n |
+    y https://tangled.org/@octo.example.com/hello-gitea n n y y n y |
     bash ./init.sh 'Hello Gitea' 'Says hello'
 
   assert_initialized gitea.example.com/octo/hello-gitea hello-gitea 'Says hello'
@@ -327,6 +364,13 @@ test_gitea() (
   assert_lacks .github/workflows/release.yaml client
   assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client
   assert_contains .agents/skills/fix-vulnerable/SKILL.md '(`vulnerable-nix`, `vulnerable-go`, `vulnerable-npm`)'
+  # The Android app is kept without the client
+  assert_contains AGENTS.md '`server/gen/`, `web/gen/`, or `android/app/src/gen/`'
+  assert_contains android/app/build.gradle.kts 'applicationId = "com.example.gitea.octo.hellogitea"'
+  assert_contains flake.nix 'android-lint = {' 'trevrpc-kotlin' './android/app/src/gen'
+  assert_lacks flake.nix trevrpc-rust
+  assert_contains .gitea/renovate.jsonc 'update-android-deps'
+  assert_lacks .gitea/renovate.jsonc cargo
 )
 
 # Runs the t3.json worktree setup script with a direnv stub that logs its calls.
@@ -445,7 +489,7 @@ chmod +x "$tmp/bin/nix"
 PATH=$tmp/bin:$PATH
 
 create_upstream
-for test in test_parse_remote test_check_tangled_remote test_slugify test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_application test_minimal test_gitea test_t3_worktree_setup test_rollback; do
+for test in test_parse_remote test_check_tangled_remote test_slugify test_java_package test_nix_string test_json_string test_replace_literal test_remove_block test_remove_checks test_application test_minimal test_gitea test_t3_worktree_setup test_rollback; do
   "$test"
   printf 'ok: %s\n' "$test"
 done
