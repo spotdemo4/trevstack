@@ -244,7 +244,7 @@ test_application() (
   assert_eq "$(git remote)" $'forgejo\norigin\ntangled' remotes
   assert_eq "$(git remote get-url forgejo)" https://git.example.com/octo/hello-world 'forgejo remote'
   assert_eq "$(git remote get-url tangled)" octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx 'tangled remote'
-  assert_contains .tangled/workflows/vulnerable.yaml 'vulnerable-nix:' 'vulnerable-go:' 'vulnerable-rust:' 'vulnerable-npm:' 'cargo-audit audit'
+  assert_contains .tangled/workflows/vulnerable.yaml 'vulnerable-nix:' 'vulnerable-go:' 'vulnerable-rust:' 'vulnerable-npm:' 'vulnerable-android:' 'cargo-audit audit' 'osv-scanner scan source'
   [[ -f .tangled/workflows/check.yaml ]] || fail 'Tangled check workflow is missing'
   assert_eq "$(head -n 1 README.md)" '# <img src="web/public/icons/icon.svg" alt="" height="32"> Hello World' 'README title'
   assert_contains README.md "$description" \
@@ -265,7 +265,7 @@ test_application() (
   assert_contains .forgejo/renovate.jsonc \
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-world"]'
-  assert_contains .agents/skills/fix-vulnerable/SKILL.md 'govulncheck, cargo audit, npm audit' '## cargo audit' 'RUSTSEC' 'cargo-audit audit' '`vulnerable-rust`'
+  assert_contains .agents/skills/fix-vulnerable/SKILL.md 'govulncheck, cargo audit, npm audit' '## cargo audit' 'RUSTSEC' 'cargo-audit audit' '`vulnerable-rust`' '## osv-scanner' '`vulnerable-android`'
   [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test && -f t3.json ]] || fail 'application files are missing'
   assert_eq "$(git ls-files .claude)" .claude/skills 'tracked .claude files'
   assert_eq "$(readlink .claude/skills)" ../.agents/skills '.claude/skills target'
@@ -321,7 +321,7 @@ test_minimal() (
   assert_lacks buf.gen.yaml prost trevrpc-rust
   assert_lacks AGENTS.md client android
   assert_contains AGENTS.md '`server/gen/` or `web/gen/`'
-  assert_lacks flake.nix android ktlint gradle jdk25 trevrpc-kotlin 'protobuf # protoc' ANDROID
+  assert_lacks flake.nix android ktlint gradle jdk25 trevrpc-kotlin 'protobuf # protoc' ANDROID osv-scanner
   assert_lacks buf.gen.yaml java kotlin
   assert_lacks treefmt.toml ktlint android
   assert_lacks .gitignore android
@@ -330,8 +330,9 @@ test_minimal() (
   assert_lacks .forgejo/renovate.jsonc gradle android zip.trev.trevrpc
   assert_contains .forgejo/renovate.jsonc '"^nix run \\.#update-go-deps$"'
   assert_lacks .forgejo/labeler.yaml kotlin
+  assert_lacks .forgejo/workflows/vulnerable.yaml osv-scanner android
   assert_contains .agents/skills/fix-vulnerable/SKILL.md 'runs govulncheck, npm audit, flake-checker' '## govulncheck' '## npm audit' '## flake-checker'
-  assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client
+  assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client osv-scanner Android android gradle
 )
 
 test_gitea() (
@@ -374,7 +375,7 @@ test_gitea() (
   assert_lacks .gitea/renovate.jsonc cargo
   assert_lacks .github/workflows/release.yaml client
   assert_lacks .agents/skills/fix-vulnerable/SKILL.md cargo RUSTSEC client
-  assert_contains .agents/skills/fix-vulnerable/SKILL.md '(`vulnerable-nix`, `vulnerable-go`, `vulnerable-npm`)'
+  assert_contains .agents/skills/fix-vulnerable/SKILL.md '(`vulnerable-nix`, `vulnerable-go`, `vulnerable-npm`, `vulnerable-android`)' '## osv-scanner'
   # The Android app is kept without the client
   assert_contains AGENTS.md '`server/gen/`, `web/gen/`, or `android/app/src/gen/`'
   assert_contains android/app/build.gradle.kts 'applicationId = "com.example.gitea.octo.hellogitea"'

@@ -156,6 +156,7 @@
               govulncheck # govulncheck ./...
               cargo-audit # cargo-audit audit
               nodejs_26 # npm audit
+              osv-scanner # osv-scanner scan source
               flake-checker # flake-checker -f
               zizmor # actions
             ];

@@ -1,16 +1,17 @@
 ---
 name: fix-vulnerable
-description: Fixes failures reported by the vulnerable workflow, which runs govulncheck, cargo audit, npm audit, flake-checker and zizmor. Use when the vulnerable workflow fails, or when asked about a govulncheck finding, a Go vulnerability (GO-YYYY-NNNN), a RUSTSEC advisory, an npm advisory, an outdated nixpkgs input or a zizmor finding.
+description: Fixes failures reported by the vulnerable workflow, which runs govulncheck, cargo audit, npm audit, osv-scanner, flake-checker and zizmor. Use when the vulnerable workflow fails, or when asked about a govulncheck finding, a Go vulnerability (GO-YYYY-NNNN), a RUSTSEC advisory, an npm advisory, an Android or Gradle dependency advisory, an outdated nixpkgs input or a zizmor finding.
 ---
 
 # Fix Vulnerable
 
-The `vulnerable` workflow runs weekly in each forge directory (`.github`, `.gitea`, `.forgejo`, `.tangled`) that exists, with a job for each tool. Tangled runs each tool as its own workflow (`vulnerable-nix`, `vulnerable-go`, `vulnerable-rust`, `vulnerable-npm`) and skips zizmor, which only audits Actions workflows. Read the failed job's log to find which tool failed and why, then reproduce it locally in the `vulnerable` dev shell, from the job's working directory:
+The `vulnerable` workflow runs weekly in each forge directory (`.github`, `.gitea`, `.forgejo`, `.tangled`) that exists, with a job for each tool. Tangled runs each tool as its own workflow (`vulnerable-nix`, `vulnerable-go`, `vulnerable-rust`, `vulnerable-npm`, `vulnerable-android`) and skips zizmor, which only audits Actions workflows. Read the failed job's log to find which tool failed and why, then reproduce it locally in the `vulnerable` dev shell, from the job's working directory:
 
 ```sh
 (cd server && nix develop ..#vulnerable -c govulncheck ./...)
 (cd client && nix develop ..#vulnerable -c cargo-audit audit)
-(cd web && nix develop ..#vulnerable -c npm audit --audit-level moderate)
+(cd web && nix develop ..#vulnerable -c npm audit --omit=dev --audit-level moderate)
+(cd android && lockfile=$(mktemp -d)/gradle.lockfile && grep -E '[=,]releaseRuntimeClasspath(,|$)' app/gradle.lockfile > "$lockfile" && nix develop ..#vulnerable -c osv-scanner scan source --lockfile "$lockfile")
 nix develop .#vulnerable -c flake-checker -f
 nix develop .#vulnerable -c zizmor .github/workflows
 ```
@@ -55,7 +56,7 @@ Warnings for unmaintained, unsound or yanked crates don't fail the job.
 
 ## npm audit
 
-The job runs in `web`. The GitHub job audits dev dependencies too, but the Gitea, Forgejo and Tangled jobs pass `--omit=dev`, so an advisory in a dev dependency only fails the GitHub one.
+The job runs in `web`, and passes `--omit=dev`, so it only audits the dependencies the web app ships, not dev dependencies such as its build tools.
 
 Renovate opens automerging fix PRs for vulnerable direct dependencies, so check for an open Renovate PR first. A failure without one is usually a transitive dependency.
 
@@ -76,6 +77,33 @@ Renovate opens automerging fix PRs for vulnerable direct dependencies, so check 
 4. Only when no patched version exists, or the vulnerable code is unreachable, tell the user. npm audit has no ignore file, so the advisory can't be ignored. Leave `--audit-level` and `--omit=dev` in the workflows as they are unless the user asks to change them.
 
 The flake reads `package-lock.json` directly with `importNpmLock`, so changing the lock file needs no hash update.
+
+## osv-scanner
+
+The job runs in `android`. It scans only the dependencies the release APK ships, the lines of `app/gradle.lockfile` whose configurations include `releaseRuntimeClasspath`, so it skips test dependencies and build tools such as Android lint, Kotlin's compiler and the Android Gradle plugin's own dependencies. Each finding names the vulnerable Maven package and its `FIXED VERSION`.
+
+Renovate opens automerging fix PRs for vulnerable direct dependencies, so check for an open Renovate PR first. A failure without one is usually a transitive dependency.
+
+1. If the package is a direct dependency, raise its version in `android/gradle/libs.versions.toml`.
+2. Otherwise find the direct dependency that pulls it in with `gradle -p android :app:dependencyInsight --configuration releaseRuntimeClasspath --dependency <group>:<name>` in the default dev shell, and prefer updating that dependency to a release that requires the patched version.
+3. If no release of the direct dependency does, force the patched version with a constraint in `android/app/build.gradle.kts`, and tell the user:
+
+   ```kotlin
+   dependencies {
+       constraints {
+           implementation("<group>:<name>:<patched version>") { because("<advisory ID>") }
+       }
+   }
+   ```
+
+4. After any of these, run `nix run .#update-android-deps` to rewrite the lock files and `android/deps.json`, which the Nix build needs.
+5. Only when no patched version exists, or the vulnerable code is unreachable, ignore the advisory in `android/osv-scanner.toml`, with the reason, and tell the user. Pass `--config osv-scanner.toml` to the job's osv-scanner in every forge's workflow, since it looks for the config next to the scanned lock file, which the job writes to a temporary directory:
+
+   ```toml
+   [[IgnoredVulns]]
+   id = "GHSA-xxxx-xxxx-xxxx"
+   reason = "..."
+   ```
 
 ## flake-checker
 

@@ -911,6 +911,7 @@ remove_android() {
     -e '/^            env\.ANDROID_HOME = /d' \
     -e '/^              gradle_9 # gradle --write-locks$/d' \
     -e '/^              jdk25$/d' \
+    -e '/^              osv-scanner # osv-scanner scan source$/d' \
     flake.nix
   remove_block flake.nix '              # android'
   remove_block flake.nix '          update-android-deps = {' '          };'
@@ -930,8 +931,19 @@ remove_android() {
     .gitattributes
   sed_inplace '/^nix build \.#android$/d' CONTRIBUTING.md
   remove_block CONTRIBUTING.md 'after changing `android/gradle/libs.versions.toml`, update the Gradle lock files and `android/deps.json`:' '```'
+  sed_inplace \
+    -e '/^(cd android && /d' \
+    -e '/^## osv-scanner$/,/^## flake-checker$/{/^## flake-checker$/!d;}' \
+    .agents/skills/fix-vulnerable/SKILL.md
+  replace_literal 'npm audit, osv-scanner, flake-checker' 'npm audit, flake-checker' .agents/skills/fix-vulnerable/SKILL.md
+  replace_literal 'an Android or Gradle dependency advisory, ' '' .agents/skills/fix-vulnerable/SKILL.md
+  replace_literal ', `vulnerable-android`' '' .agents/skills/fix-vulnerable/SKILL.md
+  if [[ -d .tangled ]]; then
+    remove_block .tangled/workflows/vulnerable.yaml '  vulnerable-android:' '          nix develop ..#vulnerable --command osv-scanner scan source --lockfile "$lockfile"'
+  fi
   for provider_directory in .github .gitea .forgejo; do
     [[ -d $provider_directory ]] || continue
+    remove_block "$provider_directory/workflows/vulnerable.yaml" '  android:' '          osv-scanner scan source --lockfile "$lockfile"'
     remove_block "$provider_directory/labeler.yaml" 'kotlin:'
     rule_line=$(grep -n -m 1 -F '"matchManagers": ["gradle", "gradle-wrapper"],' "$provider_directory/renovate.jsonc" | cut -d: -f1 || true)
     if [[ -z $rule_line || $(sed -n "$((rule_line - 1))p;$((rule_line + 7))p" "$provider_directory/renovate.jsonc") != $'    {\n    },' ]]; then
@@ -1102,7 +1114,7 @@ validate_project() {
     [[ -f android/app/src/main/kotlin/${target_package//.//}/MainActivity.kt ]] || die 'Replacement validation failed: the Android package was not moved.'
   else
     [[ ! -e android ]] || die 'Replacement validation failed: Android files still exist.'
-    ! grep -qE '\./android|android/|#android|ktlint|gradle|trevrpc-kotlin|java_package|zip\.trev\.trevrpc' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md .gitignore .gitattributes || die 'Replacement validation failed: Android references remain.'
+    ! grep -qE '\./android|android/|#android|ktlint|gradle|trevrpc-kotlin|java_package|zip\.trev\.trevrpc|osv-scanner' flake.nix buf.gen.yaml treefmt.toml README.md CONTRIBUTING.md AGENTS.md .gitignore .gitattributes .agents/skills/fix-vulnerable/SKILL.md || die 'Replacement validation failed: Android references remain.'
   fi
   require_text web/default.nix "version = \"$version\";"
   require_text server/default.nix "version = \"$version\";"

@@ -91,3 +91,29 @@ workflows:
           fi
           cd web
           nix develop ..#vulnerable --command npm audit --omit=dev --audit-level moderate
+
+  vulnerable-android:
+    when:
+      - event: ["schedule"]
+        schedule:
+          - cron: "0 9 * * 0" # every Sunday at 09:00 UTC
+      - event: ["manual"]
+
+    engine: microvm
+    image: nixos
+
+    substituters:
+      https://nix.trev.zip: "trev:I39N/EsnHkvfmsbx8RUW+ia5dOzojTQNCTzKYij1chU="
+
+    steps:
+      - name: Run osv-scanner
+        command: |
+          # the optional GH_TOKEN secret raises GitHub's rate limit for flake inputs
+          if [[ -n ${GH_TOKEN:-} ]]; then
+            export NIX_CONFIG="access-tokens = github.com=${GH_TOKEN}"
+          fi
+          cd android
+          # only scans what the release APK ships, not build tools such as Android lint
+          lockfile=$(mktemp -d)/gradle.lockfile
+          grep -E '[=,]releaseRuntimeClasspath(,|$)' app/gradle.lockfile > "$lockfile"
+          nix develop ..#vulnerable --command osv-scanner scan source --lockfile "$lockfile"
