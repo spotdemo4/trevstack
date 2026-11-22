@@ -355,6 +355,41 @@
             '';
           };
 
+          protobuf-generate = {
+            root = ./.;
+            files = [
+              ./proto
+              ./buf.lock
+              ./buf.yaml
+              ./buf.gen.yaml
+              ./server/gen
+              ./web/gen
+              ./client/src/gen
+            ];
+            inherit (self.checks.${system}.protobuf-lint) bufDeps;
+            packages = with pkgs; [
+              trev.libs.bufHook
+              buf
+              protoc-gen-go
+              protoc-gen-es
+              protoc-gen-prost
+              trevrpc.packages.${system}.trevrpc-go
+              trevrpc.packages.${system}.trevrpc-js
+              trevrpc.packages.${system}.trevrpc-rust
+            ];
+            # regenerates every plugin output from scratch, so stale and leftover files both fail
+            script = ''
+              committed=$(mktemp -d)
+              cp -r . "$committed"
+              sed -n 's/^ *out: *//p' buf.gen.yaml | sort -u | xargs rm -rf
+              buf generate
+              if ! diff -ru "$committed" .; then
+                echo "the generated code does not match buf generate, run buf generate"
+                exit 1
+              fi
+            '';
+          };
+
           actions-gh = {
             root = ./.github/workflows;
             filter = file: file.hasExt "yaml";

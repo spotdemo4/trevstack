@@ -728,6 +728,7 @@ remove_client() {
     -e '/^            RUST_SRC_PATH = /d' \
     -e '/^              protoc-gen-prost$/d' \
     -e '/^              trevrpc\.packages\.\${system}\.trevrpc-rust$/d' \
+    -e '/^              \.\/client\/src\/gen$/d' \
     -e '/^              cargo # cargo update$/d' \
     -e '/^              cargo-audit # cargo-audit audit$/d' \
     -e '/^            rustfmt$/d' \
