@@ -343,7 +343,7 @@
             bufDeps = pkgs.trev.libs.bufFetchDeps {
               src = ./.;
               pname = "trevstack-proto-deps";
-              hash = "sha256-UkM9Neh01dDHINf92aCD0KuJQ9fDue+ZaDtdxHkA2HQ=";
+              hash = "sha256-TvDzKn9ZUOylwfCmxND3bwhmHwPCg8NfbNL/nkvQnS8=";
             };
             packages = with pkgs; [
               trev.libs.bufHook

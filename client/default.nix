@@ -10,6 +10,11 @@ trev.libs.mkRustPackage (final: {
   src = ./.;
   cargoLock.lockFile = ./Cargo.lock;
 
+  # nixpkgs' cargoSetupHook makes crates such as zstd-sys link system libraries
+  # through pkg-config, keep building the vendored ones, which cross-compile and
+  # link statically
+  dontCargoUseSystemLibs = true;
+
   doCheck = true;
   checkPhase = ''
     runHook preCheck
