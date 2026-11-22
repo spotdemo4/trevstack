@@ -17,21 +17,3 @@
 /.venv
 .ruff_cache
 __pycache__
-
-# server
-/server/build/
-/server/tmp/
-
-# client
-/client/target/
-
-# android
-/android/.gradle/
-/android/.kotlin/
-/android/build/
-/android/app/build/
-/android/local.properties
-
-# web
-/web/node_modules/
-/web/dist/

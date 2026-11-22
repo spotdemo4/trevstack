@@ -812,18 +812,18 @@ remove_client() {
     -e '/^            rustfmt$/d' \
     -e '/^            ruff$/d' \
     -e '/^          client = pkgs\.callPackage \.\/client { };$/d' \
+    -e '/^          client = pkgs\.trev\.libs\.callChecks \.\/client { inherit self; };$/d' \
     -e '/^          client = pkgs\.trev\.libs\.mkImage {$/,/^          };$/d' \
     -e '/^            client$/d' \
     flake.nix
   remove_block flake.nix '              # rust'
   remove_block flake.nix '              # python'
-  remove_checks client-lint integration python-lint
+  remove_checks integration python-lint
   remove_block buf.gen.yaml '  - local: protoc-gen-prost'
   remove_block buf.gen.yaml '  - local: protoc-gen-trevrpc-rust'
   remove_block treefmt.toml '[formatter.rustfmt]'
   remove_block treefmt.toml '[formatter.ruff]'
   sed_inplace '/^  "client\/src\/gen\/\*\*",$/d' treefmt.toml
-  remove_block .gitignore '# client'
   remove_block .gitignore '# python'
   remove_block .gitattributes '# Rust source files use Rust diff driver'
   sed_inplace -e '/^Cargo\.lock linguist-generated=true$/d' -e '/^client\/src\/gen\/\*\* linguist-generated=true$/d' .gitattributes
@@ -892,6 +892,7 @@ remove_android() {
     -e '/^ *trevrpc\.packages\.\${system}\.trevrpc-kotlin$/d' \
     -e '/^              \.\/android\/app\/src\/gen$/d' \
     -e '/^          android = pkgs\.buildPackages\.callPackage \.\/android { };$/d' \
+    -e '/^          android = \.\/android;$/d' \
     -e '/^            ktlint$/d' \
     -e '/^      let$/d' \
     -e '/^        androidSdk = pkgs\.callPackage \.\/android\/sdk\.nix { };$/d' \
@@ -903,13 +904,11 @@ remove_android() {
     flake.nix
   remove_block flake.nix '              # android'
   remove_block flake.nix '          update-android-deps = {' '          };'
-  remove_checks android-lint
   remove_block buf.gen.yaml '  # protobuf-java messages, which the TrevRPC Kotlin runtime encodes and decodes. the buf.validate'
   remove_block buf.gen.yaml '  - local: protoc-gen-trevrpc-kotlin'
   remove_block buf.gen.yaml '    - file_option: java_package_prefix' "      value: $(java_package "$source_base").gen"
   remove_block treefmt.toml '[formatter.ktlint]'
   sed_inplace '/^  "android\/app\/src\/gen\/\*\*",$/d' treefmt.toml
-  remove_block .gitignore '# android'
   remove_block .gitattributes '# Kotlin source files use Kotlin diff driver'
   remove_block .gitattributes '# Gradle wrapper'
   sed_inplace \

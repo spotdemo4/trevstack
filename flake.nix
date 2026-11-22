@@ -246,19 +246,15 @@
         # nix build [#...]
         packages = rec {
           default = server;
-          client = pkgs.callPackage ./client { };
-          android = pkgs.buildPackages.callPackage ./android { };
-          web = pkgs.buildPackages.callPackage ./web { };
           server = pkgs.callPackage ./server { inherit web; };
+          client = pkgs.callPackage ./client { };
+          web = pkgs.buildPackages.callPackage ./web { };
+          android = pkgs.buildPackages.callPackage ./android { };
         };
 
         # nix build #images.[...]
         images = rec {
           default = server;
-          client = pkgs.trev.libs.mkImage {
-            src = self.packages.${system}.client;
-            contents = with pkgs; [ dockerTools.caCertificates ];
-          };
           server = pkgs.trev.libs.mkImage {
             src = self.packages.${system}.default;
             contents = with pkgs; [ dockerTools.caCertificates ];
@@ -268,53 +264,19 @@
               "8080/udp" = { };
             };
           };
+          client = pkgs.trev.libs.mkImage {
+            src = self.packages.${system}.client;
+            contents = with pkgs; [ dockerTools.caCertificates ];
+          };
         };
 
         # nix flake check
         checks = pkgs.trev.libs.mkChecks {
-          server-lint = {
-            src = self.packages.${system}.server;
-            packages = with pkgs; [ golangci-lint ];
-            script = ''
-              golangci-lint run ./...
-              golangci-lint run --build-tags=prod ./...
-            '';
-          };
-
-          client-lint = {
-            src = self.packages.${system}.client;
-            packages = with pkgs; [
-              rustfmt
-              clippy
-            ];
-            script = ''
-              cargo fmt --check
-              cargo clippy --offline --all-targets -- -D warnings
-            '';
-          };
-
-          android-lint = {
-            root = ./android;
-            filter = file: file.hasExt "kt" || file.hasExt "kts";
-            include = [ ./android/.editorconfig ];
-            packages = with pkgs; [ ktlint ];
-            # the Android lint checks run when the package builds
-            script = ''
-              ktlint --relative "**/*.kt" "**/*.kts" "!app/src/gen/**"
-            '';
-          };
-
-          web-lint = {
-            src = self.packages.${system}.web;
-            packages = with pkgs; [
-              oxfmt
-              oxlint
-            ];
-            script = ''
-              oxfmt --check
-              oxlint --deny-warnings
-            '';
-          };
+          # each package's checks.nix, named <package>-<check>
+          server = pkgs.trev.libs.callChecks ./server { inherit self; };
+          client = pkgs.trev.libs.callChecks ./client { inherit self; };
+          web = pkgs.trev.libs.callChecks ./web { inherit self; };
+          android = ./android;
 
           integration = {
             root = ./test;

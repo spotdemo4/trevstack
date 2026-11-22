@@ -243,7 +243,7 @@ test_application() (
   assert_contains client/README.md 'docker run ghcr.io/octo/hello-world/client:latest'
   assert_contains flake.nix \
     'description = "Says \"hi\" to \${USER} \\o/";' \
-    'client-lint = {' 'integration = {' 'python-lint = {' \
+    'client = pkgs.trev.libs.callChecks ./client { inherit self; };' 'integration = {' 'python-lint = {' \
     'actions-gh = {' 'actions-fj = {' 'renovate-gh = {' 'renovate-fj = {'
   assert_lacks flake.nix 'actions-gt = {' 'renovate-gt = {'
   assert_missing .gitea
@@ -269,7 +269,7 @@ test_application() (
   assert_contains android/settings.gradle.kts 'rootProject.name = "hello-world"'
   assert_contains android/app/src/main/res/values/strings.xml '<string name="app_name">Hello World</string>'
   assert_contains android/default.nix 'pname = "hello-world-android";' 'version = "0.0.1";' 'description = "Says \"hi\" to \${USER} \\o/";'
-  assert_contains flake.nix 'android-lint = {' 'update-android-deps = {' 'trevrpc-kotlin'
+  assert_contains flake.nix 'android = ./android;' 'update-android-deps = {' 'trevrpc-kotlin'
   assert_contains AGENTS.md '`server/gen/`, `web/gen/`, `client/src/gen/`, or `android/app/src/gen/`'
   assert_contains README.md '- [android](android/README.md)'
   assert_contains .github/renovate.jsonc 'update-android-deps' '"zip.trev.trevrpc:**",'
@@ -302,7 +302,7 @@ test_minimal() (
     '"repositories": ["octo/hello-min"]'
   assert_lacks flake.nix \
     client cargo python ruff trevrpc-rust \
-    'client-lint = {' 'integration = {' 'python-lint = {' 'actions-gh = {' 'renovate-gh = {' \
+    'integration = {' 'python-lint = {' 'actions-gh = {' 'renovate-gh = {' \
     'actions-gt = {' 'renovate-gt = {'
   assert_contains flake.nix 'actions-fj = {' 'renovate-fj = {'
   assert_contains web/layout/layout.tsx 'on Forgejo'
@@ -367,7 +367,7 @@ test_gitea() (
   # The Android app is kept without the client
   assert_contains AGENTS.md '`server/gen/`, `web/gen/`, or `android/app/src/gen/`'
   assert_contains android/app/build.gradle.kts 'applicationId = "com.example.gitea.octo.hellogitea"'
-  assert_contains flake.nix 'android-lint = {' 'trevrpc-kotlin' './android/app/src/gen'
+  assert_contains flake.nix 'android = ./android;' 'trevrpc-kotlin' './android/app/src/gen'
   assert_lacks flake.nix trevrpc-rust
   assert_contains .gitea/renovate.jsonc 'update-android-deps'
   assert_lacks .gitea/renovate.jsonc cargo
