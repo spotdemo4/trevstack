@@ -212,9 +212,9 @@ test_application() (
   git commit --quiet --message 'Initial commit'
   # The build sandbox has no /usr/bin/env for the shebang
   # GitHub (detected), no Gitea, Forgejo mirror, Tangled mirror, Zed, VS Code,
-  # Claude Code, client
+  # Claude Code, T3 Code, client
   printf '%s\n' '' n y https://git.example.com/octo/hello-world \
-    y octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx '' '' '' '' |
+    y octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx '' '' '' '' '' |
     bash ./init.sh 'Hello World' "$description"
 
   assert_initialized github.com/octo/hello-world hello-world 'Says \"hi\" to ${USER} \\o/'
@@ -243,7 +243,7 @@ test_application() (
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-world"]'
   assert_contains .agents/skills/fix-vulnerable/SKILL.md 'govulncheck, cargo audit, npm audit' '## cargo audit' 'RUSTSEC' 'cargo-audit audit' '`vulnerable-rust`'
-  [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test ]] || fail 'application files are missing'
+  [[ -d .zed && -d .vscode && -d .github && -d .forgejo && -d client && -d test && -f t3.json ]] || fail 'application files are missing'
   assert_eq "$(git ls-files .claude)" .claude/skills 'tracked .claude files'
   assert_eq "$(readlink .claude/skills)" ../.agents/skills '.claude/skills target'
 )
@@ -255,14 +255,14 @@ test_minimal() (
   # nix flake init leaves the template uncommitted and init.sh not executable
   chmod -x init.sh
   # Forgejo (detected), no GitHub, no Gitea, no Tangled, no Zed, no VS Code, no
-  # Claude Code, no client
-  printf '%s\n' '' n n n n n n n | bash init.sh 'Hello Min' 'Says hello'
+  # Claude Code, no T3 Code, no client
+  printf '%s\n' '' n n n n n n n n | bash init.sh 'Hello Min' 'Says hello'
 
   assert_initialized git.example.com/octo/hello-min hello-min 'Says hello'
   assert_eq "$(git log --format=%s)" 'chore: initialize project' commits
   assert_eq "$(git remote)" origin remotes
   assert_eq "$(git remote get-url origin)" https://git.example.com/octo/hello-min.git 'origin remote'
-  assert_missing .github .gitea .tangled .zed .vscode .claude client test pyproject.toml
+  assert_missing .github .gitea .tangled .zed .vscode .claude t3.json client test pyproject.toml
   [[ -f .agents/skills/template-sync/SKILL.md ]] || fail '.agents/skills is missing'
   assert_contains README.md \
     'https://git.example.com/octo/hello-min/actions?workflow=check.yaml' \
@@ -293,9 +293,9 @@ test_gitea() (
   git add -A
   git commit --quiet --message 'Initial commit'
   # Gitea, GitHub mirror, no Forgejo, Tangled mirror, no Zed, no VS Code, Claude
-  # Code, no client
+  # Code, T3 Code, no client
   printf '%s\n' Gitea y git@github.com:octo/hello-mirror.git n \
-    y https://tangled.org/@octo.example.com/hello-gitea n n y n |
+    y https://tangled.org/@octo.example.com/hello-gitea n n y y n |
     bash ./init.sh 'Hello Gitea' 'Says hello'
 
   assert_initialized gitea.example.com/octo/hello-gitea hello-gitea 'Says hello'
@@ -304,6 +304,7 @@ test_gitea() (
   assert_eq "$(git remote get-url tangled)" https://tangled.org/@octo.example.com/hello-gitea 'tangled remote'
   assert_missing .forgejo .zed .vscode client test
   [[ -L .claude/skills && -f .claude/skills/template-sync/SKILL.md ]] || fail '.claude/skills is missing'
+  [[ -f t3.json ]] || fail 't3.json is missing'
   assert_contains README.md \
     'https://gitea.example.com/octo/hello-gitea/actions?workflow=check.yaml' \
     'logo=gitea'
@@ -357,12 +358,13 @@ test_rollback() (
     bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n n y https://github.com/octo/rollback)
 
   # Generating code fails after the new repository has replaced the old one, and
-  # the answers include declining Claude Code, which deletes .claude
+  # the answers include declining Claude Code and T3 Code, which deletes .claude
+  # and t3.json
   mkdir "$tmp/failing"
   printf '#!%s\nexit 1\n' "$BASH" >"$tmp/failing/nix"
   chmod +x "$tmp/failing/nix"
   assert_fails '' env PATH="$tmp/failing:$PATH" \
-    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y https://git.example.com/octo/rollback n '' '' n '')
+    bash ./init.sh Rollback Rollback < <(printf '%s\n' '' n y https://git.example.com/octo/rollback n '' '' n n '')
 
   assert_eq "$(git rev-parse HEAD)" "$head" HEAD
   assert_eq "$(git status --porcelain --untracked-files=all)" '' 'worktree status'

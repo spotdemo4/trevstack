@@ -527,6 +527,11 @@ choose_agents() {
   if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
     delete_directories+=(.claude)
   fi
+
+  read -r -p 'Are you using T3 Code? [Y/n] ' reply || reply=
+  if [[ $reply =~ ^[Nn]([Oo])?$ ]]; then
+    delete_files+=(t3.json)
+  fi
 }
 
 # Asks which of the optional components to keep.
@@ -622,6 +627,7 @@ remove_template_files() {
   for directory in "${delete_directories[@]}"; do
     rm -rf "$directory"
   done
+  rm -f "${delete_files[@]}"
 }
 
 # Replaces the template's name and repository with the project's.
@@ -962,6 +968,7 @@ main() {
   read_template_metadata
 
   delete_directories=()
+  delete_files=()
   choose_providers
   choose_editors
   choose_agents
