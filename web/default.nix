@@ -6,7 +6,7 @@
 }:
 buildNpmPackage (final: {
   pname = "trevstack-web";
-  version = "3.2.3";
+  version = "3.3.0";
 
   # the root oxlint config that ours extends lives outside this directory
   src = lib.fileset.toSource {
