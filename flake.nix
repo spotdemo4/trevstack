@@ -24,7 +24,7 @@
       inputs.flake-utils.inputs.systems.follows = "systems";
     };
     trevrpc = {
-      url = "git+https://trev.zip/llc/TrevRPC.git?ref=refs/tags/v1.12.0";
+      url = "git+https://trev.zip/llc/TrevRPC.git?ref=refs/tags/v1.13.0";
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.trevpkgs.follows = "trevpkgs";
@@ -362,7 +362,7 @@
             bufDeps = pkgs.trev.libs.bufFetchDeps {
               src = ./.;
               pname = "trevstack-proto-deps";
-              hash = "sha256-TvDzKn9ZUOylwfCmxND3bwhmHwPCg8NfbNL/nkvQnS8=";
+              hash = "sha256-vr6oxZLIZIV2HOzfBuI4nSqZiIkTrgMwoeZKWlisIDo=";
             };
             packages = with pkgs; [
               trev.libs.bufHook

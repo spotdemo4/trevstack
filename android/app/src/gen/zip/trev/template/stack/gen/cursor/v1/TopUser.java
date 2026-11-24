@@ -9,65 +9,23 @@ package zip.trev.template.stack.gen.cursor.v1;
  * Protobuf type {@code cursor.v1.TopUser}
  */
 @com.google.protobuf.Generated
-public final class TopUser extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class TopUser extends
+    com.google.protobuf.GeneratedMessageLite<
+        TopUser, TopUser.Builder> implements
     // @@protoc_insertion_point(message_implements:cursor.v1.TopUser)
     TopUserOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "TopUser");
-  }
-  // Use TopUser.newBuilder() to construct.
-  private TopUser(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private TopUser() {
     username_ = "";
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUser_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUser_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUser_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.cursor.v1.TopUser.class, zip.trev.template.stack.gen.cursor.v1.TopUser.Builder.class);
-  }
-
   public static final int USERNAME_FIELD_NUMBER = 1;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object username_ = "";
+  private java.lang.String username_;
   /**
    * <code>string username = 1 [json_name = "username"];</code>
    * @return The username.
    */
   @java.lang.Override
   public java.lang.String getUsername() {
-    java.lang.Object ref = username_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      username_ = s;
-      return s;
-    }
+    return username_;
   }
   /**
    * <code>string username = 1 [json_name = "username"];</code>
@@ -76,20 +34,38 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public com.google.protobuf.ByteString
       getUsernameBytes() {
-    java.lang.Object ref = username_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      username_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+    return com.google.protobuf.ByteString.copyFromUtf8(username_);
+  }
+  /**
+   * <code>string username = 1 [json_name = "username"];</code>
+   * @param value The username to set.
+   */
+  private void setUsername(
+      java.lang.String value) {
+    java.util.Objects.requireNonNull(value);
+
+    username_ = value;
+  }
+  /**
+   * <code>string username = 1 [json_name = "username"];</code>
+   */
+  private void clearUsername() {
+
+    username_ = getDefaultInstance().getUsername();
+  }
+  /**
+   * <code>string username = 1 [json_name = "username"];</code>
+   * @param value The bytes for username to set.
+   */
+  private void setUsernameBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    username_ = value.toStringUtf8();
+
   }
 
   public static final int COUNT_FIELD_NUMBER = 2;
-  private long count_ = 0L;
+  private long count_;
   /**
    * <pre>
    * Number of positions.
@@ -102,9 +78,32 @@ private static final long serialVersionUID = 0L;
   public long getCount() {
     return count_;
   }
+  /**
+   * <pre>
+   * Number of positions.
+   * </pre>
+   *
+   * <code>int64 count = 2 [json_name = "count"];</code>
+   * @param value The count to set.
+   */
+  private void setCount(long value) {
+    
+    count_ = value;
+  }
+  /**
+   * <pre>
+   * Number of positions.
+   * </pre>
+   *
+   * <code>int64 count = 2 [json_name = "count"];</code>
+   */
+  private void clearCount() {
+
+    count_ = 0L;
+  }
 
   public static final int STREAMS_FIELD_NUMBER = 3;
-  private long streams_ = 0L;
+  private long streams_;
   /**
    * <pre>
    * Number of streams with a position in range.
@@ -117,9 +116,32 @@ private static final long serialVersionUID = 0L;
   public long getStreams() {
     return streams_;
   }
+  /**
+   * <pre>
+   * Number of streams with a position in range.
+   * </pre>
+   *
+   * <code>int64 streams = 3 [json_name = "streams"];</code>
+   * @param value The streams to set.
+   */
+  private void setStreams(long value) {
+    
+    streams_ = value;
+  }
+  /**
+   * <pre>
+   * Number of streams with a position in range.
+   * </pre>
+   *
+   * <code>int64 streams = 3 [json_name = "streams"];</code>
+   */
+  private void clearStreams() {
+
+    streams_ = 0L;
+  }
 
   public static final int DISTANCE_FIELD_NUMBER = 4;
-  private double distance_ = 0D;
+  private double distance_;
   /**
    * <pre>
    * Total distance between consecutive positions, in fractions of the pad's size.
@@ -132,409 +154,143 @@ private static final long serialVersionUID = 0L;
   public double getDistance() {
     return distance_;
   }
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
+  /**
+   * <pre>
+   * Total distance between consecutive positions, in fractions of the pad's size.
+   * </pre>
+   *
+   * <code>double distance = 4 [json_name = "distance"];</code>
+   * @param value The distance to set.
+   */
+  private void setDistance(double value) {
+    
+    distance_ = value;
   }
+  /**
+   * <pre>
+   * Total distance between consecutive positions, in fractions of the pad's size.
+   * </pre>
+   *
+   * <code>double distance = 4 [json_name = "distance"];</code>
+   */
+  private void clearDistance() {
 
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(username_)) {
-      com.google.protobuf.GeneratedMessage.writeString(output, 1, username_);
-    }
-    if (count_ != 0L) {
-      output.writeInt64(2, count_);
-    }
-    if (streams_ != 0L) {
-      output.writeInt64(3, streams_);
-    }
-    if (java.lang.Double.doubleToRawLongBits(distance_) != 0) {
-      output.writeDouble(4, distance_);
-    }
-    getUnknownFields().writeTo(output);
-  }
-  private int computeSerializedSize_0() {
-    int size = 0;
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(username_)) {
-      size += com.google.protobuf.GeneratedMessage.computeStringSize(1, username_);
-    }
-    if (count_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(2, count_);
-    }
-    if (streams_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(3, streams_);
-    }
-    if (java.lang.Double.doubleToRawLongBits(distance_) != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeDoubleSize(4, distance_);
-    }
-    return size;
-  }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.cursor.v1.TopUser)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.cursor.v1.TopUser other = (zip.trev.template.stack.gen.cursor.v1.TopUser) obj;
-
-    if (!getUsername()
-        .equals(other.getUsername())) return false;
-    if (getCount()
-        != other.getCount()) return false;
-    if (getStreams()
-        != other.getStreams()) return false;
-    if (java.lang.Double.doubleToLongBits(getDistance())
-        != java.lang.Double.doubleToLongBits(
-            other.getDistance())) return false;
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + USERNAME_FIELD_NUMBER;
-    hash = (53 * hash) + getUsername().hashCode();
-    hash = (37 * hash) + COUNT_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getCount());
-    hash = (37 * hash) + STREAMS_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getStreams());
-    hash = (37 * hash) + DISTANCE_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        java.lang.Double.doubleToLongBits(getDistance()));
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
+    distance_ = 0D;
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUser parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.cursor.v1.TopUser prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * Protobuf type {@code cursor.v1.TopUser}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.cursor.v1.TopUser, Builder> implements
       // @@protoc_insertion_point(builder_implements:cursor.v1.TopUser)
       zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUser_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUser_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.cursor.v1.TopUser.class, zip.trev.template.stack.gen.cursor.v1.TopUser.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.cursor.v1.TopUser.newBuilder()
     private Builder() {
-
+      super(DEFAULT_INSTANCE);
     }
 
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
 
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      username_ = "";
-      count_ = 0L;
-      streams_ = 0L;
-      distance_ = 0D;
-      return this;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUser_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TopUser getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.cursor.v1.TopUser.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TopUser build() {
-      zip.trev.template.stack.gen.cursor.v1.TopUser result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TopUser buildPartial() {
-      zip.trev.template.stack.gen.cursor.v1.TopUser result = new zip.trev.template.stack.gen.cursor.v1.TopUser(this);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.cursor.v1.TopUser result) {
-      int from_bitField0_ = bitField0_;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.username_ = username_;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.count_ = count_;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.streams_ = streams_;
-      }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.distance_ = distance_;
-      }
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.cursor.v1.TopUser) {
-        return mergeFrom((zip.trev.template.stack.gen.cursor.v1.TopUser)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.cursor.v1.TopUser other) {
-      if (other == zip.trev.template.stack.gen.cursor.v1.TopUser.getDefaultInstance()) return this;
-      if (!other.getUsername().isEmpty()) {
-        username_ = other.username_;
-        bitField0_ |= 0x00000001;
-        onChanged();
-      }
-      if (other.getCount() != 0L) {
-        setCount(other.getCount());
-      }
-      if (other.getStreams() != 0L) {
-        setStreams(other.getStreams());
-      }
-      if (java.lang.Double.doubleToRawLongBits(other.getDistance()) != 0) {
-        setDistance(other.getDistance());
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              username_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000001;
-              break;
-            } // case 10
-            case 16: {
-              count_ = input.readInt64();
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 16
-            case 24: {
-              streams_ = input.readInt64();
-              bitField0_ |= 0x00000004;
-              break;
-            } // case 24
-            case 33: {
-              distance_ = input.readDouble();
-              bitField0_ |= 0x00000008;
-              break;
-            } // case 33
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int bitField0_;
-
-    private java.lang.Object username_ = "";
     /**
      * <code>string username = 1 [json_name = "username"];</code>
      * @return The username.
      */
+    @java.lang.Override
     public java.lang.String getUsername() {
-      java.lang.Object ref = username_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        username_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+      return instance.getUsername();
     }
     /**
      * <code>string username = 1 [json_name = "username"];</code>
      * @return The bytes for username.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getUsernameBytes() {
-      java.lang.Object ref = username_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        username_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+      return instance.getUsernameBytes();
     }
     /**
      * <code>string username = 1 [json_name = "username"];</code>
@@ -543,10 +299,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setUsername(
         java.lang.String value) {
-      java.util.Objects.requireNonNull(value);
-      username_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setUsername(value);
       return this;
     }
     /**
@@ -554,9 +308,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearUsername() {
-      username_ = getDefaultInstance().getUsername();
-      bitField0_ = (bitField0_ & ~0x00000001);
-      onChanged();
+      copyOnWrite();
+      instance.clearUsername();
       return this;
     }
     /**
@@ -566,15 +319,11 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setUsernameBytes(
         com.google.protobuf.ByteString value) {
-      java.util.Objects.requireNonNull(value);
-      checkByteStringIsUtf8(value);
-      username_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setUsernameBytes(value);
       return this;
     }
 
-    private long count_ ;
     /**
      * <pre>
      * Number of positions.
@@ -585,7 +334,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public long getCount() {
-      return count_;
+      return instance.getCount();
     }
     /**
      * <pre>
@@ -597,10 +346,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setCount(long value) {
-
-      count_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setCount(value);
       return this;
     }
     /**
@@ -612,13 +359,11 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCount() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      count_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearCount();
       return this;
     }
 
-    private long streams_ ;
     /**
      * <pre>
      * Number of streams with a position in range.
@@ -629,7 +374,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public long getStreams() {
-      return streams_;
+      return instance.getStreams();
     }
     /**
      * <pre>
@@ -641,10 +386,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setStreams(long value) {
-
-      streams_ = value;
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.setStreams(value);
       return this;
     }
     /**
@@ -656,13 +399,11 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearStreams() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      streams_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearStreams();
       return this;
     }
 
-    private double distance_ ;
     /**
      * <pre>
      * Total distance between consecutive positions, in fractions of the pad's size.
@@ -673,7 +414,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public double getDistance() {
-      return distance_;
+      return instance.getDistance();
     }
     /**
      * <pre>
@@ -685,10 +426,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setDistance(double value) {
-
-      distance_ = value;
-      bitField0_ |= 0x00000008;
-      onChanged();
+      copyOnWrite();
+      instance.setDistance(value);
       return this;
     }
     /**
@@ -700,60 +439,86 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearDistance() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      distance_ = 0D;
-      onChanged();
+      copyOnWrite();
+      instance.clearDistance();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:cursor.v1.TopUser)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.cursor.v1.TopUser();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "username_",
+            "count_",
+            "streams_",
+            "distance_",
+          };
+          java.lang.String info =
+              "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u0208\u0002\u0002" +
+              "\u0003\u0002\u0004\u0000";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.cursor.v1.TopUser> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.cursor.v1.TopUser.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.cursor.v1.TopUser>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:cursor.v1.TopUser)
   private static final zip.trev.template.stack.gen.cursor.v1.TopUser DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.cursor.v1.TopUser();
+    TopUser defaultInstance = new TopUser();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      TopUser.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUser getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<TopUser>
-      PARSER = new com.google.protobuf.AbstractParser<TopUser>() {
-    @java.lang.Override
-    public TopUser parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<TopUser> PARSER;
 
   public static com.google.protobuf.Parser<TopUser> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<TopUser> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.TopUser getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

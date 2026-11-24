@@ -44,7 +44,8 @@ android {
 
     buildTypes {
         release {
-            // protobuf-java finds message fields by reflection, which R8 would rename
+            // R8 fails on TrevRPC core's references to zstd-jni, which it compiles against but
+            // doesn't ship, and has no rules for
             isMinifyEnabled = false
         }
     }
@@ -170,6 +171,7 @@ dependencies {
     implementation(libs.cronet.bundled)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.protobuf.javalite)
     implementation(libs.trevrpc.core)
     implementation(libs.trevrpc.transport.cronet)
     debugImplementation(libs.compose.ui.tooling)

@@ -6,67 +6,13 @@
 package zip.trev.template.stack.gen.auth.v1;
 
 @com.google.protobuf.Generated
-public final class ServiceProto extends com.google.protobuf.GeneratedFile {
+public final class ServiceProto {
   private ServiceProto() {}
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "ServiceProto");
-  }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
 
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static final com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
   static {
-    java.lang.String[] descriptorData = {
-      "\n\025auth/v1/service.proto\022\007auth.v1\032\023auth/v" +
-      "1/login.proto\032\024auth/v1/logout.proto\032\025aut" +
-      "h/v1/options.proto\032\024auth/v1/signup.proto" +
-      "2\315\001\n\013AuthService\022?\n\006Signup\022\026.auth.v1.Sig" +
-      "nupRequest\032\027.auth.v1.SignupResponse\"\004\200\265\030" +
-      "\001\022<\n\005Login\022\025.auth.v1.LoginRequest\032\026.auth" +
-      ".v1.LoginResponse\"\004\200\265\030\001\022?\n\006Logout\022\026.auth" +
-      ".v1.LogoutRequest\032\027.auth.v1.LogoutRespon" +
-      "se\"\004\200\265\030\001B\246\001\n#zip.trev.template.stack.gen" +
-      ".auth.v1B\014ServiceProtoP\001Z4trev.zip/templ" +
-      "ate/stack/server/v3/gen/auth/v1;authv1\242\002" +
-      "\003AXX\252\002\007Auth.V1\312\002\007Auth\\V1\342\002\023Auth\\V1\\GPBMe" +
-      "tadata\352\002\010Auth::V1b\006proto3"
-    };
-    descriptor = com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-          zip.trev.template.stack.gen.auth.v1.LoginProto.getDescriptor(),
-          zip.trev.template.stack.gen.auth.v1.LogoutProto.getDescriptor(),
-          zip.trev.template.stack.gen.auth.v1.OptionsProto.getDescriptor(),
-          zip.trev.template.stack.gen.auth.v1.SignupProto.getDescriptor(),
-        });
-    descriptor.resolveAllFeaturesImmutable();
-    zip.trev.template.stack.gen.auth.v1.LoginProto.getDescriptor();
-    zip.trev.template.stack.gen.auth.v1.LogoutProto.getDescriptor();
-    zip.trev.template.stack.gen.auth.v1.OptionsProto.getDescriptor();
-    zip.trev.template.stack.gen.auth.v1.SignupProto.getDescriptor();
-    com.google.protobuf.ExtensionRegistry registry =
-        com.google.protobuf.ExtensionRegistry.newInstance();
-    registry.add(zip.trev.template.stack.gen.auth.v1.OptionsProto.public_);
-    com.google.protobuf.Descriptors.FileDescriptor
-        .internalUpdateFileDescriptor(descriptor, registry);
   }
 
   // @@protoc_insertion_point(outer_class_scope)

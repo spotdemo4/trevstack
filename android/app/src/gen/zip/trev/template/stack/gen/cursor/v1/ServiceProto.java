@@ -6,80 +6,13 @@
 package zip.trev.template.stack.gen.cursor.v1;
 
 @com.google.protobuf.Generated
-public final class ServiceProto extends com.google.protobuf.GeneratedFile {
+public final class ServiceProto {
   private ServiceProto() {}
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "ServiceProto");
-  }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
 
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static final com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
   static {
-    java.lang.String[] descriptorData = {
-      "\n\027cursor/v1/service.proto\022\tcursor.v1\032\024cu" +
-      "rsor/v1/list.proto\032\027cursor/v1/metrics.pr" +
-      "oto\032\024cursor/v1/send.proto\032\025cursor/v1/sha" +
-      "re.proto\032\025cursor/v1/track.proto\032\025cursor/" +
-      "v1/watch.proto2\243\005\n\rCursorService\0227\n\004Send" +
-      "\022\026.cursor.v1.SendRequest\032\027.cursor.v1.Sen" +
-      "dResponse\022<\n\005Watch\022\027.cursor.v1.WatchRequ" +
-      "est\032\030.cursor.v1.WatchResponse0\001\022<\n\005Track" +
-      "\022\027.cursor.v1.TrackRequest\032\030.cursor.v1.Tr" +
-      "ackResponse(\001\022>\n\005Share\022\027.cursor.v1.Share" +
-      "Request\032\030.cursor.v1.ShareResponse(\0010\001\0229\n" +
-      "\004List\022\026.cursor.v1.ListRequest\032\027.cursor.v" +
-      "1.ListResponse0\001\022N\n\013ListStreams\022\035.cursor" +
-      ".v1.ListStreamsRequest\032\036.cursor.v1.ListS" +
-      "treamsResponse0\001\022@\n\007Summary\022\031.cursor.v1." +
-      "SummaryRequest\032\032.cursor.v1.SummaryRespon" +
-      "se\022I\n\nTimeSeries\022\034.cursor.v1.TimeSeriesR" +
-      "equest\032\035.cursor.v1.TimeSeriesResponse\022@\n" +
-      "\007Heatmap\022\031.cursor.v1.HeatmapRequest\032\032.cu" +
-      "rsor.v1.HeatmapResponse\022C\n\010TopUsers\022\032.cu" +
-      "rsor.v1.TopUsersRequest\032\033.cursor.v1.TopU" +
-      "sersResponseB\264\001\n%zip.trev.template.stack" +
-      ".gen.cursor.v1B\014ServiceProtoP\001Z8trev.zip" +
-      "/template/stack/server/v3/gen/cursor/v1;" +
-      "cursorv1\242\002\003CXX\252\002\tCursor.V1\312\002\tCursor\\V1\342\002" +
-      "\025Cursor\\V1\\GPBMetadata\352\002\nCursor::V1b\006pro" +
-      "to3"
-    };
-    descriptor = com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-          zip.trev.template.stack.gen.cursor.v1.ListProto.getDescriptor(),
-          zip.trev.template.stack.gen.cursor.v1.MetricsProto.getDescriptor(),
-          zip.trev.template.stack.gen.cursor.v1.SendProto.getDescriptor(),
-          zip.trev.template.stack.gen.cursor.v1.ShareProto.getDescriptor(),
-          zip.trev.template.stack.gen.cursor.v1.TrackProto.getDescriptor(),
-          zip.trev.template.stack.gen.cursor.v1.WatchProto.getDescriptor(),
-        });
-    descriptor.resolveAllFeaturesImmutable();
-    zip.trev.template.stack.gen.cursor.v1.ListProto.getDescriptor();
-    zip.trev.template.stack.gen.cursor.v1.MetricsProto.getDescriptor();
-    zip.trev.template.stack.gen.cursor.v1.SendProto.getDescriptor();
-    zip.trev.template.stack.gen.cursor.v1.ShareProto.getDescriptor();
-    zip.trev.template.stack.gen.cursor.v1.TrackProto.getDescriptor();
-    zip.trev.template.stack.gen.cursor.v1.WatchProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

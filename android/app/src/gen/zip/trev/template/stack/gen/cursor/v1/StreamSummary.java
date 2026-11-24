@@ -13,50 +13,17 @@ package zip.trev.template.stack.gen.cursor.v1;
  * Protobuf type {@code cursor.v1.StreamSummary}
  */
 @com.google.protobuf.Generated
-public final class StreamSummary extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class StreamSummary extends
+    com.google.protobuf.GeneratedMessageLite<
+        StreamSummary, StreamSummary.Builder> implements
     // @@protoc_insertion_point(message_implements:cursor.v1.StreamSummary)
     StreamSummaryOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "StreamSummary");
-  }
-  // Use StreamSummary.newBuilder() to construct.
-  private StreamSummary(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private StreamSummary() {
     username_ = "";
-    source_ = 0;
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.CursorProto.internal_static_cursor_v1_StreamSummary_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.cursor.v1.CursorProto.internal_static_cursor_v1_StreamSummary_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.cursor.v1.CursorProto.internal_static_cursor_v1_StreamSummary_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.cursor.v1.StreamSummary.class, zip.trev.template.stack.gen.cursor.v1.StreamSummary.Builder.class);
-  }
-
   private int bitField0_;
   public static final int ID_FIELD_NUMBER = 1;
-  private long id_ = 0L;
+  private long id_;
   /**
    * <code>int64 id = 1 [json_name = "id"];</code>
    * @return The id.
@@ -65,26 +32,31 @@ private static final long serialVersionUID = 0L;
   public long getId() {
     return id_;
   }
+  /**
+   * <code>int64 id = 1 [json_name = "id"];</code>
+   * @param value The id to set.
+   */
+  private void setId(long value) {
+    
+    id_ = value;
+  }
+  /**
+   * <code>int64 id = 1 [json_name = "id"];</code>
+   */
+  private void clearId() {
+
+    id_ = 0L;
+  }
 
   public static final int USERNAME_FIELD_NUMBER = 2;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object username_ = "";
+  private java.lang.String username_;
   /**
    * <code>string username = 2 [json_name = "username"];</code>
    * @return The username.
    */
   @java.lang.Override
   public java.lang.String getUsername() {
-    java.lang.Object ref = username_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      username_ = s;
-      return s;
-    }
+    return username_;
   }
   /**
    * <code>string username = 2 [json_name = "username"];</code>
@@ -93,34 +65,77 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public com.google.protobuf.ByteString
       getUsernameBytes() {
-    java.lang.Object ref = username_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      username_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+    return com.google.protobuf.ByteString.copyFromUtf8(username_);
+  }
+  /**
+   * <code>string username = 2 [json_name = "username"];</code>
+   * @param value The username to set.
+   */
+  private void setUsername(
+      java.lang.String value) {
+    java.util.Objects.requireNonNull(value);
+
+    username_ = value;
+  }
+  /**
+   * <code>string username = 2 [json_name = "username"];</code>
+   */
+  private void clearUsername() {
+
+    username_ = getDefaultInstance().getUsername();
+  }
+  /**
+   * <code>string username = 2 [json_name = "username"];</code>
+   * @param value The bytes for username to set.
+   */
+  private void setUsernameBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    username_ = value.toStringUtf8();
+
   }
 
   public static final int SOURCE_FIELD_NUMBER = 3;
-  private int source_ = 0;
+  private int source_;
   /**
    * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
    * @return The enum numeric value on the wire for source.
    */
-  @java.lang.Override public int getSourceValue() {
+  @java.lang.Override
+  public int getSourceValue() {
     return source_;
   }
   /**
    * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
    * @return The source.
    */
-  @java.lang.Override public zip.trev.template.stack.gen.cursor.v1.Source getSource() {
+  @java.lang.Override
+  public zip.trev.template.stack.gen.cursor.v1.Source getSource() {
     zip.trev.template.stack.gen.cursor.v1.Source result = zip.trev.template.stack.gen.cursor.v1.Source.forNumber(source_);
     return result == null ? zip.trev.template.stack.gen.cursor.v1.Source.UNRECOGNIZED : result;
+  }
+  /**
+   * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
+   * @param value The enum numeric value on the wire for source to set.
+   */
+  private void setSourceValue(int value) {
+      source_ = value;
+  }
+  /**
+   * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
+   * @param value The source to set.
+   * @throws IllegalArgumentException if UNRECOGNIZED is provided.
+   */
+  private void setSource(zip.trev.template.stack.gen.cursor.v1.Source value) {
+    source_ = value.getNumber();
+
+  }
+  /**
+   * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
+   */
+  private void clearSource() {
+
+    source_ = 0;
   }
 
   public static final int START_FIELD_NUMBER = 4;
@@ -131,7 +146,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-   * @return Whether the start field is set.
    */
   @java.lang.Override
   public boolean hasStart() {
@@ -143,7 +157,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-   * @return The start.
    */
   @java.lang.Override
   public com.google.protobuf.Timestamp getStart() {
@@ -156,9 +169,40 @@ private static final long serialVersionUID = 0L;
    *
    * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
    */
-  @java.lang.Override
-  public com.google.protobuf.TimestampOrBuilder getStartOrBuilder() {
-    return start_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : start_;
+  private void setStart(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    start_ = value;
+    bitField0_ |= 0x00000001;
+  }
+  /**
+   * <pre>
+   * Time of the first position.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
+   */
+  @java.lang.SuppressWarnings("ReferenceEquality")
+  private void mergeStart(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    if (start_ != null &&
+        start_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+      start_ =
+        com.google.protobuf.Timestamp.newBuilder(start_).mergeFrom(value).buildPartial();
+    } else {
+      start_ = value;
+    }
+    bitField0_ |= 0x00000001;
+  }
+  /**
+   * <pre>
+   * Time of the first position.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
+   */
+  private void clearStart() {
+    start_ = null;
+    bitField0_ = (bitField0_ & ~0x00000001);
   }
 
   public static final int END_FIELD_NUMBER = 5;
@@ -169,7 +213,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-   * @return Whether the end field is set.
    */
   @java.lang.Override
   public boolean hasEnd() {
@@ -181,7 +224,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-   * @return The end.
    */
   @java.lang.Override
   public com.google.protobuf.Timestamp getEnd() {
@@ -194,13 +236,44 @@ private static final long serialVersionUID = 0L;
    *
    * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
    */
-  @java.lang.Override
-  public com.google.protobuf.TimestampOrBuilder getEndOrBuilder() {
-    return end_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : end_;
+  private void setEnd(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    end_ = value;
+    bitField0_ |= 0x00000002;
+  }
+  /**
+   * <pre>
+   * Time of the last position.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
+   */
+  @java.lang.SuppressWarnings("ReferenceEquality")
+  private void mergeEnd(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    if (end_ != null &&
+        end_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+      end_ =
+        com.google.protobuf.Timestamp.newBuilder(end_).mergeFrom(value).buildPartial();
+    } else {
+      end_ = value;
+    }
+    bitField0_ |= 0x00000002;
+  }
+  /**
+   * <pre>
+   * Time of the last position.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
+   */
+  private void clearEnd() {
+    end_ = null;
+    bitField0_ = (bitField0_ & ~0x00000002);
   }
 
   public static final int COUNT_FIELD_NUMBER = 6;
-  private long count_ = 0L;
+  private long count_;
   /**
    * <pre>
    * Number of positions.
@@ -213,9 +286,32 @@ private static final long serialVersionUID = 0L;
   public long getCount() {
     return count_;
   }
+  /**
+   * <pre>
+   * Number of positions.
+   * </pre>
+   *
+   * <code>int64 count = 6 [json_name = "count"];</code>
+   * @param value The count to set.
+   */
+  private void setCount(long value) {
+    
+    count_ = value;
+  }
+  /**
+   * <pre>
+   * Number of positions.
+   * </pre>
+   *
+   * <code>int64 count = 6 [json_name = "count"];</code>
+   */
+  private void clearCount() {
+
+    count_ = 0L;
+  }
 
   public static final int DISTANCE_FIELD_NUMBER = 7;
-  private double distance_ = 0D;
+  private double distance_;
   /**
    * <pre>
    * Total distance between consecutive positions, in fractions of the pad's size.
@@ -228,246 +324,113 @@ private static final long serialVersionUID = 0L;
   public double getDistance() {
     return distance_;
   }
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
+  /**
+   * <pre>
+   * Total distance between consecutive positions, in fractions of the pad's size.
+   * </pre>
+   *
+   * <code>double distance = 7 [json_name = "distance"];</code>
+   * @param value The distance to set.
+   */
+  private void setDistance(double value) {
+    
+    distance_ = value;
   }
+  /**
+   * <pre>
+   * Total distance between consecutive positions, in fractions of the pad's size.
+   * </pre>
+   *
+   * <code>double distance = 7 [json_name = "distance"];</code>
+   */
+  private void clearDistance() {
 
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    if (id_ != 0L) {
-      output.writeInt64(1, id_);
-    }
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(username_)) {
-      com.google.protobuf.GeneratedMessage.writeString(output, 2, username_);
-    }
-    if (source_ != zip.trev.template.stack.gen.cursor.v1.Source.SOURCE_UNSPECIFIED.getNumber()) {
-      output.writeEnum(3, source_);
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      output.writeMessage(4, getStart());
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      output.writeMessage(5, getEnd());
-    }
-    if (count_ != 0L) {
-      output.writeInt64(6, count_);
-    }
-    if (java.lang.Double.doubleToRawLongBits(distance_) != 0) {
-      output.writeDouble(7, distance_);
-    }
-    getUnknownFields().writeTo(output);
-  }
-  private int computeSerializedSize_0() {
-    int size = 0;
-    if (id_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(1, id_);
-    }
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(username_)) {
-      size += com.google.protobuf.GeneratedMessage.computeStringSize(2, username_);
-    }
-    if (source_ != zip.trev.template.stack.gen.cursor.v1.Source.SOURCE_UNSPECIFIED.getNumber()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(3, source_);
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, getStart());
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(5, getEnd());
-    }
-    if (count_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(6, count_);
-    }
-    if (java.lang.Double.doubleToRawLongBits(distance_) != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeDoubleSize(7, distance_);
-    }
-    return size;
-  }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.cursor.v1.StreamSummary)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.cursor.v1.StreamSummary other = (zip.trev.template.stack.gen.cursor.v1.StreamSummary) obj;
-
-    if (getId()
-        != other.getId()) return false;
-    if (!getUsername()
-        .equals(other.getUsername())) return false;
-    if (source_ != other.source_) return false;
-    if (hasStart() != other.hasStart()) return false;
-    if (hasStart()) {
-      if (!getStart()
-          .equals(other.getStart())) return false;
-    }
-    if (hasEnd() != other.hasEnd()) return false;
-    if (hasEnd()) {
-      if (!getEnd()
-          .equals(other.getEnd())) return false;
-    }
-    if (getCount()
-        != other.getCount()) return false;
-    if (java.lang.Double.doubleToLongBits(getDistance())
-        != java.lang.Double.doubleToLongBits(
-            other.getDistance())) return false;
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + ID_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getId());
-    hash = (37 * hash) + USERNAME_FIELD_NUMBER;
-    hash = (53 * hash) + getUsername().hashCode();
-    hash = (37 * hash) + SOURCE_FIELD_NUMBER;
-    hash = (53 * hash) + source_;
-    if (hasStart()) {
-      hash = (37 * hash) + START_FIELD_NUMBER;
-      hash = (53 * hash) + getStart().hashCode();
-    }
-    if (hasEnd()) {
-      hash = (37 * hash) + END_FIELD_NUMBER;
-      hash = (53 * hash) + getEnd().hashCode();
-    }
-    hash = (37 * hash) + COUNT_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getCount());
-    hash = (37 * hash) + DISTANCE_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        java.lang.Double.doubleToLongBits(getDistance()));
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
+    distance_ = 0D;
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.cursor.v1.StreamSummary prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * <pre>
    * The positions of one stream, in aggregate.
@@ -476,245 +439,23 @@ private static final long serialVersionUID = 0L;
    * Protobuf type {@code cursor.v1.StreamSummary}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.cursor.v1.StreamSummary, Builder> implements
       // @@protoc_insertion_point(builder_implements:cursor.v1.StreamSummary)
       zip.trev.template.stack.gen.cursor.v1.StreamSummaryOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.cursor.v1.CursorProto.internal_static_cursor_v1_StreamSummary_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.cursor.v1.CursorProto.internal_static_cursor_v1_StreamSummary_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.cursor.v1.StreamSummary.class, zip.trev.template.stack.gen.cursor.v1.StreamSummary.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.cursor.v1.StreamSummary.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+      super(DEFAULT_INSTANCE);
     }
 
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessage
-              .alwaysUseFieldBuilders) {
-        internalGetStartFieldBuilder();
-        internalGetEndFieldBuilder();
-      }
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      id_ = 0L;
-      username_ = "";
-      source_ = 0;
-      start_ = null;
-      if (startBuilder_ != null) {
-        startBuilder_.dispose();
-        startBuilder_ = null;
-      }
-      end_ = null;
-      if (endBuilder_ != null) {
-        endBuilder_.dispose();
-        endBuilder_ = null;
-      }
-      count_ = 0L;
-      distance_ = 0D;
-      return this;
-    }
 
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.cursor.v1.CursorProto.internal_static_cursor_v1_StreamSummary_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.StreamSummary getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.cursor.v1.StreamSummary.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.StreamSummary build() {
-      zip.trev.template.stack.gen.cursor.v1.StreamSummary result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.StreamSummary buildPartial() {
-      zip.trev.template.stack.gen.cursor.v1.StreamSummary result = new zip.trev.template.stack.gen.cursor.v1.StreamSummary(this);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.cursor.v1.StreamSummary result) {
-      int from_bitField0_ = bitField0_;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.id_ = id_;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.username_ = username_;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.source_ = source_;
-      }
-      int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.start_ = startBuilder_ == null
-            ? start_
-            : startBuilder_.build();
-        to_bitField0_ |= 0x00000001;
-      }
-      if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.end_ = endBuilder_ == null
-            ? end_
-            : endBuilder_.build();
-        to_bitField0_ |= 0x00000002;
-      }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
-        result.count_ = count_;
-      }
-      if (((from_bitField0_ & 0x00000040) != 0)) {
-        result.distance_ = distance_;
-      }
-      result.bitField0_ |= to_bitField0_;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.cursor.v1.StreamSummary) {
-        return mergeFrom((zip.trev.template.stack.gen.cursor.v1.StreamSummary)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.cursor.v1.StreamSummary other) {
-      if (other == zip.trev.template.stack.gen.cursor.v1.StreamSummary.getDefaultInstance()) return this;
-      if (other.getId() != 0L) {
-        setId(other.getId());
-      }
-      if (!other.getUsername().isEmpty()) {
-        username_ = other.username_;
-        bitField0_ |= 0x00000002;
-        onChanged();
-      }
-      if (other.source_ != 0) {
-        setSourceValue(other.getSourceValue());
-      }
-      if (other.hasStart()) {
-        mergeStart(other.getStart());
-      }
-      if (other.hasEnd()) {
-        mergeEnd(other.getEnd());
-      }
-      if (other.getCount() != 0L) {
-        setCount(other.getCount());
-      }
-      if (java.lang.Double.doubleToRawLongBits(other.getDistance()) != 0) {
-        setDistance(other.getDistance());
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-              id_ = input.readInt64();
-              bitField0_ |= 0x00000001;
-              break;
-            } // case 8
-            case 18: {
-              username_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 18
-            case 24: {
-              source_ = input.readEnum();
-              bitField0_ |= 0x00000004;
-              break;
-            } // case 24
-            case 34: {
-              input.readMessage(
-                  internalGetStartFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000008;
-              break;
-            } // case 34
-            case 42: {
-              input.readMessage(
-                  internalGetEndFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000010;
-              break;
-            } // case 42
-            case 48: {
-              count_ = input.readInt64();
-              bitField0_ |= 0x00000020;
-              break;
-            } // case 48
-            case 57: {
-              distance_ = input.readDouble();
-              bitField0_ |= 0x00000040;
-              break;
-            } // case 57
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int bitField0_;
-
-    private long id_ ;
     /**
      * <code>int64 id = 1 [json_name = "id"];</code>
      * @return The id.
      */
     @java.lang.Override
     public long getId() {
-      return id_;
+      return instance.getId();
     }
     /**
      * <code>int64 id = 1 [json_name = "id"];</code>
@@ -722,10 +463,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setId(long value) {
-
-      id_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setId(value);
       return this;
     }
     /**
@@ -733,45 +472,27 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearId() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      id_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearId();
       return this;
     }
 
-    private java.lang.Object username_ = "";
     /**
      * <code>string username = 2 [json_name = "username"];</code>
      * @return The username.
      */
+    @java.lang.Override
     public java.lang.String getUsername() {
-      java.lang.Object ref = username_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        username_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+      return instance.getUsername();
     }
     /**
      * <code>string username = 2 [json_name = "username"];</code>
      * @return The bytes for username.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getUsernameBytes() {
-      java.lang.Object ref = username_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        username_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+      return instance.getUsernameBytes();
     }
     /**
      * <code>string username = 2 [json_name = "username"];</code>
@@ -780,10 +501,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setUsername(
         java.lang.String value) {
-      java.util.Objects.requireNonNull(value);
-      username_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setUsername(value);
       return this;
     }
     /**
@@ -791,9 +510,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearUsername() {
-      username_ = getDefaultInstance().getUsername();
-      bitField0_ = (bitField0_ & ~0x00000002);
-      onChanged();
+      copyOnWrite();
+      instance.clearUsername();
       return this;
     }
     /**
@@ -803,31 +521,28 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setUsernameBytes(
         com.google.protobuf.ByteString value) {
-      java.util.Objects.requireNonNull(value);
-      checkByteStringIsUtf8(value);
-      username_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setUsernameBytes(value);
       return this;
     }
 
-    private int source_ = 0;
     /**
      * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
      * @return The enum numeric value on the wire for source.
      */
-    @java.lang.Override public int getSourceValue() {
-      return source_;
+    @java.lang.Override
+    public int getSourceValue() {
+      return instance.getSourceValue();
     }
     /**
      * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
-     * @param value The enum numeric value on the wire for source to set.
+     * @param value The source to set.
+     * @throws IllegalArgumentException if UNRECOGNIZED is provided.
      * @return This builder for chaining.
      */
     public Builder setSourceValue(int value) {
-      source_ = value;
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.setSourceValue(value);
       return this;
     }
     /**
@@ -836,20 +551,16 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public zip.trev.template.stack.gen.cursor.v1.Source getSource() {
-      zip.trev.template.stack.gen.cursor.v1.Source result = zip.trev.template.stack.gen.cursor.v1.Source.forNumber(source_);
-      return result == null ? zip.trev.template.stack.gen.cursor.v1.Source.UNRECOGNIZED : result;
+      return instance.getSource();
     }
     /**
      * <code>.cursor.v1.Source source = 3 [json_name = "source"];</code>
-     * @param value The source to set.
-     * @throws IllegalArgumentException if UNRECOGNIZED is provided.
+     * @param value The enum numeric value on the wire for source to set.
      * @return This builder for chaining.
      */
     public Builder setSource(zip.trev.template.stack.gen.cursor.v1.Source value) {
-      java.util.Objects.requireNonNull(value);
-      bitField0_ |= 0x00000004;
-      source_ = value.getNumber();
-      onChanged();
+      copyOnWrite();
+      instance.setSource(value);
       return this;
     }
     /**
@@ -857,25 +568,21 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearSource() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      source_ = 0;
-      onChanged();
+      copyOnWrite();
+      instance.clearSource();
       return this;
     }
 
-    private com.google.protobuf.Timestamp start_;
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> startBuilder_;
     /**
      * <pre>
      * Time of the first position.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-     * @return Whether the start field is set.
      */
+    @java.lang.Override
     public boolean hasStart() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return instance.hasStart();
     }
     /**
      * <pre>
@@ -883,14 +590,10 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-     * @return The start.
      */
+    @java.lang.Override
     public com.google.protobuf.Timestamp getStart() {
-      if (startBuilder_ == null) {
-        return start_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : start_;
-      } else {
-        return startBuilder_.getMessage();
-      }
+      return instance.getStart();
     }
     /**
      * <pre>
@@ -900,16 +603,10 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
      */
     public Builder setStart(com.google.protobuf.Timestamp value) {
-      if (startBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        start_ = value;
-      } else {
-        startBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000008;
-      onChanged();
+      copyOnWrite();
+      instance.setStart(value);
       return this;
-    }
+      }
     /**
      * <pre>
      * Time of the first position.
@@ -919,13 +616,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setStart(
         com.google.protobuf.Timestamp.Builder builderForValue) {
-      if (startBuilder_ == null) {
-        start_ = builderForValue.build();
-      } else {
-        startBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000008;
-      onChanged();
+      copyOnWrite();
+      instance.setStart(builderForValue.build());
       return this;
     }
     /**
@@ -936,21 +628,8 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
      */
     public Builder mergeStart(com.google.protobuf.Timestamp value) {
-      if (startBuilder_ == null) {
-        if (((bitField0_ & 0x00000008) != 0) &&
-          start_ != null &&
-          start_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
-          getStartBuilder().mergeFrom(value);
-        } else {
-          start_ = value;
-        }
-      } else {
-        startBuilder_.mergeFrom(value);
-      }
-      if (start_ != null) {
-        bitField0_ |= 0x00000008;
-        onChanged();
-      }
+      copyOnWrite();
+      instance.mergeStart(value);
       return this;
     }
     /**
@@ -960,77 +639,21 @@ private static final long serialVersionUID = 0L;
      *
      * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
      */
-    public Builder clearStart() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      start_ = null;
-      if (startBuilder_ != null) {
-        startBuilder_.dispose();
-        startBuilder_ = null;
-      }
-      onChanged();
+    public Builder clearStart() {  copyOnWrite();
+      instance.clearStart();
       return this;
-    }
-    /**
-     * <pre>
-     * Time of the first position.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-     */
-    public com.google.protobuf.Timestamp.Builder getStartBuilder() {
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return internalGetStartFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * Time of the first position.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-     */
-    public com.google.protobuf.TimestampOrBuilder getStartOrBuilder() {
-      if (startBuilder_ != null) {
-        return startBuilder_.getMessageOrBuilder();
-      } else {
-        return start_ == null ?
-            com.google.protobuf.Timestamp.getDefaultInstance() : start_;
-      }
-    }
-    /**
-     * <pre>
-     * Time of the first position.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
-        internalGetStartFieldBuilder() {
-      if (startBuilder_ == null) {
-        startBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
-                getStart(),
-                getParentForChildren(),
-                isClean());
-        start_ = null;
-      }
-      return startBuilder_;
     }
 
-    private com.google.protobuf.Timestamp end_;
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> endBuilder_;
     /**
      * <pre>
      * Time of the last position.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-     * @return Whether the end field is set.
      */
+    @java.lang.Override
     public boolean hasEnd() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return instance.hasEnd();
     }
     /**
      * <pre>
@@ -1038,14 +661,10 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-     * @return The end.
      */
+    @java.lang.Override
     public com.google.protobuf.Timestamp getEnd() {
-      if (endBuilder_ == null) {
-        return end_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : end_;
-      } else {
-        return endBuilder_.getMessage();
-      }
+      return instance.getEnd();
     }
     /**
      * <pre>
@@ -1055,16 +674,10 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
      */
     public Builder setEnd(com.google.protobuf.Timestamp value) {
-      if (endBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        end_ = value;
-      } else {
-        endBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000010;
-      onChanged();
+      copyOnWrite();
+      instance.setEnd(value);
       return this;
-    }
+      }
     /**
      * <pre>
      * Time of the last position.
@@ -1074,13 +687,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setEnd(
         com.google.protobuf.Timestamp.Builder builderForValue) {
-      if (endBuilder_ == null) {
-        end_ = builderForValue.build();
-      } else {
-        endBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000010;
-      onChanged();
+      copyOnWrite();
+      instance.setEnd(builderForValue.build());
       return this;
     }
     /**
@@ -1091,21 +699,8 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
      */
     public Builder mergeEnd(com.google.protobuf.Timestamp value) {
-      if (endBuilder_ == null) {
-        if (((bitField0_ & 0x00000010) != 0) &&
-          end_ != null &&
-          end_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
-          getEndBuilder().mergeFrom(value);
-        } else {
-          end_ = value;
-        }
-      } else {
-        endBuilder_.mergeFrom(value);
-      }
-      if (end_ != null) {
-        bitField0_ |= 0x00000010;
-        onChanged();
-      }
+      copyOnWrite();
+      instance.mergeEnd(value);
       return this;
     }
     /**
@@ -1115,65 +710,11 @@ private static final long serialVersionUID = 0L;
      *
      * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
      */
-    public Builder clearEnd() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      end_ = null;
-      if (endBuilder_ != null) {
-        endBuilder_.dispose();
-        endBuilder_ = null;
-      }
-      onChanged();
+    public Builder clearEnd() {  copyOnWrite();
+      instance.clearEnd();
       return this;
-    }
-    /**
-     * <pre>
-     * Time of the last position.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-     */
-    public com.google.protobuf.Timestamp.Builder getEndBuilder() {
-      bitField0_ |= 0x00000010;
-      onChanged();
-      return internalGetEndFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * Time of the last position.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-     */
-    public com.google.protobuf.TimestampOrBuilder getEndOrBuilder() {
-      if (endBuilder_ != null) {
-        return endBuilder_.getMessageOrBuilder();
-      } else {
-        return end_ == null ?
-            com.google.protobuf.Timestamp.getDefaultInstance() : end_;
-      }
-    }
-    /**
-     * <pre>
-     * Time of the last position.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
-        internalGetEndFieldBuilder() {
-      if (endBuilder_ == null) {
-        endBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
-                getEnd(),
-                getParentForChildren(),
-                isClean());
-        end_ = null;
-      }
-      return endBuilder_;
     }
 
-    private long count_ ;
     /**
      * <pre>
      * Number of positions.
@@ -1184,7 +725,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public long getCount() {
-      return count_;
+      return instance.getCount();
     }
     /**
      * <pre>
@@ -1196,10 +737,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setCount(long value) {
-
-      count_ = value;
-      bitField0_ |= 0x00000020;
-      onChanged();
+      copyOnWrite();
+      instance.setCount(value);
       return this;
     }
     /**
@@ -1211,13 +750,11 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCount() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      count_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearCount();
       return this;
     }
 
-    private double distance_ ;
     /**
      * <pre>
      * Total distance between consecutive positions, in fractions of the pad's size.
@@ -1228,7 +765,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public double getDistance() {
-      return distance_;
+      return instance.getDistance();
     }
     /**
      * <pre>
@@ -1240,10 +777,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setDistance(double value) {
-
-      distance_ = value;
-      bitField0_ |= 0x00000040;
-      onChanged();
+      copyOnWrite();
+      instance.setDistance(value);
       return this;
     }
     /**
@@ -1255,60 +790,90 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearDistance() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      distance_ = 0D;
-      onChanged();
+      copyOnWrite();
+      instance.clearDistance();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:cursor.v1.StreamSummary)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.cursor.v1.StreamSummary();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "bitField0_",
+            "id_",
+            "username_",
+            "source_",
+            "start_",
+            "end_",
+            "count_",
+            "distance_",
+          };
+          java.lang.String info =
+              "\u0000\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0000\u0000\u0001\u0002\u0002\u0208" +
+              "\u0003\f\u0004\u1009\u0000\u0005\u1009\u0001\u0006\u0002\u0007\u0000";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.cursor.v1.StreamSummary> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.cursor.v1.StreamSummary.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.cursor.v1.StreamSummary>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:cursor.v1.StreamSummary)
   private static final zip.trev.template.stack.gen.cursor.v1.StreamSummary DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.cursor.v1.StreamSummary();
+    StreamSummary defaultInstance = new StreamSummary();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      StreamSummary.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.StreamSummary getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<StreamSummary>
-      PARSER = new com.google.protobuf.AbstractParser<StreamSummary>() {
-    @java.lang.Override
-    public StreamSummary parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<StreamSummary> PARSER;
 
   public static com.google.protobuf.Parser<StreamSummary> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<StreamSummary> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.StreamSummary getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

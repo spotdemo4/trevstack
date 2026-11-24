@@ -13,51 +13,17 @@ package zip.trev.template.stack.gen.cursor.v1;
  * Protobuf type {@code cursor.v1.ShareResponse}
  */
 @com.google.protobuf.Generated
-public final class ShareResponse extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class ShareResponse extends
+    com.google.protobuf.GeneratedMessageLite<
+        ShareResponse, ShareResponse.Builder> implements
     // @@protoc_insertion_point(message_implements:cursor.v1.ShareResponse)
     ShareResponseOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "ShareResponse");
-  }
-  // Use ShareResponse.newBuilder() to construct.
-  private ShareResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private ShareResponse() {
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.ShareProto.internal_static_cursor_v1_ShareResponse_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.cursor.v1.ShareProto.internal_static_cursor_v1_ShareResponse_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.cursor.v1.ShareProto.internal_static_cursor_v1_ShareResponse_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.cursor.v1.ShareResponse.class, zip.trev.template.stack.gen.cursor.v1.ShareResponse.Builder.class);
-  }
-
   private int eventCase_ = 0;
-  @SuppressWarnings("serial")
   private java.lang.Object event_;
   public enum EventCase
-      implements com.google.protobuf.Internal.EnumLite,
-          com.google.protobuf.AbstractMessage.InternalOneOfEnum {
+      implements com.google.protobuf.AbstractMessageLite.InternalOneOfEnum {
     MOVED(1),
     ENDED(2),
     EVENT_NOT_SET(0);
@@ -66,8 +32,6 @@ private static final long serialVersionUID = 0L;
       this.value = value;
     }
     /**
-     * @param value The number of the enum to look for.
-     * @return The enum associated with the given number.
      * @deprecated Use {@link #forNumber(int)} instead.
      */
     @java.lang.Deprecated
@@ -83,15 +47,21 @@ private static final long serialVersionUID = 0L;
         default: return null;
       }
     }
-    public int getNumber() {
+    @java.lang.Override public int getNumber() {
       return this.value;
     }
   };
 
+  @java.lang.Override
   public EventCase
   getEventCase() {
     return EventCase.forNumber(
         eventCase_);
+  }
+
+  private void clearEvent() {
+    eventCase_ = 0;
+    event_ = null;
   }
 
   public static final int MOVED_FIELD_NUMBER = 1;
@@ -101,7 +71,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-   * @return Whether the moved field is set.
    */
   @java.lang.Override
   public boolean hasMoved() {
@@ -113,7 +82,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-   * @return The moved.
    */
   @java.lang.Override
   public zip.trev.template.stack.gen.cursor.v1.Cursor getMoved() {
@@ -129,12 +97,41 @@ private static final long serialVersionUID = 0L;
    *
    * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
    */
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.CursorOrBuilder getMovedOrBuilder() {
-    if (eventCase_ == 1) {
-       return (zip.trev.template.stack.gen.cursor.v1.Cursor) event_;
+  private void setMoved(zip.trev.template.stack.gen.cursor.v1.Cursor value) {
+    java.util.Objects.requireNonNull(value);
+    event_ = value;
+    eventCase_ = 1;
+  }
+  /**
+   * <pre>
+   * A cursor moved.
+   * </pre>
+   *
+   * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
+   */
+  private void mergeMoved(zip.trev.template.stack.gen.cursor.v1.Cursor value) {
+    java.util.Objects.requireNonNull(value);
+    if (eventCase_ == 1 &&
+        event_ != zip.trev.template.stack.gen.cursor.v1.Cursor.getDefaultInstance()) {
+      event_ = zip.trev.template.stack.gen.cursor.v1.Cursor.newBuilder((zip.trev.template.stack.gen.cursor.v1.Cursor) event_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      event_ = value;
     }
-    return zip.trev.template.stack.gen.cursor.v1.Cursor.getDefaultInstance();
+    eventCase_ = 1;
+  }
+  /**
+   * <pre>
+   * A cursor moved.
+   * </pre>
+   *
+   * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
+   */
+  private void clearMoved() {
+    if (eventCase_ == 1) {
+      eventCase_ = 0;
+      event_ = null;
+    }
   }
 
   public static final int ENDED_FIELD_NUMBER = 2;
@@ -144,7 +141,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-   * @return Whether the ended field is set.
    */
   @java.lang.Override
   public boolean hasEnded() {
@@ -156,7 +152,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-   * @return The ended.
    */
   @java.lang.Override
   public zip.trev.template.stack.gen.cursor.v1.StreamEnd getEnded() {
@@ -172,203 +167,126 @@ private static final long serialVersionUID = 0L;
    *
    * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
    */
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.StreamEndOrBuilder getEndedOrBuilder() {
+  private void setEnded(zip.trev.template.stack.gen.cursor.v1.StreamEnd value) {
+    java.util.Objects.requireNonNull(value);
+    event_ = value;
+    eventCase_ = 2;
+  }
+  /**
+   * <pre>
+   * A stream ended, so its cursor can be removed.
+   * </pre>
+   *
+   * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
+   */
+  private void mergeEnded(zip.trev.template.stack.gen.cursor.v1.StreamEnd value) {
+    java.util.Objects.requireNonNull(value);
+    if (eventCase_ == 2 &&
+        event_ != zip.trev.template.stack.gen.cursor.v1.StreamEnd.getDefaultInstance()) {
+      event_ = zip.trev.template.stack.gen.cursor.v1.StreamEnd.newBuilder((zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_)
+          .mergeFrom(value).buildPartial();
+    } else {
+      event_ = value;
+    }
+    eventCase_ = 2;
+  }
+  /**
+   * <pre>
+   * A stream ended, so its cursor can be removed.
+   * </pre>
+   *
+   * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
+   */
+  private void clearEnded() {
     if (eventCase_ == 2) {
-       return (zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_;
+      eventCase_ = 0;
+      event_ = null;
     }
-    return zip.trev.template.stack.gen.cursor.v1.StreamEnd.getDefaultInstance();
-  }
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
-  }
-
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    if (eventCase_ == 1) {
-      output.writeMessage(1, (zip.trev.template.stack.gen.cursor.v1.Cursor) event_);
-    }
-    if (eventCase_ == 2) {
-      output.writeMessage(2, (zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_);
-    }
-    getUnknownFields().writeTo(output);
-  }
-  private int computeSerializedSize_0() {
-    int size = 0;
-    if (eventCase_ == 1) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(1, (zip.trev.template.stack.gen.cursor.v1.Cursor) event_);
-    }
-    if (eventCase_ == 2) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, (zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_);
-    }
-    return size;
-  }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.cursor.v1.ShareResponse)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.cursor.v1.ShareResponse other = (zip.trev.template.stack.gen.cursor.v1.ShareResponse) obj;
-
-    if (!getEventCase().equals(other.getEventCase())) return false;
-    switch (eventCase_) {
-      case 1:
-        if (!getMoved()
-            .equals(other.getMoved())) return false;
-        break;
-      case 2:
-        if (!getEnded()
-            .equals(other.getEnded())) return false;
-        break;
-      case 0:
-      default:
-    }
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    switch (eventCase_) {
-      case 1:
-        hash = (37 * hash) + MOVED_FIELD_NUMBER;
-        hash = (53 * hash) + getMoved().hashCode();
-        break;
-      case 2:
-        hash = (37 * hash) + ENDED_FIELD_NUMBER;
-        hash = (53 * hash) + getEnded().hashCode();
-        break;
-      case 0:
-      default:
-    }
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.cursor.v1.ShareResponse prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * <pre>
    * One cursor event of another stream in the server's half of the stream.
@@ -377,201 +295,38 @@ private static final long serialVersionUID = 0L;
    * Protobuf type {@code cursor.v1.ShareResponse}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.cursor.v1.ShareResponse, Builder> implements
       // @@protoc_insertion_point(builder_implements:cursor.v1.ShareResponse)
       zip.trev.template.stack.gen.cursor.v1.ShareResponseOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.cursor.v1.ShareProto.internal_static_cursor_v1_ShareResponse_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.cursor.v1.ShareProto.internal_static_cursor_v1_ShareResponse_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.cursor.v1.ShareResponse.class, zip.trev.template.stack.gen.cursor.v1.ShareResponse.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.cursor.v1.ShareResponse.newBuilder()
     private Builder() {
-
-    }
-
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
-
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      if (movedBuilder_ != null) {
-        movedBuilder_.clear();
-      }
-      if (endedBuilder_ != null) {
-        endedBuilder_.clear();
-      }
-      eventCase_ = 0;
-      event_ = null;
-      return this;
+      super(DEFAULT_INSTANCE);
     }
 
     @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.cursor.v1.ShareProto.internal_static_cursor_v1_ShareResponse_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.ShareResponse getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.cursor.v1.ShareResponse.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.ShareResponse build() {
-      zip.trev.template.stack.gen.cursor.v1.ShareResponse result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.ShareResponse buildPartial() {
-      zip.trev.template.stack.gen.cursor.v1.ShareResponse result = new zip.trev.template.stack.gen.cursor.v1.ShareResponse(this);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      buildPartialOneofs(result);
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.cursor.v1.ShareResponse result) {
-      int from_bitField0_ = bitField0_;
-    }
-
-    private void buildPartialOneofs(zip.trev.template.stack.gen.cursor.v1.ShareResponse result) {
-      result.eventCase_ = eventCase_;
-      result.event_ = this.event_;
-      if (eventCase_ == 1 &&
-          movedBuilder_ != null) {
-        result.event_ = movedBuilder_.build();
-      }
-      if (eventCase_ == 2 &&
-          endedBuilder_ != null) {
-        result.event_ = endedBuilder_.build();
-      }
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.cursor.v1.ShareResponse) {
-        return mergeFrom((zip.trev.template.stack.gen.cursor.v1.ShareResponse)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.cursor.v1.ShareResponse other) {
-      if (other == zip.trev.template.stack.gen.cursor.v1.ShareResponse.getDefaultInstance()) return this;
-      switch (other.getEventCase()) {
-        case MOVED: {
-          mergeMoved(other.getMoved());
-          break;
-        }
-        case ENDED: {
-          mergeEnded(other.getEnded());
-          break;
-        }
-        case EVENT_NOT_SET: {
-          break;
-        }
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              input.readMessage(
-                  internalGetMovedFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              eventCase_ = 1;
-              break;
-            } // case 10
-            case 18: {
-              input.readMessage(
-                  internalGetEndedFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              eventCase_ = 2;
-              break;
-            } // case 18
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int eventCase_ = 0;
-    private java.lang.Object event_;
     public EventCase
         getEventCase() {
-      return EventCase.forNumber(
-          eventCase_);
+      return instance.getEventCase();
     }
 
     public Builder clearEvent() {
-      eventCase_ = 0;
-      event_ = null;
-      onChanged();
+      copyOnWrite();
+      instance.clearEvent();
       return this;
     }
 
-    private int bitField0_;
 
-    private com.google.protobuf.SingleFieldBuilder<
-        zip.trev.template.stack.gen.cursor.v1.Cursor, zip.trev.template.stack.gen.cursor.v1.Cursor.Builder, zip.trev.template.stack.gen.cursor.v1.CursorOrBuilder> movedBuilder_;
     /**
      * <pre>
      * A cursor moved.
      * </pre>
      *
      * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-     * @return Whether the moved field is set.
      */
     @java.lang.Override
     public boolean hasMoved() {
-      return eventCase_ == 1;
+      return instance.hasMoved();
     }
     /**
      * <pre>
@@ -579,21 +334,10 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-     * @return The moved.
      */
     @java.lang.Override
     public zip.trev.template.stack.gen.cursor.v1.Cursor getMoved() {
-      if (movedBuilder_ == null) {
-        if (eventCase_ == 1) {
-          return (zip.trev.template.stack.gen.cursor.v1.Cursor) event_;
-        }
-        return zip.trev.template.stack.gen.cursor.v1.Cursor.getDefaultInstance();
-      } else {
-        if (eventCase_ == 1) {
-          return movedBuilder_.getMessage();
-        }
-        return zip.trev.template.stack.gen.cursor.v1.Cursor.getDefaultInstance();
-      }
+      return instance.getMoved();
     }
     /**
      * <pre>
@@ -603,14 +347,8 @@ private static final long serialVersionUID = 0L;
      * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
      */
     public Builder setMoved(zip.trev.template.stack.gen.cursor.v1.Cursor value) {
-      if (movedBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        event_ = value;
-        onChanged();
-      } else {
-        movedBuilder_.setMessage(value);
-      }
-      eventCase_ = 1;
+      copyOnWrite();
+      instance.setMoved(value);
       return this;
     }
     /**
@@ -622,13 +360,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setMoved(
         zip.trev.template.stack.gen.cursor.v1.Cursor.Builder builderForValue) {
-      if (movedBuilder_ == null) {
-        event_ = builderForValue.build();
-        onChanged();
-      } else {
-        movedBuilder_.setMessage(builderForValue.build());
-      }
-      eventCase_ = 1;
+      copyOnWrite();
+      instance.setMoved(builderForValue.build());
       return this;
     }
     /**
@@ -639,23 +372,8 @@ private static final long serialVersionUID = 0L;
      * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
      */
     public Builder mergeMoved(zip.trev.template.stack.gen.cursor.v1.Cursor value) {
-      if (movedBuilder_ == null) {
-        if (eventCase_ == 1 &&
-            event_ != zip.trev.template.stack.gen.cursor.v1.Cursor.getDefaultInstance()) {
-          event_ = zip.trev.template.stack.gen.cursor.v1.Cursor.newBuilder((zip.trev.template.stack.gen.cursor.v1.Cursor) event_)
-              .mergeFrom(value).buildPartial();
-        } else {
-          event_ = value;
-        }
-        onChanged();
-      } else {
-        if (eventCase_ == 1) {
-          movedBuilder_.mergeFrom(value);
-        } else {
-          movedBuilder_.setMessage(value);
-        }
-      }
-      eventCase_ = 1;
+      copyOnWrite();
+      instance.mergeMoved(value);
       return this;
     }
     /**
@@ -666,88 +384,21 @@ private static final long serialVersionUID = 0L;
      * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
      */
     public Builder clearMoved() {
-      if (movedBuilder_ == null) {
-        if (eventCase_ == 1) {
-          eventCase_ = 0;
-          event_ = null;
-          onChanged();
-        }
-      } else {
-        if (eventCase_ == 1) {
-          eventCase_ = 0;
-          event_ = null;
-        }
-        movedBuilder_.clear();
-      }
+      copyOnWrite();
+      instance.clearMoved();
       return this;
     }
-    /**
-     * <pre>
-     * A cursor moved.
-     * </pre>
-     *
-     * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-     */
-    public zip.trev.template.stack.gen.cursor.v1.Cursor.Builder getMovedBuilder() {
-      return internalGetMovedFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * A cursor moved.
-     * </pre>
-     *
-     * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-     */
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.CursorOrBuilder getMovedOrBuilder() {
-      if ((eventCase_ == 1) && (movedBuilder_ != null)) {
-        return movedBuilder_.getMessageOrBuilder();
-      } else {
-        if (eventCase_ == 1) {
-          return (zip.trev.template.stack.gen.cursor.v1.Cursor) event_;
-        }
-        return zip.trev.template.stack.gen.cursor.v1.Cursor.getDefaultInstance();
-      }
-    }
-    /**
-     * <pre>
-     * A cursor moved.
-     * </pre>
-     *
-     * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        zip.trev.template.stack.gen.cursor.v1.Cursor, zip.trev.template.stack.gen.cursor.v1.Cursor.Builder, zip.trev.template.stack.gen.cursor.v1.CursorOrBuilder> 
-        internalGetMovedFieldBuilder() {
-      if (movedBuilder_ == null) {
-        if (!(eventCase_ == 1)) {
-          event_ = zip.trev.template.stack.gen.cursor.v1.Cursor.getDefaultInstance();
-        }
-        movedBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            zip.trev.template.stack.gen.cursor.v1.Cursor, zip.trev.template.stack.gen.cursor.v1.Cursor.Builder, zip.trev.template.stack.gen.cursor.v1.CursorOrBuilder>(
-                (zip.trev.template.stack.gen.cursor.v1.Cursor) event_,
-                getParentForChildren(),
-                isClean());
-        event_ = null;
-      }
-      eventCase_ = 1;
-      onChanged();
-      return movedBuilder_;
-    }
 
-    private com.google.protobuf.SingleFieldBuilder<
-        zip.trev.template.stack.gen.cursor.v1.StreamEnd, zip.trev.template.stack.gen.cursor.v1.StreamEnd.Builder, zip.trev.template.stack.gen.cursor.v1.StreamEndOrBuilder> endedBuilder_;
     /**
      * <pre>
      * A stream ended, so its cursor can be removed.
      * </pre>
      *
      * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-     * @return Whether the ended field is set.
      */
     @java.lang.Override
     public boolean hasEnded() {
-      return eventCase_ == 2;
+      return instance.hasEnded();
     }
     /**
      * <pre>
@@ -755,21 +406,10 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-     * @return The ended.
      */
     @java.lang.Override
     public zip.trev.template.stack.gen.cursor.v1.StreamEnd getEnded() {
-      if (endedBuilder_ == null) {
-        if (eventCase_ == 2) {
-          return (zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_;
-        }
-        return zip.trev.template.stack.gen.cursor.v1.StreamEnd.getDefaultInstance();
-      } else {
-        if (eventCase_ == 2) {
-          return endedBuilder_.getMessage();
-        }
-        return zip.trev.template.stack.gen.cursor.v1.StreamEnd.getDefaultInstance();
-      }
+      return instance.getEnded();
     }
     /**
      * <pre>
@@ -779,14 +419,8 @@ private static final long serialVersionUID = 0L;
      * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
      */
     public Builder setEnded(zip.trev.template.stack.gen.cursor.v1.StreamEnd value) {
-      if (endedBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        event_ = value;
-        onChanged();
-      } else {
-        endedBuilder_.setMessage(value);
-      }
-      eventCase_ = 2;
+      copyOnWrite();
+      instance.setEnded(value);
       return this;
     }
     /**
@@ -798,13 +432,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setEnded(
         zip.trev.template.stack.gen.cursor.v1.StreamEnd.Builder builderForValue) {
-      if (endedBuilder_ == null) {
-        event_ = builderForValue.build();
-        onChanged();
-      } else {
-        endedBuilder_.setMessage(builderForValue.build());
-      }
-      eventCase_ = 2;
+      copyOnWrite();
+      instance.setEnded(builderForValue.build());
       return this;
     }
     /**
@@ -815,23 +444,8 @@ private static final long serialVersionUID = 0L;
      * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
      */
     public Builder mergeEnded(zip.trev.template.stack.gen.cursor.v1.StreamEnd value) {
-      if (endedBuilder_ == null) {
-        if (eventCase_ == 2 &&
-            event_ != zip.trev.template.stack.gen.cursor.v1.StreamEnd.getDefaultInstance()) {
-          event_ = zip.trev.template.stack.gen.cursor.v1.StreamEnd.newBuilder((zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_)
-              .mergeFrom(value).buildPartial();
-        } else {
-          event_ = value;
-        }
-        onChanged();
-      } else {
-        if (eventCase_ == 2) {
-          endedBuilder_.mergeFrom(value);
-        } else {
-          endedBuilder_.setMessage(value);
-        }
-      }
-      eventCase_ = 2;
+      copyOnWrite();
+      instance.mergeEnded(value);
       return this;
     }
     /**
@@ -842,123 +456,86 @@ private static final long serialVersionUID = 0L;
      * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
      */
     public Builder clearEnded() {
-      if (endedBuilder_ == null) {
-        if (eventCase_ == 2) {
-          eventCase_ = 0;
-          event_ = null;
-          onChanged();
-        }
-      } else {
-        if (eventCase_ == 2) {
-          eventCase_ = 0;
-          event_ = null;
-        }
-        endedBuilder_.clear();
-      }
+      copyOnWrite();
+      instance.clearEnded();
       return this;
-    }
-    /**
-     * <pre>
-     * A stream ended, so its cursor can be removed.
-     * </pre>
-     *
-     * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-     */
-    public zip.trev.template.stack.gen.cursor.v1.StreamEnd.Builder getEndedBuilder() {
-      return internalGetEndedFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * A stream ended, so its cursor can be removed.
-     * </pre>
-     *
-     * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-     */
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.StreamEndOrBuilder getEndedOrBuilder() {
-      if ((eventCase_ == 2) && (endedBuilder_ != null)) {
-        return endedBuilder_.getMessageOrBuilder();
-      } else {
-        if (eventCase_ == 2) {
-          return (zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_;
-        }
-        return zip.trev.template.stack.gen.cursor.v1.StreamEnd.getDefaultInstance();
-      }
-    }
-    /**
-     * <pre>
-     * A stream ended, so its cursor can be removed.
-     * </pre>
-     *
-     * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        zip.trev.template.stack.gen.cursor.v1.StreamEnd, zip.trev.template.stack.gen.cursor.v1.StreamEnd.Builder, zip.trev.template.stack.gen.cursor.v1.StreamEndOrBuilder> 
-        internalGetEndedFieldBuilder() {
-      if (endedBuilder_ == null) {
-        if (!(eventCase_ == 2)) {
-          event_ = zip.trev.template.stack.gen.cursor.v1.StreamEnd.getDefaultInstance();
-        }
-        endedBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            zip.trev.template.stack.gen.cursor.v1.StreamEnd, zip.trev.template.stack.gen.cursor.v1.StreamEnd.Builder, zip.trev.template.stack.gen.cursor.v1.StreamEndOrBuilder>(
-                (zip.trev.template.stack.gen.cursor.v1.StreamEnd) event_,
-                getParentForChildren(),
-                isClean());
-        event_ = null;
-      }
-      eventCase_ = 2;
-      onChanged();
-      return endedBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:cursor.v1.ShareResponse)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.cursor.v1.ShareResponse();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "event_",
+            "eventCase_",
+            zip.trev.template.stack.gen.cursor.v1.Cursor.class,
+            zip.trev.template.stack.gen.cursor.v1.StreamEnd.class,
+          };
+          java.lang.String info =
+              "\u0000\u0002\u0001\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001<\u0000\u0002<" +
+              "\u0000";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.cursor.v1.ShareResponse> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.cursor.v1.ShareResponse.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.cursor.v1.ShareResponse>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:cursor.v1.ShareResponse)
   private static final zip.trev.template.stack.gen.cursor.v1.ShareResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.cursor.v1.ShareResponse();
+    ShareResponse defaultInstance = new ShareResponse();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      ShareResponse.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.ShareResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<ShareResponse>
-      PARSER = new com.google.protobuf.AbstractParser<ShareResponse>() {
-    @java.lang.Override
-    public ShareResponse parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<ShareResponse> PARSER;
 
   public static com.google.protobuf.Parser<ShareResponse> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<ShareResponse> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.ShareResponse getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

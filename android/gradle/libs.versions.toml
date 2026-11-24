@@ -7,8 +7,10 @@ cronet = "500.1.0"
 junit = "4.13.2"
 kotlin = "2.4.21"
 lifecycle = "2.11.1"
+# the runtime of the messages that protoc generates, at the version of the flake's protobuf
+protobuf = "4.36.2"
 # every TrevRPC package of one version works with the others, so this matches the flake's trevrpc input
-trevrpc = "1.12.0"
+trevrpc = "1.13.0"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
@@ -23,6 +25,7 @@ cronet-bundled = { module = "org.chromium.net:cronet-bundled", version.ref = "cr
 junit = { module = "junit:junit", version.ref = "junit" }
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 trevrpc-core = { module = "zip.trev.trevrpc:core", version.ref = "trevrpc" }
 trevrpc-transport-cronet = { module = "zip.trev.trevrpc:transport-cronet", version.ref = "trevrpc" }
 

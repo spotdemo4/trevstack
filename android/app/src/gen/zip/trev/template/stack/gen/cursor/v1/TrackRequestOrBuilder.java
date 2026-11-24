@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface TrackRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.TrackRequest)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <pre>

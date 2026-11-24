@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface CursorOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.Cursor)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <pre>
@@ -65,8 +65,4 @@ public interface CursorOrBuilder extends
    * @return The timestamp.
    */
   com.google.protobuf.Timestamp getTimestamp();
-  /**
-   * <code>.google.protobuf.Timestamp timestamp = 6 [json_name = "timestamp"];</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getTimestampOrBuilder();
 }

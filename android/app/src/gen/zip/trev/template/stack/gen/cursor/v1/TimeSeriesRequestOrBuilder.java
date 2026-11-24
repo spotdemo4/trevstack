@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface TimeSeriesRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.TimeSeriesRequest)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <pre>
@@ -56,14 +56,6 @@ public interface TimeSeriesRequestOrBuilder extends
    * @return The start.
    */
   com.google.protobuf.Timestamp getStart();
-  /**
-   * <pre>
-   * Inclusive lower timestamp bound; omit for no lower bound.
-   * </pre>
-   *
-   * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getStartOrBuilder();
 
   /**
    * <pre>
@@ -83,12 +75,4 @@ public interface TimeSeriesRequestOrBuilder extends
    * @return The end.
    */
   com.google.protobuf.Timestamp getEnd();
-  /**
-   * <pre>
-   * Inclusive upper timestamp bound, after start; omit for no upper bound.
-   * </pre>
-   *
-   * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getEndOrBuilder();
 }

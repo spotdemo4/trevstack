@@ -6,26 +6,11 @@
 package zip.trev.template.stack.gen.auth.v1;
 
 @com.google.protobuf.Generated
-public final class OptionsProto extends com.google.protobuf.GeneratedFile {
+public final class OptionsProto {
   private OptionsProto() {}
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "OptionsProto");
-  }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
     registry.add(zip.trev.template.stack.gen.auth.v1.OptionsProto.public_);
-  }
-
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public static final int PUBLIC_FIELD_NUMBER = 50000;
   /**
@@ -38,38 +23,19 @@ public final class OptionsProto extends com.google.protobuf.GeneratedFile {
    * <code>extend .google.protobuf.MethodOptions { ... }</code>
    */
   public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
       com.google.protobuf.DescriptorProtos.MethodOptions,
-      java.lang.Boolean> public_ = com.google.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.Boolean.class,
-        null);
+      java.lang.Boolean> public_ = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        com.google.protobuf.DescriptorProtos.MethodOptions.getDefaultInstance(),
+        false,
+        null,
+        null,
+        50000,
+        com.google.protobuf.WireFormat.FieldType.BOOL,
+        java.lang.Boolean.class);
 
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static final com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
   static {
-    java.lang.String[] descriptorData = {
-      "\n\025auth/v1/options.proto\022\007auth.v1\032 google" +
-      "/protobuf/descriptor.proto:8\n\006public\022\036.g" +
-      "oogle.protobuf.MethodOptions\030\320\206\003 \001(\010R\006pu" +
-      "blicB\246\001\n#zip.trev.template.stack.gen.aut" +
-      "h.v1B\014OptionsProtoP\001Z4trev.zip/template/" +
-      "stack/server/v3/gen/auth/v1;authv1\242\002\003AXX" +
-      "\252\002\007Auth.V1\312\002\007Auth\\V1\342\002\023Auth\\V1\\GPBMetada" +
-      "ta\352\002\010Auth::V1b\006proto3"
-    };
-    descriptor = com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.google.protobuf.DescriptorProtos.getDescriptor(),
-        });
-    public_.internalInit(descriptor.getExtension(0));
-    descriptor.resolveAllFeaturesImmutable();
-    com.google.protobuf.DescriptorProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

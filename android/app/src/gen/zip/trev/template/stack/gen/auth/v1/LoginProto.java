@@ -6,86 +6,13 @@
 package zip.trev.template.stack.gen.auth.v1;
 
 @com.google.protobuf.Generated
-public final class LoginProto extends com.google.protobuf.GeneratedFile {
+public final class LoginProto {
   private LoginProto() {}
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "LoginProto");
-  }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
 
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_auth_v1_LoginRequest_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_auth_v1_LoginRequest_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_auth_v1_LoginResponse_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_auth_v1_LoginResponse_fieldAccessorTable;
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static final com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
   static {
-    java.lang.String[] descriptorData = {
-      "\n\023auth/v1/login.proto\022\007auth.v1\032\033buf/vali" +
-      "date/validate.proto\"\257\002\n\014LoginRequest\022\325\001\n" +
-      "\010username\030\001 \001(\tB\263\001\272H\257\001r\004\020\003\030@\272\001\242\001\n\017userna" +
-      "me.format\022bvalue must start with a lette" +
-      "r or digit and contain only letters, dig" +
-      "its, underscores, and hyphens\032+this.matc" +
-      "hes(\'^[A-Za-z0-9][A-Za-z0-9_-]*$\')\310\001\001H\000R" +
-      "\010username\210\001\001\022-\n\010password\030\002 \001(\tB\014\272H\tr\004\020\010(" +
-      "H\310\001\001H\001R\010password\210\001\001B\013\n\t_usernameB\013\n\t_pas" +
-      "sword\"I\n\rLoginResponse\022\024\n\005token\030\001 \001(\tR\005t" +
-      "oken\022\020\n\003sub\030\002 \001(\tR\003sub\022\020\n\003exp\030\003 \001(\003R\003exp" +
-      "B\244\001\n#zip.trev.template.stack.gen.auth.v1" +
-      "B\nLoginProtoP\001Z4trev.zip/template/stack/" +
-      "server/v3/gen/auth/v1;authv1\242\002\003AXX\252\002\007Aut" +
-      "h.V1\312\002\007Auth\\V1\342\002\023Auth\\V1\\GPBMetadata\352\002\010A" +
-      "uth::V1b\006proto3"
-    };
-    descriptor = com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-          build.buf.validate.ValidateProto.getDescriptor(),
-        });
-    internal_static_auth_v1_LoginRequest_descriptor =
-      getDescriptor().getMessageType(0);
-    internal_static_auth_v1_LoginRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_auth_v1_LoginRequest_descriptor,
-        new java.lang.String[] { "Username", "Password", });
-    internal_static_auth_v1_LoginResponse_descriptor =
-      getDescriptor().getMessageType(1);
-    internal_static_auth_v1_LoginResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_auth_v1_LoginResponse_descriptor,
-        new java.lang.String[] { "Token", "Sub", "Exp", });
-    descriptor.resolveAllFeaturesImmutable();
-    build.buf.validate.ValidateProto.getDescriptor();
-    com.google.protobuf.ExtensionRegistry registry =
-        com.google.protobuf.ExtensionRegistry.newInstance();
-    registry.add(build.buf.validate.ValidateProto.field);
-    com.google.protobuf.Descriptors.FileDescriptor
-        .internalUpdateFileDescriptor(descriptor, registry);
   }
 
   // @@protoc_insertion_point(outer_class_scope)

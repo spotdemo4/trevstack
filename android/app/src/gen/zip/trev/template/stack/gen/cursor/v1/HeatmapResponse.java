@@ -9,48 +9,16 @@ package zip.trev.template.stack.gen.cursor.v1;
  * Protobuf type {@code cursor.v1.HeatmapResponse}
  */
 @com.google.protobuf.Generated
-public final class HeatmapResponse extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class HeatmapResponse extends
+    com.google.protobuf.GeneratedMessageLite<
+        HeatmapResponse, HeatmapResponse.Builder> implements
     // @@protoc_insertion_point(message_implements:cursor.v1.HeatmapResponse)
     HeatmapResponseOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "HeatmapResponse");
-  }
-  // Use HeatmapResponse.newBuilder() to construct.
-  private HeatmapResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private HeatmapResponse() {
     counts_ = emptyLongList();
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_HeatmapResponse_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_HeatmapResponse_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_HeatmapResponse_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.class, zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.Builder.class);
-  }
-
   public static final int COLUMNS_FIELD_NUMBER = 1;
-  private int columns_ = 0;
+  private int columns_;
   /**
    * <code>uint32 columns = 1 [json_name = "columns"];</code>
    * @return The columns.
@@ -59,9 +27,24 @@ private static final long serialVersionUID = 0L;
   public int getColumns() {
     return columns_;
   }
+  /**
+   * <code>uint32 columns = 1 [json_name = "columns"];</code>
+   * @param value The columns to set.
+   */
+  private void setColumns(int value) {
+    
+    columns_ = value;
+  }
+  /**
+   * <code>uint32 columns = 1 [json_name = "columns"];</code>
+   */
+  private void clearColumns() {
+
+    columns_ = 0;
+  }
 
   public static final int ROWS_FIELD_NUMBER = 2;
-  private int rows_ = 0;
+  private int rows_;
   /**
    * <code>uint32 rows = 2 [json_name = "rows"];</code>
    * @return The rows.
@@ -70,11 +53,24 @@ private static final long serialVersionUID = 0L;
   public int getRows() {
     return rows_;
   }
+  /**
+   * <code>uint32 rows = 2 [json_name = "rows"];</code>
+   * @param value The rows to set.
+   */
+  private void setRows(int value) {
+    
+    rows_ = value;
+  }
+  /**
+   * <code>uint32 rows = 2 [json_name = "rows"];</code>
+   */
+  private void clearRows() {
+
+    rows_ = 0;
+  }
 
   public static final int COUNTS_FIELD_NUMBER = 3;
-  @SuppressWarnings("serial")
-  private com.google.protobuf.Internal.LongList counts_ =
-      emptyLongList();
+  private com.google.protobuf.Internal.LongList counts_;
   /**
    * <pre>
    * Positions in each cell, row by row from the top-left: the cell in column c of row r is at
@@ -98,6 +94,7 @@ private static final long serialVersionUID = 0L;
    * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
    * @return The count of counts.
    */
+  @java.lang.Override
   public int getCountsCount() {
     return counts_.size();
   }
@@ -111,397 +108,177 @@ private static final long serialVersionUID = 0L;
    * @param index The index of the element to return.
    * @return The counts at the given index.
    */
+  @java.lang.Override
   public long getCounts(int index) {
     return counts_.getLong(index);
   }
   private int countsMemoizedSerializedSize = -1;
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
+  private void ensureCountsIsMutable() {
+    com.google.protobuf.Internal.LongList tmp = counts_;
+    if (!tmp.isModifiable()) {
+      counts_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
   }
-
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    getSerializedSize();
-    if (columns_ != 0) {
-      output.writeUInt32(1, columns_);
-    }
-    if (rows_ != 0) {
-      output.writeUInt32(2, rows_);
-    }
-    if (getCountsList().size() > 0) {
-      output.writeUInt32NoTag(26);
-      output.writeUInt32NoTag(countsMemoizedSerializedSize);
-    }
-    for (int i = 0; i < counts_.size(); i++) {
-      output.writeInt64NoTag(counts_.getLong(i));
-    }
-    getUnknownFields().writeTo(output);
+  /**
+   * <pre>
+   * Positions in each cell, row by row from the top-left: the cell in column c of row r is at
+   * index r * columns + c.
+   * </pre>
+   *
+   * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
+   * @param index The index to set the value at.
+   * @param value The counts to set.
+   */
+  private void setCounts(
+      int index, long value) {
+    ensureCountsIsMutable();
+    counts_.setLong(index, value);
   }
-  private int computeSerializedSize_0() {
-    int size = 0;
-    if (columns_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeUInt32Size(1, columns_);
-    }
-    if (rows_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeUInt32Size(2, rows_);
-    }
-    {
-      int dataSize = 0;
-      for (int i = 0; i < counts_.size(); i++) {
-        dataSize += com.google.protobuf.CodedOutputStream
-          .computeInt64SizeNoTag(counts_.getLong(i));
-      }
-      size += dataSize;
-      if (!getCountsList().isEmpty()) {
-        size += 1;
-        size += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(dataSize);
-      }
-      countsMemoizedSerializedSize = dataSize;
-    }
-    return size;
+  /**
+   * <pre>
+   * Positions in each cell, row by row from the top-left: the cell in column c of row r is at
+   * index r * columns + c.
+   * </pre>
+   *
+   * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
+   * @param value The counts to add.
+   */
+  private void addCounts(long value) {
+    ensureCountsIsMutable();
+    counts_.addLong(value);
   }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
+  /**
+   * <pre>
+   * Positions in each cell, row by row from the top-left: the cell in column c of row r is at
+   * index r * columns + c.
+   * </pre>
+   *
+   * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
+   * @param values The counts to add.
+   */
+  private void addAllCounts(
+      java.lang.Iterable<? extends java.lang.Long> values) {
+    ensureCountsIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, counts_);
   }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.cursor.v1.HeatmapResponse)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.cursor.v1.HeatmapResponse other = (zip.trev.template.stack.gen.cursor.v1.HeatmapResponse) obj;
-
-    if (getColumns()
-        != other.getColumns()) return false;
-    if (getRows()
-        != other.getRows()) return false;
-    if (!getCountsList()
-        .equals(other.getCountsList())) return false;
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + COLUMNS_FIELD_NUMBER;
-    hash = (53 * hash) + getColumns();
-    hash = (37 * hash) + ROWS_FIELD_NUMBER;
-    hash = (53 * hash) + getRows();
-    if (getCountsCount() > 0) {
-      hash = (37 * hash) + COUNTS_FIELD_NUMBER;
-      hash = (53 * hash) + getCountsList().hashCode();
-    }
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
+  /**
+   * <pre>
+   * Positions in each cell, row by row from the top-left: the cell in column c of row r is at
+   * index r * columns + c.
+   * </pre>
+   *
+   * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
+   */
+  private void clearCounts() {
+    counts_ = emptyLongList();
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.cursor.v1.HeatmapResponse prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * Protobuf type {@code cursor.v1.HeatmapResponse}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.cursor.v1.HeatmapResponse, Builder> implements
       // @@protoc_insertion_point(builder_implements:cursor.v1.HeatmapResponse)
       zip.trev.template.stack.gen.cursor.v1.HeatmapResponseOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_HeatmapResponse_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_HeatmapResponse_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.class, zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.newBuilder()
     private Builder() {
-
+      super(DEFAULT_INSTANCE);
     }
 
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
 
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      columns_ = 0;
-      rows_ = 0;
-      counts_ = emptyLongList();
-      return this;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_HeatmapResponse_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.HeatmapResponse getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.HeatmapResponse build() {
-      zip.trev.template.stack.gen.cursor.v1.HeatmapResponse result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.HeatmapResponse buildPartial() {
-      zip.trev.template.stack.gen.cursor.v1.HeatmapResponse result = new zip.trev.template.stack.gen.cursor.v1.HeatmapResponse(this);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.cursor.v1.HeatmapResponse result) {
-      int from_bitField0_ = bitField0_;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.columns_ = columns_;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.rows_ = rows_;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        counts_.makeImmutable();
-        result.counts_ = counts_;
-      }
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.cursor.v1.HeatmapResponse) {
-        return mergeFrom((zip.trev.template.stack.gen.cursor.v1.HeatmapResponse)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.cursor.v1.HeatmapResponse other) {
-      if (other == zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.getDefaultInstance()) return this;
-      if (other.getColumns() != 0) {
-        setColumns(other.getColumns());
-      }
-      if (other.getRows() != 0) {
-        setRows(other.getRows());
-      }
-      if (!other.counts_.isEmpty()) {
-        if (counts_.isEmpty()) {
-          counts_ = other.counts_;
-          counts_.makeImmutable();
-          bitField0_ |= 0x00000004;
-        } else {
-          ensureCountsIsMutable();
-          counts_.addAll(other.counts_);
-        }
-        onChanged();
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-              columns_ = input.readUInt32();
-              bitField0_ |= 0x00000001;
-              break;
-            } // case 8
-            case 16: {
-              rows_ = input.readUInt32();
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 16
-            case 24: {
-              long v = input.readInt64();
-              ensureCountsIsMutable();
-              counts_.addLong(v);
-              break;
-            } // case 24
-            case 26: {
-              int length = input.readRawVarint32();
-              int limit = input.pushLimit(length);
-              ensureCountsIsMutable();
-              while (input.getBytesUntilLimit() > 0) {
-                counts_.addLong(input.readInt64());
-              }
-              input.popLimit(limit);
-              break;
-            } // case 26
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int bitField0_;
-
-    private int columns_ ;
     /**
      * <code>uint32 columns = 1 [json_name = "columns"];</code>
      * @return The columns.
      */
     @java.lang.Override
     public int getColumns() {
-      return columns_;
+      return instance.getColumns();
     }
     /**
      * <code>uint32 columns = 1 [json_name = "columns"];</code>
@@ -509,10 +286,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setColumns(int value) {
-
-      columns_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setColumns(value);
       return this;
     }
     /**
@@ -520,20 +295,18 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearColumns() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      columns_ = 0;
-      onChanged();
+      copyOnWrite();
+      instance.clearColumns();
       return this;
     }
 
-    private int rows_ ;
     /**
      * <code>uint32 rows = 2 [json_name = "rows"];</code>
      * @return The rows.
      */
     @java.lang.Override
     public int getRows() {
-      return rows_;
+      return instance.getRows();
     }
     /**
      * <code>uint32 rows = 2 [json_name = "rows"];</code>
@@ -541,10 +314,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setRows(int value) {
-
-      rows_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setRows(value);
       return this;
     }
     /**
@@ -552,19 +323,11 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearRows() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      rows_ = 0;
-      onChanged();
+      copyOnWrite();
+      instance.clearRows();
       return this;
     }
 
-    private com.google.protobuf.Internal.LongList counts_ = emptyLongList();
-    private void ensureCountsIsMutable() {
-      if (!counts_.isModifiable()) {
-        counts_ = makeMutableCopy(counts_);
-      }
-      bitField0_ |= 0x00000004;
-    }
     /**
      * <pre>
      * Positions in each cell, row by row from the top-left: the cell in column c of row r is at
@@ -574,10 +337,11 @@ private static final long serialVersionUID = 0L;
      * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
      * @return A list containing the counts.
      */
+    @java.lang.Override
     public java.util.List<java.lang.Long>
         getCountsList() {
-      counts_.makeImmutable();
-      return counts_;
+      return java.util.Collections.unmodifiableList(
+          instance.getCountsList());
     }
     /**
      * <pre>
@@ -588,8 +352,9 @@ private static final long serialVersionUID = 0L;
      * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
      * @return The count of counts.
      */
+    @java.lang.Override
     public int getCountsCount() {
-      return counts_.size();
+      return instance.getCountsCount();
     }
     /**
      * <pre>
@@ -601,8 +366,9 @@ private static final long serialVersionUID = 0L;
      * @param index The index of the element to return.
      * @return The counts at the given index.
      */
+    @java.lang.Override
     public long getCounts(int index) {
-      return counts_.getLong(index);
+      return instance.getCounts(index);
     }
     /**
      * <pre>
@@ -611,17 +377,13 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>repeated int64 counts = 3 [json_name = "counts"];</code>
-     * @param index The index to set the value at.
      * @param value The counts to set.
      * @return This builder for chaining.
      */
     public Builder setCounts(
         int index, long value) {
-
-      ensureCountsIsMutable();
-      counts_.setLong(index, value);
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.setCounts(index, value);
       return this;
     }
     /**
@@ -635,11 +397,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder addCounts(long value) {
-
-      ensureCountsIsMutable();
-      counts_.addLong(value);
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.addCounts(value);
       return this;
     }
     /**
@@ -654,11 +413,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder addAllCounts(
         java.lang.Iterable<? extends java.lang.Long> values) {
-      ensureCountsIsMutable();
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(
-          values, counts_);
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.addAllCounts(values);
       return this;
     }
     /**
@@ -671,60 +427,85 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCounts() {
-      counts_ = emptyLongList();
-      bitField0_ = (bitField0_ & ~0x00000004);
-      onChanged();
+      copyOnWrite();
+      instance.clearCounts();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:cursor.v1.HeatmapResponse)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.cursor.v1.HeatmapResponse();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "columns_",
+            "rows_",
+            "counts_",
+          };
+          java.lang.String info =
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0001\u0000\u0001\u000b\u0002\u000b" +
+              "\u0003%";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.cursor.v1.HeatmapResponse> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.cursor.v1.HeatmapResponse>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:cursor.v1.HeatmapResponse)
   private static final zip.trev.template.stack.gen.cursor.v1.HeatmapResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.cursor.v1.HeatmapResponse();
+    HeatmapResponse defaultInstance = new HeatmapResponse();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      HeatmapResponse.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.HeatmapResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<HeatmapResponse>
-      PARSER = new com.google.protobuf.AbstractParser<HeatmapResponse>() {
-    @java.lang.Override
-    public HeatmapResponse parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<HeatmapResponse> PARSER;
 
   public static com.google.protobuf.Parser<HeatmapResponse> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<HeatmapResponse> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.HeatmapResponse getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

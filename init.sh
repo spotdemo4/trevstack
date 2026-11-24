@@ -916,7 +916,7 @@ remove_android() {
   remove_block flake.nix '              # android'
   remove_block flake.nix '          update-android-deps = {' '          };'
   remove_empty_let
-  remove_block buf.gen.yaml '  # protobuf-java messages, which the TrevRPC Kotlin runtime encodes and decodes. the buf.validate'
+  remove_block buf.gen.yaml '  # protobuf-javalite messages, which the TrevRPC Kotlin runtime encodes and decodes. lite code'
   remove_block buf.gen.yaml '  - local: protoc-gen-trevrpc-kotlin'
   remove_block buf.gen.yaml '    - file_option: java_package_prefix' "      value: $(java_package "$source_base").gen"
   remove_block treefmt.toml '[formatter.ktlint]'

@@ -8,5 +8,5 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface WatchRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.WatchRequest)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 }

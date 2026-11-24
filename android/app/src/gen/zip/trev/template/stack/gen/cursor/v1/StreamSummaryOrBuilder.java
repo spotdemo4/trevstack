@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface StreamSummaryOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.StreamSummary)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <code>int64 id = 1 [json_name = "id"];</code>
@@ -57,14 +57,6 @@ public interface StreamSummaryOrBuilder extends
    * @return The start.
    */
   com.google.protobuf.Timestamp getStart();
-  /**
-   * <pre>
-   * Time of the first position.
-   * </pre>
-   *
-   * <code>.google.protobuf.Timestamp start = 4 [json_name = "start"];</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getStartOrBuilder();
 
   /**
    * <pre>
@@ -84,14 +76,6 @@ public interface StreamSummaryOrBuilder extends
    * @return The end.
    */
   com.google.protobuf.Timestamp getEnd();
-  /**
-   * <pre>
-   * Time of the last position.
-   * </pre>
-   *
-   * <code>.google.protobuf.Timestamp end = 5 [json_name = "end"];</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getEndOrBuilder();
 
   /**
    * <pre>

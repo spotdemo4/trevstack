@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface TimeSeriesPointOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.TimeSeriesPoint)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
@@ -20,10 +20,6 @@ public interface TimeSeriesPointOrBuilder extends
    * @return The bucket.
    */
   com.google.protobuf.Timestamp getBucket();
-  /**
-   * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getBucketOrBuilder();
 
   /**
    * <pre>

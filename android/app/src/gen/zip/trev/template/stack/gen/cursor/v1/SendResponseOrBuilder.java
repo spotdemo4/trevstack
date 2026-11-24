@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface SendResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.SendResponse)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <pre>
@@ -28,12 +28,4 @@ public interface SendResponseOrBuilder extends
    * @return The cursor.
    */
   zip.trev.template.stack.gen.cursor.v1.Cursor getCursor();
-  /**
-   * <pre>
-   * The position as recorded.
-   * </pre>
-   *
-   * <code>.cursor.v1.Cursor cursor = 1 [json_name = "cursor"];</code>
-   */
-  zip.trev.template.stack.gen.cursor.v1.CursorOrBuilder getCursorOrBuilder();
 }

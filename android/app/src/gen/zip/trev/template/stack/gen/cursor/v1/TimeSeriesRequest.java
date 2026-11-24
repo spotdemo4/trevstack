@@ -13,49 +13,16 @@ package zip.trev.template.stack.gen.cursor.v1;
  * Protobuf type {@code cursor.v1.TimeSeriesRequest}
  */
 @com.google.protobuf.Generated
-public final class TimeSeriesRequest extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class TimeSeriesRequest extends
+    com.google.protobuf.GeneratedMessageLite<
+        TimeSeriesRequest, TimeSeriesRequest.Builder> implements
     // @@protoc_insertion_point(message_implements:cursor.v1.TimeSeriesRequest)
     TimeSeriesRequestOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "TimeSeriesRequest");
-  }
-  // Use TimeSeriesRequest.newBuilder() to construct.
-  private TimeSeriesRequest(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private TimeSeriesRequest() {
-    interval_ = 0;
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesRequest_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesRequest_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesRequest_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.class, zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.Builder.class);
-  }
-
   private int bitField0_;
   public static final int INTERVAL_FIELD_NUMBER = 1;
-  private int interval_ = 0;
+  private int interval_;
   /**
    * <pre>
    * Required. Any interval except TIME_INTERVAL_UNSPECIFIED.
@@ -64,7 +31,8 @@ private static final long serialVersionUID = 0L;
    * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
    * @return Whether the interval field is set.
    */
-  @java.lang.Override public boolean hasInterval() {
+  @java.lang.Override
+  public boolean hasInterval() {
     return ((bitField0_ & 0x00000001) != 0);
   }
   /**
@@ -75,7 +43,8 @@ private static final long serialVersionUID = 0L;
    * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
    * @return The enum numeric value on the wire for interval.
    */
-  @java.lang.Override public int getIntervalValue() {
+  @java.lang.Override
+  public int getIntervalValue() {
     return interval_;
   }
   /**
@@ -86,9 +55,45 @@ private static final long serialVersionUID = 0L;
    * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
    * @return The interval.
    */
-  @java.lang.Override public zip.trev.template.stack.gen.cursor.v1.TimeInterval getInterval() {
+  @java.lang.Override
+  public zip.trev.template.stack.gen.cursor.v1.TimeInterval getInterval() {
     zip.trev.template.stack.gen.cursor.v1.TimeInterval result = zip.trev.template.stack.gen.cursor.v1.TimeInterval.forNumber(interval_);
     return result == null ? zip.trev.template.stack.gen.cursor.v1.TimeInterval.UNRECOGNIZED : result;
+  }
+  /**
+   * <pre>
+   * Required. Any interval except TIME_INTERVAL_UNSPECIFIED.
+   * </pre>
+   *
+   * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
+   * @param value The enum numeric value on the wire for interval to set.
+   */
+  private void setIntervalValue(int value) {
+    bitField0_ |= 0x00000001;  interval_ = value;
+  }
+  /**
+   * <pre>
+   * Required. Any interval except TIME_INTERVAL_UNSPECIFIED.
+   * </pre>
+   *
+   * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
+   * @param value The interval to set.
+   * @throws IllegalArgumentException if UNRECOGNIZED is provided.
+   */
+  private void setInterval(zip.trev.template.stack.gen.cursor.v1.TimeInterval value) {
+    interval_ = value.getNumber();
+    bitField0_ |= 0x00000001;
+  }
+  /**
+   * <pre>
+   * Required. Any interval except TIME_INTERVAL_UNSPECIFIED.
+   * </pre>
+   *
+   * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
+   */
+  private void clearInterval() {
+    bitField0_ = (bitField0_ & ~0x00000001);
+    interval_ = 0;
   }
 
   public static final int START_FIELD_NUMBER = 2;
@@ -99,7 +104,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-   * @return Whether the start field is set.
    */
   @java.lang.Override
   public boolean hasStart() {
@@ -111,7 +115,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-   * @return The start.
    */
   @java.lang.Override
   public com.google.protobuf.Timestamp getStart() {
@@ -124,9 +127,40 @@ private static final long serialVersionUID = 0L;
    *
    * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
    */
-  @java.lang.Override
-  public com.google.protobuf.TimestampOrBuilder getStartOrBuilder() {
-    return start_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : start_;
+  private void setStart(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    start_ = value;
+    bitField0_ |= 0x00000002;
+  }
+  /**
+   * <pre>
+   * Inclusive lower timestamp bound; omit for no lower bound.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
+   */
+  @java.lang.SuppressWarnings("ReferenceEquality")
+  private void mergeStart(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    if (start_ != null &&
+        start_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+      start_ =
+        com.google.protobuf.Timestamp.newBuilder(start_).mergeFrom(value).buildPartial();
+    } else {
+      start_ = value;
+    }
+    bitField0_ |= 0x00000002;
+  }
+  /**
+   * <pre>
+   * Inclusive lower timestamp bound; omit for no lower bound.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
+   */
+  private void clearStart() {
+    start_ = null;
+    bitField0_ = (bitField0_ & ~0x00000002);
   }
 
   public static final int END_FIELD_NUMBER = 3;
@@ -137,7 +171,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-   * @return Whether the end field is set.
    */
   @java.lang.Override
   public boolean hasEnd() {
@@ -149,7 +182,6 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-   * @return The end.
    */
   @java.lang.Override
   public com.google.protobuf.Timestamp getEnd() {
@@ -162,208 +194,125 @@ private static final long serialVersionUID = 0L;
    *
    * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
    */
-  @java.lang.Override
-  public com.google.protobuf.TimestampOrBuilder getEndOrBuilder() {
-    return end_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : end_;
+  private void setEnd(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    end_ = value;
+    bitField0_ |= 0x00000004;
   }
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
+  /**
+   * <pre>
+   * Inclusive upper timestamp bound, after start; omit for no upper bound.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
+   */
+  @java.lang.SuppressWarnings("ReferenceEquality")
+  private void mergeEnd(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    if (end_ != null &&
+        end_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+      end_ =
+        com.google.protobuf.Timestamp.newBuilder(end_).mergeFrom(value).buildPartial();
+    } else {
+      end_ = value;
+    }
+    bitField0_ |= 0x00000004;
   }
-
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    if (((bitField0_ & 0x00000001) != 0)) {
-      output.writeEnum(1, interval_);
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      output.writeMessage(2, getStart());
-    }
-    if (((bitField0_ & 0x00000004) != 0)) {
-      output.writeMessage(3, getEnd());
-    }
-    getUnknownFields().writeTo(output);
-  }
-  private int computeSerializedSize_0() {
-    int size = 0;
-    if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(1, interval_);
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getStart());
-    }
-    if (((bitField0_ & 0x00000004) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getEnd());
-    }
-    return size;
-  }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest other = (zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest) obj;
-
-    if (hasInterval() != other.hasInterval()) return false;
-    if (hasInterval()) {
-      if (interval_ != other.interval_) return false;
-    }
-    if (hasStart() != other.hasStart()) return false;
-    if (hasStart()) {
-      if (!getStart()
-          .equals(other.getStart())) return false;
-    }
-    if (hasEnd() != other.hasEnd()) return false;
-    if (hasEnd()) {
-      if (!getEnd()
-          .equals(other.getEnd())) return false;
-    }
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    if (hasInterval()) {
-      hash = (37 * hash) + INTERVAL_FIELD_NUMBER;
-      hash = (53 * hash) + interval_;
-    }
-    if (hasStart()) {
-      hash = (37 * hash) + START_FIELD_NUMBER;
-      hash = (53 * hash) + getStart().hashCode();
-    }
-    if (hasEnd()) {
-      hash = (37 * hash) + END_FIELD_NUMBER;
-      hash = (53 * hash) + getEnd().hashCode();
-    }
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
+  /**
+   * <pre>
+   * Inclusive upper timestamp bound, after start; omit for no upper bound.
+   * </pre>
+   *
+   * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
+   */
+  private void clearEnd() {
+    end_ = null;
+    bitField0_ = (bitField0_ & ~0x00000004);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * <pre>
    * Selects the UTC bucket interval and optional time range.
@@ -372,189 +321,16 @@ private static final long serialVersionUID = 0L;
    * Protobuf type {@code cursor.v1.TimeSeriesRequest}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest, Builder> implements
       // @@protoc_insertion_point(builder_implements:cursor.v1.TimeSeriesRequest)
       zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequestOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesRequest_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesRequest_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.class, zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+      super(DEFAULT_INSTANCE);
     }
 
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessage
-              .alwaysUseFieldBuilders) {
-        internalGetStartFieldBuilder();
-        internalGetEndFieldBuilder();
-      }
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      interval_ = 0;
-      start_ = null;
-      if (startBuilder_ != null) {
-        startBuilder_.dispose();
-        startBuilder_ = null;
-      }
-      end_ = null;
-      if (endBuilder_ != null) {
-        endBuilder_.dispose();
-        endBuilder_ = null;
-      }
-      return this;
-    }
 
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesRequest_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest build() {
-      zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest buildPartial() {
-      zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest result = new zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest(this);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest result) {
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.interval_ = interval_;
-        to_bitField0_ |= 0x00000001;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.start_ = startBuilder_ == null
-            ? start_
-            : startBuilder_.build();
-        to_bitField0_ |= 0x00000002;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.end_ = endBuilder_ == null
-            ? end_
-            : endBuilder_.build();
-        to_bitField0_ |= 0x00000004;
-      }
-      result.bitField0_ |= to_bitField0_;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest) {
-        return mergeFrom((zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest other) {
-      if (other == zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.getDefaultInstance()) return this;
-      if (other.hasInterval()) {
-        setIntervalValue(other.getIntervalValue());
-      }
-      if (other.hasStart()) {
-        mergeStart(other.getStart());
-      }
-      if (other.hasEnd()) {
-        mergeEnd(other.getEnd());
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-              interval_ = input.readEnum();
-              bitField0_ |= 0x00000001;
-              break;
-            } // case 8
-            case 18: {
-              input.readMessage(
-                  internalGetStartFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 18
-            case 26: {
-              input.readMessage(
-                  internalGetEndFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000004;
-              break;
-            } // case 26
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int bitField0_;
-
-    private int interval_ = 0;
     /**
      * <pre>
      * Required. Any interval except TIME_INTERVAL_UNSPECIFIED.
@@ -563,8 +339,9 @@ private static final long serialVersionUID = 0L;
      * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
      * @return Whether the interval field is set.
      */
-    @java.lang.Override public boolean hasInterval() {
-      return ((bitField0_ & 0x00000001) != 0);
+    @java.lang.Override
+    public boolean hasInterval() {
+      return instance.hasInterval();
     }
     /**
      * <pre>
@@ -574,8 +351,9 @@ private static final long serialVersionUID = 0L;
      * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for interval.
      */
-    @java.lang.Override public int getIntervalValue() {
-      return interval_;
+    @java.lang.Override
+    public int getIntervalValue() {
+      return instance.getIntervalValue();
     }
     /**
      * <pre>
@@ -583,13 +361,13 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
-     * @param value The enum numeric value on the wire for interval to set.
+     * @param value The interval to set.
+     * @throws IllegalArgumentException if UNRECOGNIZED is provided.
      * @return This builder for chaining.
      */
     public Builder setIntervalValue(int value) {
-      interval_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setIntervalValue(value);
       return this;
     }
     /**
@@ -602,8 +380,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public zip.trev.template.stack.gen.cursor.v1.TimeInterval getInterval() {
-      zip.trev.template.stack.gen.cursor.v1.TimeInterval result = zip.trev.template.stack.gen.cursor.v1.TimeInterval.forNumber(interval_);
-      return result == null ? zip.trev.template.stack.gen.cursor.v1.TimeInterval.UNRECOGNIZED : result;
+      return instance.getInterval();
     }
     /**
      * <pre>
@@ -611,15 +388,12 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>optional .cursor.v1.TimeInterval interval = 1 [json_name = "interval", (.buf.validate.field) = { ... }</code>
-     * @param value The interval to set.
-     * @throws IllegalArgumentException if UNRECOGNIZED is provided.
+     * @param value The enum numeric value on the wire for interval to set.
      * @return This builder for chaining.
      */
     public Builder setInterval(zip.trev.template.stack.gen.cursor.v1.TimeInterval value) {
-      java.util.Objects.requireNonNull(value);
-      bitField0_ |= 0x00000001;
-      interval_ = value.getNumber();
-      onChanged();
+      copyOnWrite();
+      instance.setInterval(value);
       return this;
     }
     /**
@@ -631,25 +405,21 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearInterval() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      interval_ = 0;
-      onChanged();
+      copyOnWrite();
+      instance.clearInterval();
       return this;
     }
 
-    private com.google.protobuf.Timestamp start_;
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> startBuilder_;
     /**
      * <pre>
      * Inclusive lower timestamp bound; omit for no lower bound.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-     * @return Whether the start field is set.
      */
+    @java.lang.Override
     public boolean hasStart() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return instance.hasStart();
     }
     /**
      * <pre>
@@ -657,14 +427,10 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-     * @return The start.
      */
+    @java.lang.Override
     public com.google.protobuf.Timestamp getStart() {
-      if (startBuilder_ == null) {
-        return start_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : start_;
-      } else {
-        return startBuilder_.getMessage();
-      }
+      return instance.getStart();
     }
     /**
      * <pre>
@@ -674,16 +440,10 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
      */
     public Builder setStart(com.google.protobuf.Timestamp value) {
-      if (startBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        start_ = value;
-      } else {
-        startBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setStart(value);
       return this;
-    }
+      }
     /**
      * <pre>
      * Inclusive lower timestamp bound; omit for no lower bound.
@@ -693,13 +453,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setStart(
         com.google.protobuf.Timestamp.Builder builderForValue) {
-      if (startBuilder_ == null) {
-        start_ = builderForValue.build();
-      } else {
-        startBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setStart(builderForValue.build());
       return this;
     }
     /**
@@ -710,21 +465,8 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
      */
     public Builder mergeStart(com.google.protobuf.Timestamp value) {
-      if (startBuilder_ == null) {
-        if (((bitField0_ & 0x00000002) != 0) &&
-          start_ != null &&
-          start_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
-          getStartBuilder().mergeFrom(value);
-        } else {
-          start_ = value;
-        }
-      } else {
-        startBuilder_.mergeFrom(value);
-      }
-      if (start_ != null) {
-        bitField0_ |= 0x00000002;
-        onChanged();
-      }
+      copyOnWrite();
+      instance.mergeStart(value);
       return this;
     }
     /**
@@ -734,77 +476,21 @@ private static final long serialVersionUID = 0L;
      *
      * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
      */
-    public Builder clearStart() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      start_ = null;
-      if (startBuilder_ != null) {
-        startBuilder_.dispose();
-        startBuilder_ = null;
-      }
-      onChanged();
+    public Builder clearStart() {  copyOnWrite();
+      instance.clearStart();
       return this;
-    }
-    /**
-     * <pre>
-     * Inclusive lower timestamp bound; omit for no lower bound.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-     */
-    public com.google.protobuf.Timestamp.Builder getStartBuilder() {
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return internalGetStartFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * Inclusive lower timestamp bound; omit for no lower bound.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-     */
-    public com.google.protobuf.TimestampOrBuilder getStartOrBuilder() {
-      if (startBuilder_ != null) {
-        return startBuilder_.getMessageOrBuilder();
-      } else {
-        return start_ == null ?
-            com.google.protobuf.Timestamp.getDefaultInstance() : start_;
-      }
-    }
-    /**
-     * <pre>
-     * Inclusive lower timestamp bound; omit for no lower bound.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp start = 2 [json_name = "start", (.buf.validate.field) = { ... }</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
-        internalGetStartFieldBuilder() {
-      if (startBuilder_ == null) {
-        startBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
-                getStart(),
-                getParentForChildren(),
-                isClean());
-        start_ = null;
-      }
-      return startBuilder_;
     }
 
-    private com.google.protobuf.Timestamp end_;
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> endBuilder_;
     /**
      * <pre>
      * Inclusive upper timestamp bound, after start; omit for no upper bound.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-     * @return Whether the end field is set.
      */
+    @java.lang.Override
     public boolean hasEnd() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return instance.hasEnd();
     }
     /**
      * <pre>
@@ -812,14 +498,10 @@ private static final long serialVersionUID = 0L;
      * </pre>
      *
      * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-     * @return The end.
      */
+    @java.lang.Override
     public com.google.protobuf.Timestamp getEnd() {
-      if (endBuilder_ == null) {
-        return end_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : end_;
-      } else {
-        return endBuilder_.getMessage();
-      }
+      return instance.getEnd();
     }
     /**
      * <pre>
@@ -829,16 +511,10 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
      */
     public Builder setEnd(com.google.protobuf.Timestamp value) {
-      if (endBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        end_ = value;
-      } else {
-        endBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.setEnd(value);
       return this;
-    }
+      }
     /**
      * <pre>
      * Inclusive upper timestamp bound, after start; omit for no upper bound.
@@ -848,13 +524,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setEnd(
         com.google.protobuf.Timestamp.Builder builderForValue) {
-      if (endBuilder_ == null) {
-        end_ = builderForValue.build();
-      } else {
-        endBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.setEnd(builderForValue.build());
       return this;
     }
     /**
@@ -865,21 +536,8 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
      */
     public Builder mergeEnd(com.google.protobuf.Timestamp value) {
-      if (endBuilder_ == null) {
-        if (((bitField0_ & 0x00000004) != 0) &&
-          end_ != null &&
-          end_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
-          getEndBuilder().mergeFrom(value);
-        } else {
-          end_ = value;
-        }
-      } else {
-        endBuilder_.mergeFrom(value);
-      }
-      if (end_ != null) {
-        bitField0_ |= 0x00000004;
-        onChanged();
-      }
+      copyOnWrite();
+      instance.mergeEnd(value);
       return this;
     }
     /**
@@ -889,112 +547,86 @@ private static final long serialVersionUID = 0L;
      *
      * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
      */
-    public Builder clearEnd() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      end_ = null;
-      if (endBuilder_ != null) {
-        endBuilder_.dispose();
-        endBuilder_ = null;
-      }
-      onChanged();
+    public Builder clearEnd() {  copyOnWrite();
+      instance.clearEnd();
       return this;
-    }
-    /**
-     * <pre>
-     * Inclusive upper timestamp bound, after start; omit for no upper bound.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-     */
-    public com.google.protobuf.Timestamp.Builder getEndBuilder() {
-      bitField0_ |= 0x00000004;
-      onChanged();
-      return internalGetEndFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * Inclusive upper timestamp bound, after start; omit for no upper bound.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-     */
-    public com.google.protobuf.TimestampOrBuilder getEndOrBuilder() {
-      if (endBuilder_ != null) {
-        return endBuilder_.getMessageOrBuilder();
-      } else {
-        return end_ == null ?
-            com.google.protobuf.Timestamp.getDefaultInstance() : end_;
-      }
-    }
-    /**
-     * <pre>
-     * Inclusive upper timestamp bound, after start; omit for no upper bound.
-     * </pre>
-     *
-     * <code>.google.protobuf.Timestamp end = 3 [json_name = "end", (.buf.validate.field) = { ... }</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
-        internalGetEndFieldBuilder() {
-      if (endBuilder_ == null) {
-        endBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
-                getEnd(),
-                getParentForChildren(),
-                isClean());
-        end_ = null;
-      }
-      return endBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:cursor.v1.TimeSeriesRequest)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "bitField0_",
+            "interval_",
+            "start_",
+            "end_",
+          };
+          java.lang.String info =
+              "\u0000\u0003\u0000\u0001\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u100c\u0000\u0002" +
+              "\u1009\u0001\u0003\u1009\u0002";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:cursor.v1.TimeSeriesRequest)
   private static final zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest();
+    TimeSeriesRequest defaultInstance = new TimeSeriesRequest();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      TimeSeriesRequest.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<TimeSeriesRequest>
-      PARSER = new com.google.protobuf.AbstractParser<TimeSeriesRequest>() {
-    @java.lang.Override
-    public TimeSeriesRequest parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<TimeSeriesRequest> PARSER;
 
   public static com.google.protobuf.Parser<TimeSeriesRequest> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<TimeSeriesRequest> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

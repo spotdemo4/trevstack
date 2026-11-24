@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface TrackResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.TrackResponse)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <pre>
@@ -28,12 +28,4 @@ public interface TrackResponseOrBuilder extends
    * @return The stream.
    */
   zip.trev.template.stack.gen.cursor.v1.StreamSummary getStream();
-  /**
-   * <pre>
-   * The positions the stream recorded. Unset when the client sent none.
-   * </pre>
-   *
-   * <code>.cursor.v1.StreamSummary stream = 1 [json_name = "stream"];</code>
-   */
-  zip.trev.template.stack.gen.cursor.v1.StreamSummaryOrBuilder getStreamOrBuilder();
 }

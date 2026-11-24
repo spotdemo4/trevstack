@@ -13,50 +13,17 @@ package zip.trev.template.stack.gen.auth.v1;
  * Protobuf type {@code auth.v1.LoginResponse}
  */
 @com.google.protobuf.Generated
-public final class LoginResponse extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class LoginResponse extends
+    com.google.protobuf.GeneratedMessageLite<
+        LoginResponse, LoginResponse.Builder> implements
     // @@protoc_insertion_point(message_implements:auth.v1.LoginResponse)
     LoginResponseOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "LoginResponse");
-  }
-  // Use LoginResponse.newBuilder() to construct.
-  private LoginResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private LoginResponse() {
     token_ = "";
     sub_ = "";
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.auth.v1.LoginProto.internal_static_auth_v1_LoginResponse_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.auth.v1.LoginProto.internal_static_auth_v1_LoginResponse_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.auth.v1.LoginProto.internal_static_auth_v1_LoginResponse_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.auth.v1.LoginResponse.class, zip.trev.template.stack.gen.auth.v1.LoginResponse.Builder.class);
-  }
-
   public static final int TOKEN_FIELD_NUMBER = 1;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object token_ = "";
+  private java.lang.String token_;
   /**
    * <pre>
    * Opaque session token, sent as `authorization: Bearer &lt;token&gt;` metadata on authenticated calls.
@@ -67,16 +34,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public java.lang.String getToken() {
-    java.lang.Object ref = token_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      token_ = s;
-      return s;
-    }
+    return token_;
   }
   /**
    * <pre>
@@ -89,21 +47,50 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public com.google.protobuf.ByteString
       getTokenBytes() {
-    java.lang.Object ref = token_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      token_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+    return com.google.protobuf.ByteString.copyFromUtf8(token_);
+  }
+  /**
+   * <pre>
+   * Opaque session token, sent as `authorization: Bearer &lt;token&gt;` metadata on authenticated calls.
+   * </pre>
+   *
+   * <code>string token = 1 [json_name = "token"];</code>
+   * @param value The token to set.
+   */
+  private void setToken(
+      java.lang.String value) {
+    java.util.Objects.requireNonNull(value);
+
+    token_ = value;
+  }
+  /**
+   * <pre>
+   * Opaque session token, sent as `authorization: Bearer &lt;token&gt;` metadata on authenticated calls.
+   * </pre>
+   *
+   * <code>string token = 1 [json_name = "token"];</code>
+   */
+  private void clearToken() {
+
+    token_ = getDefaultInstance().getToken();
+  }
+  /**
+   * <pre>
+   * Opaque session token, sent as `authorization: Bearer &lt;token&gt;` metadata on authenticated calls.
+   * </pre>
+   *
+   * <code>string token = 1 [json_name = "token"];</code>
+   * @param value The bytes for token to set.
+   */
+  private void setTokenBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    token_ = value.toStringUtf8();
+
   }
 
   public static final int SUB_FIELD_NUMBER = 2;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object sub_ = "";
+  private java.lang.String sub_;
   /**
    * <pre>
    * The canonical username used as the session token's subject.
@@ -114,16 +101,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public java.lang.String getSub() {
-    java.lang.Object ref = sub_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      sub_ = s;
-      return s;
-    }
+    return sub_;
   }
   /**
    * <pre>
@@ -136,20 +114,50 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public com.google.protobuf.ByteString
       getSubBytes() {
-    java.lang.Object ref = sub_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      sub_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+    return com.google.protobuf.ByteString.copyFromUtf8(sub_);
+  }
+  /**
+   * <pre>
+   * The canonical username used as the session token's subject.
+   * </pre>
+   *
+   * <code>string sub = 2 [json_name = "sub"];</code>
+   * @param value The sub to set.
+   */
+  private void setSub(
+      java.lang.String value) {
+    java.util.Objects.requireNonNull(value);
+
+    sub_ = value;
+  }
+  /**
+   * <pre>
+   * The canonical username used as the session token's subject.
+   * </pre>
+   *
+   * <code>string sub = 2 [json_name = "sub"];</code>
+   */
+  private void clearSub() {
+
+    sub_ = getDefaultInstance().getSub();
+  }
+  /**
+   * <pre>
+   * The canonical username used as the session token's subject.
+   * </pre>
+   *
+   * <code>string sub = 2 [json_name = "sub"];</code>
+   * @param value The bytes for sub to set.
+   */
+  private void setSubBytes(
+      com.google.protobuf.ByteString value) {
+    checkByteStringIsUtf8(value);
+    sub_ = value.toStringUtf8();
+
   }
 
   public static final int EXP_FIELD_NUMBER = 3;
-  private long exp_ = 0L;
+  private long exp_;
   /**
    * <pre>
    * The session token's expiration as Unix seconds.
@@ -162,189 +170,113 @@ private static final long serialVersionUID = 0L;
   public long getExp() {
     return exp_;
   }
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
+  /**
+   * <pre>
+   * The session token's expiration as Unix seconds.
+   * </pre>
+   *
+   * <code>int64 exp = 3 [json_name = "exp"];</code>
+   * @param value The exp to set.
+   */
+  private void setExp(long value) {
+    
+    exp_ = value;
   }
+  /**
+   * <pre>
+   * The session token's expiration as Unix seconds.
+   * </pre>
+   *
+   * <code>int64 exp = 3 [json_name = "exp"];</code>
+   */
+  private void clearExp() {
 
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-      com.google.protobuf.GeneratedMessage.writeString(output, 1, token_);
-    }
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(sub_)) {
-      com.google.protobuf.GeneratedMessage.writeString(output, 2, sub_);
-    }
-    if (exp_ != 0L) {
-      output.writeInt64(3, exp_);
-    }
-    getUnknownFields().writeTo(output);
-  }
-  private int computeSerializedSize_0() {
-    int size = 0;
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(token_)) {
-      size += com.google.protobuf.GeneratedMessage.computeStringSize(1, token_);
-    }
-    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(sub_)) {
-      size += com.google.protobuf.GeneratedMessage.computeStringSize(2, sub_);
-    }
-    if (exp_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(3, exp_);
-    }
-    return size;
-  }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.auth.v1.LoginResponse)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.auth.v1.LoginResponse other = (zip.trev.template.stack.gen.auth.v1.LoginResponse) obj;
-
-    if (!getToken()
-        .equals(other.getToken())) return false;
-    if (!getSub()
-        .equals(other.getSub())) return false;
-    if (getExp()
-        != other.getExp()) return false;
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + TOKEN_FIELD_NUMBER;
-    hash = (53 * hash) + getToken().hashCode();
-    hash = (37 * hash) + SUB_FIELD_NUMBER;
-    hash = (53 * hash) + getSub().hashCode();
-    hash = (37 * hash) + EXP_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getExp());
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
+    exp_ = 0L;
   }
 
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.auth.v1.LoginResponse prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * <pre>
    * Session token and metadata returned after successful authentication.
@@ -353,165 +285,16 @@ private static final long serialVersionUID = 0L;
    * Protobuf type {@code auth.v1.LoginResponse}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.auth.v1.LoginResponse, Builder> implements
       // @@protoc_insertion_point(builder_implements:auth.v1.LoginResponse)
       zip.trev.template.stack.gen.auth.v1.LoginResponseOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.auth.v1.LoginProto.internal_static_auth_v1_LoginResponse_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.auth.v1.LoginProto.internal_static_auth_v1_LoginResponse_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.auth.v1.LoginResponse.class, zip.trev.template.stack.gen.auth.v1.LoginResponse.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.auth.v1.LoginResponse.newBuilder()
     private Builder() {
-
+      super(DEFAULT_INSTANCE);
     }
 
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
 
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      token_ = "";
-      sub_ = "";
-      exp_ = 0L;
-      return this;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.auth.v1.LoginProto.internal_static_auth_v1_LoginResponse_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.auth.v1.LoginResponse getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.auth.v1.LoginResponse.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.auth.v1.LoginResponse build() {
-      zip.trev.template.stack.gen.auth.v1.LoginResponse result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.auth.v1.LoginResponse buildPartial() {
-      zip.trev.template.stack.gen.auth.v1.LoginResponse result = new zip.trev.template.stack.gen.auth.v1.LoginResponse(this);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.auth.v1.LoginResponse result) {
-      int from_bitField0_ = bitField0_;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.token_ = token_;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.sub_ = sub_;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.exp_ = exp_;
-      }
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.auth.v1.LoginResponse) {
-        return mergeFrom((zip.trev.template.stack.gen.auth.v1.LoginResponse)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.auth.v1.LoginResponse other) {
-      if (other == zip.trev.template.stack.gen.auth.v1.LoginResponse.getDefaultInstance()) return this;
-      if (!other.getToken().isEmpty()) {
-        token_ = other.token_;
-        bitField0_ |= 0x00000001;
-        onChanged();
-      }
-      if (!other.getSub().isEmpty()) {
-        sub_ = other.sub_;
-        bitField0_ |= 0x00000002;
-        onChanged();
-      }
-      if (other.getExp() != 0L) {
-        setExp(other.getExp());
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              token_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000001;
-              break;
-            } // case 10
-            case 18: {
-              sub_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 18
-            case 24: {
-              exp_ = input.readInt64();
-              bitField0_ |= 0x00000004;
-              break;
-            } // case 24
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int bitField0_;
-
-    private java.lang.Object token_ = "";
     /**
      * <pre>
      * Opaque session token, sent as `authorization: Bearer &lt;token&gt;` metadata on authenticated calls.
@@ -520,17 +303,9 @@ private static final long serialVersionUID = 0L;
      * <code>string token = 1 [json_name = "token"];</code>
      * @return The token.
      */
+    @java.lang.Override
     public java.lang.String getToken() {
-      java.lang.Object ref = token_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        token_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+      return instance.getToken();
     }
     /**
      * <pre>
@@ -540,18 +315,10 @@ private static final long serialVersionUID = 0L;
      * <code>string token = 1 [json_name = "token"];</code>
      * @return The bytes for token.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
-      java.lang.Object ref = token_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        token_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+      return instance.getTokenBytes();
     }
     /**
      * <pre>
@@ -564,10 +331,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setToken(
         java.lang.String value) {
-      java.util.Objects.requireNonNull(value);
-      token_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setToken(value);
       return this;
     }
     /**
@@ -579,9 +344,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearToken() {
-      token_ = getDefaultInstance().getToken();
-      bitField0_ = (bitField0_ & ~0x00000001);
-      onChanged();
+      copyOnWrite();
+      instance.clearToken();
       return this;
     }
     /**
@@ -595,15 +359,11 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setTokenBytes(
         com.google.protobuf.ByteString value) {
-      java.util.Objects.requireNonNull(value);
-      checkByteStringIsUtf8(value);
-      token_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setTokenBytes(value);
       return this;
     }
 
-    private java.lang.Object sub_ = "";
     /**
      * <pre>
      * The canonical username used as the session token's subject.
@@ -612,17 +372,9 @@ private static final long serialVersionUID = 0L;
      * <code>string sub = 2 [json_name = "sub"];</code>
      * @return The sub.
      */
+    @java.lang.Override
     public java.lang.String getSub() {
-      java.lang.Object ref = sub_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        sub_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+      return instance.getSub();
     }
     /**
      * <pre>
@@ -632,18 +384,10 @@ private static final long serialVersionUID = 0L;
      * <code>string sub = 2 [json_name = "sub"];</code>
      * @return The bytes for sub.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getSubBytes() {
-      java.lang.Object ref = sub_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        sub_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+      return instance.getSubBytes();
     }
     /**
      * <pre>
@@ -656,10 +400,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setSub(
         java.lang.String value) {
-      java.util.Objects.requireNonNull(value);
-      sub_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setSub(value);
       return this;
     }
     /**
@@ -671,9 +413,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearSub() {
-      sub_ = getDefaultInstance().getSub();
-      bitField0_ = (bitField0_ & ~0x00000002);
-      onChanged();
+      copyOnWrite();
+      instance.clearSub();
       return this;
     }
     /**
@@ -687,15 +428,11 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setSubBytes(
         com.google.protobuf.ByteString value) {
-      java.util.Objects.requireNonNull(value);
-      checkByteStringIsUtf8(value);
-      sub_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setSubBytes(value);
       return this;
     }
 
-    private long exp_ ;
     /**
      * <pre>
      * The session token's expiration as Unix seconds.
@@ -706,7 +443,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public long getExp() {
-      return exp_;
+      return instance.getExp();
     }
     /**
      * <pre>
@@ -718,10 +455,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setExp(long value) {
-
-      exp_ = value;
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.setExp(value);
       return this;
     }
     /**
@@ -733,60 +468,85 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearExp() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      exp_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearExp();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:auth.v1.LoginResponse)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.auth.v1.LoginResponse();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "token_",
+            "sub_",
+            "exp_",
+          };
+          java.lang.String info =
+              "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+              "\u0003\u0002";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.auth.v1.LoginResponse> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.auth.v1.LoginResponse.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.auth.v1.LoginResponse>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:auth.v1.LoginResponse)
   private static final zip.trev.template.stack.gen.auth.v1.LoginResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.auth.v1.LoginResponse();
+    LoginResponse defaultInstance = new LoginResponse();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      LoginResponse.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.auth.v1.LoginResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<LoginResponse>
-      PARSER = new com.google.protobuf.AbstractParser<LoginResponse>() {
-    @java.lang.Override
-    public LoginResponse parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<LoginResponse> PARSER;
 
   public static com.google.protobuf.Parser<LoginResponse> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<LoginResponse> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.auth.v1.LoginResponse getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

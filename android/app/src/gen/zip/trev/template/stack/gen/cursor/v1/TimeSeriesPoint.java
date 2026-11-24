@@ -9,51 +9,18 @@ package zip.trev.template.stack.gen.cursor.v1;
  * Protobuf type {@code cursor.v1.TimeSeriesPoint}
  */
 @com.google.protobuf.Generated
-public final class TimeSeriesPoint extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class TimeSeriesPoint extends
+    com.google.protobuf.GeneratedMessageLite<
+        TimeSeriesPoint, TimeSeriesPoint.Builder> implements
     // @@protoc_insertion_point(message_implements:cursor.v1.TimeSeriesPoint)
     TimeSeriesPointOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "TimeSeriesPoint");
-  }
-  // Use TimeSeriesPoint.newBuilder() to construct.
-  private TimeSeriesPoint(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private TimeSeriesPoint() {
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesPoint_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesPoint_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesPoint_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.class, zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.Builder.class);
-  }
-
   private int bitField0_;
   public static final int BUCKET_FIELD_NUMBER = 1;
   private com.google.protobuf.Timestamp bucket_;
   /**
    * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-   * @return Whether the bucket field is set.
    */
   @java.lang.Override
   public boolean hasBucket() {
@@ -61,7 +28,6 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-   * @return The bucket.
    */
   @java.lang.Override
   public com.google.protobuf.Timestamp getBucket() {
@@ -70,13 +36,36 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
    */
-  @java.lang.Override
-  public com.google.protobuf.TimestampOrBuilder getBucketOrBuilder() {
-    return bucket_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : bucket_;
+  private void setBucket(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    bucket_ = value;
+    bitField0_ |= 0x00000001;
+  }
+  /**
+   * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
+   */
+  @java.lang.SuppressWarnings("ReferenceEquality")
+  private void mergeBucket(com.google.protobuf.Timestamp value) {
+    java.util.Objects.requireNonNull(value);
+    if (bucket_ != null &&
+        bucket_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+      bucket_ =
+        com.google.protobuf.Timestamp.newBuilder(bucket_).mergeFrom(value).buildPartial();
+    } else {
+      bucket_ = value;
+    }
+    bitField0_ |= 0x00000001;
+  }
+  /**
+   * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
+   */
+  private void clearBucket() {
+    bucket_ = null;
+    bitField0_ = (bitField0_ & ~0x00000001);
   }
 
   public static final int COUNT_FIELD_NUMBER = 2;
-  private long count_ = 0L;
+  private long count_;
   /**
    * <pre>
    * Number of positions.
@@ -89,9 +78,32 @@ private static final long serialVersionUID = 0L;
   public long getCount() {
     return count_;
   }
+  /**
+   * <pre>
+   * Number of positions.
+   * </pre>
+   *
+   * <code>int64 count = 2 [json_name = "count"];</code>
+   * @param value The count to set.
+   */
+  private void setCount(long value) {
+    
+    count_ = value;
+  }
+  /**
+   * <pre>
+   * Number of positions.
+   * </pre>
+   *
+   * <code>int64 count = 2 [json_name = "count"];</code>
+   */
+  private void clearCount() {
+
+    count_ = 0L;
+  }
 
   public static final int STREAMS_FIELD_NUMBER = 3;
-  private long streams_ = 0L;
+  private long streams_;
   /**
    * <pre>
    * Number of streams with a position in the bucket.
@@ -104,9 +116,32 @@ private static final long serialVersionUID = 0L;
   public long getStreams() {
     return streams_;
   }
+  /**
+   * <pre>
+   * Number of streams with a position in the bucket.
+   * </pre>
+   *
+   * <code>int64 streams = 3 [json_name = "streams"];</code>
+   * @param value The streams to set.
+   */
+  private void setStreams(long value) {
+    
+    streams_ = value;
+  }
+  /**
+   * <pre>
+   * Number of streams with a position in the bucket.
+   * </pre>
+   *
+   * <code>int64 streams = 3 [json_name = "streams"];</code>
+   */
+  private void clearStreams() {
+
+    streams_ = 0L;
+  }
 
   public static final int USERS_FIELD_NUMBER = 4;
-  private long users_ = 0L;
+  private long users_;
   /**
    * <pre>
    * Number of users with a position in the bucket.
@@ -119,516 +154,174 @@ private static final long serialVersionUID = 0L;
   public long getUsers() {
     return users_;
   }
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
+  /**
+   * <pre>
+   * Number of users with a position in the bucket.
+   * </pre>
+   *
+   * <code>int64 users = 4 [json_name = "users"];</code>
+   * @param value The users to set.
+   */
+  private void setUsers(long value) {
+    
+    users_ = value;
   }
+  /**
+   * <pre>
+   * Number of users with a position in the bucket.
+   * </pre>
+   *
+   * <code>int64 users = 4 [json_name = "users"];</code>
+   */
+  private void clearUsers() {
 
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    if (((bitField0_ & 0x00000001) != 0)) {
-      output.writeMessage(1, getBucket());
-    }
-    if (count_ != 0L) {
-      output.writeInt64(2, count_);
-    }
-    if (streams_ != 0L) {
-      output.writeInt64(3, streams_);
-    }
-    if (users_ != 0L) {
-      output.writeInt64(4, users_);
-    }
-    getUnknownFields().writeTo(output);
-  }
-  private int computeSerializedSize_0() {
-    int size = 0;
-    if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(1, getBucket());
-    }
-    if (count_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(2, count_);
-    }
-    if (streams_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(3, streams_);
-    }
-    if (users_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(4, users_);
-    }
-    return size;
-  }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint other = (zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint) obj;
-
-    if (hasBucket() != other.hasBucket()) return false;
-    if (hasBucket()) {
-      if (!getBucket()
-          .equals(other.getBucket())) return false;
-    }
-    if (getCount()
-        != other.getCount()) return false;
-    if (getStreams()
-        != other.getStreams()) return false;
-    if (getUsers()
-        != other.getUsers()) return false;
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    if (hasBucket()) {
-      hash = (37 * hash) + BUCKET_FIELD_NUMBER;
-      hash = (53 * hash) + getBucket().hashCode();
-    }
-    hash = (37 * hash) + COUNT_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getCount());
-    hash = (37 * hash) + STREAMS_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getStreams());
-    hash = (37 * hash) + USERS_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getUsers());
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
+    users_ = 0L;
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * Protobuf type {@code cursor.v1.TimeSeriesPoint}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint, Builder> implements
       // @@protoc_insertion_point(builder_implements:cursor.v1.TimeSeriesPoint)
       zip.trev.template.stack.gen.cursor.v1.TimeSeriesPointOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesPoint_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesPoint_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.class, zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+      super(DEFAULT_INSTANCE);
     }
 
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessage
-              .alwaysUseFieldBuilders) {
-        internalGetBucketFieldBuilder();
-      }
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      bucket_ = null;
-      if (bucketBuilder_ != null) {
-        bucketBuilder_.dispose();
-        bucketBuilder_ = null;
-      }
-      count_ = 0L;
-      streams_ = 0L;
-      users_ = 0L;
-      return this;
-    }
 
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TimeSeriesPoint_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint build() {
-      zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint buildPartial() {
-      zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint result = new zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint(this);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint result) {
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.bucket_ = bucketBuilder_ == null
-            ? bucket_
-            : bucketBuilder_.build();
-        to_bitField0_ |= 0x00000001;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.count_ = count_;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.streams_ = streams_;
-      }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.users_ = users_;
-      }
-      result.bitField0_ |= to_bitField0_;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint) {
-        return mergeFrom((zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint other) {
-      if (other == zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.getDefaultInstance()) return this;
-      if (other.hasBucket()) {
-        mergeBucket(other.getBucket());
-      }
-      if (other.getCount() != 0L) {
-        setCount(other.getCount());
-      }
-      if (other.getStreams() != 0L) {
-        setStreams(other.getStreams());
-      }
-      if (other.getUsers() != 0L) {
-        setUsers(other.getUsers());
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              input.readMessage(
-                  internalGetBucketFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000001;
-              break;
-            } // case 10
-            case 16: {
-              count_ = input.readInt64();
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 16
-            case 24: {
-              streams_ = input.readInt64();
-              bitField0_ |= 0x00000004;
-              break;
-            } // case 24
-            case 32: {
-              users_ = input.readInt64();
-              bitField0_ |= 0x00000008;
-              break;
-            } // case 32
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int bitField0_;
-
-    private com.google.protobuf.Timestamp bucket_;
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> bucketBuilder_;
     /**
      * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-     * @return Whether the bucket field is set.
      */
+    @java.lang.Override
     public boolean hasBucket() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return instance.hasBucket();
     }
     /**
      * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-     * @return The bucket.
      */
+    @java.lang.Override
     public com.google.protobuf.Timestamp getBucket() {
-      if (bucketBuilder_ == null) {
-        return bucket_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : bucket_;
-      } else {
-        return bucketBuilder_.getMessage();
-      }
+      return instance.getBucket();
     }
     /**
      * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
      */
     public Builder setBucket(com.google.protobuf.Timestamp value) {
-      if (bucketBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        bucket_ = value;
-      } else {
-        bucketBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setBucket(value);
       return this;
-    }
+      }
     /**
      * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
      */
     public Builder setBucket(
         com.google.protobuf.Timestamp.Builder builderForValue) {
-      if (bucketBuilder_ == null) {
-        bucket_ = builderForValue.build();
-      } else {
-        bucketBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000001;
-      onChanged();
+      copyOnWrite();
+      instance.setBucket(builderForValue.build());
       return this;
     }
     /**
      * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
      */
     public Builder mergeBucket(com.google.protobuf.Timestamp value) {
-      if (bucketBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0) &&
-          bucket_ != null &&
-          bucket_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
-          getBucketBuilder().mergeFrom(value);
-        } else {
-          bucket_ = value;
-        }
-      } else {
-        bucketBuilder_.mergeFrom(value);
-      }
-      if (bucket_ != null) {
-        bitField0_ |= 0x00000001;
-        onChanged();
-      }
+      copyOnWrite();
+      instance.mergeBucket(value);
       return this;
     }
     /**
      * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
      */
-    public Builder clearBucket() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      bucket_ = null;
-      if (bucketBuilder_ != null) {
-        bucketBuilder_.dispose();
-        bucketBuilder_ = null;
-      }
-      onChanged();
+    public Builder clearBucket() {  copyOnWrite();
+      instance.clearBucket();
       return this;
-    }
-    /**
-     * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-     */
-    public com.google.protobuf.Timestamp.Builder getBucketBuilder() {
-      bitField0_ |= 0x00000001;
-      onChanged();
-      return internalGetBucketFieldBuilder().getBuilder();
-    }
-    /**
-     * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-     */
-    public com.google.protobuf.TimestampOrBuilder getBucketOrBuilder() {
-      if (bucketBuilder_ != null) {
-        return bucketBuilder_.getMessageOrBuilder();
-      } else {
-        return bucket_ == null ?
-            com.google.protobuf.Timestamp.getDefaultInstance() : bucket_;
-      }
-    }
-    /**
-     * <code>.google.protobuf.Timestamp bucket = 1 [json_name = "bucket"];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
-        internalGetBucketFieldBuilder() {
-      if (bucketBuilder_ == null) {
-        bucketBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
-                getBucket(),
-                getParentForChildren(),
-                isClean());
-        bucket_ = null;
-      }
-      return bucketBuilder_;
     }
 
-    private long count_ ;
     /**
      * <pre>
      * Number of positions.
@@ -639,7 +332,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public long getCount() {
-      return count_;
+      return instance.getCount();
     }
     /**
      * <pre>
@@ -651,10 +344,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setCount(long value) {
-
-      count_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
+      copyOnWrite();
+      instance.setCount(value);
       return this;
     }
     /**
@@ -666,13 +357,11 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCount() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      count_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearCount();
       return this;
     }
 
-    private long streams_ ;
     /**
      * <pre>
      * Number of streams with a position in the bucket.
@@ -683,7 +372,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public long getStreams() {
-      return streams_;
+      return instance.getStreams();
     }
     /**
      * <pre>
@@ -695,10 +384,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setStreams(long value) {
-
-      streams_ = value;
-      bitField0_ |= 0x00000004;
-      onChanged();
+      copyOnWrite();
+      instance.setStreams(value);
       return this;
     }
     /**
@@ -710,13 +397,11 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearStreams() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      streams_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearStreams();
       return this;
     }
 
-    private long users_ ;
     /**
      * <pre>
      * Number of users with a position in the bucket.
@@ -727,7 +412,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public long getUsers() {
-      return users_;
+      return instance.getUsers();
     }
     /**
      * <pre>
@@ -739,10 +424,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setUsers(long value) {
-
-      users_ = value;
-      bitField0_ |= 0x00000008;
-      onChanged();
+      copyOnWrite();
+      instance.setUsers(value);
       return this;
     }
     /**
@@ -754,60 +437,87 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearUsers() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      users_ = 0L;
-      onChanged();
+      copyOnWrite();
+      instance.clearUsers();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:cursor.v1.TimeSeriesPoint)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "bitField0_",
+            "bucket_",
+            "count_",
+            "streams_",
+            "users_",
+          };
+          java.lang.String info =
+              "\u0000\u0004\u0000\u0001\u0001\u0004\u0004\u0000\u0000\u0000\u0001\u1009\u0000\u0002" +
+              "\u0002\u0003\u0002\u0004\u0002";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:cursor.v1.TimeSeriesPoint)
   private static final zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint();
+    TimeSeriesPoint defaultInstance = new TimeSeriesPoint();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      TimeSeriesPoint.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<TimeSeriesPoint>
-      PARSER = new com.google.protobuf.AbstractParser<TimeSeriesPoint>() {
-    @java.lang.Override
-    public TimeSeriesPoint parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<TimeSeriesPoint> PARSER;
 
   public static com.google.protobuf.Parser<TimeSeriesPoint> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<TimeSeriesPoint> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.TimeSeriesPoint getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

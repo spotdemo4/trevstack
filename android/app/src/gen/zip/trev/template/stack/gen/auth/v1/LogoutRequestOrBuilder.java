@@ -8,5 +8,5 @@ package zip.trev.template.stack.gen.auth.v1;
 @com.google.protobuf.Generated
 public interface LogoutRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:auth.v1.LogoutRequest)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 }

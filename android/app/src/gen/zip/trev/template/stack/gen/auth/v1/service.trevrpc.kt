@@ -4,45 +4,45 @@
 package zip.trev.template.stack.gen.auth.v1
 
 private val trevrpcCodec0: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.auth.v1.SignupRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.auth.v1.SignupRequest.getDescriptor(), zip.trev.template.stack.gen.auth.v1.SignupRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "auth.v1.SignupRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 18),
+        parse = zip.trev.template.stack.gen.auth.v1.SignupRequest::parseFrom,
     )
 
 private val trevrpcCodec1: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.auth.v1.SignupResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.auth.v1.SignupResponse.getDescriptor(), zip.trev.template.stack.gen.auth.v1.SignupResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "auth.v1.SignupResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(),
+        parse = zip.trev.template.stack.gen.auth.v1.SignupResponse::parseFrom,
     )
 
 private val trevrpcCodec2: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.auth.v1.LoginRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.auth.v1.LoginRequest.getDescriptor(), zip.trev.template.stack.gen.auth.v1.LoginRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "auth.v1.LoginRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 18),
+        parse = zip.trev.template.stack.gen.auth.v1.LoginRequest::parseFrom,
     )
 
 private val trevrpcCodec3: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.auth.v1.LoginResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.auth.v1.LoginResponse.getDescriptor(), zip.trev.template.stack.gen.auth.v1.LoginResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "auth.v1.LoginResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 18, 24),
+        parse = zip.trev.template.stack.gen.auth.v1.LoginResponse::parseFrom,
     )
 
 private val trevrpcCodec4: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.auth.v1.LogoutRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.auth.v1.LogoutRequest.getDescriptor(), zip.trev.template.stack.gen.auth.v1.LogoutRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "auth.v1.LogoutRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(),
+        parse = zip.trev.template.stack.gen.auth.v1.LogoutRequest::parseFrom,
     )
 
 private val trevrpcCodec5: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.auth.v1.LogoutResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.auth.v1.LogoutResponse.getDescriptor(), zip.trev.template.stack.gen.auth.v1.LogoutResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "auth.v1.LogoutResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(),
+        parse = zip.trev.template.stack.gen.auth.v1.LogoutResponse::parseFrom,
     )
 
 public const val AUTH_SERVICE_SIGNUP_PATH: String = "/auth.v1.AuthService/Signup"

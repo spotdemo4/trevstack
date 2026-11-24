@@ -53,7 +53,7 @@ Android Studio can open this directory too; the wrapper (`./gradlew`) downloads 
 `ktlint` checks the Kotlin style, and `nix fmt` fixes it.
 
 The app's code depends on code that `buf generate` writes to `app/src/gen/` from the protos in
-[`../proto`](../proto): the protobuf-java messages, and a TrevRPC client class for each service.
+[`../proto`](../proto): the protobuf-javalite messages, and a TrevRPC client class for each service.
 
 ### local server
 

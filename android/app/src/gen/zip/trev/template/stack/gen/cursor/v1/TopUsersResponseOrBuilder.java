@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface TopUsersResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.TopUsersResponse)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
@@ -23,14 +23,4 @@ public interface TopUsersResponseOrBuilder extends
    * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
    */
   int getUsersCount();
-  /**
-   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-   */
-  java.util.List<? extends zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder> 
-      getUsersOrBuilderList();
-  /**
-   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-   */
-  zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder getUsersOrBuilder(
-      int index);
 }

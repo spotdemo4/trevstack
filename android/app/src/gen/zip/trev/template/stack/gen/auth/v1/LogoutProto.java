@@ -6,70 +6,13 @@
 package zip.trev.template.stack.gen.auth.v1;
 
 @com.google.protobuf.Generated
-public final class LogoutProto extends com.google.protobuf.GeneratedFile {
+public final class LogoutProto {
   private LogoutProto() {}
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "LogoutProto");
-  }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
 
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_auth_v1_LogoutRequest_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_auth_v1_LogoutRequest_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_auth_v1_LogoutResponse_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_auth_v1_LogoutResponse_fieldAccessorTable;
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static final com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
   static {
-    java.lang.String[] descriptorData = {
-      "\n\024auth/v1/logout.proto\022\007auth.v1\"\017\n\rLogou" +
-      "tRequest\"\020\n\016LogoutResponseB\245\001\n#zip.trev." +
-      "template.stack.gen.auth.v1B\013LogoutProtoP" +
-      "\001Z4trev.zip/template/stack/server/v3/gen" +
-      "/auth/v1;authv1\242\002\003AXX\252\002\007Auth.V1\312\002\007Auth\\V" +
-      "1\342\002\023Auth\\V1\\GPBMetadata\352\002\010Auth::V1b\006prot" +
-      "o3"
-    };
-    descriptor = com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-        });
-    internal_static_auth_v1_LogoutRequest_descriptor =
-      getDescriptor().getMessageType(0);
-    internal_static_auth_v1_LogoutRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_auth_v1_LogoutRequest_descriptor,
-        new java.lang.String[] { });
-    internal_static_auth_v1_LogoutResponse_descriptor =
-      getDescriptor().getMessageType(1);
-    internal_static_auth_v1_LogoutResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_auth_v1_LogoutResponse_descriptor,
-        new java.lang.String[] { });
-    descriptor.resolveAllFeaturesImmutable();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

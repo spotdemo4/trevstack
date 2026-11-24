@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface ListStreamsResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.ListStreamsResponse)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <code>.cursor.v1.StreamSummary stream = 1 [json_name = "stream"];</code>
@@ -20,8 +20,4 @@ public interface ListStreamsResponseOrBuilder extends
    * @return The stream.
    */
   zip.trev.template.stack.gen.cursor.v1.StreamSummary getStream();
-  /**
-   * <code>.cursor.v1.StreamSummary stream = 1 [json_name = "stream"];</code>
-   */
-  zip.trev.template.stack.gen.cursor.v1.StreamSummaryOrBuilder getStreamOrBuilder();
 }

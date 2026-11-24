@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface WatchResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.WatchResponse)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <pre>
@@ -28,14 +28,6 @@ public interface WatchResponseOrBuilder extends
    * @return The moved.
    */
   zip.trev.template.stack.gen.cursor.v1.Cursor getMoved();
-  /**
-   * <pre>
-   * A cursor moved.
-   * </pre>
-   *
-   * <code>.cursor.v1.Cursor moved = 1 [json_name = "moved"];</code>
-   */
-  zip.trev.template.stack.gen.cursor.v1.CursorOrBuilder getMovedOrBuilder();
 
   /**
    * <pre>
@@ -55,14 +47,6 @@ public interface WatchResponseOrBuilder extends
    * @return The ended.
    */
   zip.trev.template.stack.gen.cursor.v1.StreamEnd getEnded();
-  /**
-   * <pre>
-   * A stream ended, so its cursor can be removed.
-   * </pre>
-   *
-   * <code>.cursor.v1.StreamEnd ended = 2 [json_name = "ended"];</code>
-   */
-  zip.trev.template.stack.gen.cursor.v1.StreamEndOrBuilder getEndedOrBuilder();
 
-  zip.trev.template.stack.gen.cursor.v1.WatchResponse.EventCase getEventCase();
+  public zip.trev.template.stack.gen.cursor.v1.WatchResponse.EventCase getEventCase();
 }

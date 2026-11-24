@@ -6,143 +6,143 @@ package zip.trev.template.stack.gen.cursor.v1
 import kotlinx.coroutines.flow.Flow
 
 private val trevrpcCodec0: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.SendRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.SendRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.SendRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.SendRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(9, 17),
+        parse = zip.trev.template.stack.gen.cursor.v1.SendRequest::parseFrom,
     )
 
 private val trevrpcCodec1: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.SendResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.SendResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.SendResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.SendResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10),
+        parse = zip.trev.template.stack.gen.cursor.v1.SendResponse::parseFrom,
     )
 
 private val trevrpcCodec2: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.WatchRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.WatchRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.WatchRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.WatchRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(),
+        parse = zip.trev.template.stack.gen.cursor.v1.WatchRequest::parseFrom,
     )
 
 private val trevrpcCodec3: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.WatchResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.WatchResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.WatchResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.WatchResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 18),
+        parse = zip.trev.template.stack.gen.cursor.v1.WatchResponse::parseFrom,
     )
 
 private val trevrpcCodec4: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.TrackRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.TrackRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.TrackRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.TrackRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(9, 17),
+        parse = zip.trev.template.stack.gen.cursor.v1.TrackRequest::parseFrom,
     )
 
 private val trevrpcCodec5: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.TrackResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.TrackResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.TrackResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.TrackResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10),
+        parse = zip.trev.template.stack.gen.cursor.v1.TrackResponse::parseFrom,
     )
 
 private val trevrpcCodec6: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.ShareRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.ShareRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.ShareRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.ShareRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(9, 17),
+        parse = zip.trev.template.stack.gen.cursor.v1.ShareRequest::parseFrom,
     )
 
 private val trevrpcCodec7: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.ShareResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.ShareResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.ShareResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.ShareResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 18),
+        parse = zip.trev.template.stack.gen.cursor.v1.ShareResponse::parseFrom,
     )
 
 private val trevrpcCodec8: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.ListRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.ListRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.ListRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.ListRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 16, 24, 33, 41, 49, 57, 66, 74),
+        parse = zip.trev.template.stack.gen.cursor.v1.ListRequest::parseFrom,
     )
 
 private val trevrpcCodec9: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.ListResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.ListResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.ListResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.ListResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10),
+        parse = zip.trev.template.stack.gen.cursor.v1.ListResponse::parseFrom,
     )
 
 private val trevrpcCodec10: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.ListStreamsRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.ListStreamsRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.ListStreamsRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.ListStreamsRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 16, 26, 34),
+        parse = zip.trev.template.stack.gen.cursor.v1.ListStreamsRequest::parseFrom,
     )
 
 private val trevrpcCodec11: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.ListStreamsResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.ListStreamsResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.ListStreamsResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.ListStreamsResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10),
+        parse = zip.trev.template.stack.gen.cursor.v1.ListStreamsResponse::parseFrom,
     )
 
 private val trevrpcCodec12: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.SummaryRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.SummaryRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.SummaryRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.SummaryRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10, 18),
+        parse = zip.trev.template.stack.gen.cursor.v1.SummaryRequest::parseFrom,
     )
 
 private val trevrpcCodec13: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.SummaryResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.SummaryResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.SummaryResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.SummaryResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(8, 16, 24, 33, 41, 49),
+        parse = zip.trev.template.stack.gen.cursor.v1.SummaryResponse::parseFrom,
     )
 
 private val trevrpcCodec14: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.TimeSeriesRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(8, 18, 26),
+        parse = zip.trev.template.stack.gen.cursor.v1.TimeSeriesRequest::parseFrom,
     )
 
 private val trevrpcCodec15: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.TimeSeriesResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.TimeSeriesResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.TimeSeriesResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.TimeSeriesResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10),
+        parse = zip.trev.template.stack.gen.cursor.v1.TimeSeriesResponse::parseFrom,
     )
 
 private val trevrpcCodec16: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.HeatmapRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.HeatmapRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.HeatmapRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.HeatmapRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(8, 16, 26, 34),
+        parse = zip.trev.template.stack.gen.cursor.v1.HeatmapRequest::parseFrom,
     )
 
 private val trevrpcCodec17: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.HeatmapResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.HeatmapResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.HeatmapResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.HeatmapResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(8, 16, 24, 26),
+        parse = zip.trev.template.stack.gen.cursor.v1.HeatmapResponse::parseFrom,
     )
 
 private val trevrpcCodec18: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.TopUsersRequest> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.TopUsersRequest.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.TopUsersRequest::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.TopUsersRequest",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(8, 18, 26),
+        parse = zip.trev.template.stack.gen.cursor.v1.TopUsersRequest::parseFrom,
     )
 
 private val trevrpcCodec19: zip.trev.trevrpc.MessageCodec<zip.trev.template.stack.gen.cursor.v1.TopUsersResponse> =
-    zip.trev.trevrpc.MessageCodec(
-        encode = { message -> message.toByteArray() },
-        decode = { body -> zip.trev.trevrpc.decodeProtobuf(body, zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.getDescriptor(), zip.trev.template.stack.gen.cursor.v1.TopUsersResponse::parseFrom) },
+    zip.trev.trevrpc.protobufCodec(
         messageType = "cursor.v1.TopUsersResponse",
+        wireTypes = zip.trev.trevrpc.ProtobufWireTypes(10),
+        parse = zip.trev.template.stack.gen.cursor.v1.TopUsersResponse::parseFrom,
     )
 
 public const val CURSOR_SERVICE_SEND_PATH: String = "/cursor.v1.CursorService/Send"

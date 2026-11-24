@@ -14,7 +14,7 @@ package zip.trev.template.stack.gen.cursor.v1;
  */
 @com.google.protobuf.Generated
 public enum TimeInterval
-    implements com.google.protobuf.ProtocolMessageEnum {
+    implements com.google.protobuf.Internal.EnumLite {
   /**
    * <code>TIME_INTERVAL_UNSPECIFIED = 0;</code>
    */
@@ -42,15 +42,6 @@ public enum TimeInterval
   UNRECOGNIZED(-1),
   ;
 
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "TimeInterval");
-  }
   /**
    * <code>TIME_INTERVAL_UNSPECIFIED = 0;</code>
    */
@@ -77,17 +68,17 @@ public enum TimeInterval
   public static final int TIME_INTERVAL_MONTH_VALUE = 5;
 
 
+  @java.lang.Override
   public final int getNumber() {
     if (this == UNRECOGNIZED) {
-      throw new java.lang.IllegalArgumentException(
-          "Can't get the number of an unknown enum value.");
+      return com.google.protobuf.Internal.throwCannotGetNumberOfUnrecognized();
     }
     return value;
   }
 
   /**
-   * @param value The numeric wire value of the corresponding enum entry.
-   * @return The enum associated with the given numeric wire value.
+   * @param value The number of the enum to look for.
+   * @return The enum associated with the given number.
    * @deprecated Use {@link #forNumber(int)} instead.
    */
   @java.lang.Deprecated
@@ -95,10 +86,6 @@ public enum TimeInterval
     return forNumber(value);
   }
 
-  /**
-   * @param value The numeric wire value of the corresponding enum entry.
-   * @return The enum associated with the given numeric wire value.
-   */
   public static TimeInterval forNumber(int value) {
     switch (value) {
       case 0: return TIME_INTERVAL_UNSPECIFIED;
@@ -118,41 +105,26 @@ public enum TimeInterval
   private static final com.google.protobuf.Internal.EnumLiteMap<
       TimeInterval> internalValueMap =
         new com.google.protobuf.Internal.EnumLiteMap<TimeInterval>() {
+          @java.lang.Override
           public TimeInterval findValueByNumber(int number) {
             return TimeInterval.forNumber(number);
           }
         };
 
-  public final com.google.protobuf.Descriptors.EnumValueDescriptor
-      getValueDescriptor() {
-    if (this == UNRECOGNIZED) {
-      throw new java.lang.IllegalStateException(
-          "Can't get the descriptor of an unrecognized enum value.");
-    }
-    return getDescriptor().getValue(ordinal());
-  }
-  public final com.google.protobuf.Descriptors.EnumDescriptor
-      getDescriptorForType() {
-    return getDescriptor();
-  }
-  public static com.google.protobuf.Descriptors.EnumDescriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.getDescriptor().getEnumType(0);
+  public static com.google.protobuf.Internal.EnumVerifier 
+      internalGetVerifier() {
+    return TimeIntervalVerifier.INSTANCE;
   }
 
-  private static final TimeInterval[] VALUES = values();
-
-  public static TimeInterval valueOf(
-      com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-    if (desc.getType() != getDescriptor()) {
-      throw new java.lang.IllegalArgumentException(
-        "EnumValueDescriptor is not for this type.");
-    }
-    if (desc.getIndex() == -1) {
-      return UNRECOGNIZED;
-    }
-    return VALUES[desc.getIndex()];
-  }
+  private static final class TimeIntervalVerifier implements 
+       com.google.protobuf.Internal.EnumVerifier { 
+          static final com.google.protobuf.Internal.EnumVerifier
+              INSTANCE = new TimeIntervalVerifier();
+          @java.lang.Override
+          public boolean isInRange(int number) {
+            return TimeInterval.forNumber(number) != null;
+          }
+        };
 
   private final int value;
 

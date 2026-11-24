@@ -9,49 +9,16 @@ package zip.trev.template.stack.gen.cursor.v1;
  * Protobuf type {@code cursor.v1.TopUsersResponse}
  */
 @com.google.protobuf.Generated
-public final class TopUsersResponse extends
-    com.google.protobuf.GeneratedMessage implements
+public  final class TopUsersResponse extends
+    com.google.protobuf.GeneratedMessageLite<
+        TopUsersResponse, TopUsersResponse.Builder> implements
     // @@protoc_insertion_point(message_implements:cursor.v1.TopUsersResponse)
     TopUsersResponseOrBuilder {
-private static final long serialVersionUID = 0L;
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "TopUsersResponse");
-  }
-  // Use TopUsersResponse.newBuilder() to construct.
-  private TopUsersResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-    super(builder);
-  }
   private TopUsersResponse() {
-    users_ = java.util.Collections.emptyList();
+    users_ = emptyProtobufList();
   }
-
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUsersResponse_descriptor;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUsersResponse_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUsersResponse_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.class, zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.Builder.class);
-  }
-
   public static final int USERS_FIELD_NUMBER = 1;
-  @SuppressWarnings("serial")
-  private java.util.List<zip.trev.template.stack.gen.cursor.v1.TopUser> users_;
+  private com.google.protobuf.Internal.ProtobufList<zip.trev.template.stack.gen.cursor.v1.TopUser> users_;
   /**
    * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
    */
@@ -62,7 +29,6 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
    */
-  @java.lang.Override
   public java.util.List<? extends zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder> 
       getUsersOrBuilderList() {
     return users_;
@@ -84,416 +50,192 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
    */
-  @java.lang.Override
   public zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder getUsersOrBuilder(
       int index) {
     return users_.get(index);
   }
-
-  private byte memoizedIsInitialized = -1;
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
+  private void ensureUsersIsMutable() {
+    com.google.protobuf.Internal.ProtobufList<zip.trev.template.stack.gen.cursor.v1.TopUser> tmp = users_;
+    if (!tmp.isModifiable()) {
+      users_ =
+          com.google.protobuf.GeneratedMessageLite.mutableCopy(tmp);
+     }
   }
 
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    for (int i = 0; i < users_.size(); i++) {
-      output.writeMessage(1, users_.get(i));
-    }
-    getUnknownFields().writeTo(output);
+  /**
+   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
+   */
+  private void setUsers(
+      int index, zip.trev.template.stack.gen.cursor.v1.TopUser value) {
+    java.util.Objects.requireNonNull(value);
+    ensureUsersIsMutable();
+    users_.set(index, value);
   }
-  private int computeSerializedSize_0() {
-    int size = 0;
-
-        {
-          final int count = users_.size();
-          for (int i = 0; i < count; i++) {
-            size += com.google.protobuf.CodedOutputStream
-              .computeMessageSizeNoTag(users_.get(i));
-          }
-          size += 1 * count;
-        }
-    return size;
+  /**
+   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
+   */
+  private void addUsers(zip.trev.template.stack.gen.cursor.v1.TopUser value) {
+    java.util.Objects.requireNonNull(value);
+    ensureUsersIsMutable();
+    users_.add(value);
   }
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    size += computeSerializedSize_0();
-    size += getUnknownFields().getSerializedSize();
-    memoizedSize = size;
-    return size;
+  /**
+   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
+   */
+  private void addUsers(
+      int index, zip.trev.template.stack.gen.cursor.v1.TopUser value) {
+    java.util.Objects.requireNonNull(value);
+    ensureUsersIsMutable();
+    users_.add(index, value);
   }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof zip.trev.template.stack.gen.cursor.v1.TopUsersResponse)) {
-      return super.equals(obj);
-    }
-    zip.trev.template.stack.gen.cursor.v1.TopUsersResponse other = (zip.trev.template.stack.gen.cursor.v1.TopUsersResponse) obj;
-
-    if (!getUsersList()
-        .equals(other.getUsersList())) return false;
-    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-    return true;
+  /**
+   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
+   */
+  private void addAllUsers(
+      java.lang.Iterable<? extends zip.trev.template.stack.gen.cursor.v1.TopUser> values) {
+    ensureUsersIsMutable();
+    com.google.protobuf.AbstractMessageLite.addAll(
+        values, users_);
   }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    if (getUsersCount() > 0) {
-      hash = (37 * hash) + USERS_FIELD_NUMBER;
-      hash = (53 * hash) + getUsersList().hashCode();
-    }
-    hash = (29 * hash) + getUnknownFields().hashCode();
-    memoizedHashCode = hash;
-    return hash;
+  /**
+   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
+   */
+  private void clearUsers() {
+    users_ = emptyProtobufList();
+  }
+  /**
+   * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
+   */
+  private void removeUsers(int index) {
+    ensureUsersIsMutable();
+    users_.remove(index);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, data, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input);
   }
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessage
-        .parseWithIOException(PARSER, input, extensionRegistry);
+    return com.google.protobuf.GeneratedMessageLite.parseFrom(
+        DEFAULT_INSTANCE, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
+    return (Builder) DEFAULT_INSTANCE.createBuilder();
   }
   public static Builder newBuilder(zip.trev.template.stack.gen.cursor.v1.TopUsersResponse prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  @java.lang.Override
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
+    return DEFAULT_INSTANCE.createBuilder(prototype);
   }
 
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
   /**
    * Protobuf type {@code cursor.v1.TopUsersResponse}
    */
   public static final class Builder extends
-      com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+      com.google.protobuf.GeneratedMessageLite.Builder<
+        zip.trev.template.stack.gen.cursor.v1.TopUsersResponse, Builder> implements
       // @@protoc_insertion_point(builder_implements:cursor.v1.TopUsersResponse)
       zip.trev.template.stack.gen.cursor.v1.TopUsersResponseOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUsersResponse_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUsersResponse_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.class, zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.Builder.class);
-    }
-
     // Construct using zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.newBuilder()
     private Builder() {
-
+      super(DEFAULT_INSTANCE);
     }
 
-    private Builder(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      super(parent);
-
-    }
-    @java.lang.Override
-    public Builder clear() {
-      super.clear();
-      bitField0_ = 0;
-      if (usersBuilder_ == null) {
-        users_ = java.util.Collections.emptyList();
-      } else {
-        users_ = null;
-        usersBuilder_.clear();
-      }
-      bitField0_ = (bitField0_ & ~0x00000001);
-      return this;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return zip.trev.template.stack.gen.cursor.v1.MetricsProto.internal_static_cursor_v1_TopUsersResponse_descriptor;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TopUsersResponse getDefaultInstanceForType() {
-      return zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.getDefaultInstance();
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TopUsersResponse build() {
-      zip.trev.template.stack.gen.cursor.v1.TopUsersResponse result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    @java.lang.Override
-    public zip.trev.template.stack.gen.cursor.v1.TopUsersResponse buildPartial() {
-      zip.trev.template.stack.gen.cursor.v1.TopUsersResponse result = new zip.trev.template.stack.gen.cursor.v1.TopUsersResponse(this);
-      buildPartialRepeatedFields(result);
-      if (bitField0_ != 0) { buildPartial0(result); }
-      onBuilt();
-      return result;
-    }
-
-    private void buildPartialRepeatedFields(zip.trev.template.stack.gen.cursor.v1.TopUsersResponse result) {
-      if (usersBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0)) {
-          users_ = java.util.Collections.unmodifiableList(users_);
-          bitField0_ = (bitField0_ & ~0x00000001);
-        }
-        result.users_ = users_;
-      } else {
-        result.users_ = usersBuilder_.build();
-      }
-    }
-
-    private void buildPartial0(zip.trev.template.stack.gen.cursor.v1.TopUsersResponse result) {
-      int from_bitField0_ = bitField0_;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof zip.trev.template.stack.gen.cursor.v1.TopUsersResponse) {
-        return mergeFrom((zip.trev.template.stack.gen.cursor.v1.TopUsersResponse)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(zip.trev.template.stack.gen.cursor.v1.TopUsersResponse other) {
-      if (other == zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.getDefaultInstance()) return this;
-      if (usersBuilder_ == null) {
-        if (!other.users_.isEmpty()) {
-          if (users_.isEmpty()) {
-            users_ = other.users_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureUsersIsMutable();
-            users_.addAll(other.users_);
-          }
-          onChanged();
-        }
-      } else {
-        if (!other.users_.isEmpty()) {
-          if (usersBuilder_.isEmpty()) {
-            usersBuilder_.dispose();
-            usersBuilder_ = null;
-            users_ = other.users_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-            usersBuilder_ = 
-              com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                 internalGetUsersFieldBuilder() : null;
-          } else {
-            usersBuilder_.addAllMessages(other.users_);
-          }
-        }
-      }
-      this.mergeUnknownFields(other.getUnknownFields());
-      onChanged();
-      return this;
-    }
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      return true;
-    }
-
-    @java.lang.Override
-    public Builder mergeFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      java.util.Objects.requireNonNull(extensionRegistry);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              zip.trev.template.stack.gen.cursor.v1.TopUser m =
-                  input.readMessage(
-                      zip.trev.template.stack.gen.cursor.v1.TopUser.parser(),
-                      extensionRegistry);
-              if (usersBuilder_ == null) {
-                ensureUsersIsMutable();
-                users_.add(m);
-              } else {
-                usersBuilder_.addMessage(m);
-              }
-              break;
-            } // case 10
-            default: {
-              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                done = true; // was an endgroup tag
-              }
-              break;
-            } // default:
-          } // switch (tag)
-        } // while (!done)
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.unwrapIOException();
-      } finally {
-        onChanged();
-      } // finally
-      return this;
-    }
-    private int bitField0_;
-
-    private java.util.List<zip.trev.template.stack.gen.cursor.v1.TopUser> users_ =
-      java.util.Collections.emptyList();
-    private void ensureUsersIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
-        users_ = new java.util.ArrayList<zip.trev.template.stack.gen.cursor.v1.TopUser>(users_);
-        bitField0_ |= 0x00000001;
-       }
-    }
-
-    private com.google.protobuf.RepeatedFieldBuilder<
-        zip.trev.template.stack.gen.cursor.v1.TopUser, zip.trev.template.stack.gen.cursor.v1.TopUser.Builder, zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder> usersBuilder_;
 
     /**
      * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
      */
+    @java.lang.Override
     public java.util.List<zip.trev.template.stack.gen.cursor.v1.TopUser> getUsersList() {
-      if (usersBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(users_);
-      } else {
-        return usersBuilder_.getMessageList();
-      }
+      return java.util.Collections.unmodifiableList(
+          instance.getUsersList());
     }
     /**
      * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
      */
+    @java.lang.Override
     public int getUsersCount() {
-      if (usersBuilder_ == null) {
-        return users_.size();
-      } else {
-        return usersBuilder_.getCount();
-      }
-    }
-    /**
+      return instance.getUsersCount();
+    }/**
      * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
      */
+    @java.lang.Override
     public zip.trev.template.stack.gen.cursor.v1.TopUser getUsers(int index) {
-      if (usersBuilder_ == null) {
-        return users_.get(index);
-      } else {
-        return usersBuilder_.getMessage(index);
-      }
+      return instance.getUsers(index);
     }
     /**
      * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
      */
     public Builder setUsers(
         int index, zip.trev.template.stack.gen.cursor.v1.TopUser value) {
-      if (usersBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        ensureUsersIsMutable();
-        users_.set(index, value);
-        onChanged();
-      } else {
-        usersBuilder_.setMessage(index, value);
-      }
+      copyOnWrite();
+      instance.setUsers(index, value);
       return this;
     }
     /**
@@ -501,27 +243,17 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setUsers(
         int index, zip.trev.template.stack.gen.cursor.v1.TopUser.Builder builderForValue) {
-      if (usersBuilder_ == null) {
-        ensureUsersIsMutable();
-        users_.set(index, builderForValue.build());
-        onChanged();
-      } else {
-        usersBuilder_.setMessage(index, builderForValue.build());
-      }
+      copyOnWrite();
+      instance.setUsers(index,
+          builderForValue.build());
       return this;
     }
     /**
      * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
      */
     public Builder addUsers(zip.trev.template.stack.gen.cursor.v1.TopUser value) {
-      if (usersBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        ensureUsersIsMutable();
-        users_.add(value);
-        onChanged();
-      } else {
-        usersBuilder_.addMessage(value);
-      }
+      copyOnWrite();
+      instance.addUsers(value);
       return this;
     }
     /**
@@ -529,14 +261,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder addUsers(
         int index, zip.trev.template.stack.gen.cursor.v1.TopUser value) {
-      if (usersBuilder_ == null) {
-        java.util.Objects.requireNonNull(value);
-        ensureUsersIsMutable();
-        users_.add(index, value);
-        onChanged();
-      } else {
-        usersBuilder_.addMessage(index, value);
-      }
+      copyOnWrite();
+      instance.addUsers(index, value);
       return this;
     }
     /**
@@ -544,13 +270,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder addUsers(
         zip.trev.template.stack.gen.cursor.v1.TopUser.Builder builderForValue) {
-      if (usersBuilder_ == null) {
-        ensureUsersIsMutable();
-        users_.add(builderForValue.build());
-        onChanged();
-      } else {
-        usersBuilder_.addMessage(builderForValue.build());
-      }
+      copyOnWrite();
+      instance.addUsers(builderForValue.build());
       return this;
     }
     /**
@@ -558,13 +279,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder addUsers(
         int index, zip.trev.template.stack.gen.cursor.v1.TopUser.Builder builderForValue) {
-      if (usersBuilder_ == null) {
-        ensureUsersIsMutable();
-        users_.add(index, builderForValue.build());
-        onChanged();
-      } else {
-        usersBuilder_.addMessage(index, builderForValue.build());
-      }
+      copyOnWrite();
+      instance.addUsers(index,
+          builderForValue.build());
       return this;
     }
     /**
@@ -572,155 +289,99 @@ private static final long serialVersionUID = 0L;
      */
     public Builder addAllUsers(
         java.lang.Iterable<? extends zip.trev.template.stack.gen.cursor.v1.TopUser> values) {
-      if (usersBuilder_ == null) {
-        ensureUsersIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, users_);
-        onChanged();
-      } else {
-        usersBuilder_.addAllMessages(values);
-      }
+      copyOnWrite();
+      instance.addAllUsers(values);
       return this;
     }
     /**
      * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
      */
     public Builder clearUsers() {
-      if (usersBuilder_ == null) {
-        users_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-      } else {
-        usersBuilder_.clear();
-      }
+      copyOnWrite();
+      instance.clearUsers();
       return this;
     }
     /**
      * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
      */
     public Builder removeUsers(int index) {
-      if (usersBuilder_ == null) {
-        ensureUsersIsMutable();
-        users_.remove(index);
-        onChanged();
-      } else {
-        usersBuilder_.remove(index);
-      }
+      copyOnWrite();
+      instance.removeUsers(index);
       return this;
-    }
-    /**
-     * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-     */
-    public zip.trev.template.stack.gen.cursor.v1.TopUser.Builder getUsersBuilder(
-        int index) {
-      return internalGetUsersFieldBuilder().getBuilder(index);
-    }
-    /**
-     * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-     */
-    public zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder getUsersOrBuilder(
-        int index) {
-      if (usersBuilder_ == null) {
-        return users_.get(index);  } else {
-        return usersBuilder_.getMessageOrBuilder(index);
-      }
-    }
-    /**
-     * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-     */
-    public java.util.List<? extends zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder> 
-         getUsersOrBuilderList() {
-      if (usersBuilder_ != null) {
-        return usersBuilder_.getMessageOrBuilderList();
-      } else {
-        return java.util.Collections.unmodifiableList(users_);
-      }
-    }
-    /**
-     * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-     */
-    public zip.trev.template.stack.gen.cursor.v1.TopUser.Builder addUsersBuilder() {
-      return internalGetUsersFieldBuilder().addBuilder(
-          zip.trev.template.stack.gen.cursor.v1.TopUser.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-     */
-    public zip.trev.template.stack.gen.cursor.v1.TopUser.Builder addUsersBuilder(
-        int index) {
-      return internalGetUsersFieldBuilder().addBuilder(
-          index, zip.trev.template.stack.gen.cursor.v1.TopUser.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .cursor.v1.TopUser users = 1 [json_name = "users"];</code>
-     */
-    public java.util.List<zip.trev.template.stack.gen.cursor.v1.TopUser.Builder> 
-         getUsersBuilderList() {
-      return internalGetUsersFieldBuilder().getBuilderList();
-    }
-    private com.google.protobuf.RepeatedFieldBuilder<
-        zip.trev.template.stack.gen.cursor.v1.TopUser, zip.trev.template.stack.gen.cursor.v1.TopUser.Builder, zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder> 
-        internalGetUsersFieldBuilder() {
-      if (usersBuilder_ == null) {
-        usersBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-            zip.trev.template.stack.gen.cursor.v1.TopUser, zip.trev.template.stack.gen.cursor.v1.TopUser.Builder, zip.trev.template.stack.gen.cursor.v1.TopUserOrBuilder>(
-                users_,
-                ((bitField0_ & 0x00000001) != 0),
-                getParentForChildren(),
-                isClean());
-        users_ = null;
-      }
-      return usersBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:cursor.v1.TopUsersResponse)
   }
+  @java.lang.Override
+  @java.lang.SuppressWarnings({"ThrowNull"})
+  protected final java.lang.Object dynamicMethod(
+      com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+      java.lang.Object arg0, java.lang.Object arg1) {
+    switch (method) {
+      case NEW_MUTABLE_INSTANCE: {
+        return new zip.trev.template.stack.gen.cursor.v1.TopUsersResponse();
+      }
+      case NEW_BUILDER: {
+        return new Builder();
+      }
+      case BUILD_MESSAGE_INFO: {
+          java.lang.Object[] objects = new java.lang.Object[] {
+            "users_",
+            zip.trev.template.stack.gen.cursor.v1.TopUser.class,
+          };
+          java.lang.String info =
+              "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0001\u0000\u0001\u001b";
+          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+      }
+      case GET_DEFAULT_INSTANCE: {
+        return DEFAULT_INSTANCE;
+      }
+      case GET_PARSER: {
+        com.google.protobuf.Parser<zip.trev.template.stack.gen.cursor.v1.TopUsersResponse> parser = PARSER;
+        if (parser == null) {
+          synchronized (zip.trev.template.stack.gen.cursor.v1.TopUsersResponse.class) {
+            parser = PARSER;
+            if (parser == null) {
+              parser =
+                  new DefaultInstanceBasedParser<zip.trev.template.stack.gen.cursor.v1.TopUsersResponse>(
+                      DEFAULT_INSTANCE);
+              PARSER = parser;
+            }
+          }
+        }
+        return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      // SET_MEMOIZED_IS_INITIALIZED is never called for this message.
+      // So it can do anything. Combine with default case for smaller codegen.
+      case SET_MEMOIZED_IS_INITIALIZED:
+    }
+    // Should never happen. Generates tight code to throw an exception.
+    throw null;
+  }
+
 
   // @@protoc_insertion_point(class_scope:cursor.v1.TopUsersResponse)
   private static final zip.trev.template.stack.gen.cursor.v1.TopUsersResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new zip.trev.template.stack.gen.cursor.v1.TopUsersResponse();
+    TopUsersResponse defaultInstance = new TopUsersResponse();
+    // New instances are implicitly immutable so no need to make
+    // immutable.
+    DEFAULT_INSTANCE = defaultInstance;
+    com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+      TopUsersResponse.class, defaultInstance);
   }
 
   public static zip.trev.template.stack.gen.cursor.v1.TopUsersResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<TopUsersResponse>
-      PARSER = new com.google.protobuf.AbstractParser<TopUsersResponse>() {
-    @java.lang.Override
-    public TopUsersResponse parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      Builder builder = newBuilder();
-      try {
-        builder.mergeFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(builder.buildPartial());
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e)
-            .setUnfinishedMessage(builder.buildPartial());
-      }
-      return builder.buildPartial();
-    }
-  };
+  private static volatile com.google.protobuf.Parser<TopUsersResponse> PARSER;
 
   public static com.google.protobuf.Parser<TopUsersResponse> parser() {
-    return PARSER;
+    return DEFAULT_INSTANCE.getParserForType();
   }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<TopUsersResponse> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public zip.trev.template.stack.gen.cursor.v1.TopUsersResponse getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
-
 }
 

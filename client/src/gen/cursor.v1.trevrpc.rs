@@ -92,28 +92,28 @@ where
     T: ::trevrpc::client::RpcTransport,
 {
     /// Calls the `Send` RPC when the returned call is awaited.
-    pub fn send(&self, request: &SendRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<SendRequest, SendResponse>> {
-        ::trevrpc::client::unary(&self.transport, cursor_service_paths::SEND, request, self.default_options.clone()).message_types("cursor.v1.SendRequest", "cursor.v1.SendResponse")
+    pub fn send(&self, request: &SendRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<SendRequest, SendResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, cursor_service_paths::SEND, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.SendRequest", "cursor.v1.SendResponse")
     }
 
     /// Calls the `Summary` RPC when the returned call is awaited.
-    pub fn summary(&self, request: &SummaryRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<SummaryRequest, SummaryResponse>> {
-        ::trevrpc::client::unary(&self.transport, cursor_service_paths::SUMMARY, request, self.default_options.clone()).message_types("cursor.v1.SummaryRequest", "cursor.v1.SummaryResponse")
+    pub fn summary(&self, request: &SummaryRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<SummaryRequest, SummaryResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, cursor_service_paths::SUMMARY, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.SummaryRequest", "cursor.v1.SummaryResponse")
     }
 
     /// Calls the `TimeSeries` RPC when the returned call is awaited.
-    pub fn time_series(&self, request: &TimeSeriesRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<TimeSeriesRequest, TimeSeriesResponse>> {
-        ::trevrpc::client::unary(&self.transport, cursor_service_paths::TIME_SERIES, request, self.default_options.clone()).message_types("cursor.v1.TimeSeriesRequest", "cursor.v1.TimeSeriesResponse")
+    pub fn time_series(&self, request: &TimeSeriesRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<TimeSeriesRequest, TimeSeriesResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, cursor_service_paths::TIME_SERIES, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.TimeSeriesRequest", "cursor.v1.TimeSeriesResponse")
     }
 
     /// Calls the `Heatmap` RPC when the returned call is awaited.
-    pub fn heatmap(&self, request: &HeatmapRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<HeatmapRequest, HeatmapResponse>> {
-        ::trevrpc::client::unary(&self.transport, cursor_service_paths::HEATMAP, request, self.default_options.clone()).message_types("cursor.v1.HeatmapRequest", "cursor.v1.HeatmapResponse")
+    pub fn heatmap(&self, request: &HeatmapRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<HeatmapRequest, HeatmapResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, cursor_service_paths::HEATMAP, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.HeatmapRequest", "cursor.v1.HeatmapResponse")
     }
 
     /// Calls the `TopUsers` RPC when the returned call is awaited.
-    pub fn top_users(&self, request: &TopUsersRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<TopUsersRequest, TopUsersResponse>> {
-        ::trevrpc::client::unary(&self.transport, cursor_service_paths::TOP_USERS, request, self.default_options.clone()).message_types("cursor.v1.TopUsersRequest", "cursor.v1.TopUsersResponse")
+    pub fn top_users(&self, request: &TopUsersRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<TopUsersRequest, TopUsersResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, cursor_service_paths::TOP_USERS, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.TopUsersRequest", "cursor.v1.TopUsersResponse")
     }
 
 }
@@ -123,28 +123,28 @@ where
     T: ::trevrpc::client::StreamingRpcTransport,
 {
     /// Calls the `Watch` RPC when the returned call is awaited.
-    pub fn watch(&self, request: &WatchRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ServerStreaming<WatchRequest, WatchResponse>> {
-        ::trevrpc::client::server_streaming(&self.transport, cursor_service_paths::WATCH, request, self.default_options.clone()).message_types("cursor.v1.WatchRequest", "cursor.v1.WatchResponse")
+    pub fn watch(&self, request: &WatchRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ServerStreaming<WatchRequest, WatchResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::server_streaming(&self.transport, cursor_service_paths::WATCH, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.WatchRequest", "cursor.v1.WatchResponse")
     }
 
     /// Calls the `Track` RPC when the returned call is awaited.
-    pub fn track(&self) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ClientStreaming<TrackRequest, TrackResponse>> {
-        ::trevrpc::client::client_streaming(&self.transport, cursor_service_paths::TRACK, self.default_options.clone()).message_types("cursor.v1.TrackRequest", "cursor.v1.TrackResponse")
+    pub fn track(&self) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ClientStreaming<TrackRequest, TrackResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::client_streaming(&self.transport, cursor_service_paths::TRACK, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.TrackRequest", "cursor.v1.TrackResponse")
     }
 
     /// Calls the `Share` RPC when the returned call is awaited.
-    pub fn share(&self) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::BidirectionalStreaming<ShareRequest, ShareResponse>> {
-        ::trevrpc::client::bidirectional_streaming(&self.transport, cursor_service_paths::SHARE, self.default_options.clone()).message_types("cursor.v1.ShareRequest", "cursor.v1.ShareResponse")
+    pub fn share(&self) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::BidirectionalStreaming<ShareRequest, ShareResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::bidirectional_streaming(&self.transport, cursor_service_paths::SHARE, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.ShareRequest", "cursor.v1.ShareResponse")
     }
 
     /// Calls the `List` RPC when the returned call is awaited.
-    pub fn list(&self, request: &ListRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ServerStreaming<ListRequest, ListResponse>> {
-        ::trevrpc::client::server_streaming(&self.transport, cursor_service_paths::LIST, request, self.default_options.clone()).message_types("cursor.v1.ListRequest", "cursor.v1.ListResponse")
+    pub fn list(&self, request: &ListRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ServerStreaming<ListRequest, ListResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::server_streaming(&self.transport, cursor_service_paths::LIST, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.ListRequest", "cursor.v1.ListResponse")
     }
 
     /// Calls the `ListStreams` RPC when the returned call is awaited.
-    pub fn list_streams(&self, request: &ListStreamsRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ServerStreaming<ListStreamsRequest, ListStreamsResponse>> {
-        ::trevrpc::client::server_streaming(&self.transport, cursor_service_paths::LIST_STREAMS, request, self.default_options.clone()).message_types("cursor.v1.ListStreamsRequest", "cursor.v1.ListStreamsResponse")
+    pub fn list_streams(&self, request: &ListStreamsRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::ServerStreaming<ListStreamsRequest, ListStreamsResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::server_streaming(&self.transport, cursor_service_paths::LIST_STREAMS, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("cursor.v1.ListStreamsRequest", "cursor.v1.ListStreamsResponse")
     }
 
 }
@@ -161,9 +161,9 @@ where
         server.route_with_options(cursor_service_paths::SEND, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.SendRequest", "cursor.v1.SendResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <SendRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<SendRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.send(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }
@@ -173,9 +173,9 @@ where
         server.route_streaming_with_options(cursor_service_paths::WATCH, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.WatchRequest", "cursor.v1.WatchResponse").with_method_options(b""), move |context, body, _request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <WatchRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<WatchRequest>(&::trevrpc::codec::Prost, body)?;
                 let responses = service.watch(context, request).await?;
-                Ok(::trevrpc::stream::encode(responses))
+                Ok(::trevrpc::stream::encode(responses, ::trevrpc::codec::Prost))
             }
         });
     }
@@ -185,9 +185,9 @@ where
         server.route_streaming_with_options(cursor_service_paths::TRACK, ::trevrpc::RpcKind::ClientStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TrackRequest", "cursor.v1.TrackResponse").with_method_options(b""), move |context, _body, request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let requests = ::trevrpc::stream::decode::<TrackRequest>(request_stream);
+                let requests = ::trevrpc::stream::decode::<TrackRequest, _>(request_stream, ::trevrpc::codec::Prost);
                 let response = service.track(context, requests).await?;
-                Ok(::trevrpc::stream::encode(::trevrpc::stream::from_iter([response])))
+                Ok(::trevrpc::stream::encode(::trevrpc::stream::from_iter([response]), ::trevrpc::codec::Prost))
             }
         });
     }
@@ -197,9 +197,9 @@ where
         server.route_streaming_with_options(cursor_service_paths::SHARE, ::trevrpc::RpcKind::BidirectionalStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ShareRequest", "cursor.v1.ShareResponse").with_method_options(b""), move |context, _body, request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let requests = ::trevrpc::stream::decode::<ShareRequest>(request_stream);
+                let requests = ::trevrpc::stream::decode::<ShareRequest, _>(request_stream, ::trevrpc::codec::Prost);
                 let responses = service.share(context, requests).await?;
-                Ok(::trevrpc::stream::encode(responses))
+                Ok(::trevrpc::stream::encode(responses, ::trevrpc::codec::Prost))
             }
         });
     }
@@ -209,9 +209,9 @@ where
         server.route_streaming_with_options(cursor_service_paths::LIST, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ListRequest", "cursor.v1.ListResponse").with_method_options(b""), move |context, body, _request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <ListRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<ListRequest>(&::trevrpc::codec::Prost, body)?;
                 let responses = service.list(context, request).await?;
-                Ok(::trevrpc::stream::encode(responses))
+                Ok(::trevrpc::stream::encode(responses, ::trevrpc::codec::Prost))
             }
         });
     }
@@ -221,9 +221,9 @@ where
         server.route_streaming_with_options(cursor_service_paths::LIST_STREAMS, ::trevrpc::RpcKind::ServerStreaming, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.ListStreamsRequest", "cursor.v1.ListStreamsResponse").with_method_options(b""), move |context, body, _request_stream| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <ListStreamsRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<ListStreamsRequest>(&::trevrpc::codec::Prost, body)?;
                 let responses = service.list_streams(context, request).await?;
-                Ok(::trevrpc::stream::encode(responses))
+                Ok(::trevrpc::stream::encode(responses, ::trevrpc::codec::Prost))
             }
         });
     }
@@ -233,9 +233,9 @@ where
         server.route_with_options(cursor_service_paths::SUMMARY, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.SummaryRequest", "cursor.v1.SummaryResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <SummaryRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<SummaryRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.summary(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }
@@ -245,9 +245,9 @@ where
         server.route_with_options(cursor_service_paths::TIME_SERIES, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TimeSeriesRequest", "cursor.v1.TimeSeriesResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <TimeSeriesRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<TimeSeriesRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.time_series(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }
@@ -257,9 +257,9 @@ where
         server.route_with_options(cursor_service_paths::HEATMAP, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.HeatmapRequest", "cursor.v1.HeatmapResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <HeatmapRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<HeatmapRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.heatmap(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }
@@ -269,9 +269,9 @@ where
         server.route_with_options(cursor_service_paths::TOP_USERS, ::trevrpc::server::RouteOptions::new().with_message_types("cursor.v1.TopUsersRequest", "cursor.v1.TopUsersResponse").with_method_options(b""), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <TopUsersRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<TopUsersRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.top_users(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }

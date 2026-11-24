@@ -6,84 +6,13 @@
 package zip.trev.template.stack.gen.cursor.v1;
 
 @com.google.protobuf.Generated
-public final class SendProto extends com.google.protobuf.GeneratedFile {
+public final class SendProto {
   private SendProto() {}
-  static {
-    com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
-      com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
-      /* major= */ 4,
-      /* minor= */ 36,
-      /* patch= */ 2,
-      /* suffix= */ "",
-      "SendProto");
-  }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
 
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_cursor_v1_SendRequest_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_cursor_v1_SendRequest_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_cursor_v1_SendResponse_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_cursor_v1_SendResponse_fieldAccessorTable;
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static final com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
   static {
-    java.lang.String[] descriptorData = {
-      "\n\024cursor/v1/send.proto\022\tcursor.v1\032\033buf/v" +
-      "alidate/validate.proto\032\026cursor/v1/cursor" +
-      ".proto\"w\n\013SendRequest\022-\n\001x\030\001 \001(\001B\032\272H\027\022\022\031" +
-      "\000\000\000\000\000\000\360?)\000\000\000\000\000\000\000\000\310\001\001H\000R\001x\210\001\001\022-\n\001y\030\002 \001(\001B" +
-      "\032\272H\027\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\000\000\310\001\001H\001R\001y\210\001\001B\004\n\002_" +
-      "xB\004\n\002_y\"9\n\014SendResponse\022)\n\006cursor\030\001 \001(\0132" +
-      "\021.cursor.v1.CursorR\006cursorB\261\001\n%zip.trev." +
-      "template.stack.gen.cursor.v1B\tSendProtoP" +
-      "\001Z8trev.zip/template/stack/server/v3/gen" +
-      "/cursor/v1;cursorv1\242\002\003CXX\252\002\tCursor.V1\312\002\t" +
-      "Cursor\\V1\342\002\025Cursor\\V1\\GPBMetadata\352\002\nCurs" +
-      "or::V1b\006proto3"
-    };
-    descriptor = com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-          build.buf.validate.ValidateProto.getDescriptor(),
-          zip.trev.template.stack.gen.cursor.v1.CursorProto.getDescriptor(),
-        });
-    internal_static_cursor_v1_SendRequest_descriptor =
-      getDescriptor().getMessageType(0);
-    internal_static_cursor_v1_SendRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_cursor_v1_SendRequest_descriptor,
-        new java.lang.String[] { "X", "Y", });
-    internal_static_cursor_v1_SendResponse_descriptor =
-      getDescriptor().getMessageType(1);
-    internal_static_cursor_v1_SendResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_cursor_v1_SendResponse_descriptor,
-        new java.lang.String[] { "Cursor", });
-    descriptor.resolveAllFeaturesImmutable();
-    build.buf.validate.ValidateProto.getDescriptor();
-    zip.trev.template.stack.gen.cursor.v1.CursorProto.getDescriptor();
-    com.google.protobuf.ExtensionRegistry registry =
-        com.google.protobuf.ExtensionRegistry.newInstance();
-    registry.add(build.buf.validate.ValidateProto.field);
-    com.google.protobuf.Descriptors.FileDescriptor
-        .internalUpdateFileDescriptor(descriptor, registry);
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -199,6 +199,7 @@ cachePackages = [
   'trev.zip/llc/trevrpc/trevrpc-go',
   'trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc',
   'trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc',
+  'trev.zip/llc/trevrpc/trevrpc-go/qmux',
   'trev.zip/llc/trevrpc/trevrpc-go/ratelimit'
 ]
 
@@ -452,13 +453,17 @@ cachePackages = [
     hash = 'sha256-MKd0AdkWEe2A79mGPzOY5I76nMqTsGJKQNPJOKyOwkQ='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go']
-    version = 'v1.12.0'
-    hash = 'sha256-A2PH9wUc68MgAv2XrkNidCEGZJ+WUzPszK7Kj5UkQYE='
+    version = 'v1.13.0'
+    hash = 'sha256-buozomRFPj5xBFfSxQyPXmZbMmBVCiEAtD8dH9AquEE='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/oteltrevrpc']
-    version = 'v1.12.0'
-    hash = 'sha256-hJB8Xx/p5gddGFyfuGt/FsRRxMQuvOOgmB6o4fBmuoU='
+    version = 'v1.13.0'
+    hash = 'sha256-aIjRb7SzXVKd3oBQDv/YCb4XhuSVCKN/dcuZY5MacSA='
 
   [mod.'trev.zip/llc/trevrpc/trevrpc-go/protovalidatetrevrpc']
-    version = 'v1.12.0'
-    hash = 'sha256-vbK1/ttgjpLV6P3MSX64BTRhG7YT8iHlOWbabgJHbEg='
+    version = 'v1.13.0'
+    hash = 'sha256-KupC3tWrVkSNm/GXku3SxMyrEPOA6wGE0OZm9EIEd5w='
+
+  [mod.'trev.zip/llc/trevrpc/trevrpc-go/qmux']
+    version = 'v1.13.0'
+    hash = 'sha256-mIjxZ317P3pcCn3VxxaGb6S+5O4+AMu6y1bCSTRZl3c='

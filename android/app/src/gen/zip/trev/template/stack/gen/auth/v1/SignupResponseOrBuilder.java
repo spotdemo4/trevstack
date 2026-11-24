@@ -8,5 +8,5 @@ package zip.trev.template.stack.gen.auth.v1;
 @com.google.protobuf.Generated
 public interface SignupResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:auth.v1.SignupResponse)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 }

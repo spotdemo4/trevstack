@@ -64,18 +64,18 @@ where
     T: ::trevrpc::client::RpcTransport,
 {
     /// Calls the `Signup` RPC when the returned call is awaited.
-    pub fn signup(&self, request: &SignupRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<SignupRequest, SignupResponse>> {
-        ::trevrpc::client::unary(&self.transport, auth_service_paths::SIGNUP, request, self.default_options.clone()).message_types("auth.v1.SignupRequest", "auth.v1.SignupResponse")
+    pub fn signup(&self, request: &SignupRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<SignupRequest, SignupResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, auth_service_paths::SIGNUP, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("auth.v1.SignupRequest", "auth.v1.SignupResponse")
     }
 
     /// Calls the `Login` RPC when the returned call is awaited.
-    pub fn login(&self, request: &LoginRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<LoginRequest, LoginResponse>> {
-        ::trevrpc::client::unary(&self.transport, auth_service_paths::LOGIN, request, self.default_options.clone()).message_types("auth.v1.LoginRequest", "auth.v1.LoginResponse")
+    pub fn login(&self, request: &LoginRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<LoginRequest, LoginResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, auth_service_paths::LOGIN, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("auth.v1.LoginRequest", "auth.v1.LoginResponse")
     }
 
     /// Calls the `Logout` RPC when the returned call is awaited.
-    pub fn logout(&self, request: &LogoutRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<LogoutRequest, LogoutResponse>> {
-        ::trevrpc::client::unary(&self.transport, auth_service_paths::LOGOUT, request, self.default_options.clone()).message_types("auth.v1.LogoutRequest", "auth.v1.LogoutResponse")
+    pub fn logout(&self, request: &LogoutRequest) -> ::trevrpc::client::Call<'_, T, ::trevrpc::client::call::Unary<LogoutRequest, LogoutResponse, ::trevrpc::codec::Prost>> {
+        ::trevrpc::client::unary(&self.transport, auth_service_paths::LOGOUT, request, self.default_options.clone(), ::trevrpc::codec::Prost).message_types("auth.v1.LogoutRequest", "auth.v1.LogoutResponse")
     }
 
 }
@@ -98,9 +98,9 @@ where
         server.route_with_options(auth_service_paths::SIGNUP, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.SignupRequest", "auth.v1.SignupResponse").with_method_options(b"\x80\xb5\x18\x01"), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <SignupRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<SignupRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.signup(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }
@@ -110,9 +110,9 @@ where
         server.route_with_options(auth_service_paths::LOGIN, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.LoginRequest", "auth.v1.LoginResponse").with_method_options(b"\x80\xb5\x18\x01"), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <LoginRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<LoginRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.login(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }
@@ -122,9 +122,9 @@ where
         server.route_with_options(auth_service_paths::LOGOUT, ::trevrpc::server::RouteOptions::new().with_message_types("auth.v1.LogoutRequest", "auth.v1.LogoutResponse").with_method_options(b"\x80\xb5\x18\x01"), move |context, body| {
             let service = ::std::sync::Arc::clone(&service);
             async move {
-                let request = <LogoutRequest as ::prost::Message>::decode(body.as_slice())?;
+                let request = ::trevrpc::codec::decode::<LogoutRequest>(&::trevrpc::codec::Prost, body)?;
                 let response = service.logout(context, request).await?;
-                Ok(::prost::Message::encode_to_vec(&response))
+                ::trevrpc::codec::encode(&::trevrpc::codec::Prost, &response)
             }
         });
     }

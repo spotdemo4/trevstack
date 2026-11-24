@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface ListStreamsRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.ListStreamsRequest)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <pre>
@@ -85,14 +85,6 @@ public interface ListStreamsRequestOrBuilder extends
    * @return The start.
    */
   com.google.protobuf.Timestamp getStart();
-  /**
-   * <pre>
-   * Inclusive lower bound of the stream's first position.
-   * </pre>
-   *
-   * <code>.google.protobuf.Timestamp start = 3 [json_name = "start", (.buf.validate.field) = { ... }</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getStartOrBuilder();
 
   /**
    * <pre>
@@ -112,12 +104,4 @@ public interface ListStreamsRequestOrBuilder extends
    * @return The end.
    */
   com.google.protobuf.Timestamp getEnd();
-  /**
-   * <pre>
-   * Inclusive upper bound of the stream's first position, after start.
-   * </pre>
-   *
-   * <code>.google.protobuf.Timestamp end = 4 [json_name = "end", (.buf.validate.field) = { ... }</code>
-   */
-  com.google.protobuf.TimestampOrBuilder getEndOrBuilder();
 }

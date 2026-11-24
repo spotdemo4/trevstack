@@ -8,7 +8,7 @@ package zip.trev.template.stack.gen.cursor.v1;
 @com.google.protobuf.Generated
 public interface TimeSeriesResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:cursor.v1.TimeSeriesResponse)
-    com.google.protobuf.MessageOrBuilder {
+    com.google.protobuf.MessageLiteOrBuilder {
 
   /**
    * <code>repeated .cursor.v1.TimeSeriesPoint points = 1 [json_name = "points"];</code>
@@ -23,14 +23,4 @@ public interface TimeSeriesResponseOrBuilder extends
    * <code>repeated .cursor.v1.TimeSeriesPoint points = 1 [json_name = "points"];</code>
    */
   int getPointsCount();
-  /**
-   * <code>repeated .cursor.v1.TimeSeriesPoint points = 1 [json_name = "points"];</code>
-   */
-  java.util.List<? extends zip.trev.template.stack.gen.cursor.v1.TimeSeriesPointOrBuilder> 
-      getPointsOrBuilderList();
-  /**
-   * <code>repeated .cursor.v1.TimeSeriesPoint points = 1 [json_name = "points"];</code>
-   */
-  zip.trev.template.stack.gen.cursor.v1.TimeSeriesPointOrBuilder getPointsOrBuilder(
-      int index);
 }
