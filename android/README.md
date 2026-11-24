@@ -31,6 +31,7 @@ and `Send` time out after 10 seconds; the streams last for as long as their mode
 
 ### install
 
+Each `android/v*` release has a signed APK to download and install. To build it yourself instead,
 `nix build .#android` builds an unsigned release APK in `result/share/trevstack/`. Sign it with your
 own key, using `apksigner` from the Android SDK's build tools, before installing it:
 
@@ -89,6 +90,37 @@ nix run .#update-android-deps
 
 Keep `trevrpc` at the version of the flake's `trevrpc` input, since TrevRPC packages are compatible
 only with those of the same version.
+
+### releases
+
+Pushing an `android/v*` tag runs the `android` job of the release workflow, which builds `.#android`
+and uploads the APK to the release with [flake-release](https://trev.zip/llc/flake-release). It signs
+the APK with the key in two Actions secrets, and releases it unsigned without them:
+
+| secret                              | value                                       |
+| ----------------------------------- | ------------------------------------------- |
+| `ANDROID_SIGNING_KEYSTORE`          | the keystore, base64-encoded                |
+| `ANDROID_SIGNING_KEYSTORE_PASSWORD` | the password of the keystore and of its key |
+
+Create a keystore holding one key, and encode it for the secret, with `keytool` from a JDK:
+
+```sh
+keytool -genkeypair -storetype PKCS12 -keystore release.jks -alias release \
+  -keyalg RSA -keysize 4096 -validity 10000 -dname "CN=your name"
+base64 -w0 release.jks
+```
+
+Keep the keystore and its password safe: Android installs an update only when it's signed with the
+same key as the installed app, so losing the key means users must uninstall the app to update it.
+
+Certified Android devices install apps only from
+[verified developers](https://developer.android.com/developer-verification), even outside Google
+Play. Register the app's package name, `applicationId` in [`app/build.gradle.kts`](app/build.gradle.kts),
+with the SHA-256 fingerprint of your key, which `keytool -list -v -keystore release.jks` prints, on the
+Android developer verification page of the Google Play Console, or in the Android Developer Console
+if you don't publish on Google Play. Each package name belongs to one developer, and
+`zip.trev.template.stack` is the template's, so change `applicationId` in a project created from it
+before registering.
 
 ### layout
 
