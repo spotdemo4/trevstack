@@ -1,6 +1,6 @@
 [versions]
 activity = "1.13.0"
-android-gradle = "9.5.2"
+android-gradle = "9.5.3"
 compose-bom = "2026.11.01"
 coroutines = "1.11.0"
 cronet = "500.1.0"
